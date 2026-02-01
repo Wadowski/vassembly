@@ -5,11 +5,17 @@ export enum Environment {
 
 export interface Config {
   apps: {
-    web: {
-      port: number;
-    };
-    docs: {
-      port: number;
-    };
+    web: WebConfig;
+    docs: WebConfig;
   };
+  mongoDb: MongoDbConfig;
+}
+
+export interface WebConfig {
+  port: number;
+}
+
+export interface MongoDbConfig {
+  url: string;
+  database: string;
 }

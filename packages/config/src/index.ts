@@ -9,4 +9,4 @@ const CONFIG_MAP = {
   [Environment.Production]: productionConfig,
 };
 
-export default CONFIG_MAP[ENVIRONMENT] || developmentConfig;
+export const config = CONFIG_MAP[ENVIRONMENT] || developmentConfig;

@@ -1,5 +1,5 @@
 {
-  "name": "@vassembly/client-mongodb",
+  "name": "@vassembly/logger",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -14,8 +14,6 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "@vassembly/config": "workspace:^",
-    "@vassembly/logger": "workspace:^",
-    "mongodb": "^7.0.0"
+    "cli-color": "^2.0.4"
   }
 }
