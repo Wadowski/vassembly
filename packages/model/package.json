@@ -1,9 +1,7 @@
 {
-  "name": "@vassembly/package-general-empty",
+  "name": "@vassembly/model",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts", 
-  "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
@@ -17,5 +15,11 @@
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
     "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "@vassembly/constants": "workspace:*",
+    "mongodb": "^7.0.0",
+    "reflect-metadata": "^0.2.2",
+    "type-graphql": "2.0.0-rc.3"
   }
 }
