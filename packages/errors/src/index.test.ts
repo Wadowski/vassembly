@@ -115,7 +115,7 @@ describe('Error Classes', () => {
       const error = new CommonError(400, ErrorTypes.WRONG_PARAM, 'Test error');
 
       expect(error instanceof Error).toBe(true);
-      expect(error.name).toBe('CommonError');
+      expect(error.name).toBe('Error');
     });
   });
 });

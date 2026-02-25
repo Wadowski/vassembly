@@ -143,6 +143,9 @@ importers:
       '@vassembly/model':
         specifier: workspace:^
         version: link:../model
+      '@vassembly/queries':
+        specifier: workspace:^
+        version: link:../queries
     devDependencies:
       '@types/node':
         specifier: ^22.19.7

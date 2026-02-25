@@ -39,7 +39,7 @@ describe("Model", () => {
 
     it("toMongoDb should return object without timestamps by default", () => {
       const instance = new TestModel();
-      instance.id = "test-id";
+      instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
       const result = instance.toMongoDb();
 
@@ -51,7 +51,7 @@ describe("Model", () => {
 
     it("toMongoDb with isCreate should add timestamps", () => {
       const instance = new TestModel();
-      instance.id = "test-id";
+      instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
       const result = instance.toMongoDb({ isCreate: true });
 
@@ -63,7 +63,7 @@ describe("Model", () => {
 
     it("toMongoDb with isUpdate should add updatedAt only", () => {
       const instance = new TestModel();
-      instance.id = "test-id";
+      instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
       const result = instance.toMongoDb({ isUpdate: true });
 
@@ -74,7 +74,7 @@ describe("Model", () => {
 
     it("toMongoDb with isRemove should add removedAt", () => {
       const instance = new TestModel();
-      instance.id = "test-id";
+      instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
       const result = instance.toMongoDb({ isRemove: true });
 
@@ -89,7 +89,7 @@ describe("Model", () => {
         customField?: string;
       }
       const instance = new CustomModel();
-      instance.id = "test-id";
+      instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
       instance.customField = "test";
 
       const result = instance.toJSON();

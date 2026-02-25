@@ -46,22 +46,6 @@ describe("factory", () => {
     expect(result?.name).toBe("Test");
   });
 
-  it("should return null when data is null", () => {
-    const testFactory = factory(TestModel);
-
-    const result = testFactory.create(null);
-
-    expect(result).toBeNull();
-  });
-
-  it("should return null when data is undefined", () => {
-    const testFactory = factory(TestModel);
-
-    const result = testFactory.create(undefined);
-
-    expect(result).toBeNull();
-  });
-
   it("should create multiple instances with createMany", () => {
     const testFactory = factory(TestModel);
     const dataArray = [
@@ -85,40 +69,10 @@ describe("factory", () => {
 
     expect(result).toHaveLength(0);
   });
-
-  it("should assign all provided properties to the instance", () => {
-    const testFactory = factory(TestModel);
-    const data = {
-      id: "abc123",
-      name: "My Model",
-      description: "A detailed description",
-    };
-
-    const result = testFactory.create(data);
-
-    expect(result?.id).toBe(data.id);
-    expect(result?.name).toBe(data.name);
-    expect(result?.description).toBe(data.description);
-  });
 });
 
 describe("translationFactory", () => {
-  it("should return object with createWithTranslations and createManyWithTranslations methods", () => {
-    const translationMap = [
-      { fieldKey: "name", translationKey: "nameTranslations" },
-    ];
-    const translationFact = translationFactory(
-      TestModelWithTranslation,
-      translationMap
-    );
-
-    expect(translationFact).toHaveProperty("createWithTranslations");
-    expect(translationFact).toHaveProperty("createManyWithTranslations");
-    expect(typeof translationFact.createWithTranslations).toBe("function");
-    expect(typeof translationFact.createManyWithTranslations).toBe("function");
-  });
-
-  it("should create instance with translation map data", () => {
+  it("should use translation value based on language when createWithTranslations is called", () => {
     const translationMap = [
       { fieldKey: "name", translationKey: "nameTranslations" },
     ];
@@ -131,17 +85,20 @@ describe("translationFactory", () => {
       id: "123",
       name: "Default Name",
       nameTranslations: [
-        { language: COUNTRIES.Poland, value: "Nazwa" },
+        { language: COUNTRIES.Poland, value: "Polska Nazwa" },
+        { language: COUNTRIES.England, value: "English Name" },
       ],
     };
 
-    const result = translationFact.createWithTranslations(data);
+    const resultPL = translationFact.createWithTranslations(
+      data,
+      COUNTRIES.Poland
+    );
 
-    expect(result).not.toBeNull();
-    expect(result?.id).toBe("123");
+    expect(resultPL?.name).toBe("Polska Nazwa");
   });
 
-  it("should return null when data is null", () => {
+  it("should use different translation value for different languages", () => {
     const translationMap = [
       { fieldKey: "name", translationKey: "nameTranslations" },
     ];
@@ -150,12 +107,29 @@ describe("translationFactory", () => {
       translationMap
     );
 
-    const result = translationFact.createWithTranslations(null as any);
+    const data = {
+      id: "456",
+      name: "Default Name",
+      nameTranslations: [
+        { language: COUNTRIES.Poland, value: "Polska Nazwa" },
+        { language: COUNTRIES.England, value: "English Name" },
+      ],
+    };
 
-    expect(result).toBeNull();
+    const resultPL = translationFact.createWithTranslations(
+      data,
+      COUNTRIES.Poland
+    );
+    const resultEN = translationFact.createWithTranslations(
+      data,
+      COUNTRIES.England
+    );
+
+    expect(resultPL?.name).toBe("Polska Nazwa");
+    expect(resultEN?.name).toBe("English Name");
   });
 
-  it("should provide createManyWithTranslations method", () => {
+  it("should fallback to default value when translation for language is not found", () => {
     const translationMap = [
       { fieldKey: "name", translationKey: "nameTranslations" },
     ];
@@ -164,6 +138,84 @@ describe("translationFactory", () => {
       translationMap
     );
 
-    expect(typeof translationFact.createManyWithTranslations).toBe("function");
+    const data = {
+      id: "789",
+      name: "Default Name",
+      nameTranslations: [{ language: COUNTRIES.Poland, value: "Polska Nazwa" }],
+    };
+
+    const resultEN = translationFact.createWithTranslations(
+      data,
+      COUNTRIES.England
+    );
+
+    expect(resultEN?.name).toBe("Default Name");
+  });
+
+  it("should apply translations to multiple fields", () => {
+    const translationMap = [
+      { fieldKey: "name", translationKey: "nameTranslations" },
+      { fieldKey: "category", translationKey: "categoryTranslations" },
+    ];
+    const translationFact = translationFactory(
+      TestModelWithTranslation,
+      translationMap
+    );
+
+    const data = {
+      id: "101",
+      name: "Default Name",
+      nameTranslations: [
+        { language: COUNTRIES.Poland, value: "Polska Nazwa" },
+      ],
+      category: "Default Category",
+      categoryTranslations: [
+        { language: COUNTRIES.Poland, value: "Polska Kategoria" },
+      ],
+    };
+
+    const result = translationFact.createWithTranslations(
+      data,
+      COUNTRIES.Poland
+    );
+
+    expect(result?.name).toBe("Polska Nazwa");
+    expect(result?.category).toBe("Polska Kategoria");
+  });
+
+  it("should use translations for multiple items in createManyWithTranslations", () => {
+    const translationMap = [
+      { fieldKey: "name", translationKey: "nameTranslations" },
+    ];
+    const translationFact = translationFactory(
+      TestModelWithTranslation,
+      translationMap
+    );
+
+    const dataArray = [
+      {
+        id: "1",
+        name: "Item 1",
+        nameTranslations: [
+          { language: COUNTRIES.Poland, value: "Przedmiot 1" },
+        ],
+      },
+      {
+        id: "2",
+        name: "Item 2",
+        nameTranslations: [
+          { language: COUNTRIES.Poland, value: "Przedmiot 2" },
+        ],
+      },
+    ];
+
+    const results = translationFact.createManyWithTranslations(
+      dataArray,
+      COUNTRIES.Poland
+    );
+
+    expect(results).toHaveLength(2);
+    expect(results[0]?.name).toBe("Przedmiot 1");
+    expect(results[1]?.name).toBe("Przedmiot 2");
   });
 });

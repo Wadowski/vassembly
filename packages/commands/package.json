@@ -21,6 +21,7 @@
   "dependencies": {
     "@vassembly/client-mongodb": "workspace:^",
     "@vassembly/errors": "workspace:^",
-    "@vassembly/model": "workspace:^"
+    "@vassembly/model": "workspace:^",
+    "@vassembly/queries": "workspace:^"
   }
 }

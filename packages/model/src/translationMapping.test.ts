@@ -164,32 +164,53 @@ describe("translationMapping", () => {
   describe("getTranslationList", () => {
     it("should map items and apply getTranslation to each one", () => {
       const instance = {
-        names: ["Item 1", "Item 2"],
-        nameTranslations: [
-          [{ language: COUNTRIES.Poland, value: "Przedmiot 1" }],
-          [{ language: COUNTRIES.Poland, value: "Przedmiot 2" }],
+        items: [
+          { name: "Item 1", value: [{ language: COUNTRIES.Poland, value: "Przedmiot 1" }] },
+          { name: "Item 2", value: [{ language: COUNTRIES.Poland, value: "Przedmiot 2" }] },
         ],
       };
 
       const result = getTranslationList(
-        "names.[].",
-        "nameTranslations.[].",
+        "items.[].name",
+        "items.[].value",
         instance,
         COUNTRIES.Poland
       );
 
       expect(result).toHaveLength(2);
+      expect(result?.[0]).toBe("Przedmiot 1");
+      expect(result?.[1]).toBe("Przedmiot 2");
+    });
+
+    it("should return fallback value when translation not found", () => {
+      const instance = {
+        items: [
+          { name: "Item 1", value: [{ language: COUNTRIES.Poland, value: "Przedmiot 1" }] },
+          { name: "Item 2", value: [{ language: COUNTRIES.England, value: "Item 2" }] },
+        ],
+      };
+
+      const result = getTranslationList(
+        "items.[].name",
+        "items.[].value",
+        instance,
+        COUNTRIES.Poland
+      );
+
+      expect(result).toHaveLength(2);
+      expect(result?.[0]).toBe("Przedmiot 1");
+      expect(result?.[1]).toBe("Item 2");
     });
 
     it("should return undefined when top level field is not an array", () => {
       const instance = {
-        names: "not an array",
-        nameTranslations: [],
+        items: "not an array",
+        itemsTranslations: [],
       };
 
       const result = getTranslationList(
-        "names.[].",
-        "nameTranslations.[].",
+        "items.[].name",
+        "itemsTranslations.[].value",
         instance,
         COUNTRIES.Poland
       );
@@ -199,13 +220,13 @@ describe("translationMapping", () => {
 
     it("should return undefined when translation key is not an array", () => {
       const instance = {
-        names: ["Item 1"],
-        nameTranslations: "not an array",
+        items: [{ name: "Item 1" }],
+        itemsTranslations: "not an array",
       };
 
       const result = getTranslationList(
-        "names.[].",
-        "nameTranslations.[].",
+        "items.[].name",
+        "itemsTranslations.[].value",
         instance,
         COUNTRIES.Poland
       );
@@ -215,13 +236,13 @@ describe("translationMapping", () => {
 
     it("should return undefined for invalid language", () => {
       const instance = {
-        names: ["Item 1"],
-        nameTranslations: [[{ language: COUNTRIES.Poland, value: "Przedmiot 1" }]],
+        items: [{ name: "Item 1" }],
+        itemsTranslations: [[{ language: COUNTRIES.Poland, value: "Przedmiot 1" }]],
       };
 
       const result = getTranslationList(
-        "names.[].",
-        "nameTranslations.[].",
+        "items.[].name",
+        "itemsTranslations.[].value",
         instance,
         "INVALID" as COUNTRIES
       );
@@ -231,13 +252,13 @@ describe("translationMapping", () => {
 
     it("should handle empty array", () => {
       const instance = {
-        names: [],
-        nameTranslations: [],
+        items: [],
+        itemsTranslations: [],
       };
 
       const result = getTranslationList(
-        "names.[].",
-        "nameTranslations.[].",
+        "items.[].name",
+        "itemsTranslations.[].value",
         instance,
         COUNTRIES.Poland
       );
@@ -252,32 +273,26 @@ describe("translationMapping", () => {
         items: [
           [
             {
-              value: "Val 1",
+              name: "Val 1",
+              nameTranslations: [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
             },
             {
-              value: "Val 2",
+              name: "Val 2",
+              nameTranslations: [{ language: COUNTRIES.Poland, value: "Wartość 2" }],
             },
           ],
           [
             {
-              value: "Val 3",
+              name: "Val 3",
+              nameTranslations: [{ language: COUNTRIES.Poland, value: "Wartość 3" }],
             },
-          ],
-        ],
-        itemsTranslations: [
-          [
-            [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
-            [{ language: COUNTRIES.Poland, value: "Wartość 2" }],
-          ],
-          [
-            [{ language: COUNTRIES.Poland, value: "Wartość 3" }],
           ],
         ],
       };
 
       const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
+        "items.[].[].name",
+        "items.[].[].nameTranslations",
         instance,
         COUNTRIES.Poland
       );
@@ -285,6 +300,9 @@ describe("translationMapping", () => {
       expect(result).toHaveLength(2);
       expect(result?.[0]).toHaveLength(2);
       expect(result?.[1]).toHaveLength(1);
+      expect(result?.[0]?.[0]?.name).toBe("Wartość 1");
+      expect(result?.[0]?.[1]?.name).toBe("Wartość 2");
+      expect(result?.[1]?.[0]?.name).toBe("Wartość 3");
     });
 
     it("should spread original object and preserve all properties", () => {
@@ -292,38 +310,33 @@ describe("translationMapping", () => {
         items: [
           [
             {
-              value: "Val 1",
+              name: "Val 1",
               id: "123",
+              nameTranslations: [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
             },
-          ],
-        ],
-        itemsTranslations: [
-          [
-            [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
           ],
         ],
       };
 
       const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
+        "items.[].[].name",
+        "items.[].[].nameTranslations",
         instance,
         COUNTRIES.Poland
       );
 
       expect(result?.[0]?.[0]?.id).toBe("123");
-      expect(result?.[0]?.[0]?.value).toBeDefined();
+      expect(result?.[0]?.[0]?.name).toBe("Wartość 1");
     });
 
     it("should return undefined when top level is not an array", () => {
       const instance = {
         items: "not an array",
-        itemsTranslations: [],
       };
 
       const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
+        "items.[].[].name",
+        "items.[].[].nameTranslations",
         instance,
         COUNTRIES.Poland
       );
@@ -331,52 +344,21 @@ describe("translationMapping", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should handle when translation item is not an array", () => {
-      const instance = {
-        items: [
-          [
-            {
-              value: "Val 1",
-            },
-          ],
-        ],
-        itemsTranslations: [
-          [
-            "not an array",
-          ],
-        ],
-      };
-
-      const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
-        instance,
-        COUNTRIES.Poland
-      );
-
-      expect(result).toBeDefined();
-      expect(result).toHaveLength(1);
-    });
-
     it("should return undefined for invalid language", () => {
       const instance = {
         items: [
           [
             {
-              value: "Val 1",
+              name: "Val 1",
+              nameTranslations: [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
             },
-          ],
-        ],
-        itemsTranslations: [
-          [
-            [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
           ],
         ],
       };
 
       const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
+        "items.[].[].name",
+        "items.[].[].nameTranslations",
         instance,
         "INVALID" as COUNTRIES
       );
@@ -390,23 +372,16 @@ describe("translationMapping", () => {
           "not an array",
           [
             {
-              value: "Val 1",
+              name: "Val 1",
+              nameTranslations: [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
             },
-          ],
-        ],
-        itemsTranslations: [
-          [
-            [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
-          ],
-          [
-            [{ language: COUNTRIES.Poland, value: "Wartość 2" }],
           ],
         ],
       };
 
       const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
+        "items.[].[].name",
+        "items.[].[].nameTranslations",
         instance,
         COUNTRIES.Poland
       );
@@ -419,12 +394,11 @@ describe("translationMapping", () => {
     it("should handle empty nested arrays", () => {
       const instance = {
         items: [[], []],
-        itemsTranslations: [[], []],
       };
 
       const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
+        "items.[].[].name",
+        "items.[].[].nameTranslations",
         instance,
         COUNTRIES.Poland
       );
@@ -439,27 +413,22 @@ describe("translationMapping", () => {
             {
               id: "id1",
               name: "Name1",
-              value: "Val 1",
               extra: { data: "extra" },
+              nameTranslations: [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
             },
-          ],
-        ],
-        itemsTranslations: [
-          [
-            [{ language: COUNTRIES.Poland, value: "Wartość 1" }],
           ],
         ],
       };
 
       const result = getTranslationListList(
-        "items.[].[].",
-        "itemsTranslations.[].[].",
+        "items.[].[].name",
+        "items.[].[].nameTranslations",
         instance,
         COUNTRIES.Poland
       );
 
       expect(result?.[0]?.[0]?.id).toBe("id1");
-      expect(result?.[0]?.[0]?.name).toBe("Name1");
+      expect(result?.[0]?.[0]?.name).toBe("Wartość 1");
       expect(result?.[0]?.[0]?.extra).toEqual({ data: "extra" });
     });
   });
