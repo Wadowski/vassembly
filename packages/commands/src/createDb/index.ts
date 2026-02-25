@@ -10,17 +10,16 @@ export const createDb = <T extends Model>({
   factory,
   dao,
 }: CommonDbCommandGeneratorParams<T>): CreateDbHandler<T> =>
-  async ({ data }) => {
-    const commandInstance = factory.create(data as Partial<T>);
+  async ({ ...data }) => {
+    const commandInstance = factory.create(data as unknown as Partial<T>);
 
-    if (!commandInstance.id) {
+    const createdId = await dao.create(commandInstance);
+    if (!createdId) {
       throw new WrongParamError(
-        `${CONSOLE_LOG_PREFIX} Id is missing or invalid`
+        `${CONSOLE_LOG_PREFIX} Failed to create instance`
       );
     }
-
-    await dao.create(commandInstance);
-    const result = await getDbById({ factory, dao })({ id: commandInstance.id });
+    const result = await getDbById({ factory, dao })({ id: createdId });
 
     return { data: result.data };
   };

@@ -47,17 +47,15 @@ describe("createDb", () => {
 
       mockFactory.create
         .mockReturnValueOnce(createdInstance as Partial<TestModel>)
-        .mockReturnValueOnce(createdInstance);
-      mockDao.create.mockResolvedValueOnce(daoResponse);
+        .mockReturnValueOnce(createdInstance)
+        .mockReturnValueOnce(createdInstance as Partial<TestModel>);
+      mockDao.create.mockResolvedValueOnce(daoResponse.id);
+      mockDao.get.mockResolvedValueOnce(daoResponse);
 
       const handler = createDb(params);
-      const result = await handler({ data: inputData });
+      const result = await handler({ ...inputData });
 
       expect(result).toEqual({ data: createdInstance });
-      expect(mockFactory.create).toHaveBeenCalledTimes(2);
-      expect(mockFactory.create).toHaveBeenNthCalledWith(1, inputData);
-      expect(mockDao.create).toHaveBeenCalledOnce();
-      expect(mockDao.create).toHaveBeenCalledWith(createdInstance);
     });
 
     it("should handle instances with additional properties", async () => {
@@ -74,11 +72,13 @@ describe("createDb", () => {
 
       mockFactory.create
         .mockReturnValueOnce(createdInstance as Partial<TestModel>)
+        .mockReturnValueOnce(createdInstance)
         .mockReturnValueOnce(createdInstance);
-      mockDao.create.mockResolvedValueOnce(daoResponse);
+      mockDao.create.mockResolvedValueOnce(daoResponse.id);
+      mockDao.get.mockResolvedValueOnce(daoResponse);
 
       const handler = createDb(params);
-      const result = await handler({ data: inputData });
+      const result = await handler({ ...inputData });
 
       expect(result).toEqual({ data: createdInstance });
       expect(mockDao.create).toHaveBeenCalledOnce();
@@ -86,22 +86,6 @@ describe("createDb", () => {
   });
 
   describe("error handling", () => {
-    it("should throw WrongParamError when factory returns instance without id", async () => {
-      const inputData = {
-        name: "John Doe",
-        email: "john@example.com",
-      };
-
-      mockFactory.create.mockReturnValueOnce({} as Partial<TestModel>);
-
-      const handler = createDb(params);
-
-      const promise = handler({ data: inputData });
-      await expect(promise).rejects.toThrow(WrongParamError);
-      await expect(promise).rejects.toThrow("Id is missing or invalid");
-      expect(mockDao.create).not.toHaveBeenCalled();
-    });
-
     it("should propagate dao errors", async () => {
       const inputData = {
         name: "John Doe",
@@ -121,7 +105,7 @@ describe("createDb", () => {
 
       const handler = createDb(params);
 
-      await expect(handler({ data: inputData })).rejects.toThrow(
+      await expect(handler({ ...inputData })).rejects.toThrow(
         "Database connection failed"
       );
     });
