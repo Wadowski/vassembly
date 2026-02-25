@@ -106,9 +106,43 @@ importers:
       '@vassembly/logger':
         specifier: workspace:^
         version: link:../logger
+      '@vassembly/model':
+        specifier: workspace:^
+        version: link:../model
       mongodb:
         specifier: ^7.0.0
         version: 7.0.0
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.7
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.7)
+
+  packages/commands:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:^
+        version: link:../client-mongodb
+      '@vassembly/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@vassembly/model':
+        specifier: workspace:^
+        version: link:../model
     devDependencies:
       '@types/node':
         specifier: ^22.19.7
@@ -264,6 +298,37 @@ importers:
       type-graphql:
         specifier: 2.0.0-rc.3
         version: 2.0.0-rc.3(graphql-scalars@1.25.0)(graphql@16.12.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.7
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.7)
+
+  packages/queries:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:^
+        version: link:../client-mongodb
+      '@vassembly/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@vassembly/model':
+        specifier: workspace:^
+        version: link:../model
     devDependencies:
       '@types/node':
         specifier: ^22.19.7

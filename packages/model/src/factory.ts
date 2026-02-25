@@ -1,15 +1,11 @@
 import { COUNTRIES } from "@vassembly/constants";
-import { Model, ModelWithTranslation } from "./types";
+import { Model, ModelWithTranslation, ModelFactory, ModelTranslationFactory } from "./types";
 
 const KEYS_TO_OMIT = ["toMongoDb", "toJSON", "setLanguageTranslation"];
 
-export const factory = <T extends Model>(FactoryModel: { new (): T }) => {
-  const create = (data?: Partial<T> | null): T | null => {
+export const factory = <T extends Model>(FactoryModel: { new (): T }): ModelFactory<T> => {
+  const create = (data: Partial<T>): T => {
     const instance = new FactoryModel();
-
-    if (!data) {
-      return null;
-    }
 
     Object.entries(data).forEach(([key, value]) => {
       if (!KEYS_TO_OMIT.includes(key)) {
@@ -19,11 +15,7 @@ export const factory = <T extends Model>(FactoryModel: { new (): T }) => {
     return instance;
   };
 
-  const createMany = (data?: Array<Partial<T>>): (T | null)[] => {
-    if (!data) {
-      return [];
-    }
-
+  const createMany = (data: Array<Partial<T>>): Array<T> => {
     return data.map(create);
   };
 
@@ -40,7 +32,7 @@ export const translationFactory = <T extends ModelWithTranslation>(
     translationKey: string;
     isArray?: boolean;
   }>
-) => {
+): ModelTranslationFactory<T> => {
   const createWithTranslations = (
     data: Partial<T>,
     language?: COUNTRIES

@@ -1,8 +1,8 @@
+import type { Model } from "@vassembly/model";
 import { mongoDb } from "./connection";
 import {
   MongoDbDAOGenerator,
   MongoDbDAO as MongoDbDAOType,
-  Model,
 } from "./types";
 import { flattenObject } from "./utils";
 

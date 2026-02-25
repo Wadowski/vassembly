@@ -1,9 +1,9 @@
 {
-  "name": "@vassembly/client-mongodb",
+  "name": "@vassembly/commands",
   "version": "0.0.0",
-  "main": "./src/index.ts", 
-  "types": "./src/index.ts",
   "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
@@ -19,9 +19,8 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
-    "@vassembly/config": "workspace:^",
-    "@vassembly/logger": "workspace:^",
-    "@vassembly/model": "workspace:^",
-    "mongodb": "^7.0.0"
+    "@vassembly/client-mongodb": "workspace:^",
+    "@vassembly/errors": "workspace:^",
+    "@vassembly/model": "workspace:^"
   }
 }
