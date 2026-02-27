@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID } from "type-graphql";
 import { ObjectId } from "mongodb";
 import { mongoDbDocumentParamOmitDecorator, MongoDbOmit } from "./mongodb";
 import { COUNTRIES } from "@vassembly/constants";

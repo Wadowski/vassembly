@@ -10,7 +10,7 @@ export interface Config {
   };
   mongoDb: MongoDbConfig;
   aws: AwsConfig;
-  s3: S3Config;
+  deepSeekAi: DeepSeekAiConfig;
 }
 
 export interface AwsConfig {
@@ -19,7 +19,17 @@ export interface AwsConfig {
   region: string;
 }
 
-export interface S3Config {}
+export interface S3Config {
+  bucketName: string;
+}
+
+export interface SqsConfig {
+  queueUrl: string;
+}
+
+export interface SesConfig {
+  configurationSetName?: string;
+}
 
 export interface WebConfig {
   port: number;
@@ -28,4 +38,9 @@ export interface WebConfig {
 export interface MongoDbConfig {
   url: string;
   database: string;
+}
+
+export interface DeepSeekAiConfig {
+  apiKey: string;
+  baseURL: string;
 }
