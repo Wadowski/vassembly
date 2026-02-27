@@ -4,9 +4,18 @@ import {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl as getSignedUrlAwsSdk } from "@aws-sdk/s3-request-presigner";
-import { ClientAwsS3Params, GetFileParams, GetSignedUrlParams, UploadFileParams } from "./types";
+import { Upload } from "@aws-sdk/lib-storage";
+import { 
+  ClientAwsS3Params,
+  GetFileParams,
+  GetSignedUrlParams,
+  UploadFileParams,
+  UploadFileStreamParams,
+  RemoveFileParams,
+} from "./types";
 
 const CONSOLE_LOG_PREFIX = "client-aws-s3 ::";
 const EXPIRES_IN = 60 * 60; // 1 hour
@@ -62,14 +71,49 @@ export const AwsS3Client = ({ bucketName }: ClientAwsS3Params) => {
       });
       await s3Client.send(command);
       return key;
-      } catch (err) {
-        throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on upload file`);
-      }
-    };
-
-    return {
-      getFile,
-      getSignedUrl,
-      uploadFile,
-    };
+    } catch (err) {
+      throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on upload file`);
+    }
   };
+
+  const uploadFileStream = async ({ key, stream, fileType, options = {} }: UploadFileStreamParams) => {
+    try {
+      const upload = new Upload({
+        client: s3Client,
+        params: {
+          Bucket: bucketName,
+          Key: key,
+          Body: stream,
+          ContentType: fileType,
+          ...options,
+        },
+      });
+
+      await upload.done();
+      return key;
+    } catch (err) {
+      throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on upload file stream`);
+    }
+  };
+
+  const removeFile = async ({ key, options = {} }: RemoveFileParams) => {
+    try {
+      const command = new DeleteObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+        ...options,
+      });
+      await s3Client.send(command);
+    } catch (err) {
+      throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on remove file`);
+    }
+  };
+
+  return {
+    getFile,
+    getSignedUrl,
+    uploadFile,
+    uploadFileStream,
+    removeFile,
+  };
+};
