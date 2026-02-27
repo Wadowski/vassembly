@@ -43,7 +43,7 @@ describe("removeDb", () => {
 
       expect(result).toEqual({ success: true });
       expect(mockFactory.create).toHaveBeenCalledWith({ id });
-      expect(mockDao.delete).toHaveBeenCalledWith(queryInstance);
+      expect(mockDao.remove).toHaveBeenCalledWith(queryInstance);
     });
 
     it("should handle removal of multiple different items", async () => {
