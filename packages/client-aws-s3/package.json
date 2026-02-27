@@ -1,5 +1,5 @@
 {
-  "name": "@vassembly/config",
+  "name": "@vassembly/client-aws-s3",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",
@@ -17,5 +17,12 @@
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
     "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.999.0",
+    "@aws-sdk/s3-request-presigner": "^3.999.0",
+    "@vassembly/config": "workspace:^",
+    "@vassembly/errors": "workspace:^",
+    "@vassembly/logger": "workspace:^"
   }
 }
