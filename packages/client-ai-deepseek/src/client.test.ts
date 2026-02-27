@@ -120,7 +120,7 @@ describe("DeepseekAiClient", () => {
 
       mockAiClient.chat.completions.create.mockRejectedValueOnce(error);
 
-      await expect(client.chat({ userMessage })).rejects.toThrow("API Error");
+      await expect(client.chat({ userMessage })).rejects.toThrow("client-ai-deepseek :: error on chat");
     });
   });
 });

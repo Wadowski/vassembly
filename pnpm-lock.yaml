@@ -237,6 +237,34 @@ importers:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@22.19.7)
 
+  packages/client-file:
+    dependencies:
+      '@vassembly/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@vassembly/logger':
+        specifier: workspace:^
+        version: link:../logger
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.7
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.7)
+
   packages/client-mongodb:
     dependencies:
       '@vassembly/config':
