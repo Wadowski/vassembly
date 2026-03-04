@@ -6,3 +6,4 @@ Always follow the coding standards rules listed below:
 
 - use named exports instead of default exports
 - When function has more then one argument, always use object of arguments instead of list of arguments
+- for tests use vitest

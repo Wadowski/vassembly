@@ -1,9 +1,9 @@
 {
-  "name": "@vassembly/model",
+  "name": "@vassembly/validation",
   "version": "0.0.0",
-  "main": "./src/index.ts", 
-  "types": "./src/index.ts",
   "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
@@ -19,11 +19,7 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
-    "@vassembly/constants": "workspace:*",
-    "@vassembly/errors": "workspace:*",
-    "@vassembly/validation": "workspace:*",
-    "mongodb": "^7.0.0",
-    "reflect-metadata": "^0.2.2",
-    "type-graphql": "2.0.0-rc.3"
+    "@vassembly/errors": "workspace:^",
+    "zod": "^4.3.6"
   }
 }

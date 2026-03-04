@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { Model, ModelWithTranslation, MONGODB_VALUE_MAP } from "./model";
 
 class TestModel extends Model {}
@@ -99,6 +99,58 @@ describe("Model", () => {
       expect(result).not.toHaveProperty("mongoDbKeyMap");
       expect(result).not.toHaveProperty("mongoDbValueMap");
       expect(result.customField).toBe("test");
+    });
+
+    describe("isValid", () => {
+      it("should return success with data when no validator is set", () => {
+        const instance = new TestModel();
+        instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
+
+        const result = instance.isValid();
+
+        expect(result.success).toBe(true);
+        expect(result.data).toBe(instance);
+      });
+
+      it("should call validator when validator is set", () => {
+        const instance = new TestModel();
+        instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
+
+        const validatorMock = vi.fn().mockReturnValue({ success: true, data: instance });
+        (instance as any).validator = validatorMock;
+
+        const result = instance.isValid();
+
+        expect(validatorMock).toHaveBeenCalledWith(instance);
+        expect(result.success).toBe(true);
+      });
+
+      it("should return validator failure result when validator returns error", () => {
+        const instance = new TestModel();
+        instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
+
+        const error = { field: "id", message: "Invalid id format" };
+        const validatorMock = vi.fn().mockReturnValue({ success: false, error });
+        (instance as any).validator = validatorMock;
+
+        const result = instance.isValid();
+
+        expect(result.success).toBe(false);
+        expect(result.error).toEqual(error);
+      });
+
+      it("should return instance as data in result when validator succeeds", () => {
+        const instance = new TestModel();
+        instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
+
+        const validatorMock = vi.fn().mockReturnValue({ success: true, data: instance });
+        (instance as any).validator = validatorMock;
+
+        const result = instance.isValid();
+
+        expect(result.data).toBe(instance);
+        expect(result.success).toBe(true);
+      });
     });
   });
 });

@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 import { mongoDbDocumentParamOmitDecorator, MongoDbOmit } from "./mongodb";
 import { COUNTRIES } from "@vassembly/constants";
 import { getTranslation, getTranslationList, getTranslationListList } from "./translationMapping";
+import { ValidatorResult } from "@vassembly/validation";
 
 export const MONGODB_VALUE_MAP = {
   value: (data: string) => new ObjectId(data),
@@ -47,6 +48,18 @@ export abstract class Model {
   @MongoDbOmit
   mongoDbValueMap: Record<string, (data: string) => any> = {
     id: MONGODB_VALUE_MAP.value,
+  };
+
+  @MongoDbOmit
+  private validator?: (data: unknown) => ValidatorResult<this>;
+
+  @MongoDbOmit
+  isValid = (): ValidatorResult<this> => {
+    if (!this.validator) {
+      return { success: true, data: this };
+    }
+
+    return this.validator(this);
   };
 
   @MongoDbOmit
@@ -116,6 +129,8 @@ export abstract class Model {
       toMongoDb,
       mongoDbKeyMap,
       mongoDbValueMap,
+      validator,
+      isValid,
       ...rest
     } = this;
     return rest;
