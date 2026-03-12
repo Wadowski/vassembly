@@ -1,2 +1,2 @@
-export * from "./getDbById";
-export * from "./getDbListAll";
+export * from "./getById";
+export * from "./getListAll";

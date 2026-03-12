@@ -2,7 +2,7 @@ import { getDbByQuery } from "@vassembly/queries";
 import { moduleMongodbDao } from "../clients";
 import { ModuleModel, moduleFactory } from "../model";
 
-export const getModuleDbListAll = getDbByQuery<ModuleModel>({
+export const getModuleListAll = getDbByQuery<ModuleModel>({
   dao: moduleMongodbDao,
   factory: moduleFactory,
 });

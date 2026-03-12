@@ -21,6 +21,7 @@
     "@vassembly/commands": "workspace:*",
     "@vassembly/model": "workspace:*",
     "@vassembly/queries": "workspace:*",
+    "@vassembly/validation": "workspace:*",
     "type-graphql": "2.0.0-rc.3"
   }
 }
