@@ -141,4 +141,71 @@ describe('getListDbByQuery', () => {
       await expect(promise).rejects.toThrow('Database connection failed');
     });
   });
+
+  describe('validationSchema field', () => {
+    it('should not call isValid when validationSchema is not provided', async () => {
+      const mockQueryInstance = {
+        isValid: vi.fn(),
+      };
+      const daoResponse: any[] = [];
+
+      mockFactory.create.mockReturnValueOnce(mockQueryInstance);
+      mockFactory.createMany.mockReturnValueOnce([]);
+      mockDao.getMany.mockResolvedValueOnce(daoResponse);
+
+      const handler = getListDbByQuery(params);
+      await handler({ limit: 10, offset: 0 });
+
+      expect(mockQueryInstance.isValid).not.toHaveBeenCalled();
+    });
+
+    it('should propagate validation errors when isValid throws', async () => {
+      const validationSchema = { validate: vi.fn() } as any;
+      const validationError = new Error('Invalid query parameters');
+      const mockQueryInstance = {
+        isValid: vi.fn().mockImplementation(() => {
+          throw validationError;
+        }),
+      };
+
+      mockFactory.create.mockReturnValueOnce(mockQueryInstance);
+
+      const paramsWithSchema: CommonDbQueryGeneratorParams<TestModel> = {
+        ...params,
+        validationSchema,
+      };
+
+      const handler = getListDbByQuery(paramsWithSchema);
+
+      const promise = handler({ limit: 10, offset: 0 });
+      await expect(promise).rejects.toThrow('Invalid query parameters');
+    });
+
+    it('should complete successfully when validation passes', async () => {
+      const validationSchema = { validate: vi.fn() } as any;
+      const daoResponse = [
+        { id: 'id-1', name: 'John Doe', email: 'john@example.com' },
+      ];
+      const createdInstances = daoResponse;
+      const mockQueryInstance = {
+        isValid: vi.fn(),
+      };
+
+      mockFactory.create.mockReturnValueOnce(mockQueryInstance);
+      mockFactory.createMany.mockReturnValueOnce(createdInstances);
+      mockDao.getMany.mockResolvedValueOnce(daoResponse);
+
+      const paramsWithSchema: CommonDbQueryGeneratorParams<TestModel> = {
+        ...params,
+        validationSchema,
+      };
+
+      const handler = getListDbByQuery(paramsWithSchema);
+      const result = await handler({ limit: 10, offset: 0 });
+
+      expect(result).toEqual({ data: createdInstances });
+      expect(mockQueryInstance.isValid).toHaveBeenCalledWith({ shouldThrow: true });
+      expect(mockDao.getMany).toHaveBeenCalled();
+    });
+  });
 });

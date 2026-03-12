@@ -9,9 +9,13 @@ const CONSOLE_LOG_PREFIX = "command :: createDb ::";
 export const createDb = <T extends Model>({
   factory,
   dao,
+  validationSchema,
 }: CommonDbCommandGeneratorParams<T>): CreateDbHandler<T> =>
   async ({ ...data }) => {
-    const commandInstance = factory.create(data as unknown as Partial<T>);
+    const commandInstance = factory.create(data as unknown as Partial<T>, { validationSchema });
+    if (validationSchema) {
+      commandInstance.isValid({ shouldThrow: true });
+    }
 
     const createdId = await dao.create(commandInstance);
     if (!createdId) {

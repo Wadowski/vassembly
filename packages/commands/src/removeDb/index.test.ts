@@ -33,7 +33,10 @@ describe("removeDb", () => {
   describe("successful removal", () => {
     it("should remove item and return success when id is valid", async () => {
       const id = "test-id-123";
-      const queryInstance = { id };
+      const queryInstance = {
+        id,
+        isValid: vi.fn(),
+      };
 
       mockFactory.create.mockReturnValueOnce(queryInstance as Partial<TestModel>);
       mockDao.remove.mockResolvedValueOnce(undefined);
@@ -42,15 +45,24 @@ describe("removeDb", () => {
       const result = await handler({ id });
 
       expect(result).toEqual({ success: true });
-      expect(mockFactory.create).toHaveBeenCalledWith({ id });
+      expect(mockFactory.create).toHaveBeenCalledWith(
+        { id },
+        { validationSchema: expect.any(Object) }
+      );
       expect(mockDao.remove).toHaveBeenCalledWith(queryInstance);
     });
 
     it("should handle removal of multiple different items", async () => {
       const id1 = "test-id-456";
       const id2 = "test-id-789";
-      const queryInstance1 = { id: id1 };
-      const queryInstance2 = { id: id2 };
+      const queryInstance1 = {
+        id: id1,
+        isValid: vi.fn(),
+      };
+      const queryInstance2 = {
+        id: id2,
+        isValid: vi.fn(),
+      };
 
       mockFactory.create
         .mockReturnValueOnce(queryInstance1 as Partial<TestModel>)
@@ -71,6 +83,15 @@ describe("removeDb", () => {
 
   describe("error handling", () => {
     it("should throw WrongParamError when id is missing", async () => {
+      const queryInstance = {
+        id: "",
+        isValid: vi.fn().mockImplementation(() => {
+          throw new WrongParamError("Id is missing or invalid");
+        }),
+      };
+
+      mockFactory.create.mockReturnValueOnce(queryInstance as Partial<TestModel>);
+
       const handler = removeDb(params);
 
       await expect(handler({ id: "" })).rejects.toThrow(WrongParamError);
@@ -78,7 +99,10 @@ describe("removeDb", () => {
 
     it("should propagate dao errors", async () => {
       const id = "test-id-123";
-      const queryInstance = { id };
+      const queryInstance = {
+        id,
+        isValid: vi.fn(),
+      };
       const daoError = new Error("Database connection failed");
 
       mockFactory.create.mockReturnValueOnce(queryInstance as Partial<TestModel>);
@@ -89,6 +113,42 @@ describe("removeDb", () => {
       await expect(handler({ id })).rejects.toThrow(
         "Database connection failed"
       );
+    });
+  });
+
+  describe("validation schema", () => {
+    it("should always call isValid since VALIDATION_SCHEMA is built-in", async () => {
+      const id = "test-id-123";
+      const queryInstance = {
+        id,
+        isValid: vi.fn(),
+      };
+
+      mockFactory.create.mockReturnValueOnce(queryInstance as Partial<TestModel>);
+      mockDao.remove.mockResolvedValueOnce(undefined);
+
+      const handler = removeDb(params);
+      await handler({ id });
+
+      expect(queryInstance.isValid).toHaveBeenCalledWith({ shouldThrow: true });
+    });
+
+    it("should propagate validation errors when isValid throws", async () => {
+      const id = "test-id-123";
+      const validationError = new Error("Invalid id format");
+      const queryInstance = {
+        id,
+        isValid: vi.fn().mockImplementation(() => {
+          throw validationError;
+        }),
+      };
+
+      mockFactory.create.mockReturnValueOnce(queryInstance as Partial<TestModel>);
+
+      const handler = removeDb(params);
+
+      const promise = handler({ id });
+      await expect(promise).rejects.toThrow("Invalid id format");
     });
   });
 });

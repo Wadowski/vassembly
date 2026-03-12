@@ -124,5 +124,122 @@ describe("createDb", () => {
         "Database connection failed"
       );
     });
+
+    it("should throw WrongParamError when dao.create returns falsy value", async () => {
+      const inputData = {
+        name: "John Doe",
+        email: "john@example.com",
+      };
+
+      const commandInstance = createMockInstance(inputData as TestModel);
+      mockFactory.create.mockReturnValueOnce(commandInstance);
+      mockDao.create.mockResolvedValueOnce(null);
+
+      const handler = createDb(params);
+
+      await expect(handler({ ...inputData })).rejects.toThrow(
+        "command :: createDb :: Failed to create instance"
+      );
+    });
+  });
+
+  describe("validationSchema field", () => {
+    it("should not call isValid when validationSchema is not provided", async () => {
+      const inputData = {
+        name: "John Doe",
+        email: "john@example.com",
+      };
+      const createdInstance = {
+        id: "test-id-123",
+        name: "John Doe",
+        email: "john@example.com",
+      };
+
+      const commandInstance = {
+        ...inputData,
+        isValid: vi.fn(),
+      };
+      const queryInstance = createMockInstance({ id: createdInstance.id } as TestModel);
+      const finalInstance = createMockInstance(createdInstance);
+
+      mockFactory.create
+        .mockReturnValueOnce(commandInstance)
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance);
+      mockDao.create.mockResolvedValueOnce(createdInstance.id);
+      mockDao.get.mockResolvedValueOnce(createdInstance);
+
+      const handler = createDb(params);
+      await handler({ ...inputData });
+
+      expect(commandInstance.isValid).not.toHaveBeenCalled();
+    });
+
+    it("should propagate validation errors when isValid throws", async () => {
+      const inputData = {
+        name: "John Doe",
+        email: "john@example.com",
+      };
+      const validationSchema = { validate: vi.fn() } as any;
+      const validationError = new Error("Invalid input data");
+
+      const commandInstance = {
+        ...inputData,
+        isValid: vi.fn().mockImplementation(() => {
+          throw validationError;
+        }),
+      };
+
+      mockFactory.create.mockReturnValueOnce(commandInstance);
+
+      const paramsWithSchema: CommonDbCommandGeneratorParams<TestModel> = {
+        ...params,
+        validationSchema,
+      };
+
+      const handler = createDb(paramsWithSchema);
+
+      const promise = handler({ ...inputData });
+      await expect(promise).rejects.toThrow("Invalid input data");
+    });
+
+    it("should complete successfully when validation passes", async () => {
+      const inputData = {
+        name: "John Doe",
+        email: "john@example.com",
+      };
+      const createdInstance = {
+        id: "test-id-123",
+        name: "John Doe",
+        email: "john@example.com",
+      };
+      const validationSchema = { validate: vi.fn() } as any;
+
+      const commandInstance = {
+        ...inputData,
+        isValid: vi.fn(),
+      };
+      const queryInstance = createMockInstance({ id: createdInstance.id } as TestModel);
+      const finalInstance = createMockInstance(createdInstance);
+
+      mockFactory.create
+        .mockReturnValueOnce(commandInstance)
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance);
+      mockDao.create.mockResolvedValueOnce(createdInstance.id);
+      mockDao.get.mockResolvedValueOnce(createdInstance);
+
+      const paramsWithSchema: CommonDbCommandGeneratorParams<TestModel> = {
+        ...params,
+        validationSchema,
+      };
+
+      const handler = createDb(paramsWithSchema);
+      const result = await handler({ ...inputData });
+
+      expect(result).toEqual({ data: finalInstance });
+      expect(commandInstance.isValid).toHaveBeenCalledWith({ shouldThrow: true });
+      expect(mockDao.create).toHaveBeenCalled();
+    });
   });
 });
