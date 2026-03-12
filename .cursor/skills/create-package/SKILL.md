@@ -20,8 +20,7 @@ The skill handles:
 When invoked, the skill will:
 - Ask for package type (required, default: empty)
 - Ask for package name (required)
-- Ask for package direction (required, options: apps, packages, modules)
-- Create the package in `/{package-direction}/{package-name}/`
+- Create the package in `/packages/{package-name}/`
 - Update the package name in `package.json` to `@vassembly/{package-name}`
 - Update the package name in `README.md` to `@vassembly/{package-name}`
 

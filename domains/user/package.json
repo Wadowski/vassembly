@@ -1,0 +1,29 @@
+{
+  "name": "@vassembly/user",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.7",
+    "@vassembly/eslint-config": "workspace:*",
+    "@vassembly/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "@vassembly/client-mongodb": "workspace:*",
+    "@vassembly/commands": "workspace:*",
+    "@vassembly/model": "workspace:*",
+    "@vassembly/queries": "workspace:*",
+    "@vassembly/validation": "workspace:*",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "type-graphql": "2.0.0-rc.3"
+  }
+}

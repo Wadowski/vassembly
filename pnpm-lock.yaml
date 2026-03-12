@@ -105,7 +105,7 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
-  modules/user:
+  domains/refresh-token:
     dependencies:
       '@vassembly/client-mongodb':
         specifier: workspace:*
@@ -119,6 +119,52 @@ importers:
       '@vassembly/queries':
         specifier: workspace:*
         version: link:../../packages/queries
+      type-graphql:
+        specifier: 2.0.0-rc.3
+        version: 2.0.0-rc.3(graphql-scalars@1.25.0)(graphql@16.12.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.7
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.7)
+
+  domains/user:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/client-mongodb
+      '@vassembly/commands':
+        specifier: workspace:*
+        version: link:../../packages/commands
+      '@vassembly/model':
+        specifier: workspace:*
+        version: link:../../packages/model
+      '@vassembly/queries':
+        specifier: workspace:*
+        version: link:../../packages/queries
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
+      bcrypt:
+        specifier: ^6.0.0
+        version: 6.0.0
+      bcryptjs:
+        specifier: ^3.0.3
+        version: 3.0.3
       type-graphql:
         specifier: 2.0.0-rc.3
         version: 2.0.0-rc.3(graphql-scalars@1.25.0)(graphql@16.12.0)
@@ -3192,6 +3238,20 @@ packages:
     hasBin: true
     dev: false
 
+  /bcrypt@6.0.0:
+    resolution: {integrity: sha512-cU8v/EGSrnH+HnxV2z0J7/blxH8gq7Xh2JFT6Aroax7UohdmiJJlxApMxtKfuI7z68NvvVcmR78k2LbT6efhRg==}
+    engines: {node: '>= 18'}
+    requiresBuild: true
+    dependencies:
+      node-addon-api: 8.6.0
+      node-gyp-build: 4.8.4
+    dev: false
+
+  /bcryptjs@3.0.3:
+    resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
+    hasBin: true
+    dev: false
+
   /bowser@2.14.1:
     resolution: {integrity: sha512-tzPjzCxygAKWFOJP011oxFHs57HzIhOEracIgAePE4pqB3LikALKnSzUyU4MGs9/iCEUuHlAJTjTc5M+u7YEGg==}
     dev: false
@@ -4620,6 +4680,11 @@ packages:
       - babel-plugin-macros
     dev: false
 
+  /node-addon-api@8.6.0:
+    resolution: {integrity: sha512-gBVjCaqDlRUk0EwoPNKzIr9KkS9041G/q31IBShPs1Xz6UTA+EXdZADbzqAJQrpDRq71CIMnOP5VMut3SL0z5Q==}
+    engines: {node: ^18 || ^20 || >= 21}
+    dev: false
+
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -4636,6 +4701,11 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
+    dev: false
+
+  /node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
+    hasBin: true
     dev: false
 
   /object-assign@4.1.1:
