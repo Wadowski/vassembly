@@ -11,6 +11,14 @@ interface TestModel extends Model {
   email: string;
 }
 
+const createMockInstance = (data: Partial<TestModel>, isValidResult?: any): any => {
+  const instance = {
+    ...data,
+    isValid: vi.fn(() => isValidResult || { success: true, data }),
+  };
+  return instance;
+};
+
 describe('getDbById', () => {
   const mockFactory = {
     create: vi.fn(),
@@ -45,19 +53,22 @@ describe('getDbById', () => {
         email: 'john@example.com',
       };
 
+      const queryInstance = createMockInstance({ id } as TestModel);
+      const finalInstance = createMockInstance(createdInstance);
+
       mockFactory.create
-        .mockReturnValueOnce({ id } as Partial<TestModel>)
-        .mockReturnValueOnce(createdInstance);
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance);
       mockDao.get.mockResolvedValueOnce(daoResponse);
 
       const handler = getDbById(params);
       const result = await handler({ id });
 
-      expect(result).toEqual({ data: createdInstance });
+      expect(result).toEqual({ data: finalInstance });
       expect(mockFactory.create).toHaveBeenCalledTimes(2);
-      expect(mockFactory.create).toHaveBeenNthCalledWith(1, { id });
+      expect(mockFactory.create).toHaveBeenNthCalledWith(1, { id }, { validationSchema: expect.any(Object) });
       expect(mockDao.get).toHaveBeenCalledOnce();
-      expect(mockDao.get).toHaveBeenCalledWith({ id });
+      expect(mockDao.get).toHaveBeenCalledWith(queryInstance);
     });
 
     it('should handle instances with additional properties', async () => {
@@ -71,30 +82,39 @@ describe('getDbById', () => {
       };
       const createdInstance = { ...daoResponse };
 
+      const queryInstance = createMockInstance({ id } as TestModel);
+      const finalInstance = createMockInstance(createdInstance as TestModel);
+
       mockFactory.create
-        .mockReturnValueOnce({ id } as Partial<TestModel>)
-        .mockReturnValueOnce(createdInstance);
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance);
       mockDao.get.mockResolvedValueOnce(daoResponse);
 
       const handler = getDbById(params);
       const result = await handler({ id });
 
-      expect(result).toEqual({ data: createdInstance });
+      expect(result).toEqual({ data: finalInstance });
       expect(mockDao.get).toHaveBeenCalledOnce();
     });
   });
 
   describe('error handling', () => {
-    it('should throw WrongParamError when factory returns instance without id', async () => {
+    it('should throw WrongParamError when validation fails', async () => {
       const id = 'test-id-789';
+      const validationError = new WrongParamError('Validation failed');
 
-      mockFactory.create.mockReturnValueOnce({} as Partial<TestModel>);
+      const queryInstance = {
+        id: undefined,
+        isValid: vi.fn(() => {
+          throw validationError;
+        }),
+      } as any;
+      mockFactory.create.mockReturnValueOnce(queryInstance);
 
       const handler = getDbById(params);
 
       const promise = handler({ id });
       await expect(promise).rejects.toThrow(WrongParamError);
-      await expect(promise).rejects.toThrow('Id is missing');
       expect(mockDao.get).not.toHaveBeenCalled();
     });
 
@@ -102,7 +122,8 @@ describe('getDbById', () => {
     it('should throw NotFoundError when instance is not found in dao', async () => {
       const id = 'non-existent-id';
 
-      mockFactory.create.mockReturnValueOnce({ id } as Partial<TestModel>);
+      const queryInstance = createMockInstance({ id } as TestModel);
+      mockFactory.create.mockReturnValueOnce(queryInstance);
       mockDao.get.mockResolvedValueOnce(null);
 
       const handler = getDbById(params);
@@ -116,7 +137,8 @@ describe('getDbById', () => {
       const id = 'test-id-error';
       const daoError = new Error('Database connection failed');
 
-      mockFactory.create.mockReturnValueOnce({ id } as Partial<TestModel>);
+      const queryInstance = createMockInstance({ id } as TestModel);
+      mockFactory.create.mockReturnValueOnce(queryInstance);
       mockDao.get.mockRejectedValueOnce(daoError);
 
       const handler = getDbById(params);

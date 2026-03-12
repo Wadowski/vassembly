@@ -151,6 +151,37 @@ describe("Model", () => {
         expect(result.data).toBe(instance);
         expect(result.success).toBe(true);
       });
+
+      it("should throw error when shouldThrow is true and validator fails", () => {
+        const instance = new TestModel();
+        instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
+
+        const testError = new Error("Validation failed");
+        const validatorMock = vi.fn().mockReturnValue({ success: false, error: testError });
+        (instance as any).validator = validatorMock;
+
+        expect(() => instance.isValid({ shouldThrow: true })).toThrow(testError);
+      });
+
+      it("should return result when shouldThrow is true and validator succeeds", () => {
+        const instance = new TestModel();
+        instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
+
+        const validatorMock = vi.fn().mockReturnValue({ success: true, data: instance });
+        (instance as any).validator = validatorMock;
+
+        const result = instance.isValid({ shouldThrow: true });
+
+        expect(result.success).toBe(true);
+        expect(result.data).toBe(instance);
+      });
+
+      it("should not throw when shouldThrow is true and no validator is set", () => {
+        const instance = new TestModel();
+        instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
+
+        expect(() => instance.isValid({ shouldThrow: true })).not.toThrow();
+      });
     });
   });
 });

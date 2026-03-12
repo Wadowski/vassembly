@@ -1,14 +1,6 @@
 import { z } from 'zod';
-import { InternalError, WrongParamError } from '@vassembly/errors';
-import { ValidatorErrorResult, ValidatorResult, ValidatorSuccessResult } from './types';
-
-export const isValidatorError = (result: ValidatorResult<unknown>): result is ValidatorErrorResult => {
-  return !result.success;
-};
-
-export const isValidatorSuccess = <T>(result: ValidatorResult<T>): result is ValidatorSuccessResult<T> => {
-  return result.success;
-};
+import { WrongParamError } from '@vassembly/errors';
+import { ValidatorResult } from './types';
 
 export const validatorFactory = <T extends z.ZodTypeAny>(schema: T) => (
   data: unknown

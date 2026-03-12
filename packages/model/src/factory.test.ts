@@ -111,10 +111,10 @@ describe("factory", () => {
         id: z.string(),
         name: z.string().min(1),
       });
-      const testFactory = factory(TestModel, schema);
+      const testFactory = factory(TestModel);
       const data = { id: "123", name: "Test" };
 
-      const instance = testFactory.create(data);
+      const instance = testFactory.create(data, { validationSchema: schema });
       const result = instance?.isValid();
 
       expect(result?.success).toBe(true);
@@ -125,10 +125,10 @@ describe("factory", () => {
         id: z.string(),
         name: z.string().min(5),
       });
-      const testFactory = factory(TestModel, schema);
+      const testFactory = factory(TestModel);
       const data = { id: "123", name: "No" };
 
-      const instance = testFactory.create(data);
+      const instance = testFactory.create(data, { validationSchema: schema });
       const result = instance?.isValid();
 
       expect(result?.success).toBe(false);

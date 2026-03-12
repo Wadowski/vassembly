@@ -54,12 +54,18 @@ export abstract class Model {
   private validator?: (data: unknown) => ValidatorResult<this>;
 
   @MongoDbOmit
-  isValid = (): ValidatorResult<this> => {
+  isValid = ({ shouldThrow } = { shouldThrow: false }): ValidatorResult<this> => {
     if (!this.validator) {
       return { success: true, data: this };
     }
 
-    return this.validator(this);
+    const result = this.validator(this);
+
+    if (shouldThrow && !result.success) {
+      throw result.error;
+    }
+
+    return result;
   };
 
   @MongoDbOmit

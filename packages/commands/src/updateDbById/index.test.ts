@@ -11,6 +11,14 @@ interface TestModel extends Model {
   email: string;
 }
 
+const createMockInstance = (data: Partial<TestModel>): any => {
+  const instance = {
+    ...data,
+    isValid: vi.fn(() => ({ success: true, data })),
+  };
+  return instance;
+};
+
 describe("updateDbById", () => {
   const mockFactory = {
     create: vi.fn(),
@@ -45,16 +53,20 @@ describe("updateDbById", () => {
         email: "john.updated@example.com",
       };
 
+      const commandInstance = createMockInstance({ ...inputData, id } as TestModel);
+      const queryInstance = createMockInstance({ id } as TestModel);
+      const finalInstance = createMockInstance(updatedInstance);
+
       mockFactory.create
-        .mockReturnValueOnce(updatedInstance as Partial<TestModel>)
-        .mockReturnValueOnce(updatedInstance)
-        .mockReturnValueOnce({ id })
+        .mockReturnValueOnce(commandInstance)
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance)
         .mockReturnValueOnce(updatedInstance);
       mockDao.update.mockResolvedValueOnce(updatedInstance);
       mockDao.get.mockResolvedValueOnce(updatedInstance);
 
       const handler = updateDbById(params);
-      const result = await handler({ id, data: inputData });
+      const result = await handler({ id, data: updatedInstance });
 
       expect(result).toEqual({ data: updatedInstance });
     });
@@ -71,10 +83,14 @@ describe("updateDbById", () => {
         email: "jane.updated@example.com",
       };
 
+      const commandInstance = createMockInstance({ ...inputData, id } as TestModel);
+      const queryInstance = createMockInstance({ id } as TestModel);
+      const finalInstance = createMockInstance(updatedInstance);
+
       mockFactory.create
-        .mockReturnValueOnce(updatedInstance as Partial<TestModel>)
-        .mockReturnValueOnce(updatedInstance)
-        .mockReturnValueOnce({ id })
+        .mockReturnValueOnce(commandInstance)
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance)
         .mockReturnValueOnce(updatedInstance);
       mockDao.update.mockResolvedValueOnce(updatedInstance);
       mockDao.get.mockResolvedValueOnce(updatedInstance);

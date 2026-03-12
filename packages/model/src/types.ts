@@ -1,19 +1,26 @@
 import { COUNTRIES } from "@vassembly/constants";
+import { ValidatorResult } from "@vassembly/validation";
+import { z } from "zod";
 
 export interface Model {
   createdAt?: Date;
   updatedAt?: Date;
   removedAt?: Date | null;
+  isValid: (options?: { shouldThrow?: boolean }) => ValidatorResult<this>;
+}
+
+export interface CreateOptions {
+  validationSchema?: z.ZodSchema;
 }
 
 export interface ModelFactory<T> {
-  create: (data: Partial<T>) => T;
-  createMany: (data: Array<Partial<T>>) => Array<T>;
+  create: (data: Partial<T>, options?: CreateOptions) => T;
+  createMany: (data: Array<Partial<T>>, options?: CreateOptions) => Array<T>;
 }
 
 export interface ModelTranslationFactory<T> {
-  createWithTranslations: (data: Partial<T>, language?: COUNTRIES) => T;
-  createManyWithTranslations: (data: Array<Partial<T>>, language: COUNTRIES) => Array<T>;
+  createWithTranslations: (data: Partial<T>, language?: COUNTRIES, options?: CreateOptions) => T;
+  createManyWithTranslations: (data: Array<Partial<T>>, language: COUNTRIES, options?: CreateOptions) => Array<T>;
 }
 
 export interface ModelWithTranslation extends Model {

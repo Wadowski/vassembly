@@ -12,6 +12,14 @@ interface TestModel extends Model {
   removedAt?: Date;
 }
 
+const createMockInstance = (data: Partial<TestModel>): any => {
+  const instance = {
+    ...data,
+    isValid: vi.fn(() => ({ success: true, data })),
+  };
+  return instance;
+};
+
 describe("removeSoftDb", () => {
   const mockFactory = {
     create: vi.fn(),
@@ -44,21 +52,23 @@ describe("removeSoftDb", () => {
         removedAt,
       };
 
+      const commandInstance = createMockInstance({ removedAt } as TestModel);
+      const queryInstance = createMockInstance({ id } as TestModel);
+      const finalInstance = createMockInstance(updatedInstance);
+
       mockFactory.create
-        .mockReturnValueOnce(updatedInstance as Partial<TestModel>)
-        .mockReturnValueOnce(updatedInstance as Partial<TestModel>)
-        .mockReturnValueOnce({ id })
-        .mockReturnValueOnce(updatedInstance);
+        .mockReturnValueOnce(commandInstance)
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance)
+        .mockReturnValueOnce(finalInstance);
       mockDao.update.mockResolvedValueOnce(updatedInstance);
       mockDao.get.mockResolvedValueOnce(updatedInstance);
 
       const handler = removeSoftDb(params);
       const result = await handler({ id });
 
-      expect(result).toEqual({ data: updatedInstance });
-      expect(mockFactory.create).toHaveBeenCalledWith({
-        removedAt: expect.any(Date),
-      });
+      expect(result).toEqual({ data: finalInstance });
+      expect(mockFactory.create).toHaveBeenNthCalledWith(1, { removedAt: expect.any(Date) });
       expect(mockDao.update).toHaveBeenCalledOnce();
     });
   });

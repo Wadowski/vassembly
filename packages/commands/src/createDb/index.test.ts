@@ -11,6 +11,14 @@ interface TestModel extends Model {
   email: string;
 }
 
+const createMockInstance = (data: Partial<TestModel>): any => {
+  const instance = {
+    ...data,
+    isValid: vi.fn(() => ({ success: true, data })),
+  };
+  return instance;
+};
+
 describe("createDb", () => {
   const mockFactory = {
     create: vi.fn(),
@@ -45,17 +53,21 @@ describe("createDb", () => {
       };
       const daoResponse = { ...createdInstance };
 
+      const commandInstance = createMockInstance(inputData as TestModel);
+      const queryInstance = createMockInstance({ id: createdInstance.id } as TestModel);
+      const finalInstance = createMockInstance(createdInstance);
+
       mockFactory.create
-        .mockReturnValueOnce(createdInstance as Partial<TestModel>)
-        .mockReturnValueOnce(createdInstance)
-        .mockReturnValueOnce(createdInstance as Partial<TestModel>);
+        .mockReturnValueOnce(commandInstance)
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance);
       mockDao.create.mockResolvedValueOnce(daoResponse.id);
       mockDao.get.mockResolvedValueOnce(daoResponse);
 
       const handler = createDb(params);
       const result = await handler({ ...inputData });
 
-      expect(result).toEqual({ data: createdInstance });
+      expect(result).toEqual({ data: finalInstance });
     });
 
     it("should handle instances with additional properties", async () => {
@@ -70,17 +82,21 @@ describe("createDb", () => {
       };
       const daoResponse = { ...createdInstance };
 
+      const commandInstance = createMockInstance(inputData as TestModel);
+      const queryInstance = createMockInstance({ id: createdInstance.id } as TestModel);
+      const finalInstance = createMockInstance(createdInstance);
+
       mockFactory.create
-        .mockReturnValueOnce(createdInstance as Partial<TestModel>)
-        .mockReturnValueOnce(createdInstance)
-        .mockReturnValueOnce(createdInstance);
+        .mockReturnValueOnce(commandInstance)
+        .mockReturnValueOnce(queryInstance)
+        .mockReturnValueOnce(finalInstance);
       mockDao.create.mockResolvedValueOnce(daoResponse.id);
       mockDao.get.mockResolvedValueOnce(daoResponse);
 
       const handler = createDb(params);
       const result = await handler({ ...inputData });
 
-      expect(result).toEqual({ data: createdInstance });
+      expect(result).toEqual({ data: finalInstance });
       expect(mockDao.create).toHaveBeenCalledOnce();
     });
   });
@@ -98,9 +114,8 @@ describe("createDb", () => {
       };
       const daoError = new Error("Database connection failed");
 
-      mockFactory.create.mockReturnValueOnce(
-        createdInstance as Partial<TestModel>
-      );
+      const commandInstance = createMockInstance(inputData as TestModel);
+      mockFactory.create.mockReturnValueOnce(commandInstance);
       mockDao.create.mockRejectedValueOnce(daoError);
 
       const handler = createDb(params);
