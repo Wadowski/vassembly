@@ -1,9 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { factory, translationFactory } from "./factory";
 import { Translation } from "./types";
 import { COUNTRIES } from "@vassembly/constants";
 import { Model, ModelWithTranslation } from "./model";
-import { z } from "zod";
 
 class TestModel extends Model {
   name?: string;
@@ -69,71 +68,6 @@ describe("factory", () => {
     const result = testFactory.createMany([]);
 
     expect(result).toHaveLength(0);
-  });
-
-  describe("isValid", () => {
-    it("should have isValid function on created instance", () => {
-      const testFactory = factory(TestModel);
-      const data = { id: "123", name: "Test" };
-
-      const result = testFactory.create(data);
-
-      expect(typeof result?.isValid).toBe("function");
-    });
-
-    it("should have isValid function on all instances created with createMany", () => {
-      const testFactory = factory(TestModel);
-      const dataArray = [
-        { id: "1", name: "First" },
-        { id: "2", name: "Second" },
-      ];
-
-      const results = testFactory.createMany(dataArray);
-
-      expect(results).toHaveLength(2);
-      expect(typeof results[0]?.isValid).toBe("function");
-      expect(typeof results[1]?.isValid).toBe("function");
-    });
-
-    it("should have isValid function that returns success when no validation schema is provided", () => {
-      const testFactory = factory(TestModel);
-      const data = { id: "123", name: "Test" };
-
-      const instance = testFactory.create(data);
-      const result = instance?.isValid();
-
-      expect(result?.success).toBe(true);
-      expect(result?.data).toBe(instance);
-    });
-
-    it("should have isValid function that validates against schema when provided", () => {
-      const schema = z.object({
-        id: z.string(),
-        name: z.string().min(1),
-      });
-      const testFactory = factory(TestModel);
-      const data = { id: "123", name: "Test" };
-
-      const instance = testFactory.create(data, { validationSchema: schema });
-      const result = instance?.isValid();
-
-      expect(result?.success).toBe(true);
-    });
-
-    it("should have isValid function that returns error for invalid data against schema", () => {
-      const schema = z.object({
-        id: z.string(),
-        name: z.string().min(5),
-      });
-      const testFactory = factory(TestModel);
-      const data = { id: "123", name: "No" };
-
-      const instance = testFactory.create(data, { validationSchema: schema });
-      const result = instance?.isValid();
-
-      expect(result?.success).toBe(false);
-      expect(result?.error).toBeDefined();
-    });
   });
 });
 

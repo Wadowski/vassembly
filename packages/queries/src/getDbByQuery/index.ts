@@ -1,8 +1,20 @@
 import type { Model } from "@vassembly/model";
-import type { CommonDbQueryGeneratorParams } from "../types";
-import { GetListDbByQueryHandler } from "./types";
+import type { GetListDbByQueryHandler, GetListDbByQueryGeneratorParams } from "./types";
 
-export const getListDbByQuery = <T extends Model>({ factory, dao, validationSchema }: CommonDbQueryGeneratorParams<T>): GetListDbByQueryHandler<T> => async ({ limit, offset, ...query }) => {
+const DEFAULT_LIMIT = 10;
+const DEFAULT_OFFSET = 0;
+
+export const getListDbByQuery = <T extends Model>({ 
+  factory, 
+  dao, 
+  validationSchema,
+  defaultLimit = DEFAULT_LIMIT,
+  defaultOffset = DEFAULT_OFFSET,
+}: GetListDbByQueryGeneratorParams<T>): GetListDbByQueryHandler<T> => async ({ 
+  limit = defaultLimit, 
+  offset = defaultOffset, 
+  ...query
+}) => {
   const queryInstance = factory.create(query as Partial<T>, { validationSchema });
 
   if (validationSchema) {

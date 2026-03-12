@@ -17,12 +17,10 @@ export const getDbById = <T extends Model>({ factory, dao }: CommonDbQueryGenera
 
   const daoResponse = await dao.get(queryInstance);
 
-  console.log('daoResponse', daoResponse);
   if (!daoResponse) {
     throw new NotFoundError(`${CONSOLE_LOG_PREFIX} Instance with id ${id} not found`);
   }
   const data = factory.create(daoResponse);
 
-  console.log('data', data);
   return { data };
 };

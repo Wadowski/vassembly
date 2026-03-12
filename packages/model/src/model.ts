@@ -54,14 +54,14 @@ export abstract class Model {
   private validator?: (data: unknown) => ValidatorResult<this>;
 
   @MongoDbOmit
-  isValid = ({ shouldThrow } = { shouldThrow: false }): ValidatorResult<this> => {
+  isValid = (options?: { shouldThrow?: boolean }): ValidatorResult<this> => {
     if (!this.validator) {
       return { success: true, data: this };
     }
 
     const result = this.validator(this);
 
-    if (shouldThrow && !result.success) {
+    if (options?.shouldThrow && !result.success) {
       throw result.error;
     }
 

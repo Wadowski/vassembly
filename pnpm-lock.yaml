@@ -105,6 +105,43 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
+  modules/user:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/client-mongodb
+      '@vassembly/commands':
+        specifier: workspace:*
+        version: link:../../packages/commands
+      '@vassembly/model':
+        specifier: workspace:*
+        version: link:../../packages/model
+      '@vassembly/queries':
+        specifier: workspace:*
+        version: link:../../packages/queries
+      type-graphql:
+        specifier: 2.0.0-rc.3
+        version: 2.0.0-rc.3(graphql-scalars@1.25.0)(graphql@16.12.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.7
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.7)
+
   packages/client-ai-deepseek:
     dependencies:
       '@vassembly/config':
@@ -543,6 +580,9 @@ importers:
       '@vassembly/model':
         specifier: workspace:^
         version: link:../model
+      '@vassembly/validation':
+        specifier: workspace:^
+        version: link:../validation
     devDependencies:
       '@types/node':
         specifier: ^22.19.7
