@@ -1,6 +1,6 @@
 import { createDb } from "@vassembly/commands";
-import { refreshTokenMongodbDao } from "../clients";
-import { RefreshTokenModel, refreshTokenFactory } from "../model";
+import { refreshTokenMongodbDao } from "../../clients";
+import { RefreshTokenModel, refreshTokenFactory } from "../../model";
 import z from "zod";
 
 const VALIDATION_SCHEMA = z.object({
@@ -10,7 +10,7 @@ const VALIDATION_SCHEMA = z.object({
   description: z.string().optional(),
 });
 
-export const createRefreshToken = createDb<RefreshTokenModel>({
+export const createRefreshTokenDb = createDb<RefreshTokenModel>({
   dao: refreshTokenMongodbDao,
   factory: refreshTokenFactory,
   validationSchema: VALIDATION_SCHEMA,

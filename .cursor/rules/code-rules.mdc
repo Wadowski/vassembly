@@ -6,4 +6,9 @@ Always follow the coding standards rules listed below:
 
 - use named exports instead of default exports
 - When function has more then one argument, always use object of arguments instead of list of arguments
+
+When creating tests follow the rules below:
 - for tests use vitest
+- Tests shouldn't be micromanaged. Do not valdiate if each function were called or with provided params
+- Do not generate multiple test cases checking the same flow but checking different response fields or functions trigerred. Create different test cases if flow is different e.g. optional param, missing datsa, all error cases etc. Do not add multiple test cases to chech the same success flow
+- Test are like black box, provide an input and validate output, what is expected in response or an error. What is happening inside doesn't matter

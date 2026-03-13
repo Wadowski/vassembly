@@ -1,12 +1,14 @@
 {
-  "name": "@vassembly/refresh-token",
+  "name": "@vassembly/domain-refresh-token",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts", 
   "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "^22.19.7",
