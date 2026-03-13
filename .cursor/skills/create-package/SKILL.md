@@ -22,6 +22,7 @@ When invoked, the skill will:
 - Ask for package name (required)
 - Create the package in `/packages/{package-name}/`
 - Update the package name in `package.json` to `@vassembly/{package-name}`
+- Update the package name in `README.md` to `@vassembly/{package-name}`
 
 ## Implementation
 

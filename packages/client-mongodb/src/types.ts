@@ -1,13 +1,5 @@
 import { Collection } from "mongodb";
-
-export interface Model {
-  toMongoDb: (props?: {
-    isCreate?: boolean;
-    isUpdate?: boolean;
-    isRemove?: boolean;
-  }) => Record<string, any>;
-  toJSON: () => Record<string, any>;
-}
+import type { Model } from "@vassembly/model";
 
 interface Context {
   init: () => Promise<void>;

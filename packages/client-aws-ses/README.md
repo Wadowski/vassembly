@@ -1,0 +1,1 @@
+# `@vassembly/client-aws-ses`
