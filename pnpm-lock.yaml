@@ -113,6 +113,9 @@ importers:
       '@vassembly/commands':
         specifier: workspace:*
         version: link:../../packages/commands
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
       '@vassembly/model':
         specifier: workspace:*
         version: link:../../packages/model
@@ -150,6 +153,9 @@ importers:
       '@vassembly/commands':
         specifier: workspace:*
         version: link:../../packages/commands
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
       '@vassembly/model':
         specifier: workspace:*
         version: link:../../packages/model
@@ -159,9 +165,6 @@ importers:
       '@vassembly/validation':
         specifier: workspace:*
         version: link:../../packages/validation
-      bcrypt:
-        specifier: ^6.0.0
-        version: 6.0.0
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -3238,15 +3241,6 @@ packages:
     hasBin: true
     dev: false
 
-  /bcrypt@6.0.0:
-    resolution: {integrity: sha512-cU8v/EGSrnH+HnxV2z0J7/blxH8gq7Xh2JFT6Aroax7UohdmiJJlxApMxtKfuI7z68NvvVcmR78k2LbT6efhRg==}
-    engines: {node: '>= 18'}
-    requiresBuild: true
-    dependencies:
-      node-addon-api: 8.6.0
-      node-gyp-build: 4.8.4
-    dev: false
-
   /bcryptjs@3.0.3:
     resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
     hasBin: true
@@ -4680,11 +4674,6 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /node-addon-api@8.6.0:
-    resolution: {integrity: sha512-gBVjCaqDlRUk0EwoPNKzIr9KkS9041G/q31IBShPs1Xz6UTA+EXdZADbzqAJQrpDRq71CIMnOP5VMut3SL0z5Q==}
-    engines: {node: ^18 || ^20 || >= 21}
-    dev: false
-
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -4701,11 +4690,6 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
-    dev: false
-
-  /node-gyp-build@4.8.4:
-    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
-    hasBin: true
     dev: false
 
   /object-assign@4.1.1:
