@@ -19,10 +19,10 @@
   "dependencies": {
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
+    "@vassembly/errors": "workspace:*",
     "@vassembly/model": "workspace:*",
     "@vassembly/queries": "workspace:*",
     "@vassembly/validation": "workspace:*",
-    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "type-graphql": "2.0.0-rc.3"
   }
