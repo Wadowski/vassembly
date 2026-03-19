@@ -18,6 +18,8 @@ The skill handles:
 5. Copying the domain-empty template to the domains directory
 6. Updating package.json of a coppied template with the correct domain name
 
+If prompted to create a command or query use add-domain-command-query skill.
+
 ## Usage
 
 ### Create general files

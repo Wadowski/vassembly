@@ -27,6 +27,9 @@ web: {
     apiKey: process.env.DEEP_SEEK_AI_API_KEY || '',
     baseURL: process.env.DEEP_SEEK_AI_BASE_URL || '',
   },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'dev-jwt-secret',
+  },
 };
 
 export default config;

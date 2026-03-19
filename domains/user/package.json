@@ -19,6 +19,7 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/client-encoder": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",

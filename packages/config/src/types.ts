@@ -12,6 +12,7 @@ export interface Config {
   aws: AwsConfig;
   deepSeekAi: DeepSeekAiConfig;
   encoder: EncoderConfig;
+  jwt: JwtConfig;
 }
 
 export interface AwsConfig {
@@ -50,4 +51,8 @@ export interface EncoderConfig {
   secret: string;
   saltRounds: number;
   algorithm: string;
+}
+
+export interface JwtConfig {
+  secret: string;
 }

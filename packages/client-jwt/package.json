@@ -1,5 +1,5 @@
 {
-  "name": "@vassembly/service-auth",
+  "name": "@vassembly/client-jwt",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts", 
@@ -7,20 +7,20 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@vassembly/config": "workspace:*",
+    "jsonwebtoken": "^9.0.3"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.19.7",
     "@vassembly/eslint-config": "workspace:*",
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
     "vitest": "^2.0.0"
-  },
-  "dependencies": {
-    "@vassembly/domain-auth-token": "workspace:*",
-    "@vassembly/domain-user": "workspace:*",
-    "@vassembly/domain-refresh-token": "workspace:*",
-    "type-graphql": "2.0.0-rc.3"
   }
 }
