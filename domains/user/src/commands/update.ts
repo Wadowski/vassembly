@@ -9,7 +9,7 @@ const VALIDATION_SCHEMA = z.object({
   verifiedAt: z.date().optional(),
 });
 
-export const updateUser = updateDbById<UserModel>({
+export const update = updateDbById<UserModel>({
   dao: userMongodbDao,
   factory: userFactory,
   validationSchema: VALIDATION_SCHEMA,

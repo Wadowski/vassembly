@@ -46,12 +46,12 @@ vi.mock("@vassembly/commands", () => ({
 }));
 
 vi.mock("../../queries", () => ({
-  getListUsersByQuery: mockGetListUsersByQuery,
+  getListByQuery: mockGetListUsersByQuery,
 }));
 
 vi.mock("./constants");
 
-import { createUser } from "./index";
+import { create } from "./index";
 import type { UserModel } from "../../model";
 import { WrongParamError } from "@vassembly/errors";
 
@@ -94,7 +94,7 @@ describe("createUser", () => {
       data: mockUser,
     });
 
-    const result = await createUser(input);
+    const result = await create(input);
 
     expect(result.data.id).toBe("user-id-123");
     expect(result.data.email).toBe(input.email);
@@ -115,7 +115,7 @@ describe("createUser", () => {
       data: [{ id: "existing-user-id", email: input.email }],
     });
 
-    await expect(createUser(input)).rejects.toThrow(
+    await expect(create(input)).rejects.toThrow(
       new WrongParamError("Email already exists")
     );
   });
@@ -139,7 +139,7 @@ describe("createUser", () => {
       error: validationError,
     });
 
-    await expect(createUser(input)).rejects.toThrow(validationError);
+    await expect(create(input)).rejects.toThrow(validationError);
   });
 
   it("should throw error if passwords do not match", async () => {
@@ -161,7 +161,7 @@ describe("createUser", () => {
       error: validationError,
     });
 
-    await expect(createUser(input)).rejects.toThrow(validationError);
+    await expect(create(input)).rejects.toThrow(validationError);
   });
 
   it("should create user with hashed password", async () => {
@@ -195,7 +195,7 @@ describe("createUser", () => {
       },
     });
 
-    const result = await createUser(input);
+    const result = await create(input);
 
     expect(result.data.passwordHash).toBe(passwordHash);
     expect(result.data.email).toBe(input.email);

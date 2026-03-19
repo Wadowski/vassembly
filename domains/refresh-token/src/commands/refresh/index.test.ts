@@ -25,19 +25,19 @@ const { mockGetRefreshTokenByTokenHash, mockCreateRefreshToken, mockUpdateRefres
   return { mockGetRefreshTokenByTokenHash, mockCreateRefreshToken, mockUpdateRefreshToken };
 });
 
-vi.mock("../../queries", () => ({
-  getRefreshTokenByTokenHash: mockGetRefreshTokenByTokenHash,
+vi.mock("../../queries/getByTokenHash", () => ({
+  getByTokenHash: mockGetRefreshTokenByTokenHash,
 }));
 
 vi.mock("../create", () => ({
-  createRefreshToken: mockCreateRefreshToken,
+  create: mockCreateRefreshToken,
 }));
 
 vi.mock("../updateDb", () => ({
-  updateRefreshToken: mockUpdateRefreshToken,
+  update: mockUpdateRefreshToken,
 }));
 
-import { refreshRefreshToken } from "./index";
+import { refresh } from "./index";
 import { hash } from "@vassembly/client-encoder";
 import { WrongParamError, NotFoundError } from "@vassembly/errors";
 
@@ -78,7 +78,7 @@ describe("refreshRefreshToken", () => {
       },
     });
 
-    const result = await refreshRefreshToken({ refreshToken: "token-string" });
+    const result = await refresh({ refreshToken: "token-string" });
 
     expect(result.id).toBe("new-token-id");
     expect(result.userId).toBe("user-123");
@@ -92,7 +92,7 @@ describe("refreshRefreshToken", () => {
     });
 
     await expect(
-      refreshRefreshToken({ refreshToken: "token-string" })
+      refresh({ refreshToken: "token-string" })
     ).rejects.toThrow(
       new NotFoundError("Refresh token not found")
     );
@@ -111,7 +111,7 @@ describe("refreshRefreshToken", () => {
     });
 
     await expect(
-      refreshRefreshToken({ refreshToken: "token-string" })
+      refresh({ refreshToken: "token-string" })
     ).rejects.toThrow(
       new WrongParamError("Refresh token is revoked")
     );
@@ -131,7 +131,7 @@ describe("refreshRefreshToken", () => {
     });
 
     await expect(
-      refreshRefreshToken({ refreshToken: "token-string" })
+      refresh({ refreshToken: "token-string" })
     ).rejects.toThrow(
       new WrongParamError("Refresh token is expired")
     );
@@ -167,7 +167,7 @@ describe("refreshRefreshToken", () => {
       },
     });
 
-    const result = await refreshRefreshToken({ refreshToken: "token-string" });
+    const result = await refresh({ refreshToken: "token-string" });
 
     expect(result.id).toBe("new-token-id");
   });

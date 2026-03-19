@@ -1,11 +1,11 @@
-import { verifyAuthToken } from "./index";
-import { createAuthToken } from "../../commands/create";
+import { verify } from "./index";
+import { create } from "../../commands/create";
 import type { VerifyAuthTokenInput } from "./types";
 import { describe, it, expect } from "vitest";
 
 describe("verifyAuthToken", () => {
   it("should verify and decode auth token", async () => {
-    const createResult = await createAuthToken({
+    const createResult = await create({
       input: {
         role: "admin",
         userId: "user-123",
@@ -17,7 +17,7 @@ describe("verifyAuthToken", () => {
       token: createResult.token as string,
     };
 
-    const result = await verifyAuthToken(verifyInput);
+    const result = await verify(verifyInput);
 
     expect(result.role).toBe("admin");
     expect(result.userId).toBe("user-123");

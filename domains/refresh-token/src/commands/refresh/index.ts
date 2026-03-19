@@ -1,17 +1,17 @@
 import { hash } from "@vassembly/client-encoder";
-import { createRefreshToken } from "../create";
-import { updateRefreshToken } from "../updateDb";
-import { getRefreshTokenByTokenHash } from "../../queries";
+import { create } from "../create";
+import { update } from "../updateDb";
+import { getByTokenHash } from "../../queries/getByTokenHash";
 import type { RefreshRefreshTokenInput } from "./types";
 import { NotFoundError, WrongParamError } from "@vassembly/errors";
 import type { RefreshTokenModel } from "../../model";
 
 const EXPIRATION_GRACE_PERIOD = 30 * 1000;
 
-export const refreshRefreshToken = async (input: RefreshRefreshTokenInput): Promise<RefreshTokenModel> => {
+export const refresh = async (input: RefreshRefreshTokenInput): Promise<RefreshTokenModel> => {
   const { refreshToken: tokenString } = input;
   const tokenHash = hash(tokenString);
-  const refreshTokenDb = await getRefreshTokenByTokenHash(tokenHash);
+  const refreshTokenDb = await getByTokenHash(tokenHash);
   
   if (!refreshTokenDb.data.id) {
     throw new NotFoundError("Refresh token not found");
@@ -28,9 +28,9 @@ export const refreshRefreshToken = async (input: RefreshRefreshTokenInput): Prom
     throw new WrongParamError("Refresh token is expired");
   }
 
-  const newToken = await createRefreshToken({ userId: userId! });
+  const newToken = await create({ userId: userId! });
   
-  await updateRefreshToken({
+  await update({
     id,
     data: { replacedByRefreshTokenId: newToken.id, revokedAt: now },
   });

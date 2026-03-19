@@ -1,14 +1,14 @@
 import { compareHash } from "@vassembly/client-encoder";
 import { UserModel } from "../../model";
-import { getListUsersByQuery } from "../getListQuery";
+import { getListByQuery } from "../getListQuery";
 import { VerifyCredentialsQuery } from "./types";
 import { UnauthorizedError } from "@vassembly/errors";
 
-export const verifyCredentials = async ({
+export const verify = async ({
   email,
   password,
 }: VerifyCredentialsQuery): Promise<UserModel> => {
-  const result = await getListUsersByQuery({ email, limit: 1 });
+  const result = await getListByQuery({ email, limit: 1 });
 
   if (result.data.length === 0) {
     throw new UnauthorizedError("Invalid email or password", { email });

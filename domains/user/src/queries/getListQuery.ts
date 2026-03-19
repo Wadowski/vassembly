@@ -7,7 +7,7 @@ const VALIDATION_SCHEMA = z.object({
   email: z.email().optional(),
 });
 
-export const getListUsersByQuery = getListDbByQuery<UserModel>({
+export const getListByQuery = getListDbByQuery<UserModel>({
   dao: userMongodbDao,
   factory: userFactory,
   validationSchema: VALIDATION_SCHEMA,

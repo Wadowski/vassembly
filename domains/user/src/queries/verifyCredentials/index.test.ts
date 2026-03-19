@@ -28,10 +28,10 @@ vi.mock("@vassembly/client-encoder", () => ({
 }));
 
 vi.mock("../getListQuery", () => ({
-  getListUsersByQuery: mockGetListUsersByQuery,
+  getListByQuery: mockGetListUsersByQuery,
 }));
 
-import { verifyCredentials } from "./index";
+import { verify } from "./index";
 import { UnauthorizedError } from "@vassembly/errors";
 import type { UserModel } from "../../model";
 
@@ -60,7 +60,7 @@ describe("verifyCredentials", () => {
 
     mockCompareHash.mockResolvedValue(true);
 
-    const result = await verifyCredentials(input);
+    const result = await verify(input);
 
     expect(result).toEqual(mockUser);
     expect(result.id).toBe("user-id-123");
@@ -84,8 +84,8 @@ describe("verifyCredentials", () => {
       data: [],
     });
 
-    await expect(verifyCredentials(input)).rejects.toThrow(UnauthorizedError);
-    await expect(verifyCredentials(input)).rejects.toThrow(
+    await expect(verify(input)).rejects.toThrow(UnauthorizedError);
+    await expect(verify(input)).rejects.toThrow(
       "Invalid email or password"
     );
     expect(mockCompareHash).not.toHaveBeenCalled();
@@ -111,8 +111,8 @@ describe("verifyCredentials", () => {
 
     mockCompareHash.mockResolvedValue(false);
 
-    await expect(verifyCredentials(input)).rejects.toThrow(UnauthorizedError);
-    await expect(verifyCredentials(input)).rejects.toThrow(
+    await expect(verify(input)).rejects.toThrow(UnauthorizedError);
+    await expect(verify(input)).rejects.toThrow(
       "Invalid email or password"
     );
     expect(mockCompareHash).toHaveBeenCalledWith({
@@ -139,8 +139,8 @@ describe("verifyCredentials", () => {
       data: [mockUserWithoutHash],
     });
 
-    await expect(verifyCredentials(input)).rejects.toThrow(UnauthorizedError);
-    await expect(verifyCredentials(input)).rejects.toThrow(
+    await expect(verify(input)).rejects.toThrow(UnauthorizedError);
+    await expect(verify(input)).rejects.toThrow(
       "Invalid email or password"
     );
     expect(mockCompareHash).not.toHaveBeenCalled();

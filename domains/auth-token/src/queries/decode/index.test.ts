@@ -1,11 +1,11 @@
-import { decodeAuthToken } from "./index";
-import { createAuthToken } from "../../commands/create";
+import { decode } from "./index";
+import { create } from "../../commands/create";
 import type { DecodeAuthTokenInput } from "./types";
 import { describe, it, expect } from "vitest";
 
 describe("decodeAuthToken", () => {
   it("should decode auth token without verification", async () => {
-    const createResult = await createAuthToken({
+      const createResult = await create({
       input: {
         role: "user",
         userId: "user-789",
@@ -17,7 +17,7 @@ describe("decodeAuthToken", () => {
       token: createResult.token as string,
     };
 
-    const result = await decodeAuthToken(decodeInput);
+    const result = await decode(decodeInput);
 
     expect(result).not.toBeNull();
     expect(result?.role).toBe("user");
@@ -30,7 +30,7 @@ describe("decodeAuthToken", () => {
       token: "invalid-token",
     };
 
-    const result = await decodeAuthToken(decodeInput);
+    const result = await decode(decodeInput);
 
     expect(result).toBeNull();
   });

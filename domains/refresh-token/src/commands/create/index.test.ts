@@ -23,7 +23,7 @@ vi.mock("@vassembly/client-encoder", () => ({
   hash: mockHash,
 }));
 
-import { createRefreshToken } from "./index";
+import { create } from "./index";
 import type { RefreshTokenModel } from "../../model";
 
 describe("createRefreshToken", () => {
@@ -53,7 +53,7 @@ describe("createRefreshToken", () => {
       data: mockCreatedToken,
     });
 
-    const result = await createRefreshToken({
+    const result = await create({
       userId: mockUserId,
     });
 
@@ -87,7 +87,7 @@ describe("createRefreshToken", () => {
       data: mockCreatedToken,
     });
 
-    const result = await createRefreshToken({
+    const result = await create({
       userId: mockUserId,
       description,
     });

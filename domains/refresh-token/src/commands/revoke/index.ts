@@ -4,7 +4,7 @@ import { getRefreshTokenByTokenHash } from '../../queries';
 import type { RevokeRefreshTokenInput } from "./types";
 import { NotFoundError } from "@vassembly/errors";
 
-export const revokeRefreshToken = async (input: RevokeRefreshTokenInput) => {
+export const revoke = async (input: RevokeRefreshTokenInput) => {
   const { refreshToken: tokenString } = input;
   const tokenHash = hash(tokenString);
   const refreshTokenDb = await getRefreshTokenByTokenHash(tokenHash);

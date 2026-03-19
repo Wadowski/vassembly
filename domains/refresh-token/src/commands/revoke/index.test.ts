@@ -31,7 +31,7 @@ vi.mock("../../queries", () => ({
   getRefreshTokenByTokenHash: mockGetRefreshTokenByTokenHash,
 }));
 
-import { revokeRefreshToken } from "./index";
+import { revoke } from "./index";
 import { NotFoundError } from "@vassembly/errors";
 
 describe("revokeRefreshToken", () => {
@@ -63,7 +63,7 @@ describe("revokeRefreshToken", () => {
       },
     });
 
-    const result = await revokeRefreshToken({
+    const result = await revoke({
       refreshToken: tokenString,
     });
 
@@ -81,7 +81,7 @@ describe("revokeRefreshToken", () => {
     });
 
     await expect(
-      revokeRefreshToken({ refreshToken: tokenString })
+      revoke({ refreshToken: tokenString })
     ).rejects.toThrow(
       new NotFoundError("Refresh token not found")
     );

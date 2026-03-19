@@ -20,15 +20,27 @@ const { mockCreateAuthToken } = vi.hoisted(() => {
 });
 
 vi.mock("@vassembly/domain-user", () => ({
-  verifyCredentials: mockVerifyCredentials,
+  default: {
+    queries: {
+      verify: mockVerifyCredentials,
+    },
+  },
 }));
 
 vi.mock("@vassembly/domain-refresh-token", () => ({
-  createRefreshToken: mockCreateRefreshToken,
+  default: {
+    commands: {
+      create: mockCreateRefreshToken,
+    },
+  },
 }));
 
 vi.mock("@vassembly/domain-auth-token", () => ({
-  createAuthToken: mockCreateAuthToken,
+  default: {
+    commands: {
+      create: mockCreateAuthToken,
+    },
+  },
 }));
 
 import { login } from "./index";

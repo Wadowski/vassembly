@@ -3,7 +3,7 @@ import type { VerifyAuthTokenInput, VerifyAuthTokenResult } from "./types";
 import { authTokenFactory } from "../../model";
 import { ForbiddenError } from "@vassembly/errors";
 
-export const verifyAuthToken = async ({ token, options }: VerifyAuthTokenInput): VerifyAuthTokenResult => {
+export const verify = async ({ token, options }: VerifyAuthTokenInput): VerifyAuthTokenResult => {
   const decoded = await jwtClient.verify({ token, options });
 
   if (!decoded.role && !decoded.userId && !decoded.jti && !decoded.expiresAt && !decoded.issuedAt) {

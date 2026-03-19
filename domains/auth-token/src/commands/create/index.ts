@@ -4,7 +4,7 @@ import { authTokenFactory } from "../../model";
 
 const EXPIRES_IN = 1000 * 60 * 15; // 15 minutes
 
-export const createAuthToken = async ({ input, options }: CreateAuthTokenArgs): AuthTokenResponse => {
+export const create = async ({ input, options }: CreateAuthTokenArgs): AuthTokenResponse => {
 
   const data = authTokenFactory.create({
     role: input.role,

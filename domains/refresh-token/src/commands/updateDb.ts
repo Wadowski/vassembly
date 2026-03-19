@@ -8,7 +8,7 @@ const VALIDATION_SCHEMA = z.object({
   replacedByRefreshTokenId: z.string().optional(),
 });
 
-export const updateRefreshToken = updateDbById<RefreshTokenModel>({
+export const update = updateDbById<RefreshTokenModel>({
   dao: refreshTokenMongodbDao,
   factory: refreshTokenFactory,
   validationSchema: VALIDATION_SCHEMA,

@@ -2,7 +2,7 @@ import { jwtClient } from "../../clients";
 import type { DecodeAuthTokenInput, DecodeAuthTokenResult } from "./types";
 import { authTokenFactory } from "../../model";
 
-export const decodeAuthToken = async ({ token }: DecodeAuthTokenInput): Promise<DecodeAuthTokenResult> => {
+export const decode = async ({ token }: DecodeAuthTokenInput): Promise<DecodeAuthTokenResult> => {
   const decoded = await jwtClient.decode(token);
 
   if (!decoded) {

@@ -15,7 +15,7 @@ const getTokenHash = () => {
   return { token, tokenHash };
 };
 
-export const createRefreshToken = async (input: CreateRefreshTokenInput): Promise<RefreshTokenModel> => {
+export const create = async (input: CreateRefreshTokenInput): Promise<RefreshTokenModel> => {
   const expiresAt = getExpiresAt();
   const { token, tokenHash } = getTokenHash();
   const refreshToken = await createRefreshTokenDb({ ...input, expiresAt, tokenHash });
