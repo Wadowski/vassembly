@@ -1,0 +1,268 @@
+---
+description: Defines the structure and conventions for domain packages
+globs: domains/**
+alwaysApply: false
+---
+
+# Domain Package Structure
+
+Domain packages are the core of the monorepo architecture. They encapsulate business logic, entity models, and operations around a specific domain concept.
+
+## Directory Structure
+
+Every domain package must follow this structure:
+
+```
+domains/[domain-name]/
+├── src/
+│   ├── index.ts                 # Main entry point - exports commands and queries
+│   ├── model/
+│   │   ├── index.ts             # Exports Model class and factories
+│   │   ├── model.ts             # Domain-specific Model class extending @vassembly/model
+│   │   └── factories.ts         # Factory functions for creating/translating model instances
+│   ├── commands/
+│   │   ├── index.ts             # Exports all commands
+│   │   ├── create.ts            # Create operation
+│   │   ├── update.ts            # Update operation
+│   │   ├── remove.ts            # Hard delete operation
+│   │   └── removeSoft.ts        # Soft delete operation (if needed)
+│       └── ...                  # Other commands
+│   ├── queries/
+│   │   ├── index.ts             # Exports all queries
+│   │   ├── getById.ts           # Fetch by ID
+│   │   └── getListAll.ts        # Fetch all records (paginated)
+│       └── ...                  # Other queries
+│   └── clients/
+│       ├── index.ts             # Exports all data access objects
+│       └── mongodb.ts           # MongoDB DAO for this domain
+│       └── ...                  # Other clients
+├── package.json
+├── tsconfig.json
+├── vitest.config.ts
+└── README.md
+```
+
+## Model (`src/model/`)
+
+The model represents your domain entity. It defines the data structure and behavior.
+
+### model.ts
+
+- Extend `Model` from `@vassembly/model`
+- Define your domain-specific class with typed properties
+- Use PascalCase class name (e.g., `UserModel`, `AuthTokenModel`)
+
+```typescript
+import { Model } from "@vassembly/model";
+
+export class UserModel extends Model {
+  username: string;
+  email: string;
+  isActive: boolean;
+}
+```
+
+### factories.ts
+
+- Create factory functions for instantiating and translating models
+- Use `factory()` for default model creation
+- Use `translationFactory()` for field translation/mapping
+- Export both as lowercase camelCase (e.g., `userFactory`, `userTranslationFactory`)
+
+```typescript
+import { factory, translationFactory } from "@vassembly/model";
+import { UserModel } from "./model";
+
+export const userFactory = factory(UserModel);
+
+const TRANSLATION_MAP = [
+  { fieldKey: "username", translationKey: "username" },
+  { fieldKey: "email", translationKey: "email" },
+];
+export const userTranslationFactory = translationFactory(UserModel, TRANSLATION_MAP);
+```
+
+### index.ts
+
+Export the model class and all factory functions:
+
+```typescript
+export { UserModel } from "./model";
+export { userFactory, userTranslationFactory } from "./factories";
+```
+
+## Commands (`src/commands/`)
+
+Commands are mutations/writes that modify domain data. Use helper functions from `@vassembly/commands`.
+
+### Standard Commands
+
+all are optional:
+- **create**: Creates a new entity. Use `createDb()` helper with validation schema
+- **update**: Updates an existing entity. Use `updateDb()` helper with validation schema
+- **remove**: Hard delete. Use `removeDb()` helper (permanent deletion)
+- **removeSoft**: Soft delete. Use `removeSoftDb()` helper (marks as deleted, preserves data)
+
+### Custom Commands
+
+- Custom command should implement **custom domain logic** that does not exist in any standard commands
+- It may **reuse** standard or other custom commands or queries
+
+### Command Structure
+
+Each command file should:
+1. Import the helper function from `@vassembly/commands`
+2. Import the client from `../clients`
+3. Import the model and factory from `../model`
+4. Define a validation schema using Zod
+5. Call the helper with configuration
+
+```typescript
+import { createDb } from "@vassembly/commands";
+import { userMongodbDao } from "../clients";
+import { UserModel, userFactory } from "../model";
+import z from "zod";
+
+const VALIDATION_SCHEMA = z.object({
+  username: z.string().min(1),
+  email: z.string().email(),
+  isActive: z.boolean().default(true),
+});
+
+export const create = createDb<UserModel>({
+  dao: userMongodbDao,
+  factory: userFactory,
+  validationSchema: VALIDATION_SCHEMA,
+});
+```
+
+### index.ts
+
+Export all commands using named exports:
+
+```typescript
+export { create } from "./create";
+export { update } from "./update";
+export { remove } from "./remove";
+export { removeSoft } from "./removeSoft";
+```
+
+## Queries (`src/queries/`)
+
+Queries are reads that fetch domain data. Use helper functions from `@vassembly/queries`.
+
+### Standard Queries
+
+all standard queries are optional:
+- **getById**: Fetch a single entity by ID. Use `getDbById()` helper
+- **getListAll**: Fetch all entities with optional pagination. Use `getDbListAll()` helper
+
+### Custom Commands
+
+- Custom query should implement **custom domain logic** that does not exist in any standard query
+- It may **reuse** standard or other custom queries
+
+### Query Structure
+
+Each query file should:
+1. Import the helper function from `@vassembly/queries`
+2. Import the client from `../clients`
+3. Import the model and factory from `../model`
+4. Call the helper with configuration
+
+```typescript
+import { getDbById } from "@vassembly/queries";
+import { userMongodbDao } from "../clients";
+import { UserModel, userFactory } from "../model";
+
+export const getById = getDbById<UserModel>({
+  dao: userMongodbDao,
+  factory: userFactory,
+});
+```
+
+### index.ts
+
+Export all queries using named exports:
+
+```typescript
+export { getById } from "./getById";
+export { getListAll } from "./getListAll";
+```
+
+## Clients (`src/clients/`)
+
+Data access layer. Encapsulates database/storage/external services interactions using DAOs.
+
+### mongodb.ts
+
+- Import `MongoDbDAO` from `@vassembly/client-mongodb`
+- Create a DAO instance for your model's collection
+- Export with a descriptive name (e.g., `userMongodbDao`)
+- Use lowercase collection names
+
+```typescript
+import { MongoDbDAO } from "@vassembly/client-mongodb";
+import { UserModel } from "../model";
+
+export const userMongodbDao = MongoDbDAO<UserModel>({
+  collectionName: "users",
+});
+```
+
+### index.ts
+
+Export all clients:
+
+```typescript
+export { userMongodbDao } from "./mongodb";
+```
+
+## Main Entry Point (`src/index.ts`)
+
+The domain exports a default object with `commands` and `queries` namespaces:
+
+```typescript
+import * as commands from "./commands";
+import * as queries from "./queries";
+
+const domain = {
+  commands,
+  queries,
+};
+
+export default domain;
+```
+
+This allows consumers to use:
+```typescript
+import userDomain from "@vassembly/domain-user";
+
+const user = await userDomain.commands.create({ username: "john" });
+const foundUser = await userDomain.queries.getById({ id: "123" });
+```
+
+## Key Principles
+
+### Single Responsibility
+
+- Each domain manages one entity/concept
+- Commands and queries are focused operations
+- Model encapsulates the entity's data and behavior
+
+### Composability
+
+- Domains depend on shared packages (`@vassembly/commands`, `@vassembly/queries`, `@vassembly/model`)
+- Services compose multiple domain queries and commands
+
+### Type Safety
+
+- All models, commands, and queries are fully typed
+- Use TypeScript generics (`<UserModel>`) for type inference
+- Validation schemas define the contract for command inputs
+
+### Testing
+
+- Colocate tests with implementation (`.test.ts` suffix)
+- Test commands and queries as black boxes
+- Validate inputs produce expected outputs, not implementation details

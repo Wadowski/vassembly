@@ -1,0 +1,190 @@
+---
+description: Defines the structure and conventions for service packages
+globs: services/**
+alwaysApply: false
+---
+
+# Service Package Structure
+
+Service packages orchestrate business logic by combining domain operations and queries. They act as the application layer that handles user-facing actions and workflows. Services are server-agnostic and can be consumed by APIs, CLI tools, workers, or other interfaces.
+
+## Directory Structure
+
+Every service package must follow this structure:
+
+```
+services/[service-name]/
+├── src/
+│   ├── index.ts                 # Main entry point - exports all handlers
+│   └── handlers/
+│       ├── index.ts             # Exports all handlers
+│       ├── [handler-name]/
+│       │   ├── index.ts         # Handler implementation
+│       │   ├── types.ts         # TypeScript types and interfaces for this handler
+│       │   └── index.test.ts    # Vitest unit tests
+│       ├── [another-handler]/
+│       │   ├── index.ts
+│       │   ├── types.ts
+│       │   └── index.test.ts
+├── package.json
+├── tsconfig.json
+├── vitest.config.ts
+└── README.md
+```
+
+## Main Entry Point (`src/index.ts`)
+
+The service exports a default object containing all handlers:
+
+```typescript
+import * as handlers from "./handlers";
+
+export default handlers;
+```
+
+This allows consumers to import and use handlers directly:
+
+```typescript
+import authService from "@vassembly/service-auth";
+
+const result = await authService.login({ email: "user@example.com", password: "pass" });
+```
+
+## Handlers (`src/handlers/`)
+
+Handlers are async functions that orchestrate domain operations to accomplish a specific business action. Each handler combines queries and commands from one or multiple domains.
+
+### Handler Structure
+
+Each handler lives in its own directory with three files:
+
+#### index.ts
+
+The handler implementation. Should:
+1. Import necessary domains
+2. Import types from `./types`
+3. Define an async function that orchestrates domain operations
+5. Throw descriptive internal errors from `@vassembly/errors`
+6. Return typed results
+
+```typescript
+import userDomain from "@vassembly/domain-user";
+import refreshTokenDomain from "@vassembly/domain-refresh-token";
+import authTokenDomain from "@vassembly/domain-auth-token";
+import { InternalError } from "@vassembly/errors";
+
+import type { LoginInput } from "./types";
+
+export const login = async (input: LoginInput) => {
+  const { email, password } = input;
+
+  const user = await userDomain.queries.verify({ email, password });
+  if (!user.id) {
+    throw new InternalError("Failed to verify credentials");
+  }
+
+  const refreshToken = await refreshTokenDomain.commands.create({ userId: user.id });
+  if (!refreshToken.id) {
+    throw new InternalError("Failed to create refresh token");
+  }
+
+  const authToken = await authTokenDomain.commands.create({
+    input: { userId: user.id, refreshTokenId: refreshToken.id, role: "user" },
+  });
+
+  return {
+    user,
+    authToken: authToken.token,
+    refreshToken: refreshToken.token,
+  };
+};
+```
+
+#### types.ts
+
+Type definitions for the handler's inputs and outputs. Should:
+1. Define input interface (what the handler accepts)
+2. Define output interface (what the handler returns)
+3. Export types with `export type` for tree-shaking
+
+```typescript
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface LoginOutput {
+  user: UserModel;
+  authToken: string;
+  refreshToken: string;
+}
+```
+
+#### index.test.ts
+
+Vitest unit tests for the handler. Should:
+1. Test the handler as a black box (provide input, validate output)
+2. Mock domain dependencies
+3. Test success flows
+4. Test error scenarios
+5. Validate error messages and types
+
+### handlers/index.ts
+
+Export all handlers:
+
+```typescript
+export { login } from "./login";
+export { register } from "./register";
+export { auth } from "./auth";
+export { refresh } from "./refresh";
+
+export type { LoginInput } from "./login/types";
+export type { RegisterInput } from "./register/types";
+export type { AuthInput } from "./auth/types";
+export type { RefreshInput } from "./refresh/types";
+```
+
+## Key Principles
+
+### Orchestration, Not Logic
+
+- Services combine domain operations; they don't duplicate domain logic
+- Business logic stays in domains; services coordinate operations
+- If you're writing complex conditional logic, consider if it belongs in a domain instead
+
+### Dependency Direction
+
+- Services depend on domains and utility packages
+- Domains never depend on services
+- This creates a clean separation: domains are reusable, services are use-case specific
+
+### Error Handling
+
+- Handlers should throw appropriate errors from `@vassembly/errors`
+- Let domain errors bubble up (don't catch and re-throw silently)
+- Catch only when you need to transform or retry logic
+
+### Type Safety
+
+- Every handler input and output is typed
+- Types live in `types.ts` alongside the handler
+- Export types from handlers/index.ts for consumers
+
+### Input Validation
+
+- Handlers accept typed objects as input
+- Validation happens in domain operations (commands check schemas)
+- Additional business validation in handlers (e.g., checking entity existence before operations, do not check handler input)
+
+### Testing Approach
+
+- Test handlers as black boxes: mock domains, provide input, validate output
+- Don't test internal implementation details
+- Test success flows, error scenarios, and edge cases
+- Use vitest with proper mocking of domain dependencies
+
+### Composability
+
+- Keep each handler focused on a single user action
+- Avoid creating "god handlers" that do too much

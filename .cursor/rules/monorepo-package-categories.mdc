@@ -1,0 +1,90 @@
+---
+description: Explains monorepo package categories and where to place new packages
+alwaysApply: false
+---
+# Monorepo Package Categories
+
+When creating a new package, it should go in one of the following categories based on its purpose:
+
+## Categories
+
+### Domains (`domains/`)
+
+**Purpose**: Business logic and entity-specific operations organized around domain concepts.
+
+**Characteristics**:
+- Represent core business domains (e.g., `user`, `auth-token`, `refresh-token`)
+- Defines a model used by all commands and queries
+- Have access to clients
+- Contain commands (mutations/writes) and queries (reads) specific to that domain model
+- Self-contained business logic with clear boundaries
+- Exported as a domain package (e.g., `@vassembly/domain-user`)
+
+**When to create**: When you need to model a major business entity or concept with its own operations.
+
+**Example**: `domains/user/`, `domains/auth-token/`
+
+---
+
+### Services (`services/`)
+
+**Purpose**: Microservices backend logic that handle specific concerns. Combines multiple domain queries and commands to perform some acion
+
+**Characteristics**:
+- It is not API or request
+- It is server agnostic and can be used by API, CLI, worker, etc
+- Have handlers that handles actions
+- Depend only on domains and utility packages
+
+**When to create**: When you need to handle an action. It is an entrypoint for API, workers or other interfaces
+
+**Example**: `services/auth/` (authentication API service)
+
+---
+
+### 📦 Client Packages (`packages/client-*`)
+
+**Purpose**: Client libraries for external services and integrations.
+
+**Characteristics**:
+- Wrap external services (AWS, Stripe, MongoDB, etc.)
+- Named with `client-` prefix (e.g., `client-aws-s3`, `client-stripe`)
+- Provide typed interfaces to external APIs
+- Reusable across multiple domains
+
+**When to create**: When you need to integrate with an external service or third-party API.
+
+**Example**: `packages/client-aws-s3/`, `packages/client-mongodb/`, `packages/client-stripe/`
+
+---
+
+### 🎯 Other Packages (`packages/*`)
+
+**Purpose**: Shared utilities, infrastructure, and configuration packages.
+
+**Characteristics**:
+- Utilities and helpers: `config`, `constants`, `logger`, `model`, `validation`
+- Infrastructure: `errors`, `typescript-config`, `eslint-config`
+- Foundational tools that multiple packages depend on
+
+**When to create**: When you need shared functionality across multiple domains or services.
+
+**Example**: `packages/errors/`, `packages/config/`, `packages/ui/`, `packages/logger/`
+
+---
+
+### 🚀 Apps (`apps/`)
+
+**Purpose**: End-user facing applications (web, mobile, desktop, etc.).
+
+**Characteristics**:
+- Full applications with UI and user interactions
+- Consumers of domains, services, and utility packages
+- Often frontends (Next.js, React, etc.)
+- Deployed separately from backend services
+
+**When to create**: When you need a new user-facing application.
+
+**Example**: `apps/web/` (Next.js web app), `apps/docs/` (documentation site)
+
+---
