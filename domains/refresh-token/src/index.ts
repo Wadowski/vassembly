@@ -1,7 +1,7 @@
 import * as commands from "./commands";
 import * as queries from "./queries";
 
-export const refreshToken = {
+const refreshToken = {
   commands,
   queries,
 };
