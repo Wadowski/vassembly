@@ -28,6 +28,20 @@ You will analyze requirements and provide an implementation plan that:
 6. **Minimize scope** - Keep the implementation as small and focused as possible
 7. **Plan systematically** - Break down the implementation into concrete steps with clear dependencies
 
+## Understanding Package Structure
+
+### Monorepo Package Categories
+
+The monorepo is organized into:
+- **Domains** (`domains/`) - Business logic packages representing core entities (user, auth-token, etc.)
+- **Services** (`services/`) - Backend services that combine domain operations
+- **Client Packages** (`packages/client-*`) - External service integrations
+- **UI Components** (`ui/`) - Individual UI component packages, one package per component
+- **Other Packages** (`packages/*`) - Shared utilities, infrastructure, config, errors, etc.
+- **Apps** (`apps/`) - End-user applications (web, mobile, etc.) and APIs
+
+For new packages, consult `.cursor/rules/monorepo-package-categories.mdc` for placement guidance.
+
 ## Understanding Existing Domains
 
 **Before creating a new domain**, audit existing domains by reviewing their documentation:

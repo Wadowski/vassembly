@@ -58,6 +58,24 @@ When creating a new package, it should go in one of the following categories bas
 
 ---
 
+### 🎨 UI Component Packages (`packages/ui/`)
+
+**Purpose**: Reusable UI components organized as individual packages.
+
+**Characteristics**:
+- Each UI component is its own package (e.g., `packages/ui/button`, `packages/ui/modal`, `packages/ui/card`)
+- Packages follow naming convention: `packages/ui/[component-name]`
+- Exported as scoped packages (e.g., `@vassembly/ui-button`)
+- Self-contained components with their own dependencies and styles
+- Can be used across multiple applications and services
+- Include component exports, types, and styling
+
+**When to create**: When you need a new reusable UI component that can be shared across apps.
+
+**Example**: `packages/ui/button/`, `packages/ui/modal/`, `packages/ui/card/`, `packages/ui/form-input/`
+
+---
+
 ### 🎯 Other Packages (`packages/*`)
 
 **Purpose**: Shared utilities, infrastructure, and configuration packages.
@@ -69,7 +87,7 @@ When creating a new package, it should go in one of the following categories bas
 
 **When to create**: When you need shared functionality across multiple domains or services.
 
-**Example**: `packages/errors/`, `packages/config/`, `packages/ui/`, `packages/logger/`
+**Example**: `packages/errors/`, `packages/config/`, `packages/logger/`
 
 ---
 

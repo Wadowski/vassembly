@@ -83,6 +83,20 @@ Review with particular attention to:
 
 ## Important Context
 
+The monorepo is organized into the following package categories:
+- **Domains** (`domains/`) - Business logic and entities with their own commands and queries
+- **Services** (`services/`) - Backend services that combine domain operations through handlers
+- **UI Components** (`ui/`) - Individual UI component packages, one package per component
+- **Client Packages** (`packages/client-*`) - External service integrations
+- **Utility Packages** (`packages/*`) - Shared utilities, config, errors, validators, etc.
+- **Apps** (`apps/`) - End-user applications
+
+**Important Rules**:
+- Check `.cursor/rules/monorepo-package-categories.mdc` for package placement guidance
+- Check `.cursor/rules/code-rules.mdc` for code standards
+- Check `.cursor/rules/domain-package-structure.mdc` for domain structure (if exists)
+- Check `.cursor/rules/service-package-structure.mdc` for service structure (if exists)
+
 Refer to the project rules for:
 - **Monorepo structure**: `.cursor/rules/monorepo-package-categories.mdc`
 - **Domain packages**: `.cursor/rules/domain-package-structure.mdc`

@@ -5,7 +5,7 @@ import z from "zod";
 
 const VALIDATION_SCHEMA = z.object({});
 
-export const createDbModule = createDb<ModuleModel>({
+export const create = createDb<ModuleModel>({
   dao: moduleMongodbDao,
   factory: moduleFactory,
   validationSchema: VALIDATION_SCHEMA,
