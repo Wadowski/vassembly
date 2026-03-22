@@ -1,0 +1,149 @@
+---
+description: Unit test standards and best practices for the project
+globs: **/*.test.ts
+alwaysApply: false
+---
+
+# Unit Test Standards
+
+## Framework & Setup
+
+- Use **Vitest** for all unit tests
+- Place test files alongside implementation with `.test.ts` suffix
+- Import types using `import type` for tree-shaking
+
+## Test Design Principles
+
+### Black Box Testing
+
+Tests should verify behavior, not implementation:
+
+```typescript
+// ❌ BAD - Testing internal implementation details
+expect(mockFn).toHaveBeenCalledWith(expectedData);
+expect(spy).toHaveBeenCalledTimes(2);
+
+// ✅ GOOD - Testing input/output behavior
+const result = calculateTotal([10, 20, 30]);
+expect(result).toBe(60);
+```
+
+### Single Responsibility per Test
+
+Create separate test cases for:
+- Different execution flows (optional params, missing data, error cases)
+- Edge cases and boundary conditions
+- Error scenarios
+
+Do NOT create multiple test cases for the same success flow with different response fields:
+
+```typescript
+// ❌ BAD - Multiple tests for same flow
+test('returns user with name', () => { /* ... */ });
+test('returns user with email', () => { /* ... */ });
+
+// ✅ GOOD - Single test for the success flow
+test('returns complete user object', () => { /* ... */ });
+```
+
+## Test Structure
+
+### Descriptive Names
+
+- Use clear, descriptive test names that explain the scenario
+- Follow: `should [expected behavior] when [condition]`
+
+```typescript
+// ✅ GOOD
+test('should return user data when userId is valid', () => { /* ... */ });
+test('should throw error when userId is not found', () => { /* ... */ });
+```
+
+### Arrange-Act-Assert Pattern
+
+```typescript
+test('should calculate total correctly', () => {
+  // Arrange
+  const items = [{ price: 10 }, { price: 20 }];
+  
+  // Act
+  const total = calculateTotal(items);
+  
+  // Assert
+  expect(total).toBe(30);
+});
+```
+
+## Error Handling
+
+- Always test error cases and exceptions
+- Use `expect().toThrow()` for error scenarios
+
+```typescript
+// ✅ GOOD - Testing error case
+test('should throw ValidationError when data is invalid', () => {
+  expect(() => validateEmail('invalid')).toThrow(ValidationError);
+});
+```
+
+## Mocking & Dependencies
+
+- Mock external dependencies (APIs, databases, services)
+- Use `vi.mock()` for module mocking
+- Test with realistic data, not empty/null values
+
+```typescript
+// ✅ GOOD - Mocking external service
+vi.mock('./api', () => ({
+  fetchUser: vi.fn().mockResolvedValue({ id: 1, name: 'John' })
+}));
+
+test('should fetch and return user', async () => {
+  const user = await getUser(1);
+  expect(user.name).toBe('John');
+});
+```
+
+## Async Tests
+
+- Always await async operations
+- Use `async/await` syntax, not `.then()` chains
+- Test both success and error paths
+
+```typescript
+// ✅ GOOD
+test('should resolve with data', async () => {
+  const result = await fetchData();
+  expect(result).toBeDefined();
+});
+
+test('should reject with error', async () => {
+  expect(fetchData()).rejects.toThrow(NetworkError);
+});
+```
+
+## Test Organization
+
+- Group related tests using `describe()` blocks
+- Keep test files focused on a single module/function
+- Use meaningful descriptions for test suites
+
+```typescript
+describe('UserService', () => {
+  describe('getUser', () => {
+    test('should return user when found', () => { /* ... */ });
+    test('should throw error when not found', () => { /* ... */ });
+  });
+  
+  describe('createUser', () => {
+    test('should create user with valid data', () => { /* ... */ });
+    test('should throw error with invalid email', () => { /* ... */ });
+  });
+});
+```
+
+## Coverage Goals
+
+- Aim for high code coverage (80%+)
+- Cover all code paths and error conditions
+- Focus on meaningful coverage, not line coverage alone

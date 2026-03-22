@@ -1,2 +1,9 @@
-export * from "./commands";
-export * from "./queries";
+import * as commands from "./commands";
+import * as queries from "./queries";
+
+const refreshToken = {
+  commands,
+  queries,
+};
+
+export default refreshToken;

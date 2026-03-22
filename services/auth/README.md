@@ -1,0 +1,1 @@
+# `@vassembly/service-auth`

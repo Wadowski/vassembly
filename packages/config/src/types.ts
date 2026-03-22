@@ -11,6 +11,8 @@ export interface Config {
   mongoDb: MongoDbConfig;
   aws: AwsConfig;
   deepSeekAi: DeepSeekAiConfig;
+  encoder: EncoderConfig;
+  jwt: JwtConfig;
 }
 
 export interface AwsConfig {
@@ -43,4 +45,14 @@ export interface MongoDbConfig {
 export interface DeepSeekAiConfig {
   apiKey: string;
   baseURL: string;
+}
+
+export interface EncoderConfig {
+  secret: string;
+  saltRounds: number;
+  algorithm: string;
+}
+
+export interface JwtConfig {
+  secret: string;
 }

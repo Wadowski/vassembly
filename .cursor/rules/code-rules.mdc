@@ -1,9 +1,80 @@
 ---
 alwaysApply: true
+description: General coding standards and best practices for the project
 ---
 
-Always follow the coding standards rules listed below:
+# General Code Rules
 
-- use named exports instead of default exports
-- When function has more then one argument, always use object of arguments instead of list of arguments
-- for tests use vitest
+## Exports and Imports
+
+- Use named exports instead of default exports, with exception for domain package exports
+- Organize imports: external dependencies → internal modules → same folder files
+- Use `import type` for type imports to enable tree-shaking
+
+## Function Arguments
+
+- When a function has more than one argument, use an object of arguments instead of positional parameters
+- Always destructure typed object parameters
+
+## Naming Conventions
+
+- Use **camelCase** for variables, functions, and methods
+- Use **PascalCase** for classes, interfaces, and types
+- Use **UPPER_SNAKE_CASE** for constants
+- Prefix boolean variables/functions with `is`, `has`, `should`, or `can`
+
+## TypeScript Type Annotations
+
+- Always provide explicit type annotations for function parameters and return types
+- Use specific types instead of `any`; use `unknown` if the type is truly unknown
+- Avoid optional chaining without null checks in critical paths
+
+## Error Handling
+
+- Always wrap async operations in try-catch blocks
+- Never silently catch errors (empty catch blocks)
+- Throw descriptive using relevant error from @vassembly/errors package
+- Validate inputs at function boundaries
+
+## Async/Await Best Practices
+
+- Use `async/await` instead of `.then()` chains
+- Only declare functions as `async` if they use `await`
+- Use `Promise.all()` for parallel operations instead of sequential awaits
+
+## Null/Undefined Handling
+
+- Explicitly check for null/undefined before accessing properties
+- Use nullish coalescing (`??`) instead of logical OR (`||`) for default values
+
+## Performance
+
+- Avoid unnecessary computations in loops
+- Cache expensive function results
+- Use lazy loading for large data structures
+- Avoid creating objects/arrays in hot paths
+
+## Security
+
+- Never log sensitive data (passwords, tokens, PII)
+- Validate and sanitize all external inputs
+- Always validate types and bounds on user input
+
+## Testing Standards
+
+- Use **Vitest** for all unit tests
+- Tests should be black boxes: provide input and validate output
+- Don't validate internal implementation details (function calls, params)
+- Create separate test cases only for different flows (optional params, missing data, error cases)
+- Don't create multiple test cases for the same success flow with different response fields
+
+## File Organization
+
+- Keep files focused and single-purpose
+- Organize related functionality into directories with clear structure
+- Use index files to export public API
+- Colocate tests next to implementation files with `.test.ts` suffix
+
+## Comments and Documentation
+
+- Write self-documenting code; do not add any comments
