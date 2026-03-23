@@ -82,3 +82,4 @@ description: General coding standards and best practices for the project
 ## Comments and Documentation
 
 - Write self-documenting code; do not add any comments
+- do not write comments

@@ -1,0 +1,83 @@
+---
+alwaysApply: true
+---
+
+# Delegate Long-Context Tasks to Subagents
+ 
+ ## Core Principle
+ 
+ The main thread must stay lean and sharp. Any task that consumes significant context (research, log analysis, debugging, file exploration, test execution, dependency installation, etc.) *must* be delegated to a subagent.
+ 
+ ## When to Delegate
+ 
+ Delegate to a subagent whenever the task involves:
+ 
+ - Analyzing or exploring a tagged folder or large set of files
+ - Running and interpreting test suites (npm test, jest, etc.)
+ - Running npm install or other long-running shell commands
+ - Reading logs, debugging errors, or investigating failures
+ - Researching how something works across multiple files
+ - Code review or auditing across a directory
+ - Any operation expected to produce large output or require reading many files
+ 
+ ## How to Delegate
+ 
+ ### 1. Check existing specialized subagents first
+ 
+ Before spawning a generic subagent, review the available subagent_type options and pick the best fit:
+ 
+ - explore — codebase exploration, file search, understanding structure
+ - shell — running commands (tests, installs, builds, git ops)
+ - code-reviewer / agent-code-reviewer — reviewing code quality
+ - agent-researcher — auditing legacy code, migration prep
+ - code-tester — generating or running unit tests
+ - security-auditor — security analysis
+ - agent-coder — implementing features from a task list
+ - agent-planner — breaking down large tasks into plans
+ - Other specialized types as listed in the Task tool
+ 
+ ### 2. Fall back to generalPurpose when no specialist fits
+ 
+ If none of the specialized subagents match the task, use subagent_type="generalPurpose".
+ 
+ ### 3. Provide full context in the prompt
+ 
+ Subagents do not inherit conversation history. Always include:
+ 
+ - Exact file paths or directories to work with
+ - What to look for or what to do
+ - What information to return in the final response
+ 
+ ## Examples
+ 
+ 
+ # ❌ BAD — reading 20 files on main thread to understand a feature
+ Read file1.ts → Read file2.ts → Read file3.ts → ... → summarize
+ 
+ # ✅ GOOD — delegate exploration to a subagent
+ Task(subagent_type="explore", prompt="Explore src/screens/product-lists-overview/ and explain how the analytics feature works. Return a summary of key files, data flow, and state management.")
+ 
+ 
+ 
+ # ❌ BAD — running tests and reading output on main thread
+ Shell("npm test -- --coverage") → read large output → analyze
+ 
+ # ✅ GOOD — delegate to shell subagent
+ Task(subagent_type="shell", prompt="Run `npm test -- --coverage` in services/xsite-cms-bos/ and report: pass/fail count, any failures with file + error, and coverage summary.")
+ 
+ 
+ 
+ # ❌ BAD — npm install on main thread consuming scrollback
+ Shell("npm install")
+ 
+ # ✅ GOOD — delegate to shell subagent
+ Task(subagent_type="shell", prompt="Run `npm install` in the repo root. Report success or any errors/warnings.")
+ 
+ 
+ ## What Stays on the Main Thread
+ 
+ - Short, focused edits to 1-3 files
+ - Single file reads when you already know the exact path
+ - Quick grep/glob lookups for a specific symbol
+ - Responding to the user with summaries and decisions
+ - Coordinating and dispatching subagents

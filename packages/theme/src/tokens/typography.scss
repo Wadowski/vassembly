@@ -1,36 +1,164 @@
-// SCSS variables for typography tokens
+$font-family-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+$font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+$font-family-mono: 'Fira Code', 'Roboto Mono', monospace;
 
-// Font families
-$font-primary: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-$font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', Courier, monospace;
-$font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-
-// Font sizes
-$font-size-xs: 0.75rem;
-$font-size-sm: 0.875rem;
-$font-size-md: 1rem;
-$font-size-lg: 1.125rem;
-$font-size-xl: 1.25rem;
-$font-size-2xl: 1.5rem;
-$font-size-3xl: 1.875rem;
-$font-size-4xl: 2.25rem;
-$font-size-5xl: 3rem;
-$font-size-6xl: 3.75rem;
-$font-size-7xl: 4.5rem;
-$font-size-8xl: 6rem;
-$font-size-9xl: 8rem;
-
-// Font weights
 $font-weight-light: 300;
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
-$font-weight-extrabold: 800;
-$font-weight-black: 900;
+$font-weight-extra-bold: 800;
 
-// Line heights
-$line-height-tight: 1.1;
+$font-size-display-lg: 3.5rem;
+$font-size-display-md: 2.8rem;
+$font-size-display-sm: 2.25rem;
+
+$font-size-heading-lg: 2rem;
+$font-size-heading-md: 1.5rem;
+$font-size-heading-sm: 1.25rem;
+
+$font-size-title-lg: 1.125rem;
+$font-size-title-md: 1rem;
+$font-size-title-sm: 0.875rem;
+
+$font-size-body-lg: 1.125rem;
+$font-size-body-md: 1rem;
+$font-size-body-sm: 0.875rem;
+
+$font-size-label-lg: 0.875rem;
+$font-size-label-md: 0.8125rem;
+$font-size-label-sm: 0.75rem;
+$line-height-tight: 1.2;
 $line-height-normal: 1.5;
 $line-height-relaxed: 1.75;
 $line-height-loose: 2;
+
+$letter-spacing-normal: 0;
+$letter-spacing-tracked: 0.1em;
+$letter-spacing-tight: -0.01em;
+
+$text-transform-uppercase: uppercase;
+$text-transform-capitalize: capitalize;
+$text-transform-lowercase: lowercase;
+
+$typography-display-lg: (
+  font-family: $font-family-display,
+  font-size: $font-size-display-lg,
+  font-weight: $font-weight-bold,
+  line-height: $line-height-tight,
+  letter-spacing: $letter-spacing-tight
+);
+
+$typography-display-md: (
+  font-family: $font-family-display,
+  font-size: $font-size-display-md,
+  font-weight: $font-weight-bold,
+  line-height: $line-height-tight,
+  letter-spacing: $letter-spacing-tight
+);
+
+$typography-display-sm: (
+  font-family: $font-family-display,
+  font-size: $font-size-display-sm,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-tight,
+  letter-spacing: $letter-spacing-tight
+);
+
+$typography-heading-lg: (
+  font-family: $font-family-display,
+  font-size: $font-size-heading-lg,
+  font-weight: $font-weight-bold,
+  line-height: $line-height-tight,
+  letter-spacing: $letter-spacing-tight
+);
+
+$typography-heading-md: (
+  font-family: $font-family-display,
+  font-size: $font-size-heading-md,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-tight
+);
+
+$typography-heading-sm: (
+  font-family: $font-family-display,
+  font-size: $font-size-heading-sm,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-tight
+);
+
+$typography-title-lg: (
+  font-family: $font-family-body,
+  font-size: $font-size-title-lg,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-normal
+);
+
+$typography-title-md: (
+  font-family: $font-family-body,
+  font-size: $font-size-title-md,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-normal
+);
+
+$typography-title-sm: (
+  font-family: $font-family-body,
+  font-size: $font-size-title-sm,
+  font-weight: $font-weight-medium,
+  line-height: $line-height-normal
+);
+
+$typography-body-lg: (
+  font-family: $font-family-body,
+  font-size: $font-size-body-lg,
+  font-weight: $font-weight-regular,
+  line-height: $line-height-relaxed
+);
+
+$typography-body-md: (
+  font-family: $font-family-body,
+  font-size: $font-size-body-md,
+  font-weight: $font-weight-regular,
+  line-height: $line-height-relaxed
+);
+
+$typography-body-sm: (
+  font-family: $font-family-body,
+  font-size: $font-size-body-sm,
+  font-weight: $font-weight-regular,
+  line-height: $line-height-relaxed
+);
+
+$typography-label-lg: (
+  font-family: $font-family-body,
+  font-size: $font-size-label-lg,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-normal,
+  letter-spacing: $letter-spacing-tracked,
+  text-transform: $text-transform-uppercase
+);
+
+$typography-label-md: (
+  font-family: $font-family-body,
+  font-size: $font-size-label-md,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-normal,
+  letter-spacing: $letter-spacing-tracked,
+  text-transform: $text-transform-uppercase
+);
+
+$typography-label-sm: (
+  font-family: $font-family-body,
+  font-size: $font-size-label-sm,
+  font-weight: $font-weight-semibold,
+  line-height: $line-height-normal,
+  letter-spacing: $letter-spacing-tracked,
+  text-transform: $text-transform-uppercase
+);
+
+$typography-mono: (
+  font-family: $font-family-mono,
+  font-size: $font-size-body-sm,
+  font-weight: $font-weight-regular,
+  line-height: $line-height-normal
+);

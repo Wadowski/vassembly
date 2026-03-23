@@ -1,14 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Component } from './component';
 
-const meta = {
-  title: 'Component',
+const meta: Meta<typeof Component> = {
+  title: 'Components/Component',
   component: Component,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Component>;
+  argTypes: {
+    children: {
+      control: 'text',
+      description: 'Content to display',
+    },
+  },
+};
 
 export default meta;
 type Story = StoryObj<typeof meta>;

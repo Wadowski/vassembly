@@ -1,13 +1,52 @@
-// SCSS variables for spacing tokens
-$spacing-xs: 0.25rem;
-$spacing-sm: 0.5rem;
-$spacing-md: 1rem;
-$spacing-lg: 1.5rem;
-$spacing-xl: 2rem;
-$spacing-2xl: 2.5rem;
-$spacing-3xl: 3rem;
-$spacing-4xl: 4rem;
-$spacing-5xl: 5rem;
-$spacing-6xl: 6rem;
-$spacing-7xl: 7rem;
-$spacing-8xl: 8rem;
+$spacing-0: 0;
+$spacing-1: 0.25rem;
+$spacing-2: 0.5rem;
+$spacing-3: 0.75rem;
+$spacing-4: 1rem;
+$spacing-5: 1.25rem;
+$spacing-6: 1.5rem;
+$spacing-7: 1.75rem;
+$spacing-8: 2rem;
+$spacing-9: 2.25rem;
+$spacing-10: 2.5rem;
+$spacing-12: 3rem;
+$spacing-14: 3.5rem;
+$spacing-16: 4rem;
+$spacing-20: 5rem;
+$spacing-24: 6rem;
+$spacing-28: 7rem;
+$spacing-32: 8rem;
+$spacing-36: 9rem;
+$spacing-40: 10rem;
+$spacing-44: 11rem;
+$spacing-48: 12rem;
+$spacing-52: 13rem;
+$spacing-56: 14rem;
+$spacing-60: 15rem;
+$spacing-64: 16rem;
+$spacing-72: 18rem;
+$spacing-80: 20rem;
+$spacing-96: 24rem;
+
+$spacing-xs: $spacing-1;
+$spacing-sm: $spacing-2;
+$spacing-md: $spacing-4;
+$spacing-lg: $spacing-6;
+$spacing-xl: $spacing-8;
+$spacing-2xl: $spacing-12;
+$spacing-3xl: $spacing-16;
+$spacing-4xl: $spacing-24;
+$spacing-5xl: $spacing-32;
+
+$spacing-container-sm: $spacing-4;
+$spacing-container-md: $spacing-6;
+$spacing-container-lg: $spacing-8;
+
+$spacing-component-gap-sm: $spacing-2;
+$spacing-component-gap-md: $spacing-3;
+$spacing-component-gap-lg: $spacing-4;
+
+$spacing-vertical-rhythm: $spacing-6;
+
+$spacing-section-gap: $spacing-8;
+$spacing-section-gap-lg: $spacing-12;

@@ -18,7 +18,7 @@ const themeTokensPath = resolve(__dirname, '../../theme/src/tokens');
 const config: StorybookConfig = {
   stories: [
     `${uiPath}/**/*.stories.@(js|jsx|mjs|ts|tsx)`,
-    // `${themePath}/**/*.stories.@(js|jsx|mjs|ts|tsx)`,
+    `${themePath}/**/*.stories.@(js|jsx|mjs|ts|tsx)`,
   ],
   addons: [
     getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
@@ -35,14 +35,26 @@ const config: StorybookConfig = {
     config.module = config.module || {};
     config.module.rules = config.module.rules || [];
 
+    // Remove any existing SCSS rules to avoid conflicts
+    config.module.rules = config.module.rules.filter(
+      (rule) => !(rule instanceof Object && rule.test && rule.test.toString().includes('scss'))
+    );
+
     const sassRule = {
       test: /\.module\.scss$/,
       use: [
-        'style-loader',
+        {
+          loader: 'style-loader',
+          options: {
+            injectType: 'singletonStyleTag',
+          },
+        },
         {
           loader: 'css-loader',
           options: {
-            modules: true,
+            modules: {
+              namedExport: false,
+            },
             esModule: true,
           },
         },
