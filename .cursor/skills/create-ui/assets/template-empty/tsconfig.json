@@ -1,5 +1,5 @@
 {
-  "extends": "@vassembly/typescript-config/react-library",
+  "extends": "@vassembly/typescript-config/base",
   "compilerOptions": {
     "outDir": "./dist",
     "jsx": "react-jsx"

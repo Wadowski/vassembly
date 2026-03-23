@@ -1,0 +1,11 @@
+// SCSS variables for z-index tokens
+$z-hide: -1;
+$z-auto: auto;
+$z-base: 0;
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-popover: 1040;
+$z-tooltip: 1050;
+$z-modal: 1060;
+$z-offcanvas: 1070;

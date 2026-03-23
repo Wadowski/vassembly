@@ -75,6 +75,10 @@ description: General coding standards and best practices for the project
 - Use index files to export public API
 - Colocate tests next to implementation files with `.test.ts` suffix
 
+## Styling
+
+- Use scss files
+
 ## Comments and Documentation
 
 - Write self-documenting code; do not add any comments

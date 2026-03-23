@@ -1,19 +1,123 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
-import {
-  colors,
-  spacing,
-  borderRadius,
-  shadows,
-  fontFamilies,
-  fontSizes,
-  fontWeights,
-  lineHeights,
-  opacity,
-  breakpoints,
-  breakpointPixels,
-  zIndex,
-} from '.';
+import './tokens/index.scss';
+
+const getComputedTokens = () => {
+  const root = document.documentElement;
+  const styles = getComputedStyle(root);
+  
+  const getVar = (name: string) => styles.getPropertyValue(name).trim();
+  
+  return {
+    colors: {
+      primary: Object.fromEntries(
+        [0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 99, 100].map(shade => [
+          shade,
+          getVar(`--color-primary-${shade}`),
+        ])
+      ),
+      secondary: Object.fromEntries(
+        [0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 99, 100].map(shade => [
+          shade,
+          getVar(`--color-secondary-${shade}`),
+        ])
+      ),
+      tertiary: Object.fromEntries(
+        [0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 99, 100].map(shade => [
+          shade,
+          getVar(`--color-tertiary-${shade}`),
+        ])
+      ),
+      neutral: Object.fromEntries(
+        [0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 99, 100].map(shade => [
+          shade,
+          getVar(`--color-neutral-${shade}`),
+        ])
+      ),
+      error: Object.fromEntries(
+        [0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 99, 100].map(shade => [
+          shade,
+          getVar(`--color-error-${shade}`),
+        ])
+      ),
+    },
+    spacing: {
+      xs: getVar('--spacing-xs'),
+      sm: getVar('--spacing-sm'),
+      md: getVar('--spacing-md'),
+      lg: getVar('--spacing-lg'),
+      xl: getVar('--spacing-xl'),
+      xxl: getVar('--spacing-xxl'),
+    },
+    borderRadius: {
+      none: getVar('--border-radius-none'),
+      sm: getVar('--border-radius-sm'),
+      md: getVar('--border-radius-md'),
+      lg: getVar('--border-radius-lg'),
+      full: getVar('--border-radius-full'),
+    },
+    shadows: {
+      sm: getVar('--shadow-sm'),
+      md: getVar('--shadow-md'),
+      lg: getVar('--shadow-lg'),
+      xl: getVar('--shadow-xl'),
+    },
+    fontFamilies: {
+      sans: getVar('--font-family-sans'),
+      mono: getVar('--font-family-mono'),
+    },
+    fontSizes: {
+      xs: getVar('--font-size-xs'),
+      sm: getVar('--font-size-sm'),
+      base: getVar('--font-size-base'),
+      lg: getVar('--font-size-lg'),
+      xl: getVar('--font-size-xl'),
+      xxl: getVar('--font-size-xxl'),
+    },
+    fontWeights: {
+      regular: getVar('--font-weight-regular'),
+      medium: getVar('--font-weight-medium'),
+      semibold: getVar('--font-weight-semibold'),
+      bold: getVar('--font-weight-bold'),
+    },
+    lineHeights: {
+      tight: getVar('--line-height-tight'),
+      normal: getVar('--line-height-normal'),
+      relaxed: getVar('--line-height-relaxed'),
+    },
+    opacity: {
+      0: getVar('--opacity-0'),
+      10: getVar('--opacity-10'),
+      20: getVar('--opacity-20'),
+      30: getVar('--opacity-30'),
+      40: getVar('--opacity-40'),
+      50: getVar('--opacity-50'),
+      60: getVar('--opacity-60'),
+      70: getVar('--opacity-70'),
+      80: getVar('--opacity-80'),
+      90: getVar('--opacity-90'),
+      100: getVar('--opacity-100'),
+    },
+    breakpoints: {
+      sm: getVar('--breakpoint-sm'),
+      md: getVar('--breakpoint-md'),
+      lg: getVar('--breakpoint-lg'),
+      xl: getVar('--breakpoint-xl'),
+      xxl: getVar('--breakpoint-xxl'),
+    },
+    zIndex: {
+      base: getVar('--z-index-base'),
+      dropdown: getVar('--z-index-dropdown'),
+      sticky: getVar('--z-index-sticky'),
+      fixed: getVar('--z-index-fixed'),
+      modal: getVar('--z-index-modal'),
+      popover: getVar('--z-index-popover'),
+      tooltip: getVar('--z-index-tooltip'),
+    },
+  };
+};
+
+const tokens = getComputedTokens();
 
 const meta: Meta = {
   title: 'Design System/Theme',
@@ -28,7 +132,7 @@ type Story = StoryObj;
 export const Colors: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {Object.entries(colors).map(([category, colorGroup]) => (
+      {Object.entries(tokens.colors).map(([category, colorGroup]) => (
         <div key={category}>
           <h3 style={{ margin: '0 0 1rem 0', textTransform: 'capitalize' }}>
             {category}
@@ -68,7 +172,7 @@ export const Spacing: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Spacing Scale</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {Object.entries(spacing).map(([key, value]) => (
+          {Object.entries(tokens.spacing).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div
                 style={{
@@ -96,7 +200,7 @@ export const BorderRadius: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Border Radius</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1.5rem' }}>
-          {Object.entries(borderRadius).map(([key, value]) => (
+          {Object.entries(tokens.borderRadius).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
               <div
                 style={{
@@ -124,7 +228,7 @@ export const Shadows: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Shadow Levels</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.5rem' }}>
-          {Object.entries(shadows).map(([key, value]) => (
+          {Object.entries(tokens.shadows).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <div
                 style={{
@@ -154,7 +258,7 @@ export const Typography: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Font Families</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {Object.entries(fontFamilies).map(([key, value]) => (
+          {Object.entries(tokens.fontFamilies).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
               <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{key}</span>
               <div style={{ fontFamily: value, fontSize: '1rem', color: '#666', marginBottom: '0.5rem' }}>
@@ -171,7 +275,7 @@ export const Typography: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Font Sizes</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {Object.entries(fontSizes).map(([key, value]) => (
+          {Object.entries(tokens.fontSizes).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'baseline', gap: '1rem' }}>
               <span style={{ fontWeight: 600, minWidth: '60px' }}>{key}</span>
               <span style={{ fontSize: value }}>The quick brown fox</span>
@@ -186,10 +290,10 @@ export const Typography: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Font Weights</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {Object.entries(fontWeights).map(([key, value]) => (
+          {Object.entries(tokens.fontWeights).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ fontWeight: 600, minWidth: '100px' }}>{key}</span>
-              <span style={{ fontWeight: value }}>The quick brown fox jumps over the lazy dog</span>
+              <span style={{ fontWeight: Number(value) }}>The quick brown fox jumps over the lazy dog</span>
               <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#666' }}>
                 {value}
               </span>
@@ -201,7 +305,7 @@ export const Typography: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Line Heights</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {Object.entries(lineHeights).map(([key, value]) => (
+          {Object.entries(tokens.lineHeights).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
               <span style={{ fontWeight: 600, minWidth: '100px' }}>{key}</span>
               <div style={{ lineHeight: value, flex: 1 }}>
@@ -227,7 +331,7 @@ export const Opacity: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Opacity Levels</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1.5rem' }}>
-          {Object.entries(opacity).map(([key, value]) => (
+          {Object.entries(tokens.opacity).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
               <div
                 style={{
@@ -257,7 +361,7 @@ export const Breakpoints: Story = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Responsive Breakpoints</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {Object.entries(breakpoints).map(([key, value]) => (
+          {Object.entries(tokens.breakpoints).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ fontWeight: 600, minWidth: '120px', textTransform: 'capitalize' }}>
                 {key}
@@ -276,7 +380,7 @@ export const Breakpoints: Story = {
                   color: '#ffffff',
                 }}
               >
-                {breakpointPixels[key as keyof typeof breakpointPixels]}px
+                {value}
               </div>
               <span style={{ fontFamily: 'monospace', fontSize: '0.875rem', color: '#666' }}>
                 {value}
@@ -295,7 +399,7 @@ export const ZIndex = {
       <div>
         <h3 style={{ margin: '0 0 1rem 0' }}>Z-Index Scale</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {Object.entries(zIndex).map(([key, value]) => (
+          {Object.entries(tokens.zIndex).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ fontWeight: 600, minWidth: '120px', textTransform: 'capitalize' }}>
                 {key}

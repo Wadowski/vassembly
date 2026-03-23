@@ -1,0 +1,62 @@
+// SCSS variables for breakpoint tokens
+$breakpoint-mobile: 375px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$breakpoint-wide: 1280px;
+$breakpoint-ultrawide: 1536px;
+
+// Breakpoint pixel values (for calculations)
+$breakpoint-mobile-px: 375;
+$breakpoint-tablet-px: 768;
+$breakpoint-desktop-px: 1024;
+$breakpoint-wide-px: 1280;
+$breakpoint-ultrawide-px: 1536;
+
+// Media query mixins
+@mixin media-mobile {
+  @media (min-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin media-tablet {
+  @media (min-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin media-desktop {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+@mixin media-wide {
+  @media (min-width: $breakpoint-wide) {
+    @content;
+  }
+}
+
+@mixin media-ultrawide {
+  @media (min-width: $breakpoint-ultrawide) {
+    @content;
+  }
+}
+
+@mixin media-mobile-only {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin media-tablet-and-down {
+  @media (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin media-desktop-and-up {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
