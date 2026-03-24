@@ -27,6 +27,10 @@
     display: flex;
     align-items: center;
     gap: $spacing-1;
+
+    .buttonLabel {
+      color: inherit;
+    }
   }
 
   .icon {

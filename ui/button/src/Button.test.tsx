@@ -8,53 +8,44 @@ import { Button } from './Button';
 describe('Button', () => {
   describe('Rendering', () => {
     it('renders with default props', () => {
-      render(<Button>Click me</Button>);
+      render(<Button text="Click me" />);
       const button = screen.getByRole('button', { name: /click me/i });
       expect(button).toBeInTheDocument();
     });
 
-    it('renders with children text', () => {
-      render(<Button>Submit</Button>);
-      expect(screen.getByText('Submit')).toBeInTheDocument();
-    });
-
-    it('renders with JSX children', () => {
-      render(
-        <Button>
-          <span data-testid="child">Content</span>
-        </Button>,
-      );
-      expect(screen.getByTestId('child')).toBeInTheDocument();
+    it('renders required text', () => {
+      render(<Button text="Submit" />);
+      expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
     });
   });
 
   describe('Color', () => {
     it('renders primary color', () => {
-      render(<Button color="primary">Primary</Button>);
+      render(<Button color="primary" text="Primary" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-primary');
     });
 
     it('renders secondary color', () => {
-      render(<Button color="secondary">Secondary</Button>);
+      render(<Button color="secondary" text="Secondary" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-secondary');
     });
 
     it('renders tertiary color', () => {
-      render(<Button color="tertiary">Tertiary</Button>);
+      render(<Button color="tertiary" text="Tertiary" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-tertiary');
     });
 
     it('renders danger color', () => {
-      render(<Button color="danger">Delete</Button>);
+      render(<Button color="danger" text="Delete" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-danger');
     });
 
     it('defaults to primary color', () => {
-      render(<Button>Default</Button>);
+      render(<Button text="Default" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-primary');
     });
@@ -62,45 +53,45 @@ describe('Button', () => {
 
   describe('Variants', () => {
     it('renders contained variant', () => {
-      render(<Button variant="contained">Contained</Button>);
+      render(<Button variant="contained" text="Contained" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('variant-contained');
     });
 
     it('renders outlined variant', () => {
-      render(<Button variant="outlined">Outlined</Button>);
+      render(<Button variant="outlined" text="Outlined" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('variant-outlined');
     });
 
     it('renders text variant', () => {
-      render(<Button variant="text">Text</Button>);
+      render(<Button variant="text" text="Text" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('variant-text');
     });
 
     it('defaults to contained variant', () => {
-      render(<Button>Default</Button>);
+      render(<Button text="Default" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('variant-contained');
     });
 
     it('renders contained variant with primary color', () => {
-      render(<Button color="primary" variant="contained">Button</Button>);
+      render(<Button color="primary" variant="contained" text="Button" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-primary');
       expect(button.className).toContain('variant-contained');
     });
 
     it('renders outlined variant with secondary color', () => {
-      render(<Button color="secondary" variant="outlined">Button</Button>);
+      render(<Button color="secondary" variant="outlined" text="Button" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-secondary');
       expect(button.className).toContain('variant-outlined');
     });
 
     it('renders text variant with danger color', () => {
-      render(<Button color="danger" variant="text">Button</Button>);
+      render(<Button color="danger" variant="text" text="Button" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-danger');
       expect(button.className).toContain('variant-text');
@@ -109,25 +100,25 @@ describe('Button', () => {
 
   describe('Sizes', () => {
     it('renders small size', () => {
-      render(<Button size="small">Small</Button>);
+      render(<Button size="small" text="Small" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('size-small');
     });
 
     it('renders medium size', () => {
-      render(<Button size="medium">Medium</Button>);
+      render(<Button size="medium" text="Medium" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('size-medium');
     });
 
     it('renders large size', () => {
-      render(<Button size="large">Large</Button>);
+      render(<Button size="large" text="Large" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('size-large');
     });
 
     it('defaults to medium size', () => {
-      render(<Button>Default</Button>);
+      render(<Button text="Default" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('size-medium');
     });
@@ -135,35 +126,27 @@ describe('Button', () => {
 
   describe('Disabled State', () => {
     it('disables button with isDisabled prop', () => {
-      render(<Button isDisabled>Disabled</Button>);
+      render(<Button isDisabled text="Disabled" />);
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
     });
 
     it('applies disabled class', () => {
-      render(<Button isDisabled>Disabled</Button>);
+      render(<Button isDisabled text="Disabled" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('disabled');
     });
 
     it('prevents click when disabled', async () => {
       const handleClick = vi.fn();
-      render(
-        <Button isDisabled onClick={handleClick}>
-          Disabled
-        </Button>,
-      );
+      render(<Button isDisabled onClick={handleClick} text="Disabled" />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
       expect(handleClick).not.toHaveBeenCalled();
     });
 
     it('prevents loading state when disabled', () => {
-      render(
-        <Button isDisabled isLoading>
-          Loading
-        </Button>,
-      );
+      render(<Button isDisabled isLoading text="Loading" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('disabled');
       expect(button.className).toContain('loading');
@@ -172,106 +155,89 @@ describe('Button', () => {
 
   describe('Loading State', () => {
     it('applies loading class', () => {
-      render(<Button isLoading>Loading</Button>);
+      render(<Button isLoading text="Loading" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('loading');
     });
 
     it('disables button when loading', () => {
-      render(<Button isLoading>Loading</Button>);
+      render(<Button isLoading text="Loading" />);
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
     });
 
     it('hides content when loading', () => {
-      render(<Button isLoading>Visible Content</Button>);
+      render(<Button isLoading text="Visible Content" />);
       expect(screen.queryByText('Visible Content')).not.toBeVisible();
     });
 
     it('prevents click when loading', async () => {
       const handleClick = vi.fn();
-      render(
-        <Button isLoading onClick={handleClick}>
-          Loading
-        </Button>,
-      );
+      render(<Button isLoading onClick={handleClick} text="Loading" />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
       expect(handleClick).not.toHaveBeenCalled();
     });
   });
 
-// Icon Support
-it('renders icon component on the left by default', () => {
-  const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg data-testid="test-icon" {...props}>
-      <circle cx="12" cy="12" r="10" />
-    </svg>
-  );
-  render(<Button icon={IconComponent}>Search</Button>);
-  expect(screen.getByTestId('test-icon')).toBeInTheDocument();
-});
+  it('renders icon component on the left by default', () => {
+    const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
+      <svg data-testid="test-icon" {...props}>
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+    );
+    render(<Button icon={IconComponent} text="Search" />);
+    expect(screen.getByTestId('test-icon')).toBeInTheDocument();
+  });
 
-it('renders icon component on the right when specified', () => {
-  const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg data-testid="test-icon" {...props}>
-      <circle cx="12" cy="12" r="10" />
-    </svg>
-  );
-  render(
-    <Button icon={IconComponent} iconPosition="right">
-      Next
-    </Button>,
-  );
-  expect(screen.getByTestId('test-icon')).toBeInTheDocument();
-});
+  it('renders icon component on the right when specified', () => {
+    const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
+      <svg data-testid="test-icon" {...props}>
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+    );
+    render(<Button icon={IconComponent} iconPosition="right" text="Next" />);
+    expect(screen.getByTestId('test-icon')).toBeInTheDocument();
+  });
 
-it('renders JSX element icon', () => {
-  render(
-    <Button icon={<span data-testid="jsx-icon">Icon</span>}>
-      Button
-    </Button>,
-  );
-  expect(screen.getByTestId('jsx-icon')).toBeInTheDocument();
-});
+  it('renders JSX element icon', () => {
+    render(
+      <Button icon={<span data-testid="jsx-icon">Icon</span>} text="Button" />,
+    );
+    expect(screen.getByTestId('jsx-icon')).toBeInTheDocument();
+  });
 
-it('hides icon when loading', () => {
-  const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg data-testid="test-icon" {...props}>
-      <circle cx="12" cy="12" r="10" />
-    </svg>
-  );
-  render(
-    <Button icon={IconComponent} isLoading>
-      Search
-    </Button>,
-  );
-  expect(screen.queryByTestId('test-icon')).not.toBeVisible();
-});
+  it('hides icon when loading', () => {
+    const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
+      <svg data-testid="test-icon" {...props}>
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+    );
+    render(<Button icon={IconComponent} isLoading text="Search" />);
+    expect(screen.queryByTestId('test-icon')).not.toBeVisible();
+  });
 
-it('renders both content and icon component', () => {
-  const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg data-testid="test-icon" {...props}>
-      <circle cx="12" cy="12" r="10" />
-    </svg>
-  );
-  render(<Button icon={IconComponent}>Confirm</Button>);
-  expect(screen.getByTestId('test-icon')).toBeInTheDocument();
-  expect(screen.getByText('Confirm')).toBeInTheDocument();
-});
+  it('renders both text and icon component', () => {
+    const IconComponent = (props: React.SVGProps<SVGSVGElement>) => (
+      <svg data-testid="test-icon" {...props}>
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+    );
+    render(<Button icon={IconComponent} text="Confirm" />);
+    expect(screen.getByTestId('test-icon')).toBeInTheDocument();
+    expect(screen.getByText('Confirm')).toBeInTheDocument();
+  });
 
   describe('Full Width', () => {
     it('applies full width class', () => {
-      render(<Button isFullWidth>Full Width</Button>);
+      render(<Button isFullWidth text="Full Width" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('fullWidth');
     });
 
     it('renders full width with other props', () => {
       render(
-        <Button color="primary" variant="outlined" isFullWidth>
-          Full Width Outlined
-        </Button>,
+        <Button color="primary" variant="outlined" isFullWidth text="Full Width Outlined" />,
       );
       const button = screen.getByRole('button');
       expect(button.className).toContain('fullWidth');
@@ -286,9 +252,8 @@ it('renders both content and icon component', () => {
           id="test-button"
           data-testid="custom-button"
           aria-label="Custom Button"
-        >
-          Button
-        </Button>,
+          text="Button"
+        />,
       );
       const button = screen.getByTestId('custom-button');
       expect(button).toHaveAttribute('id', 'test-button');
@@ -296,14 +261,14 @@ it('renders both content and icon component', () => {
     });
 
     it('has type button by default', () => {
-      render(<Button>Button</Button>);
+      render(<Button text="Button" />);
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('type', 'button');
     });
 
     it('calls onClick handler', async () => {
       const handleClick = vi.fn();
-      render(<Button onClick={handleClick}>Click</Button>);
+      render(<Button onClick={handleClick} text="Click" />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
       expect(handleClick).toHaveBeenCalledTimes(1);
@@ -313,14 +278,14 @@ it('renders both content and icon component', () => {
   describe('Ref Forwarding', () => {
     it('forwards ref correctly', () => {
       const ref = React.createRef<HTMLButtonElement>();
-      render(<Button ref={ref}>Button</Button>);
+      render(<Button ref={ref} text="Button" />);
       expect(ref.current).toBeInstanceOf(HTMLButtonElement);
-      expect(ref.current?.textContent).toBe('Button');
+      expect(ref.current?.textContent?.trim()).toBe('Button');
     });
 
     it('allows ref to be used for DOM operations', () => {
       const ref = React.createRef<HTMLButtonElement>();
-      render(<Button ref={ref}>Button</Button>);
+      render(<Button ref={ref} text="Button" />);
       expect(ref.current?.style).toBeDefined();
     });
   });
@@ -329,7 +294,7 @@ it('renders both content and icon component', () => {
     it('responds to Enter key', async () => {
       const handleClick = vi.fn();
       const user = userEvent.setup();
-      render(<Button onClick={handleClick}>Button</Button>);
+      render(<Button onClick={handleClick} text="Button" />);
       const button = screen.getByRole('button');
       button.focus();
       await user.keyboard('{Enter}');
@@ -339,7 +304,7 @@ it('renders both content and icon component', () => {
     it('responds to Space key', async () => {
       const handleClick = vi.fn();
       const user = userEvent.setup();
-      render(<Button onClick={handleClick}>Button</Button>);
+      render(<Button onClick={handleClick} text="Button" />);
       const button = screen.getByRole('button');
       button.focus();
       await user.keyboard(' ');
@@ -348,14 +313,14 @@ it('renders both content and icon component', () => {
 
     it('is keyboard focusable', async () => {
       const user = userEvent.setup();
-      render(<Button>Focusable</Button>);
+      render(<Button text="Focusable" />);
       const button = screen.getByRole('button');
       button.focus();
       expect(button).toHaveFocus();
     });
 
     it('disabled button is not focusable', () => {
-      render(<Button isDisabled>Disabled</Button>);
+      render(<Button isDisabled text="Disabled" />);
       const button = screen.getByRole('button');
       button.focus();
       expect(button).not.toHaveFocus();
@@ -364,7 +329,7 @@ it('renders both content and icon component', () => {
 
   describe('Custom Classes', () => {
     it('merges custom className prop', () => {
-      render(<Button className="custom-class">Button</Button>);
+      render(<Button className="custom-class" text="Button" />);
       const button = screen.getByRole('button');
       expect(button.className).toContain('custom-class');
     });
@@ -376,9 +341,8 @@ it('renders both content and icon component', () => {
           variant="contained"
           size="large"
           className="custom-class"
-        >
-          Button
-        </Button>,
+          text="Button"
+        />,
       );
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-primary');
@@ -402,9 +366,7 @@ it('renders both content and icon component', () => {
       colors.forEach((color) => {
         variants.forEach((variant) => {
           const { unmount } = render(
-            <Button color={color} variant={variant}>
-              {color}-{variant}
-            </Button>,
+            <Button color={color} variant={variant} text={`${color}-${variant}`} />,
           );
           const button = screen.getByRole('button');
           expect(button.className).toContain(`color-${color}`);
@@ -421,9 +383,7 @@ it('renders both content and icon component', () => {
       sizes.forEach((size) => {
         variants.forEach((variant) => {
           const { unmount } = render(
-            <Button size={size} variant={variant}>
-              {size}-{variant}
-            </Button>,
+            <Button size={size} variant={variant} text={`${size}-${variant}`} />,
           );
           const button = screen.getByRole('button');
           expect(button.className).toContain(`size-${size}`);
@@ -446,9 +406,8 @@ it('renders both content and icon component', () => {
           size="large"
           icon={IconComponent}
           iconPosition="left"
-        >
-          Delete
-        </Button>,
+          text="Delete"
+        />,
       );
       const button = screen.getByRole('button');
       expect(button.className).toContain('color-danger');

@@ -1,6 +1,7 @@
 declare const classNames: {
   readonly button: string;
   readonly content: string;
+  readonly buttonLabel: string;
   readonly icon: string;
   readonly colorPrimary: string;
   readonly colorSecondary: string;

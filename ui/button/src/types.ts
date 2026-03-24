@@ -8,7 +8,8 @@ export type ButtonSize = 'small' | 'medium' | 'large';
 
 export type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement> & { className?: string }>;
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+  text: React.ReactNode;
   color?: ButtonColor;
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -17,5 +18,4 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   isFullWidth?: boolean;
   icon?: IconComponent | React.ReactNode;
   iconPosition?: 'left' | 'right';
-  children: React.ReactNode;
 }

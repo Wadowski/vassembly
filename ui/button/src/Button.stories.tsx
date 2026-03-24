@@ -77,6 +77,10 @@ const meta: Meta<typeof Button> = {
       options: ['left', 'right'],
       description: 'Position of the icon',
     },
+    text: {
+      control: 'text',
+      description: 'Label rendered with Text (required)',
+    },
   },
 };
 
@@ -89,7 +93,7 @@ export const ContainedPrimary: Story = {
     color: 'primary',
     variant: 'contained',
     size: 'medium',
-    children: 'Contained Primary',
+    text: 'Contained Primary',
   },
 };
 
@@ -98,7 +102,7 @@ export const ContainedSecondary: Story = {
     color: 'secondary',
     variant: 'contained',
     size: 'medium',
-    children: 'Contained Secondary',
+    text: 'Contained Secondary',
   },
 };
 
@@ -107,7 +111,7 @@ export const ContainedTertiary: Story = {
     color: 'tertiary',
     variant: 'contained',
     size: 'medium',
-    children: 'Contained Tertiary',
+    text: 'Contained Tertiary',
   },
 };
 
@@ -116,7 +120,7 @@ export const ContainedDanger: Story = {
     color: 'danger',
     variant: 'contained',
     size: 'medium',
-    children: 'Contained Danger',
+    text: 'Contained Danger',
   },
 };
 
@@ -126,7 +130,7 @@ export const OutlinedPrimary: Story = {
     color: 'primary',
     variant: 'outlined',
     size: 'medium',
-    children: 'Outlined Primary',
+    text: 'Outlined Primary',
   },
 };
 
@@ -135,7 +139,7 @@ export const OutlinedSecondary: Story = {
     color: 'secondary',
     variant: 'outlined',
     size: 'medium',
-    children: 'Outlined Secondary',
+    text: 'Outlined Secondary',
   },
 };
 
@@ -144,7 +148,7 @@ export const OutlinedTertiary: Story = {
     color: 'tertiary',
     variant: 'outlined',
     size: 'medium',
-    children: 'Outlined Tertiary',
+    text: 'Outlined Tertiary',
   },
 };
 
@@ -153,7 +157,7 @@ export const OutlinedDanger: Story = {
     color: 'danger',
     variant: 'outlined',
     size: 'medium',
-    children: 'Outlined Danger',
+    text: 'Outlined Danger',
   },
 };
 
@@ -163,7 +167,7 @@ export const TextPrimary: Story = {
     color: 'primary',
     variant: 'text',
     size: 'medium',
-    children: 'Text Primary',
+    text: 'Text Primary',
   },
 };
 
@@ -172,7 +176,7 @@ export const TextSecondary: Story = {
     color: 'secondary',
     variant: 'text',
     size: 'medium',
-    children: 'Text Secondary',
+    text: 'Text Secondary',
   },
 };
 
@@ -181,7 +185,7 @@ export const TextTertiary: Story = {
     color: 'tertiary',
     variant: 'text',
     size: 'medium',
-    children: 'Text Tertiary',
+    text: 'Text Tertiary',
   },
 };
 
@@ -190,7 +194,7 @@ export const TextDanger: Story = {
     color: 'danger',
     variant: 'text',
     size: 'medium',
-    children: 'Text Danger',
+    text: 'Text Danger',
   },
 };
 
@@ -200,7 +204,7 @@ export const SmallContained: Story = {
     color: 'primary',
     variant: 'contained',
     size: 'small',
-    children: 'Small',
+    text: 'Small',
   },
 };
 
@@ -209,7 +213,7 @@ export const MediumContained: Story = {
     color: 'primary',
     variant: 'contained',
     size: 'medium',
-    children: 'Medium',
+    text: 'Medium',
   },
 };
 
@@ -218,7 +222,7 @@ export const LargeContained: Story = {
     color: 'primary',
     variant: 'contained',
     size: 'large',
-    children: 'Large',
+    text: 'Large',
   },
 };
 
@@ -228,7 +232,7 @@ export const SmallOutlined: Story = {
     color: 'primary',
     variant: 'outlined',
     size: 'small',
-    children: 'Small',
+    text: 'Small',
   },
 };
 
@@ -237,7 +241,7 @@ export const MediumOutlined: Story = {
     color: 'primary',
     variant: 'outlined',
     size: 'medium',
-    children: 'Medium',
+    text: 'Medium',
   },
 };
 
@@ -246,7 +250,7 @@ export const LargeOutlined: Story = {
     color: 'primary',
     variant: 'outlined',
     size: 'large',
-    children: 'Large',
+    text: 'Large',
   },
 };
 
@@ -256,7 +260,7 @@ export const SmallText: Story = {
     color: 'primary',
     variant: 'text',
     size: 'small',
-    children: 'Small',
+    text: 'Small',
   },
 };
 
@@ -265,7 +269,7 @@ export const MediumText: Story = {
     color: 'primary',
     variant: 'text',
     size: 'medium',
-    children: 'Medium',
+    text: 'Medium',
   },
 };
 
@@ -274,7 +278,7 @@ export const LargeText: Story = {
     color: 'primary',
     variant: 'text',
     size: 'large',
-    children: 'Large',
+    text: 'Large',
   },
 };
 
@@ -285,7 +289,7 @@ export const Disabled: Story = {
     variant: 'contained',
     size: 'medium',
     isDisabled: true,
-    children: 'Disabled Button',
+    text: 'Disabled Button',
   },
 };
 
@@ -295,7 +299,7 @@ export const Loading: Story = {
     variant: 'contained',
     size: 'medium',
     isLoading: true,
-    children: 'Loading Button',
+    text: 'Loading Button',
   },
 };
 
@@ -305,7 +309,7 @@ export const DisabledOutlined: Story = {
     variant: 'outlined',
     size: 'medium',
     isDisabled: true,
-    children: 'Disabled Outlined',
+    text: 'Disabled Outlined',
   },
 };
 
@@ -315,7 +319,7 @@ export const LoadingOutlined: Story = {
     variant: 'outlined',
     size: 'medium',
     isLoading: true,
-    children: 'Loading Outlined',
+    text: 'Loading Outlined',
   },
 };
 
@@ -325,7 +329,7 @@ export const DisabledText: Story = {
     variant: 'text',
     size: 'medium',
     isDisabled: true,
-    children: 'Disabled Text',
+    text: 'Disabled Text',
   },
 };
 
@@ -335,7 +339,7 @@ export const LoadingText: Story = {
     variant: 'text',
     size: 'medium',
     isLoading: true,
-    children: 'Loading Text',
+    text: 'Loading Text',
   },
 };
 
@@ -347,7 +351,7 @@ export const WithIconLeft: Story = {
     size: 'medium',
     icon: SearchIcon,
     iconPosition: 'left',
-    children: 'Search',
+    text: 'Search',
   },
 };
 
@@ -358,7 +362,7 @@ export const WithIconRight: Story = {
     size: 'medium',
     icon: ArrowIcon,
     iconPosition: 'right',
-    children: 'Next',
+    text: 'Next',
   },
 };
 
@@ -369,7 +373,7 @@ export const WithIconOutlined: Story = {
     size: 'medium',
     icon: CheckIcon,
     iconPosition: 'left',
-    children: 'Confirm',
+    text: 'Confirm',
   },
 };
 
@@ -380,7 +384,7 @@ export const WithIconText: Story = {
     size: 'medium',
     icon: CloseIcon,
     iconPosition: 'left',
-    children: 'Close',
+    text: 'Close',
   },
 };
 
@@ -391,7 +395,7 @@ export const FullWidth: Story = {
     variant: 'contained',
     size: 'medium',
     isFullWidth: true,
-    children: 'Full Width Button',
+    text: 'Full Width Button',
   },
 };
 
@@ -401,7 +405,7 @@ export const FullWidthOutlined: Story = {
     variant: 'outlined',
     size: 'medium',
     isFullWidth: true,
-    children: 'Full Width Outlined',
+    text: 'Full Width Outlined',
   },
 };
 
@@ -411,7 +415,7 @@ export const FullWidthText: Story = {
     variant: 'text',
     size: 'medium',
     isFullWidth: true,
-    children: 'Full Width Text',
+    text: 'Full Width Text',
   },
 };
 
@@ -419,18 +423,10 @@ export const FullWidthText: Story = {
 export const AllColorsContained: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-      <Button color="primary" variant="contained" size="medium">
-        Primary
-      </Button>
-      <Button color="secondary" variant="contained" size="medium">
-        Secondary
-      </Button>
-      <Button color="tertiary" variant="contained" size="medium">
-        Tertiary
-      </Button>
-      <Button color="danger" variant="contained" size="medium">
-        Danger
-      </Button>
+      <Button color="primary" variant="contained" size="medium" text="Primary" />
+      <Button color="secondary" variant="contained" size="medium" text="Secondary" />
+      <Button color="tertiary" variant="contained" size="medium" text="Tertiary" />
+      <Button color="danger" variant="contained" size="medium" text="Danger" />
     </div>
   ),
 };
@@ -438,18 +434,10 @@ export const AllColorsContained: Story = {
 export const AllColorsOutlined: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-      <Button color="primary" variant="outlined" size="medium">
-        Primary
-      </Button>
-      <Button color="secondary" variant="outlined" size="medium">
-        Secondary
-      </Button>
-      <Button color="tertiary" variant="outlined" size="medium">
-        Tertiary
-      </Button>
-      <Button color="danger" variant="outlined" size="medium">
-        Danger
-      </Button>
+      <Button color="primary" variant="outlined" size="medium" text="Primary" />
+      <Button color="secondary" variant="outlined" size="medium" text="Secondary" />
+      <Button color="tertiary" variant="outlined" size="medium" text="Tertiary" />
+      <Button color="danger" variant="outlined" size="medium" text="Danger" />
     </div>
   ),
 };
@@ -457,18 +445,10 @@ export const AllColorsOutlined: Story = {
 export const AllColorsText: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-      <Button color="primary" variant="text" size="medium">
-        Primary
-      </Button>
-      <Button color="secondary" variant="text" size="medium">
-        Secondary
-      </Button>
-      <Button color="tertiary" variant="text" size="medium">
-        Tertiary
-      </Button>
-      <Button color="danger" variant="text" size="medium">
-        Danger
-      </Button>
+      <Button color="primary" variant="text" size="medium" text="Primary" />
+      <Button color="secondary" variant="text" size="medium" text="Secondary" />
+      <Button color="tertiary" variant="text" size="medium" text="Tertiary" />
+      <Button color="danger" variant="text" size="medium" text="Danger" />
     </div>
   ),
 };
@@ -480,52 +460,28 @@ export const AllVariantsShowcase: Story = {
       <div>
         <h3>Contained</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <Button color="primary" variant="contained" size="medium">
-            Primary
-          </Button>
-          <Button color="secondary" variant="contained" size="medium">
-            Secondary
-          </Button>
-          <Button color="tertiary" variant="contained" size="medium">
-            Tertiary
-          </Button>
-          <Button color="danger" variant="contained" size="medium">
-            Danger
-          </Button>
+          <Button color="primary" variant="contained" size="medium" text="Primary" />
+          <Button color="secondary" variant="contained" size="medium" text="Secondary" />
+          <Button color="tertiary" variant="contained" size="medium" text="Tertiary" />
+          <Button color="danger" variant="contained" size="medium" text="Danger" />
         </div>
       </div>
       <div>
         <h3>Outlined</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <Button color="primary" variant="outlined" size="medium">
-            Primary
-          </Button>
-          <Button color="secondary" variant="outlined" size="medium">
-            Secondary
-          </Button>
-          <Button color="tertiary" variant="outlined" size="medium">
-            Tertiary
-          </Button>
-          <Button color="danger" variant="outlined" size="medium">
-            Danger
-          </Button>
+          <Button color="primary" variant="outlined" size="medium" text="Primary" />
+          <Button color="secondary" variant="outlined" size="medium" text="Secondary" />
+          <Button color="tertiary" variant="outlined" size="medium" text="Tertiary" />
+          <Button color="danger" variant="outlined" size="medium" text="Danger" />
         </div>
       </div>
       <div>
         <h3>Text</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <Button color="primary" variant="text" size="medium">
-            Primary
-          </Button>
-          <Button color="secondary" variant="text" size="medium">
-            Secondary
-          </Button>
-          <Button color="tertiary" variant="text" size="medium">
-            Tertiary
-          </Button>
-          <Button color="danger" variant="text" size="medium">
-            Danger
-          </Button>
+          <Button color="primary" variant="text" size="medium" text="Primary" />
+          <Button color="secondary" variant="text" size="medium" text="Secondary" />
+          <Button color="tertiary" variant="text" size="medium" text="Tertiary" />
+          <Button color="danger" variant="text" size="medium" text="Danger" />
         </div>
       </div>
     </div>
@@ -536,15 +492,9 @@ export const AllVariantsShowcase: Story = {
 export const Accessibility: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <Button color="primary" variant="contained" size="medium">
-        Press Tab to navigate
-      </Button>
-      <Button color="primary" variant="outlined" size="medium">
-        Press Enter or Space to activate
-      </Button>
-      <Button color="primary" variant="text" size="medium" isDisabled>
-        Disabled - not focusable
-      </Button>
+      <Button color="primary" variant="contained" size="medium" text="Press Tab to navigate" />
+      <Button color="primary" variant="outlined" size="medium" text="Press Enter or Space to activate" />
+      <Button color="primary" variant="text" size="medium" isDisabled text="Disabled - not focusable" />
     </div>
   ),
 };
@@ -555,42 +505,26 @@ export const IconShowcase: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div>
         <h3>Icon Left</h3>
-        <Button color="primary" variant="contained" icon={SearchIcon} iconPosition="left">
-          Search
-        </Button>
+        <Button color="primary" variant="contained" icon={SearchIcon} iconPosition="left" text="Search" />
       </div>
       <div>
         <h3>Icon Right</h3>
-        <Button color="primary" variant="contained" icon={ArrowIcon} iconPosition="right">
-          Next
-        </Button>
+        <Button color="primary" variant="contained" icon={ArrowIcon} iconPosition="right" text="Next" />
       </div>
       <div>
         <h3>Icon in Different Variants</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <Button color="primary" variant="contained" icon={CheckIcon} iconPosition="left">
-            Confirm
-          </Button>
-          <Button color="primary" variant="outlined" icon={CheckIcon} iconPosition="left">
-            Confirm
-          </Button>
-          <Button color="primary" variant="text" icon={CheckIcon} iconPosition="left">
-            Confirm
-          </Button>
+          <Button color="primary" variant="contained" icon={CheckIcon} iconPosition="left" text="Confirm" />
+          <Button color="primary" variant="outlined" icon={CheckIcon} iconPosition="left" text="Confirm" />
+          <Button color="primary" variant="text" icon={CheckIcon} iconPosition="left" text="Confirm" />
         </div>
       </div>
       <div>
         <h3>Icon with Different Colors</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <Button color="primary" variant="contained" icon={DeleteIcon} iconPosition="left">
-            Delete
-          </Button>
-          <Button color="secondary" variant="outlined" icon={DeleteIcon} iconPosition="left">
-            Delete
-          </Button>
-          <Button color="danger" variant="contained" icon={DeleteIcon} iconPosition="left">
-            Delete
-          </Button>
+          <Button color="primary" variant="contained" icon={DeleteIcon} iconPosition="left" text="Delete" />
+          <Button color="secondary" variant="outlined" icon={DeleteIcon} iconPosition="left" text="Delete" />
+          <Button color="danger" variant="contained" icon={DeleteIcon} iconPosition="left" text="Delete" />
         </div>
       </div>
     </div>
@@ -607,6 +541,6 @@ export const Playground: Story = {
     isLoading: false,
     isFullWidth: false,
     iconPosition: 'left',
-    children: 'Interactive Button',
+    text: 'Interactive Button',
   },
 };

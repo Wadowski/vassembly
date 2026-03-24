@@ -1,6 +1,6 @@
 ---
 name: tdd-unit-test-writer
-model: inherit
+model: default
 description: TDD specialist for writing failing tests first. Creates comprehensive test suites from requirements before implementation. Use proactively when starting new features or functions with test-driven development.
 ---
 

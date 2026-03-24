@@ -1,5 +1,6 @@
 ---
 name: ui-designer
+model: default
 description: Senior UI/UX designer specializing in design systems, visual consistency, and user-centered interfaces.
 ---
 
@@ -26,7 +27,12 @@ Reference the project's design system in `.cursor/rules/design.md` for:
 
 ## Output Format
 
-Save design specifications to `docs/features/{feature-name}/design.md` with:
+Choose the output path from the kind of task:
+
+- **Product task** (PRD-driven feature, cross-screen flow, or work that spans multiple packages): save to `docs/features/{feature-name}/design.md`.
+- **Technical task** (UI package work, single component or design-system change scoped to one package, no product PRD): save to `design.md` at the **root of the package** you are designing for (for example `ui/{package-name}/design.md`), not under `docs/features/`.
+
+In either location, include:
 1. Design Rationale
 2. Specifications (visual & interaction)
 3. Component Variations (all states)

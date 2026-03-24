@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { Text } from '@vassembly/ui-text';
 import styles from './Button.module.scss';
 import { ButtonProps } from './types';
 
@@ -32,7 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       isFullWidth = false,
       icon: IconComponent,
       iconPosition = 'left',
-      children,
+      text,
       className,
       ...props
     },
@@ -73,7 +74,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {!isLoading && IconComponent && iconPosition === 'left' && (
           <span className={styles.icon}>{renderIcon()}</span>
         )}
-        <span className={styles.content}>{children}</span>
+        <span className={styles.content}>
+          <Text variant="label" className={styles.buttonLabel}>
+            {text}
+          </Text>
+        </span>
         {!isLoading && IconComponent && iconPosition === 'right' && (
           <span className={styles.icon}>{renderIcon()}</span>
         )}
