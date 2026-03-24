@@ -38,7 +38,7 @@ const DeleteIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 const meta: Meta<typeof Button> = {
-  title: 'Components/Button',
+  title: 'System Design/Button',
   component: Button,
   parameters: {
     layout: 'centered',

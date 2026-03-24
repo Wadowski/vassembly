@@ -2,7 +2,7 @@
 alwaysApply: true
 ---
 
-# Delegate Long-Context Tasks to Subagents
+# Delegate Tasks to Subagents
  
  ## Core Principle
  
@@ -26,15 +26,17 @@ alwaysApply: true
  
  Before spawning a generic subagent, review the available subagent_type options and pick the best fit:
  
- - explore — codebase exploration, file search, understanding structure
- - shell — running commands (tests, installs, builds, git ops)
- - code-reviewer / agent-code-reviewer — reviewing code quality
- - agent-researcher — auditing legacy code, migration prep
- - code-tester — generating or running unit tests
- - security-auditor — security analysis
- - agent-coder — implementing features from a task list
- - agent-planner — breaking down large tasks into plans
- - Other specialized types as listed in the Task tool
+- explore — codebase exploration, file search, understanding structure
+- shell — running commands (tests, installs, builds, git ops)
+- code-reviewer — expert code review for quality, security, and maintainability
+- architect — transforms PRDs into implementation plans, maximizing code reuse
+- business-analyst — product discovery, requirements gathering, and research; hands off to product-manager when done
+- coder — writes production code from architect designs and test requirements
+- documentation-writer — maintains package READMEs after code changes
+- product-manager — translates feature descriptions into PRDs for engineers and QA
+- project-manager — orchestrates the full implementation workflow across all agents
+- tdd-unit-test-writer — writes failing tests first before implementation
+- ui-designer — design systems, visual consistency, and user-centered interfaces
  
  ### 2. Fall back to generalPurpose when no specialist fits
  

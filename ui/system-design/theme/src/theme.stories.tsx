@@ -100,7 +100,7 @@ const typography = {
 };
 
 export default {
-  title: 'Design Tokens',
+  title: 'System Design/Theme',
   parameters: {
     layout: 'fullscreen',
     docs: {
