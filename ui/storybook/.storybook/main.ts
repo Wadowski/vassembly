@@ -11,15 +11,12 @@ function getAbsolutePath(value: string) {
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const uiPath = resolve(__dirname, '../../../ui');
-const themePath = resolve(__dirname, '../../theme');
-const themeTokensPath = resolve(__dirname, '../../theme/src/tokens');
+const uiPath = resolve(__dirname, '../..');
+const themeTokensPath = resolve(__dirname, '../../system-design/theme/src/tokens');
+const themePackagePath = resolve(__dirname, '../../system-design/theme');
 
 const config: StorybookConfig = {
-  stories: [
-    `${uiPath}/**/*.stories.@(js|jsx|mjs|ts|tsx)`,
-    `${themePath}/**/*.stories.@(js|jsx|mjs|ts|tsx)`,
-  ],
+  stories: [`${uiPath}/**/src/**/*.stories.@(js|jsx|mjs|ts|tsx)`],
   addons: [
     getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
     getAbsolutePath('@storybook/addon-a11y'),
@@ -30,7 +27,7 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = config.resolve.alias || {};
 
-    config.resolve.alias['@vassembly/theme'] = resolve(__dirname, '../../theme');
+    config.resolve.alias['@vassembly/theme'] = themePackagePath;
 
     config.module = config.module || {};
     config.module.rules = config.module.rules || [];
