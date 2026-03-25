@@ -1,7 +1,7 @@
 {
-  "name": "@vassembly/ui-text-field",
+  "name": "@vassembly/ui-switch",
   "version": "0.0.1",
-  "description": "TextField UI component for Vassembly design system",
+  "description": "Switch UI component for Vassembly design system",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
@@ -32,7 +32,7 @@
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"
   },
-  "keywords": ["text-field", "input", "ui", "component"],
+  "keywords": ["switch", "toggle", "ui", "component"],
   "author": "",
   "license": "MIT"
 }

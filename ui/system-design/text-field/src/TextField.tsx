@@ -1,6 +1,7 @@
 import { forwardRef, useId } from 'react';
 import type React from 'react';
 import { Text } from '@vassembly/ui-text';
+import { className as uiClassName } from '@vassembly/ui-utils';
 import styles from './TextField.module.scss';
 import type { TextFieldProps } from './types';
 
@@ -58,11 +59,9 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const hasSupportingText = !!helperText || !!errorMessage;
     const displayedSupportingText = errorMessage ?? helperText;
 
-    const wrapperClassName = [styles.wrapper, isFullWidth && styles.isFullWidth, className]
-      .filter(Boolean)
-      .join(' ');
+    const wrapperClassName = uiClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
 
-    const inputWrapperClassName = [
+    const inputWrapperClassName = uiClassName(
       styles.inputWrapper,
       VARIANT_MAP[variant],
       SIZE_MAP[size],
@@ -70,9 +69,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       isSuccess && !hasError && styles.stateSuccess,
       isDisabled && styles.isDisabled,
       isReadOnly && styles.isReadOnly,
-    ]
-      .filter(Boolean)
-      .join(' ');
+    );
 
     const sharedInputProps = {
       ...props,
@@ -81,7 +78,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       readOnly: isReadOnly,
       'aria-invalid': hasError ? (true as const) : undefined,
       'aria-describedby': hasSupportingText ? supportingTextId : undefined,
-      className: [styles.input, isMultiline && styles.inputMultiline].filter(Boolean).join(' '),
+      className: uiClassName(styles.input, isMultiline && styles.inputMultiline),
     };
 
     return (

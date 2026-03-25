@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { Text } from '@vassembly/ui-text';
+import { className as uiClassName } from '@vassembly/ui-utils';
 import styles from './Button.module.scss';
 import { ButtonProps } from './types';
 
@@ -41,7 +42,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const isButtonDisabled = isDisabled || isLoading;
 
-    const buttonClassName = [
+    const buttonClassName = uiClassName(
       styles.button,
       COLOR_MAP[color],
       VARIANT_MAP[variant],
@@ -50,9 +51,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       isLoading && styles.loading,
       isFullWidth && styles.fullWidth,
       className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+    );
 
     const renderIcon = () => {
       if (!IconComponent) return null;

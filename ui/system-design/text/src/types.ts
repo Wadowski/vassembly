@@ -5,5 +5,6 @@ export type TextVariant = 'h1' | 'h2' | 'h3' | 'body1' | 'body2' | 'label' | 'ca
 export interface TextProps extends HTMLAttributes<HTMLElement> {
   variant?: TextVariant;
   as?: ElementType;
+  htmlFor?: string;
   children: ReactNode;
 }
