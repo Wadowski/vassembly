@@ -73,6 +73,7 @@ export const Dropdown = ({
           aria-controls={listboxId}
           aria-activedescendant={activeDescendantId}
           aria-haspopup="listbox"
+          textVariant="body1"
           text={
             showPlaceholder ? (
               <span className={styles.placeholderText}>{placeholder}</span>

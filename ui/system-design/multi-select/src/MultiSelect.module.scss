@@ -1,0 +1,89 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  position: relative;
+  width: 200px;
+
+  &.isFullWidth {
+    width: 100%;
+  }
+}
+
+.label {
+  color: $color-text-secondary;
+}
+
+.triggerWrap {
+  position: relative;
+}
+
+.placeholderText {
+  color: $color-text-tertiary;
+}
+
+.chevron {
+  transition: transform 0.15s ease-in-out;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.list {
+  list-style: none;
+  margin: $spacing-1 0 0;
+  padding: $spacing-1 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: $z-index-dropdown;
+  max-height: 16rem;
+  overflow-y: auto;
+  background: $color-surface-container-high;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-input;
+  box-shadow: $shadow-md;
+}
+
+.option {
+  margin: 0;
+  padding: $spacing-2 $spacing-3;
+  cursor: pointer;
+  color: $color-text-primary;
+  font-family: $font-family-body;
+  font-size: $font-size-body-md;
+  line-height: $line-height-normal;
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+
+  &:hover,
+  &.isHighlighted {
+    background: $color-surface-container;
+  }
+
+  &.isSelected {
+    font-weight: $font-weight-medium;
+  }
+
+  &.isDisabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.optionContent {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  width: 100%;
+}
+
+.selectAllDivider {
+  border-bottom: 1px solid $color-outline;
+  margin-bottom: $spacing-1;
+  padding-bottom: $spacing-2;
+}

@@ -35,6 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       icon: IconComponent,
       iconPosition = 'left',
       text,
+      textVariant = 'label',
       className,
       ...props
     },
@@ -74,7 +75,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           <span className={styles.icon}>{renderIcon()}</span>
         )}
         <span className={styles.content}>
-          <Text variant="label" className={styles.buttonLabel}>
+          <Text variant={textVariant} as="span" className={styles.buttonLabel}>
             {text}
           </Text>
         </span>

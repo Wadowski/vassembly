@@ -1,4 +1,5 @@
 import type React from 'react';
+import { Text } from '@vassembly/ui-text';
 import { className as uiClassName } from '@vassembly/ui-utils';
 import styles from './Dropdown.module.scss';
 import type { DropdownOptionsListProps } from './types';
@@ -38,7 +39,9 @@ export const DropdownOptionsList = ({
               onSelectValue(option.value);
             }}
           >
-            {option.label}
+            <Text variant="body1" as="span">
+              {option.label}
+            </Text>
           </li>
         );
       })}

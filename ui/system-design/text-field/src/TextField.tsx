@@ -92,7 +92,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           {leadingIcon && (
             <span className={styles.leadingIcon}>{renderIcon(leadingIcon)}</span>
           )}
-          {prefixText && <span className={styles.prefixText}>{prefixText}</span>}
+          {prefixText && (
+            <Text variant="body1" as="span" className={styles.prefixText}>
+              {prefixText}
+            </Text>
+          )}
           {isMultiline ? (
             <textarea
               ref={ref as unknown as React.Ref<HTMLTextAreaElement>}
@@ -102,7 +106,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           ) : (
             <input ref={ref} type="text" {...sharedInputProps} />
           )}
-          {suffixText && <span className={styles.suffixText}>{suffixText}</span>}
+          {suffixText && (
+            <Text variant="body1" as="span" className={styles.suffixText}>
+              {suffixText}
+            </Text>
+          )}
           {trailingIcon && (
             <span className={styles.trailingIcon}>{renderIcon(trailingIcon)}</span>
           )}

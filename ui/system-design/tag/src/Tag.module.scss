@@ -1,0 +1,106 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: $spacing-2;
+  border-radius: $border-radius-pill;
+  border: 1px solid $color-outline;
+  background-color: $color-surface-container;
+  color: $color-text-primary;
+  font-family: $font-family-body;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+  border-radius: $border-radius-pill;
+  transition: background-color 0.15s;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+}
+
+.removeIcon {
+  display: block;
+  line-height: 1;
+}
+
+.stateDefault {
+  background-color: $color-surface-container;
+  border-color: $color-outline;
+  color: $color-text-primary;
+}
+
+.statePrimary {
+  background-color: $color-primary-container;
+  border-color: rgba($color-primary-600, 0.35);
+  color: $color-primary-600;
+}
+
+.stateSuccess {
+  background-color: $color-success-container;
+  border-color: rgba($color-success-500, 0.35);
+  color: $color-success-500;
+}
+
+.stateWarning {
+  background-color: $color-warning-container;
+  border-color: rgba($color-warning-500, 0.35);
+  color: $color-warning-500;
+}
+
+.stateError {
+  background-color: $color-error-container;
+  border-color: rgba($color-error-500, 0.35);
+  color: $color-error-500;
+}
+
+.sizeSmall {
+  padding: $spacing-1 $spacing-2;
+  font-size: $font-size-label-sm;
+
+  .removeIcon {
+    font-size: 0.875rem;
+  }
+}
+
+.sizeMedium {
+  padding: $spacing-1 $spacing-3;
+  font-size: $font-size-label-md;
+
+  .removeIcon {
+    font-size: 0.9375rem;
+  }
+}
+
+.sizeLarge {
+  padding: $spacing-2 $spacing-4;
+  font-size: $font-size-label-lg;
+
+  .removeIcon {
+    font-size: 1rem;
+  }
+}
+

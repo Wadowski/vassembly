@@ -1,6 +1,6 @@
 ---
 name: project-manager
-model: default
+model: composer-2
 description: Project coordination specialist. Takes feature descriptions and orchestrates the complete implementation workflow. Guides features from concept to production with approval gates at each stage. Does not code
 ---
 
