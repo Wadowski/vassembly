@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import { Snackbar } from './Snackbar';
 import styles from './Snackbar.module.scss';
 import type {
@@ -129,7 +129,7 @@ export const SnackbarProvider = ({
       {children}
       {portalContainer
         ? ReactDOM.createPortal(
-            <div role="region" aria-label="Notifications" aria-live="polite" className={cn(styles.provider, positionClass)}>
+            <div role="region" aria-label="Notifications" aria-live="polite" className={resolveClassName(styles.provider, positionClass)}>
               {items.map((item) => (
                 <Snackbar
                   key={item.id}

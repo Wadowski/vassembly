@@ -1,6 +1,6 @@
 import { forwardRef, useId } from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './RadioButton.module.scss';
 import type { RadioButtonProps } from './types';
 
@@ -57,7 +57,7 @@ export const RadioButton = forwardRef<HTMLDivElement, RadioButtonProps>(
     return (
       <div
         ref={ref}
-        className={cn(styles.wrapper, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly)}
+        className={resolveClassName(styles.wrapper, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly)}
       >
         <div className={styles.radioRow}>
           {labelPosition === 'left' && labelEl}
@@ -70,7 +70,7 @@ export const RadioButton = forwardRef<HTMLDivElement, RadioButtonProps>(
             aria-required={isRequired ? true : undefined}
             disabled={isDisabled}
             onClick={handleToggle}
-            className={cn(
+            className={resolveClassName(
               styles.circle,
               sizeClass,
               checked && styles.isChecked,

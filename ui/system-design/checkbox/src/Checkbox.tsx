@@ -1,13 +1,34 @@
-import { forwardRef, useId } from 'react';
+import { forwardRef, useId, type ReactElement } from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Checkbox.module.scss';
-import type { CheckboxProps, CheckboxChecked } from './types';
+import type { CheckboxProps, CheckboxChecked, CheckboxLabelProps } from './types';
 
 const SIZE_MAP = {
   small: styles.sizeSmall,
   medium: styles.sizeMedium,
   large: styles.sizeLarge,
+};
+
+const CheckboxLabel = ({
+  label,
+  labelId,
+  isRequired,
+  onClick,
+}: CheckboxLabelProps): ReactElement | null => {
+  if (!label) {
+    return null;
+  }
+  return (
+    <Text variant="label" as="span" id={labelId} className={styles.label} onClick={onClick}>
+      {label}
+      {isRequired && (
+        <Text variant="caption" as="span" aria-hidden="true">
+          {' *'}
+        </Text>
+      )}
+    </Text>
+  );
 };
 
 export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
@@ -46,24 +67,15 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
       onCheckedChange(next);
     };
 
-    const labelEl = label ? (
-      <Text variant="label" as="span" id={labelId} className={styles.label} onClick={handleToggle}>
-        {label}
-        {isRequired && (
-          <Text variant="caption" as="span" aria-hidden="true">
-            {' *'}
-          </Text>
-        )}
-      </Text>
-    ) : null;
-
     return (
       <div
         ref={ref}
-        className={cn(styles.wrapper, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly)}
+        className={resolveClassName(styles.wrapper, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly)}
       >
         <div className={styles.checkboxRow}>
-          {labelPosition === 'left' && labelEl}
+          {labelPosition === 'left' && (
+            <CheckboxLabel label={label} labelId={labelId} isRequired={isRequired} onClick={handleToggle} />
+          )}
           <button
             type="button"
             role="checkbox"
@@ -73,7 +85,7 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
             aria-required={isRequired ? true : undefined}
             disabled={isDisabled}
             onClick={handleToggle}
-            className={cn(
+            className={resolveClassName(
               styles.box,
               sizeClass,
               checked === true && styles.isChecked,
@@ -84,7 +96,9 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
           >
             <span className={styles.icon} aria-hidden="true" />
           </button>
-          {labelPosition === 'right' && labelEl}
+          {labelPosition === 'right' && (
+            <CheckboxLabel label={label} labelId={labelId} isRequired={isRequired} onClick={handleToggle} />
+          )}
         </div>
         {hasSupportingText && (
           <Text

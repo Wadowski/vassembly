@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './AnchorList.module.scss';
 import type { AnchorListProps, AnchorListItem } from './types';
 
@@ -33,14 +33,14 @@ export const AnchorList = forwardRef<HTMLElement, AnchorListProps>(
       <nav
         ref={ref}
         aria-label={ariaLabel}
-        className={cn(isDisabled && styles.isDisabled)}
+        className={resolveClassName(isDisabled && styles.isDisabled)}
       >
         <ul className={styles.list}>
           {items.map((item) => (
             <li key={item.href} className={styles.item}>
               <a
                 href={item.href}
-                className={cn(
+                className={resolveClassName(
                   styles.link,
                   sizeClass,
                   item.href === activeHref && styles.isActive,

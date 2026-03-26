@@ -1,5 +1,5 @@
 import { forwardRef, type ElementType } from 'react';
-import { className as uiClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Text.module.scss';
 import type { TextProps, TextVariant } from './types';
 
@@ -27,7 +27,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
   ({ variant = 'body1', as, className, children, ...props }, ref) => {
     const Tag = (as ?? DEFAULT_ELEMENT_MAP[variant]) as ElementType;
 
-    const textClassName = uiClassName(styles.text, VARIANT_MAP[variant], className);
+    const textClassName = resolveClassName(styles.text, VARIANT_MAP[variant], className);
 
     return (
       <Tag ref={ref} className={textClassName} {...props}>

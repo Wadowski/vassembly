@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as uiClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Button.module.scss';
 import { ButtonProps } from './types';
 
@@ -43,7 +43,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const isButtonDisabled = isDisabled || isLoading;
 
-    const buttonClassName = uiClassName(
+    const buttonClassName = resolveClassName(
       styles.button,
       COLOR_MAP[color],
       VARIANT_MAP[variant],

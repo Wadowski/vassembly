@@ -1,4 +1,4 @@
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import { AccordionItemContext } from './AccordionContext';
 import styles from './Accordion.module.scss';
 import type { AccordionItemProps } from './types';
@@ -13,7 +13,7 @@ export const AccordionItem = ({
   return (
     <AccordionItemContext.Provider value={{ disabled, value }}>
       <div
-        className={cn(styles.item, disabled ? styles.itemDisabled : undefined, className)}
+        className={resolveClassName(styles.item, disabled ? styles.itemDisabled : undefined, className)}
         {...rest}
       >
         {children}

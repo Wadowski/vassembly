@@ -41,6 +41,12 @@
   opacity: 0.4;
 }
 
+.arrowButton svg {
+  display: block;
+  width: 1.25em;
+  height: 1.25em;
+}
+
 .viewport {
   position: relative;
   flex: 1;

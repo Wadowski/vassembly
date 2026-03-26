@@ -1,6 +1,6 @@
 import { type KeyboardEvent, type TouchEvent } from 'react';
-import { Text } from '@vassembly/ui-text';
-import { className as cn } from '@vassembly/ui-utils';
+import { KeyboardArrowLeftIcon, KeyboardArrowRightIcon } from '@vassembly/ui-icons';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Carousel.module.scss';
 import type { CarouselProps } from './types';
 import { useCarousel } from './useCarousel';
@@ -81,7 +81,7 @@ export const Carousel = ({
       role="region"
       aria-label={ariaLabel}
       aria-roledescription="carousel"
-      className={cn(styles.root, className)}
+      className={resolveClassName(styles.root, className)}
       onKeyDown={handleKeyDown}
     >
       <div className={styles.row}>
@@ -93,9 +93,9 @@ export const Carousel = ({
             disabled={!canGoPrevious}
             onClick={goToPrevious}
           >
-            <Text variant="label" as="span" aria-hidden="true">
-              ‹
-            </Text>
+            <span aria-hidden="true">
+              <KeyboardArrowLeftIcon />
+            </span>
           </button>
         )}
         <div
@@ -134,9 +134,9 @@ export const Carousel = ({
             disabled={!canGoNext}
             onClick={goToNext}
           >
-            <Text variant="label" as="span" aria-hidden="true">
-              ›
-            </Text>
+            <span aria-hidden="true">
+              <KeyboardArrowRightIcon />
+            </span>
           </button>
         )}
       </div>
@@ -154,7 +154,7 @@ export const Carousel = ({
                 type="button"
                 aria-label={goToSlideLabel({ slideIndex: index, slideCount })}
                 aria-pressed={isActive}
-                className={cn(styles.dot, isActive && styles.dotActive)}
+                className={resolveClassName(styles.dot, isActive && styles.dotActive)}
                 onClick={() => goToIndex({ index })}
               />
             );

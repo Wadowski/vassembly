@@ -1,0 +1,49 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const SingleManActionsLocationIcon = ({
+  className,
+  style,
+}: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5"
+  >
+    <path
+      stroke="currentColor"
+      d="M18.75 16.187C18.5429 16.187 18.375 16.0191 18.375 15.812C18.375 15.6049 18.5429 15.437 18.75 15.437"
+    ></path>
+    <path
+      stroke="currentColor"
+      d="M18.75 16.187C18.9571 16.187 19.125 16.0191 19.125 15.812C19.125 15.6049 18.9571 15.437 18.75 15.437"
+    ></path>
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M18.75 11.312C19.9435 11.312 21.0881 11.7861 21.932 12.63C22.7759 13.4739 23.25 14.6185 23.25 15.812C23.25 17.732 20.562 21.388 19.341 22.949C19.2707 23.0386 19.181 23.1111 19.0786 23.1609C18.9762 23.2107 18.8639 23.2366 18.75 23.2366C18.6361 23.2366 18.5238 23.2107 18.4214 23.1609C18.319 23.1111 18.2293 23.0386 18.159 22.949C16.938 21.387 14.25 17.731 14.25 15.811C14.2503 14.6177 14.7245 13.4734 15.5684 12.6297C16.4123 11.786 17.5567 11.312 18.75 11.312V11.312Z"
+    ></path>
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6 6.75C7.65685 6.75 9 5.40685 9 3.75C9 2.09315 7.65685 0.75 6 0.75C4.34315 0.75 3 2.09315 3 3.75C3 5.40685 4.34315 6.75 6 6.75Z"
+    ></path>
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M11.25 13.5C11.25 12.1076 10.6969 10.7723 9.71231 9.78769C8.72774 8.80312 7.39239 8.25 6 8.25C4.60761 8.25 3.27226 8.80312 2.28769 9.78769C1.30312 10.7723 0.75 12.1076 0.75 13.5V15.75H3L3.75 23.25H8.25L9 15.75H11.25V13.5Z"
+    ></path>
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6 8.25V14.25"
+    ></path>
+  </svg>
+);

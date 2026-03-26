@@ -1,1 +1,1 @@
-export * from './className';
+export * from './resolveClassName';

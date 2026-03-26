@@ -1,9 +1,8 @@
 import { forwardRef, useLayoutEffect } from 'react';
-import type { SVGProps } from 'react';
+import { ArrowDownIcon } from '@vassembly/ui-icons';
 import { Button } from '@vassembly/ui-button';
 import { Text } from '@vassembly/ui-text';
-import { className as uiClassName } from '@vassembly/ui-utils';
-import { ChevronIcon } from './ChevronIcon';
+import { resolveClassName } from '@vassembly/ui-utils';
 import { MultiSelectOptionsList } from './MultiSelectOptionsList';
 import styles from './MultiSelect.module.scss';
 import type { MultiSelectProps } from './types';
@@ -60,7 +59,7 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
       maxDisplayLabels,
     });
 
-    const wrapperClassName = uiClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
+    const wrapperClassName = resolveClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
 
     const hasHiddenInput = name != null && name !== '';
 
@@ -124,8 +123,12 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
             size={size}
             isDisabled={isDisabled}
             isFullWidth={isFullWidth}
-            icon={(iconProps: SVGProps<SVGSVGElement> & { className?: string }) => (
-              <ChevronIcon isOpen={isOpen} {...iconProps} />
+            icon={() => (
+              <span aria-hidden="true">
+                <ArrowDownIcon
+                  className={resolveClassName(styles.chevron, isOpen && styles.chevronOpen)}
+                />
+              </span>
             )}
             iconPosition="right"
             onClick={toggleMenu}

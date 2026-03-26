@@ -1,4 +1,5 @@
-import { className as cn } from '@vassembly/ui-utils';
+import { ArrowDownIcon } from '@vassembly/ui-icons';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Accordion.module.scss';
 import type { AccordionTriggerProps } from './types';
 import { useAccordionTrigger } from './useAccordionTrigger';
@@ -20,7 +21,7 @@ export const AccordionTrigger = ({
       type="button"
       id={triggerId}
       data-accordion-trigger
-      className={cn(styles.trigger, open ? styles.triggerExpanded : undefined, className)}
+      className={resolveClassName(styles.trigger, className)}
       aria-controls={panelId}
       aria-expanded={open}
       disabled={disabled}
@@ -35,7 +36,11 @@ export const AccordionTrigger = ({
     >
       <span className={styles.triggerInner}>
         <span className={styles.triggerLabel}>{children}</span>
-        <span className={styles.chevron} aria-hidden="true" />
+        <span aria-hidden="true">
+          <ArrowDownIcon
+            className={resolveClassName(styles.chevron, open && styles.chevronOpen)}
+          />
+        </span>
       </span>
     </button>
   );

@@ -1,0 +1,55 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const SmileyDevastatedIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M0.750 12.000 A11.250 11.250 0 1 0 23.250 12.000 A11.250 11.250 0 1 0 0.750 12.000 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M6,11.2H6a1.8,1.8,0,0,0,3,0H9"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M15,11.2h0a1.8,1.8,0,0,0,3,0h0"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M15.756,18.9A.76.76,0,0,0,16.5,18a4.5,4.5,0,0,0-8.819,0,.76.76,0,0,0,.745.9A9.33,9.33,0,0,1,15.756,18.9Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M5.25,8.166a3.539,3.539,0,0,0,2.334-.291A3.542,3.542,0,0,0,9.268,6.232"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M18.834,8.166a3.689,3.689,0,0,1-4.018-1.934"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

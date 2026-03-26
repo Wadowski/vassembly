@@ -9,6 +9,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@vassembly/ui-icons": "workspace:*",
     "@vassembly/ui-text": "workspace:*",
     "@vassembly/ui-utils": "workspace:*",
     "@vassembly/theme": "workspace:*",

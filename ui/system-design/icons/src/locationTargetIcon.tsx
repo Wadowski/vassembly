@@ -1,0 +1,55 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const LocationTargetIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M9.000 12.000 A3.000 3.000 0 1 0 15.000 12.000 A3.000 3.000 0 1 0 9.000 12.000 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M4.500 12.000 A7.500 7.500 0 1 0 19.500 12.000 A7.500 7.500 0 1 0 4.500 12.000 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M12 0.75L12 4.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M0.75 12L4.5 12"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M12 23.25L12 19.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M23.25 12L19.5 12"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

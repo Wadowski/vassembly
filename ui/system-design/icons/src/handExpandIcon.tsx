@@ -1,0 +1,20 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const HandExpandIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <path
+      d="M6.94,21.53,1.63,15.64a1.82,1.82,0,0,1-.16-2.21h0a1.82,1.82,0,0,1,2.43-.55L6.75,14.6,5.26,4.11a1.83,1.83,0,0,1,1.36-2h0A1.83,1.83,0,0,1,8.86,3.5l1.36,6.77V2.48A1.72,1.72,0,0,1,12,.75h0a1.73,1.73,0,0,1,1.73,1.73v7.79L15,3.45a1.78,1.78,0,0,1,2.18-1.38h0a1.79,1.79,0,0,1,1.32,2.08l-1.4,7,2.65-5.29a1.59,1.59,0,0,1,2.32-.62h0a1.58,1.58,0,0,1,.6,1.93l-2.6,6.52a5.1,5.1,0,0,0-.37,1.93v2.46a5.19,5.19,0,0,1-2.08,4.15h0a5.16,5.16,0,0,1-3.12,1H10.8A5.17,5.17,0,0,1,6.94,21.53Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

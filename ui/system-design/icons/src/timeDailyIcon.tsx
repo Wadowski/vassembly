@@ -1,0 +1,73 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const TimeDailyIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <title>time-daily-1</title>
+    <path
+      d="M10.5,13h.75a.75.75,0,0,1,.75.75V19"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <line
+      x1="10.5"
+      y1="19"
+      x2="13.5"
+      y2="19"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <rect
+      x="0.75"
+      y="3.75"
+      width="22.5"
+      height="19.5"
+      rx="1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></rect>
+    <line
+      x1="0.75"
+      y1="9.75"
+      x2="23.25"
+      y2="9.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <line
+      x1="6.75"
+      y1="6"
+      x2="6.75"
+      y2="0.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <line
+      x1="17.25"
+      y1="6"
+      x2="17.25"
+      y2="0.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+  </svg>
+);

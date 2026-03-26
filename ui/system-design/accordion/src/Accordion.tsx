@@ -1,4 +1,4 @@
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import { AccordionRootContext } from './AccordionContext';
 import styles from './Accordion.module.scss';
 import type { AccordionProps, AccordionVariant } from './types';
@@ -29,7 +29,7 @@ export const Accordion = ({
     <AccordionRootContext.Provider value={contextValue}>
       <div
         ref={contextValue.rootRef}
-        className={cn(styles.root, variantClassName, className)}
+        className={resolveClassName(styles.root, variantClassName, className)}
         {...divProps}
       >
         {children}

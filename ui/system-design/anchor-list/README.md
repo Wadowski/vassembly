@@ -19,7 +19,7 @@ Item shape for the `items` prop.
 Visual size variants (`'small' | 'medium' | 'large'`).
 
 ## Dependencies
-- `@vassembly/ui-utils`: Used for `className` composition (`cn`).
+- `@vassembly/ui-utils`: Used for `resolveClassName` when merging classes.
 - `@vassembly/theme`: Design-system styling tokens used by the component styles.
 - `react`: Component runtime.
 - `react-dom`: React DOM runtime.

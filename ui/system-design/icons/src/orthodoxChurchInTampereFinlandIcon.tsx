@@ -1,0 +1,151 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const OrthodoxChurchInTampereFinlandIcon = ({
+  className,
+  style,
+}: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <title>orthodox-church-in-tampere-finland</title>
+    <polyline
+      points="10.5 13.203 10.5 9.703 19.5 9.703 19.5 13.203"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polyline>
+    <polyline
+      points="1 16.203 1 9.703 6 9.703 6 16.203"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polyline>
+    <polyline
+      points="15.071 13.203 20.5 13.203 23 16.203"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polyline>
+    <polyline
+      points="6 16.203 6 13.203 13.929 13.203"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polyline>
+    <polygon
+      points="10.5 9.703 11.5 6.804 18.5 6.804 19.5 9.703 10.5 9.703"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polygon>
+    <path
+      d="M5.251,2.743c0,1.075-.784,1.46-1.751,1.46s-1.751-.385-1.751-1.46S2.624,1.284,3.5.8C4.376,1.284,5.251,1.668,5.251,2.743Z"
+      fill="#ffffff"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <polyline
+      points="10.5 16.203 6 16.203 3.5 13.703 1 16.203 1 23.203 23 23.203 23 16.203 18.5 16.203"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polyline>
+    <line
+      x1="6"
+      y1="16.203"
+      x2="6"
+      y2="23.203"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></line>
+    <polygon
+      points="1 9.703 2.5 4.203 4.5 4.203 6 9.703 1 9.703"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polygon>
+    <line
+      x1="12"
+      y1="6.804"
+      x2="12"
+      y2="4.804"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></line>
+    <line
+      x1="12"
+      y1="1.601"
+      x2="12"
+      y2="2.101"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></line>
+    <line
+      x1="15"
+      y1="6.804"
+      x2="15"
+      y2="4.804"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></line>
+    <line
+      x1="15"
+      y1="1.601"
+      x2="15"
+      y2="2.101"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></line>
+    <line
+      x1="18"
+      y1="6.804"
+      x2="18"
+      y2="4.804"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></line>
+    <line
+      x1="18"
+      y1="1.601"
+      x2="18"
+      y2="2.101"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></line>
+    <polygon
+      points="14.5 12.703 10.5 16.203 10.5 23.203 18.5 23.203 18.5 16.203 14.5 12.703"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    ></polygon>
+  </svg>
+);

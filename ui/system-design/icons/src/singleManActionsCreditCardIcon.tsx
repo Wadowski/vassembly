@@ -1,0 +1,77 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const SingleManActionsCreditCardIcon = ({
+  className,
+  style,
+}: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    id="Regular"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <title>single-man-actions-credit-card</title>
+    <rect
+      x="11.25"
+      y="14.25"
+      width="12"
+      height="9"
+      rx="1.5"
+      ry="1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></rect>
+    <line
+      x1="11.25"
+      y1="17.25"
+      x2="23.25"
+      y2="17.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <line
+      x1="17.25"
+      y1="20.25"
+      x2="20.25"
+      y2="20.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <circle
+      cx="6"
+      cy="3.75"
+      r="3"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></circle>
+    <path
+      d="M10.555,10.888A5.251,5.251,0,0,0,.75,13.5v2.25H3l.75,7.5h4.5l.323-3.233"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <line
+      x1="6"
+      y1="8.25"
+      x2="6"
+      y2="14.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+  </svg>
+);

@@ -1,0 +1,31 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const LoginKeyIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <g>
+      <path
+        d="M12.82,14.51,15.36,12l1.76.47A1.56,1.56,0,0,0,18.63,12,1.58,1.58,0,0,0,19,10.51l-.47-1.75L19.35,8l1.76.47A1.56,1.56,0,0,0,22.62,8,1.58,1.58,0,0,0,23,6.52l-.47-1.75a2.35,2.35,0,0,0-3.33-3.33L9.49,11.18a6.29,6.29,0,1,0,3.33,3.33Z"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <circle
+        cx="6.16"
+        cy="17.84"
+        r="1.9"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></circle>
+    </g>
+  </svg>
+);

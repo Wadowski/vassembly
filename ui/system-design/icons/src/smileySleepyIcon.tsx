@@ -1,0 +1,62 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const SmileySleepyIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <title>smiley-sleepy</title>
+    <path
+      d="M22.176,7.2a11.239,11.239,0,1,1-5.743-5.54"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M6,11.2H6a1.8,1.8,0,0,0,3,0H9"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M15,11.2h0a1.8,1.8,0,0,0,3,0h0"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <rect
+      x="10.5"
+      y="15.75"
+      width="3"
+      height="4.5"
+      rx="1.5"
+      ry="1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></rect>
+    <polyline
+      points="20.25 0.75 23.25 0.75 20.25 3.75 23.25 3.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></polyline>
+    <polyline
+      points="14.25 5.25 17.25 5.25 14.25 8.25 17.25 8.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></polyline>
+  </svg>
+);

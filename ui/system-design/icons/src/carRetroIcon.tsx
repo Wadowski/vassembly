@@ -1,0 +1,48 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const CarRetroIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M15.750 17.000 A1.500 1.500 0 1 0 18.750 17.000 A1.500 1.500 0 1 0 15.750 17.000 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M3.750 17.000 A1.500 1.500 0 1 0 6.750 17.000 A1.500 1.500 0 1 0 3.750 17.000 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M15.75 17L6.75 17"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M3.75,17H2.25a1.5,1.5,0,0,1-1.5-1.5V14a3,3,0,0,1,3-3L5.585,7.329A1.5,1.5,0,0,1,6.927,6.5h7.9a1.5,1.5,0,0,1,1.342.829L18,11h2.25a3,3,0,0,1,3,3v1.5a1.5,1.5,0,0,1-1.5,1.5h-3"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M18 11L3.75 11"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

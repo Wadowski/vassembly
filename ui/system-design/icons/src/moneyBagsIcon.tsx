@@ -1,0 +1,62 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const MoneyBagsIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M14.045,7.988C16.091,9.4,18.75,12.8,18.75,15.863c0,3.107-3.361,5.625-6.75,5.625S5.25,18.97,5.25,15.863C5.25,12.8,7.909,9.4,9.955,7.988L8.4,4.281a.9.9,0,0,1,.416-1.27,10.2,10.2,0,0,1,6.363,0A.9.9,0,0,1,15.6,4.281Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M9.955 7.988L14.045 7.988"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M4.5,20.738c-3,0-3.75-3-3.75-5.114A7.512,7.512,0,0,1,4.33,9.488L3.066,7.665a.75.75,0,0,1,.616-1.177H6"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M10.329,17.332a2.225,2.225,0,0,0,1.858.876c1.139,0,2.063-.693,2.063-1.548s-.924-1.546-2.063-1.546-2.062-.693-2.062-1.548.924-1.547,2.062-1.547a2.221,2.221,0,0,1,1.858.875"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M12.187 18.208L12.187 19.238"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M12.187 10.988L12.187 12.019"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M19.5,20.738c3,0,3.75-3,3.75-5.114a7.512,7.512,0,0,0-3.58-6.136l1.264-1.823a.75.75,0,0,0-.616-1.177H18"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

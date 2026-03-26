@@ -16,3 +16,10 @@ export interface CheckboxProps {
   isReadOnly?: boolean;
   isRequired?: boolean;
 }
+
+export interface CheckboxLabelProps {
+  label?: string;
+  labelId: string;
+  isRequired: boolean;
+  onClick: () => void;
+}

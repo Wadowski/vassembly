@@ -101,9 +101,16 @@
 }
 
 .dismissIcon {
-  font-size: 1.125rem;
-  line-height: 1;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+
+  svg {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
 }
 
 .variantInfo {

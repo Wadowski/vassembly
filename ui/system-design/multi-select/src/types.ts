@@ -1,4 +1,4 @@
-import type { Dispatch, KeyboardEvent, MutableRefObject, SetStateAction, SVGProps } from 'react';
+import type { Dispatch, KeyboardEvent, MutableRefObject, SetStateAction } from 'react';
 
 export type MultiSelectOption = {
   value: string;
@@ -25,11 +25,6 @@ export type MultiSelectProps = {
   maxDisplayLabels?: number;
 };
 
-export type ChevronIconProps = SVGProps<SVGSVGElement> & {
-  className?: string;
-  isOpen: boolean;
-};
-
 export type MultiSelectOptionsListProps = {
   listboxId: string;
   label?: string;
@@ -45,6 +40,17 @@ export type MultiSelectOptionsListProps = {
   onHighlightIndexChange: (index: number) => void;
   onToggleValue: (value: string) => void;
   onToggleAll: () => void;
+};
+
+export type MultiSelectOptionsListItemProps = {
+  option: MultiSelectOption;
+  optionIndex: number;
+  flatIndex: number;
+  highlightedIndex: number;
+  isSelected: boolean;
+  getOptionDomId: (index: number) => string;
+  onHighlightIndexChange: (index: number) => void;
+  onToggleValue: (value: string) => void;
 };
 
 export type UseMultiSelectArgs = {

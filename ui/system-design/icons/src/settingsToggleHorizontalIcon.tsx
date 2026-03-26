@@ -1,0 +1,54 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const SettingsToggleHorizontalIcon = ({
+  className,
+  style,
+}: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <g>
+      <path
+        d="M18.5,10.25H5.5A4.77,4.77,0,0,1,.75,5.5h0A4.77,4.77,0,0,1,5.5.75h13A4.77,4.77,0,0,1,23.25,5.5h0A4.77,4.77,0,0,1,18.5,10.25Z"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill-rule="evenodd"
+      ></path>
+      <circle
+        cx="5.75"
+        cy="5.5"
+        r="2"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></circle>
+      <g>
+        <path
+          d="M5.5,23.25h13a4.77,4.77,0,0,0,4.75-4.75h0a4.77,4.77,0,0,0-4.75-4.75H5.5A4.77,4.77,0,0,0,.75,18.5h0A4.77,4.77,0,0,0,5.5,23.25Z"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill-rule="evenodd"
+        ></path>
+        <circle
+          cx="18.25"
+          cy="18.5"
+          r="2"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></circle>
+      </g>
+    </g>
+  </svg>
+);

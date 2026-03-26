@@ -1,6 +1,6 @@
 import type React from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as uiClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Dropdown.module.scss';
 import type { DropdownOptionsListProps } from './types';
 
@@ -17,7 +17,7 @@ export const DropdownOptionsList = ({
   return (
     <ul id={listboxId} role="listbox" className={styles.list} aria-label={label}>
       {options.map((option, index) => {
-        const optionClassName = uiClassName(
+        const optionClassName = resolveClassName(
           styles.option,
           index === highlightedIndex && styles.isHighlighted,
           option.value === selectedValue && styles.isSelected,

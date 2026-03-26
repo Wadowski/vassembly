@@ -1,0 +1,34 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const PinLocationIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M9.000 7.500 A3.000 3.000 0 1 0 15.000 7.500 A3.000 3.000 0 1 0 9.000 7.500 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M12,.75A6.75,6.75,0,0,1,18.75,7.5c0,3.251-5.132,10.527-6.446,12.337a.377.377,0,0,1-.608,0C10.382,18.027,5.25,10.751,5.25,7.5A6.75,6.75,0,0,1,12,.75Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M17.979,17.784c2.732.541,4.521,1.444,4.521,2.466,0,1.657-4.7,3-10.5,3s-10.5-1.343-10.5-3c0-1.02,1.781-1.921,4.5-2.463"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

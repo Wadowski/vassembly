@@ -1,5 +1,6 @@
 declare const styles: {
   readonly chevron: string;
+  readonly chevronOpen: string;
   readonly item: string;
   readonly itemDisabled: string;
   readonly panel: string;
@@ -8,7 +9,6 @@ declare const styles: {
   readonly panelRegion: string;
   readonly root: string;
   readonly trigger: string;
-  readonly triggerExpanded: string;
   readonly triggerInner: string;
   readonly triggerLabel: string;
   readonly variantBordered: string;

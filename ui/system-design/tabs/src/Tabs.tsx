@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Tabs.module.scss';
 import type { TabsProps } from './types';
 import { useTabs } from './useTabs';
@@ -15,7 +15,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>((props, ref) => {
   });
 
   return (
-    <div ref={ref} className={cn(styles.wrapper, className)} role="tablist" aria-orientation="horizontal">
+    <div ref={ref} className={resolveClassName(styles.wrapper, className)} role="tablist" aria-orientation="horizontal">
       {items.map((item, index) => {
         const isSelected = item.value === resolvedActiveTab;
         const isDisabled = Boolean(item.isDisabled);
@@ -29,7 +29,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>((props, ref) => {
             aria-disabled={isDisabled ? 'true' : undefined}
             disabled={isDisabled}
             tabIndex={isSelected ? 0 : -1}
-            className={cn(styles.tabButton, isSelected && styles.isActive, isDisabled && styles.isDisabled)}
+            className={resolveClassName(styles.tabButton, isSelected && styles.isActive, isDisabled && styles.isDisabled)}
             onClick={() => selectTab({ value: item.value, index })}
             onKeyDown={(event) => handleKeyDown({ event, index, value: item.value })}
           >

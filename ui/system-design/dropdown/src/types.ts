@@ -20,11 +20,6 @@ export type DropdownProps = {
   name?: string;
 };
 
-export type ChevronIconProps = React.SVGProps<SVGSVGElement> & {
-  className?: string;
-  isOpen: boolean;
-};
-
 export type DropdownOptionsListProps = {
   listboxId: string;
   label?: string;

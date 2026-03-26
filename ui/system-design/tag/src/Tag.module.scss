@@ -43,8 +43,16 @@
 }
 
 .removeIcon {
-  display: block;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+
+  svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+  }
 }
 
 .stateDefault {

@@ -1,7 +1,7 @@
 import { useId, useRef } from 'react';
 import type { KeyboardEvent, ReactElement } from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import { RadioButton } from './RadioButton';
 import styles from './RadioButtonGroup.module.scss';
 import type { RadioButtonGroupProps, RadioButtonVariant } from './types';
@@ -94,7 +94,7 @@ export const RadioButtonGroup = ({
       aria-labelledby={label ? labelId : undefined}
       aria-describedby={hasSupportingText ? supportingTextId : undefined}
       aria-required={isRequired ? true : undefined}
-      className={cn(styles.group, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly)}
+      className={resolveClassName(styles.group, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly)}
     >
       {label ? (
         <Text variant="label" as="span" id={labelId} className={styles.groupLabel}>
@@ -108,7 +108,7 @@ export const RadioButtonGroup = ({
       ) : null}
       <div
         ref={groupRef}
-        className={cn(
+        className={resolveClassName(
           styles.optionsList,
           direction === 'horizontal' ? styles.horizontal : styles.vertical,
         )}

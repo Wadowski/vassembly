@@ -1,0 +1,78 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const SendEmailFlyIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <title>send-email-fly</title>
+    <rect
+      x="5.25"
+      y="0.75"
+      width="13.5"
+      height="10.5"
+      rx="1.5"
+      ry="1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></rect>
+    <polyline
+      points="5.25 2.25 12 6 18.75 2.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></polyline>
+    <path
+      d="M18.75,3,23.25.75c0,8.25-4.5,7.5-4.5,7.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M5.25,3,.75.75c0,8.25,4.5,7.5,4.5,7.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <line
+      x1="12"
+      y1="15.75"
+      x2="12"
+      y2="23.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <line
+      x1="15.75"
+      y1="14.25"
+      x2="15.75"
+      y2="18.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <line
+      x1="8.25"
+      y1="14.25"
+      x2="8.25"
+      y2="18.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+  </svg>
+);

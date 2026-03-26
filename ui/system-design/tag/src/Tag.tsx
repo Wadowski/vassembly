@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
+import { CloseIcon } from '@vassembly/ui-icons';
 import { Text } from '@vassembly/ui-text';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Tag.module.scss';
 import type { TagProps, TagSize, TagVariant } from './types';
 
@@ -42,7 +43,7 @@ export const Tag = ({
   };
 
   return (
-    <span className={cn(styles.tag, variantClassName, sizeClassName, className)} {...rest}>
+    <span className={resolveClassName(styles.tag, variantClassName, sizeClassName, className)} {...rest}>
       {icon && (
         <span className={styles.icon} aria-hidden="true">
           {renderIcon(icon)}
@@ -58,9 +59,9 @@ export const Tag = ({
           aria-label={removeLabel}
           onClick={handleRemove}
         >
-          <Text variant="caption" as="span" className={styles.removeIcon} aria-hidden="true">
-            x
-          </Text>
+          <span className={styles.removeIcon} aria-hidden="true">
+            <CloseIcon />
+          </span>
         </button>
       )}
     </span>

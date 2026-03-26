@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vassembly/theme": "workspace:*",
+    "@vassembly/ui-icons": "workspace:*",
     "@vassembly/ui-utils": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"

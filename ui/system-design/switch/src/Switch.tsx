@@ -1,6 +1,6 @@
 import { forwardRef, useId } from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as uiClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Switch.module.scss';
 import type { SwitchProps } from './types';
 
@@ -37,9 +37,9 @@ export const Switch = forwardRef<HTMLDivElement, SwitchProps>(
     const hasSupportingText = !!helperText || !!errorMessage;
     const displayedSupportingText = errorMessage ?? helperText;
 
-    const wrapperClassName = uiClassName(styles.wrapper, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly, className);
+    const wrapperClassName = resolveClassName(styles.wrapper, isDisabled && styles.isDisabled, isReadOnly && styles.isReadOnly, className);
 
-    const trackClassName = uiClassName(
+    const trackClassName = resolveClassName(
       styles.track,
       SIZE_MAP[size],
       isChecked && styles.isChecked,

@@ -1,7 +1,7 @@
 import { forwardRef, useId } from 'react';
 import type React from 'react';
 import { Text } from '@vassembly/ui-text';
-import { className as uiClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './TextField.module.scss';
 import type { TextFieldProps } from './types';
 
@@ -59,9 +59,9 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const hasSupportingText = !!helperText || !!errorMessage;
     const displayedSupportingText = errorMessage ?? helperText;
 
-    const wrapperClassName = uiClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
+    const wrapperClassName = resolveClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
 
-    const inputWrapperClassName = uiClassName(
+    const inputWrapperClassName = resolveClassName(
       styles.inputWrapper,
       VARIANT_MAP[variant],
       SIZE_MAP[size],
@@ -78,7 +78,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       readOnly: isReadOnly,
       'aria-invalid': hasError ? (true as const) : undefined,
       'aria-describedby': hasSupportingText ? supportingTextId : undefined,
-      className: uiClassName(styles.input, isMultiline && styles.inputMultiline),
+      className: resolveClassName(styles.input, isMultiline && styles.inputMultiline),
     };
 
     return (

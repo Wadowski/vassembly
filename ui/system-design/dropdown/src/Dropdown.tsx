@@ -1,8 +1,7 @@
-import type React from 'react';
+import { ArrowDownIcon } from '@vassembly/ui-icons';
 import { Button } from '@vassembly/ui-button';
 import { Text } from '@vassembly/ui-text';
-import { className as uiClassName } from '@vassembly/ui-utils';
-import { ChevronIcon } from './ChevronIcon';
+import { resolveClassName } from '@vassembly/ui-utils';
 import { DropdownOptionsList } from './DropdownOptionsList';
 import { useDropdown } from './useDropdown';
 import styles from './Dropdown.module.scss';
@@ -50,7 +49,7 @@ export const Dropdown = ({
     name,
   });
 
-  const wrapperClassName = uiClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
+  const wrapperClassName = resolveClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
 
   return (
     <div ref={rootRef} className={wrapperClassName}>
@@ -86,8 +85,12 @@ export const Dropdown = ({
           size={size}
           isDisabled={isDisabled}
           isFullWidth={isFullWidth}
-          icon={(iconProps: React.SVGProps<SVGSVGElement> & { className?: string }) => (
-            <ChevronIcon isOpen={isOpen} {...iconProps} />
+          icon={() => (
+            <span aria-hidden="true">
+              <ArrowDownIcon
+                className={resolveClassName(styles.chevron, isOpen && styles.chevronOpen)}
+              />
+            </span>
           )}
           iconPosition="right"
           onClick={toggleMenu}

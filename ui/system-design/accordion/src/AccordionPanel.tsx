@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { className as cn } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-utils';
 import { useAccordionItem, useAccordionRoot } from './AccordionContext';
 import styles from './Accordion.module.scss';
 import type { AccordionPanelProps } from './types';
@@ -30,7 +30,7 @@ export const AccordionPanel = ({
 
   return (
     <div
-      className={cn(styles.panel, open ? styles.panelOpen : undefined, className)}
+      className={resolveClassName(styles.panel, open ? styles.panelOpen : undefined, className)}
       data-expanded={open}
       {...rest}
     >
