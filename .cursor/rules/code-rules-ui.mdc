@@ -11,6 +11,9 @@ alwaysApply: false
 - className must be resolved before added to DOM
 - split component into single responsibility.
 - more smaller components are better then one big component
+- any text in component use Text component
+- any complex className must be resolved usign function in ui-utils
+- Use scss files
 
 ## File split (required)
 

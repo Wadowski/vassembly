@@ -16,6 +16,11 @@ description: General coding standards and best practices for the project
 - When a function has more than one argument, use an object of arguments instead of positional parameters
 - Always destructure typed object parameters
 
+## Conditional logic
+
+- use map object instead of switch case
+- do not overuse ternary operation
+
 ## Naming Conventions
 
 - Use **camelCase** for variables, functions, and methods
@@ -74,11 +79,7 @@ description: General coding standards and best practices for the project
 - Organize related functionality into directories with clear structure
 - Use index files to export public API
 - Colocate tests next to implementation files with `.test.ts` suffix
-- Each file should be no longer than 150 lines. If longer split it
-
-## Styling
-
-- Use scss files
+- Each file should be no longer than 100 lines. If longer split it
 
 ## Comments and Documentation
 
