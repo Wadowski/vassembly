@@ -70,10 +70,11 @@ description: General coding standards and best practices for the project
 
 ## File Organization
 
-- Keep files focused and single-purpose
+- Keep files focused and single-purpose (single responsibility per file)
 - Organize related functionality into directories with clear structure
 - Use index files to export public API
 - Colocate tests next to implementation files with `.test.ts` suffix
+- Each file should be no longer than 150 lines. If longer split it
 
 ## Styling
 
@@ -81,5 +82,4 @@ description: General coding standards and best practices for the project
 
 ## Comments and Documentation
 
-- Write self-documenting code; do not add any comments
-- do not write comments
+- Write self-documenting code; do not write comments

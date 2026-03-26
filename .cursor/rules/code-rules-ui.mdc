@@ -1,10 +1,16 @@
 ---
 description: UI component structure (types/component/scss/stories) + hook-driven logic
-globs: "{ui,apps}/**/src/**/*.{ts,tsx,scss}"
+globs: "{ui,apps}/**/src/**/*.{ts,tsx
 alwaysApply: false
 ---
-
 # UI code structure and responsibilities
+
+## UI Code rules
+
+- event handlers must be created before rendering. Do not add it inline in DOM
+- className must be resolved before added to DOM
+- split component into single responsibility.
+- more smaller components are better then one big component
 
 ## File split (required)
 
@@ -32,6 +38,10 @@ alwaysApply: false
 
 ## Composition and subcomponents (required)
 
+- Component is considered as subcomponent if it's:
+  - list
+  - item in list
+  - dom tree deeper then 3 layers
 - If a component is composed of multiple meaningful parts, create subcomponents:
   - extract each part into its own `*.tsx` (and `*.module.scss` if needed)
   - subcomponents should also be render-focused; shared logic stays in hooks
