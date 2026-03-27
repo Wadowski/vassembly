@@ -1,0 +1,179 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.root {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  flex-direction: column;
+  gap: $spacing-1;
+}
+
+.item {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-2 $spacing-3;
+  border: none;
+  background: transparent;
+  color: $color-text-primary;
+  text-decoration: none;
+  text-align: left;
+  font-family: $font-family-body;
+  font-size: $font-size-body-md;
+  line-height: $line-height-normal;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+}
+
+.itemIcon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  color: currentColor;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.itemLabel {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.itemTrailing {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.itemSuffix {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  max-width: 8rem;
+  color: $color-text-secondary;
+  font-size: $font-size-label-sm;
+
+  svg {
+    display: block;
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.selected {
+  background-color: rgba($color-primary-600, 0.12);
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+}
+
+.submenuTrigger {
+  justify-content: flex-start;
+}
+
+.chevron {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  color: $color-text-secondary;
+  transition: transform 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.submenuPanel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.submenuPanelOpen {
+  grid-template-rows: 1fr;
+}
+
+.submenuPanelInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.submenuNested {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  padding: $spacing-1 0 $spacing-1 $spacing-3;
+  margin-top: $spacing-1;
+  border-radius: $border-radius-sm;
+  transition: background-color 0.25s ease;
+}
+
+.submenuNestedOpen {
+  background-color: rgba($color-surface-container-high, 0.85);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.groupTitle {
+  padding: $spacing-2 $spacing-3 $spacing-1;
+}
+
+.divider {
+  width: 100%;
+  margin: $spacing-1 0;
+  border: 0;
+  border-top: 1px solid $color-outline;
+}
+
+.dividerInset {
+  margin-left: $spacing-3;
+  width: calc(100% - #{$spacing-3});
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submenuPanel,
+  .chevron {
+    transition: none;
+  }
+
+  .submenuNested {
+    transition: none;
+  }
+}
