@@ -1,0 +1,34 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const ScrollHorizontalIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M9.000 12.088 A3.000 3.000 0 1 0 15.000 12.088 A3.000 3.000 0 1 0 9.000 12.088 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M1.026,11.459a.854.854,0,0,0,0,1.257l3.118,2.858a.66.66,0,0,0,1.106-.486v-6A.66.66,0,0,0,4.144,8.6Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M22.973,12.716a.852.852,0,0,0,0-1.257L19.856,8.6a.66.66,0,0,0-1.106.487v6a.659.659,0,0,0,1.105.486Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

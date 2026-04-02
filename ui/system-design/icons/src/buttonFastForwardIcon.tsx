@@ -1,0 +1,31 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const ButtonFastForwardIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <g>
+      <circle
+        cx="12"
+        cy="12"
+        r="11.25"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></circle>
+      <path
+        d="M14.72,8a1.64,1.64,0,0,0-1.13-.46A1.59,1.59,0,0,0,12,9.09V10.5L9.47,8A1.64,1.64,0,0,0,8.34,7.5,1.59,1.59,0,0,0,6.75,9.09v5.82A1.59,1.59,0,0,0,8.34,16.5,1.61,1.61,0,0,0,9.47,16L12,13.5v1.41a1.59,1.59,0,0,0,1.59,1.59A1.61,1.61,0,0,0,14.72,16L18,12.71a1,1,0,0,0,0-1.42Z"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+    </g>
+  </svg>
+);

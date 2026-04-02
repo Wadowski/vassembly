@@ -1,0 +1,63 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const PicturePolaroidLandscapeIcon = ({
+  className,
+  style,
+}: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <title>picture-polaroid-landscape</title>
+    <rect
+      x="0.75"
+      y="0.75"
+      width="15"
+      height="16.5"
+      rx="0.75"
+      ry="0.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></rect>
+    <line
+      x1="15.75"
+      y1="12.75"
+      x2="0.75"
+      y2="12.75"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <path
+      d="M18.755,6.231l3.982,1.327a.75.75,0,0,1,.474.949l-4.743,14.23a.75.75,0,0,1-.949.474L6.755,19.623"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M5.25,12.75,9.4,6.818A1.5,1.5,0,0,1,11.76,6.69l3.99,4.56"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <circle
+      cx="5.063"
+      cy="5.063"
+      r="1.688"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></circle>
+  </svg>
+);

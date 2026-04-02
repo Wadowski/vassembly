@@ -1,0 +1,82 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const ReceiptSlipIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <g>
+      <line
+        x1="6"
+        y1="8"
+        x2="12"
+        y2="8"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></line>
+      <line
+        x1="6"
+        y1="12"
+        x2="12"
+        y2="12"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></line>
+      <line
+        x1="6"
+        y1="16"
+        x2="12"
+        y2="16"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></line>
+      <line
+        x1="16.5"
+        y1="8"
+        x2="18"
+        y2="8"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></line>
+      <line
+        x1="16.5"
+        y1="12"
+        x2="18"
+        y2="12"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></line>
+      <line
+        x1="16.5"
+        y1="16"
+        x2="18"
+        y2="16"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></line>
+      <polygon
+        points="21 0.75 18 3.75 15 0.75 12 3.75 9 0.75 6 3.75 3 0.75 3 23.25 6 20.25 9 23.25 12 20.25 15 23.25 18 20.25 21 23.25 21 0.75"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></polygon>
+    </g>
+  </svg>
+);

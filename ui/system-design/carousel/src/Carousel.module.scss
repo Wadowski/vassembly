@@ -1,0 +1,100 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  width: 100%;
+  max-width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: $spacing-2;
+}
+
+.arrowButton {
+  appearance: none;
+  flex-shrink: 0;
+  align-self: center;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-sm;
+  background: $color-surface;
+  color: $color-text-primary;
+  padding: $spacing-2 $spacing-3;
+  cursor: pointer;
+  font-family: $font-family-body;
+  font-size: $font-size-body-md;
+  line-height: $line-height-normal;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.arrowButton:focus-visible {
+  outline: none;
+  box-shadow: $shadow-focus-ring;
+}
+
+.arrowButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.arrowButton svg {
+  display: block;
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.viewport {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.track {
+  display: flex;
+  flex-direction: row;
+  transition: transform 0.25s ease-out;
+  height: 100%;
+}
+
+.slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.dots {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-2;
+}
+
+.dot {
+  appearance: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: $color-outline;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.dot:focus-visible {
+  outline: none;
+  box-shadow: $shadow-focus-ring;
+}
+
+.dotActive {
+  background: $color-primary-600;
+  transform: scale(1.15);
+}

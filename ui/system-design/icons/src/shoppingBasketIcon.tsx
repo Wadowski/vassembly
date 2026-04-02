@@ -1,0 +1,34 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const ShoppingBasketIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M18.936,20.625H5.064a1.442,1.442,0,0,1-1.383-1.136l-2.138-9A1.484,1.484,0,0,1,2.926,8.625H21.074a1.484,1.484,0,0,1,1.383,1.864l-2.138,9A1.442,1.442,0,0,1,18.936,20.625Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M4.5 8.625L9 3.375"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M19.5 8.625L15 3.375"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

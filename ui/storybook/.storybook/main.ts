@@ -1,0 +1,77 @@
+import type { StorybookConfig } from '@storybook/react-webpack5';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
+/**
+ * This function is used to resolve the absolute path of a package.
+ * It is needed in projects that use Yarn PnP or are set up within a monorepo.
+ */
+function getAbsolutePath(value: string) {
+  return dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)));
+}
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const uiPath = resolve(__dirname, '../..');
+const themeTokensPath = resolve(__dirname, '../../system-design/theme/src/tokens');
+const themePackagePath = resolve(__dirname, '../../system-design/theme');
+
+const config: StorybookConfig = {
+  stories: [`${uiPath}/**/src/**/*.stories.@(js|jsx|mjs|ts|tsx)`],
+  addons: [
+    getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
+    getAbsolutePath('@storybook/addon-a11y'),
+    getAbsolutePath('@storybook/addon-docs'),
+  ],
+  framework: getAbsolutePath('@storybook/react-webpack5'),
+  webpackFinal: (config) => {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = config.resolve.alias || {};
+
+    config.resolve.alias['@vassembly/theme'] = themePackagePath;
+
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
+
+    // Remove any existing SCSS rules to avoid conflicts
+    config.module.rules = config.module.rules.filter(
+      (rule) => !(rule instanceof Object && rule.test && rule.test.toString().includes('scss'))
+    );
+
+    const sassRule = {
+      test: /\.module\.scss$/,
+      use: [
+        {
+          loader: 'style-loader',
+          options: {
+            injectType: 'singletonStyleTag',
+          },
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            modules: {
+              namedExport: false,
+            },
+            esModule: true,
+          },
+        },
+        {
+          loader: 'sass-loader',
+          options: {
+            sourceMap: true,
+            additionalData: (content: string) => `@import '${themeTokensPath}/index.scss';\n${content}`,
+            sassOptions: {
+              includePaths: [themeTokensPath],
+            },
+          },
+        },
+      ],
+    };
+
+    config.module.rules.push(sassRule);
+
+    return config;
+  },
+};
+
+export default config;

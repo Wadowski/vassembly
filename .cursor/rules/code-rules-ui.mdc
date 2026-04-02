@@ -1,0 +1,54 @@
+---
+description: UI component structure (types/component/scss/stories) + hook-driven logic
+globs: "{ui,apps}/**/src/**/*.{ts,tsx
+alwaysApply: false
+---
+# UI code structure and responsibilities
+
+## UI Code rules
+
+- event handlers must be created before rendering. Do not add it inline in DOM
+- className must be resolved before added to DOM
+- split component into single responsibility.
+- more smaller components are better then one big component
+- any text in component use Text component
+- any complex className must be resolved usign function in ui-utils
+- Use scss files
+
+## File split (required)
+
+- Keep UI code split into distinct files:
+  - `types.ts`: types for the component/hook (props, state shape, options, return types)
+  - `<Component>.tsx`: rendering only
+  - `<Component>.module.scss`: all styles (scss modules)
+  - `<Component>.stories.tsx`: Storybook stories for all supported variants/states
+  - `<Component>.test.tsx`: tests colocated with the component when applicable
+
+## Constants (required)
+
+- If any constants are added to component:
+  - Create a `constants.ts` file and move it all there.
+- For constats are consider: static text, numbers, map objects
+
+## Component vs hook responsibilities (required)
+
+- `<Component>.tsx` must be focused on rendering:
+  - no business logic, no derived state orchestration, no side-effects
+  - keep event handlers as thin delegations to hook actions
+- If the component has logic, create a dedicated hook and use it from the component:
+  - `use<Component>.ts` holds state, derived values, effects, memoization, callbacks
+  - the hook returns a small “view model” (values + handlers) consumed by the component
+
+## Composition and subcomponents (required)
+
+- Component is considered as subcomponent if it's:
+  - list
+  - item in list
+  - dom tree deeper then 3 layers
+- If a component is composed of multiple meaningful parts, create subcomponents:
+  - extract each part into its own `*.tsx` (and `*.module.scss` if needed)
+  - subcomponents should also be render-focused; shared logic stays in hooks
+
+## Exports
+
+- Use named exports (no default exports), consistent with repo conventions.

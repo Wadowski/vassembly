@@ -1,0 +1,85 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const TechnologyContactAccessLockIcon = ({
+  className,
+  style,
+}: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <path
+      d="M23.25,9V2.25a1.5,1.5,0,0,0-1.5-1.5H2.25a1.5,1.5,0,0,0-1.5,1.5v13.5a1.5,1.5,0,0,0,1.5,1.5H10"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <circle
+      cx="7.75"
+      cy="5.866"
+      r="2.366"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></circle>
+    <path
+      d="M3.694,12.964a4.056,4.056,0,1,1,8.112,0Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <line
+      x1="14.25"
+      y1="4.5"
+      x2="18.75"
+      y2="4.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <line
+      x1="14.25"
+      y1="7.5"
+      x2="20.25"
+      y2="7.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <rect
+      x="13.75"
+      y="15.75"
+      width="9.5"
+      height="7.5"
+      rx="1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></rect>
+    <path
+      d="M15,15.771V14.25a3.5,3.5,0,0,1,7,0v1.521"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <polyline
+      points="17 19.5 18 20.5 20 18.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></polyline>
+  </svg>
+);

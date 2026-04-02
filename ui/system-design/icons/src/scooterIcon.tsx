@@ -1,0 +1,55 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const ScooterIcon = ({ className, style }: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M13.239,13.206A5.027,5.027,0,0,0,9,11.25H6.2A5.5,5.5,0,0,0,.8,15.373,1.5,1.5,0,0,0,2.251,17.25h10.5a4.5,4.5,0,0,0,4.5-4.5V5.25a3,3,0,0,0-3-3h-1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M12.75,17.25H22.5a.749.749,0,0,0,.612-.317,7.174,7.174,0,0,0,.1-2.183,3,3,0,0,0-2.829-2H17.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M20.25,8.25a1.125,1.125,0,0,1-1.8.9,3,3,0,0,1,0-4.8,1.125,1.125,0,0,1,1.8.9Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M11.25 8.25L3.75 8.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M9.75,18a3.75,3.75,0,0,1-7.5,0v-.75h7.5Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+    <path
+      d="M21.75,18a3.75,3.75,0,0,1-7.5,0v-.75h7.5Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);

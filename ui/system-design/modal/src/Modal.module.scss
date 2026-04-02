@@ -1,0 +1,141 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+$modal-liquid-ease: cubic-bezier(0.22, 1, 0.36, 1);
+$modal-ambient-shadow: 0 0 40px rgba(107, 122, 159, 0.06);
+$modal-ghost-outline: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+
+@keyframes modalOverlayEnter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalContentEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: $z-index-modal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-4;
+  pointer-events: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  animation: modalOverlayEnter 300ms $modal-liquid-ease forwards;
+  opacity: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: min(90vh, 100%);
+  overflow: hidden;
+  border-radius: 12px;
+  background: rgba(36, 36, 40, 0.85);
+  backdrop-filter: blur(20px);
+  box-shadow: $modal-ambient-shadow, $modal-ghost-outline;
+  pointer-events: auto;
+  animation: modalContentEnter 400ms $modal-liquid-ease forwards;
+  opacity: 0;
+}
+
+.contentSm {
+  max-width: 400px;
+}
+
+.contentMd {
+  max-width: 600px;
+}
+
+.contentLg {
+  max-width: 900px;
+}
+
+.header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-3;
+  padding: $spacing-4 $spacing-4 $spacing-3;
+  background-color: rgba($color-neutral-0, 0.03);
+}
+
+.headerSpacer {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-family-display;
+  font-size: $font-size-heading-sm;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: $border-radius-md;
+  background: transparent;
+  color: $color-text-secondary;
+  cursor: pointer;
+  font-family: $font-family-body;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition:
+    color 300ms $modal-liquid-ease,
+    background-color 300ms $modal-liquid-ease;
+
+  &:hover {
+    color: $color-text-primary;
+    background-color: rgba($color-primary-600, 0.12);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+}
+
+.body {
+  flex: 1;
+  padding: $spacing-4;
+  padding-top: $spacing-3;
+  overflow: auto;
+  color: $color-text-primary;
+  font-family: $font-family-body;
+}

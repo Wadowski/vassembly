@@ -3,3 +3,5 @@ packages:
   - "packages/*"
   - "domains/*"
   - "services/*"
+  - "ui/*"
+  - "ui/system-design/*"

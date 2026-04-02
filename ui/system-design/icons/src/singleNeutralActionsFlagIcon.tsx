@@ -1,0 +1,55 @@
+import React from "react";
+import { IconProps } from "./types";
+
+export const SingleNeutralActionsFlagIcon = ({
+  className,
+  style,
+}: IconProps) => (
+  <svg
+    style={style}
+    className={className}
+    id="Regular"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5px"
+  >
+    <defs></defs>
+    <title>single-neutral-actions-flag</title>
+    <rect
+      x="14.25"
+      y="12.75"
+      width="9"
+      height="6"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></rect>
+    <line
+      x1="14.25"
+      y1="12.75"
+      x2="14.25"
+      y2="23.25"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></line>
+    <circle
+      cx="6"
+      cy="3.75"
+      r="3"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></circle>
+    <path
+      d="M11.25,13.5a5.25,5.25,0,0,0-10.5,0v2.25H3l.75,7.5h4.5L9,15.75h2.25Z"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></path>
+  </svg>
+);
