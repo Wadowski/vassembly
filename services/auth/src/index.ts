@@ -1,3 +1,2 @@
-import * as handlers from "./handlers";
+export * as handlers from "./handlers";
 
-export default handlers;

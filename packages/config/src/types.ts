@@ -13,6 +13,9 @@ export interface Config {
   deepSeekAi: DeepSeekAiConfig;
   encoder: EncoderConfig;
   jwt: JwtConfig;
+  services: {
+    auth: ServiceConfig;
+  };
 }
 
 export interface AwsConfig {
@@ -55,4 +58,8 @@ export interface EncoderConfig {
 
 export interface JwtConfig {
   secret: string;
+}
+
+export interface ServiceConfig {
+  port: number;
 }

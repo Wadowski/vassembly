@@ -1,0 +1,30 @@
+{
+  "name": "@vassembly/server",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.12.2",
+    "@as-integrations/fastify": "^3.1.0",
+    "@vassembly/errors": "workspace:*",
+    "fastify": "^5.3.2",
+    "fastify-type-provider-zod": "^4.0.2",
+    "graphql": "^16.11.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.7",
+    "@vassembly/eslint-config": "workspace:*",
+    "@vassembly/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2",
+    "vitest": "^2.0.0"
+  }
+}
