@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { Field, ID } from "type-graphql";
 import { ObjectId } from "mongodb";
 import { mongoDbDocumentParamOmitDecorator, MongoDbOmit } from "./mongodb";
 import { COUNTRIES } from "@vassembly/constants";
@@ -28,16 +27,12 @@ export const MONGODB_VALUE_MAP = {
 };
 
 export abstract class Model {
-  @Field(() => ID)
   id?: string;
-
-  @Field(() => Date, { nullable: true })
+  
   createdAt?: Date;
-
-  @Field(() => Date, { nullable: true })
+  
   updatedAt?: Date;
-
-  @Field(() => Date, { nullable: true })
+  
   removedAt?: Date | null;
   
   @MongoDbOmit

@@ -17,7 +17,8 @@
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "tsx": "^4.21.0"
   },
   "dependencies": {
     "@vassembly/server": "workspace:*",
@@ -25,7 +26,7 @@
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/domain-refresh-token": "workspace:*",
-    "type-graphql": "2.0.0-rc.3",
+    "@vassembly/errors": "workspace:*",
     "zod": "^3.24.2"
   }
 }

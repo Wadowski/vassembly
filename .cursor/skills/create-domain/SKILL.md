@@ -14,7 +14,7 @@ The skill handles:
 2. Prompting for commands if not provided
 3. Prompting for queries if not provided
 4. Prompting for clients if not provided
-4. If user includes domain model fields add them to model with relevant type-graphql type decorator
+4. If user includes domain model fields add them to model
 5. Copying the domain-empty template to the domains directory
 6. Updating package.json of a coppied template with the correct domain name
 

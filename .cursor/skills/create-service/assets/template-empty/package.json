@@ -17,8 +17,5 @@
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
     "vitest": "^2.0.0"
-  },
-  "dependencies": {
-    "type-graphql": "2.0.0-rc.3"
   }
 }

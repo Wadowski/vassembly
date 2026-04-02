@@ -30,6 +30,11 @@ web: {
   jwt: {
     secret: process.env.JWT_SECRET || 'dev-jwt-secret',
   },
+  services: {
+    auth: {
+      port: 5001,
+    },
+  },
 };
 
 export default config;

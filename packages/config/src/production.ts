@@ -30,6 +30,11 @@ const config: Config = {
   jwt: {
     secret: process.env.JWT_SECRET || '',
   },
+  services: {
+    auth: {
+      port: 5001,
+    },
+  },
 };
 
 export default config;
