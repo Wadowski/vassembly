@@ -27,6 +27,7 @@
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/domain-refresh-token": "workspace:*",
     "@vassembly/errors": "workspace:*",
+    "@vassembly/graphql": "workspace:*",
     "zod": "^4.3.6"
   }
 }

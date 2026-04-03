@@ -177,6 +177,9 @@ importers:
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
+      '@vassembly/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
       '@vassembly/model':
         specifier: workspace:*
         version: link:../../packages/model
@@ -639,6 +642,34 @@ importers:
         specifier: ^8.50.0
         version: 8.57.2(eslint@9.39.4)(typescript@5.9.2)
 
+  packages/graphql:
+    dependencies:
+      '@pothos/core':
+        specifier: ^4.2.2
+        version: 4.12.0(graphql@16.13.2)
+      graphql:
+        specifier: ^16.11.0
+        version: 16.13.2
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
   packages/logger:
     dependencies:
       cli-color:
@@ -825,6 +856,9 @@ importers:
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
+      '@vassembly/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
       '@vassembly/server':
         specifier: workspace:*
         version: link:../../packages/server
@@ -5199,6 +5233,14 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@pothos/core@4.12.0(graphql@16.13.2):
+    resolution: {integrity: sha512-PeiODrj3GjQ7Nbs/5p65DEyBWZTSGGjgGO/BgaMEqS1jBNX/2zJTEQJA9zM5uPmCHUCDjE7Qn2U7lOi0ALp/8A==}
+    peerDependencies:
+      graphql: ^16.10.0
+    dependencies:
+      graphql: 16.13.2
+    dev: false
 
   /@protobufjs/aspromise@1.1.2:
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}

@@ -1,14 +1,18 @@
 {
-  "name": "@vassembly/service-empty",
+  "name": "@vassembly/graphql",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts", 
+  "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@pothos/core": "^4.2.2",
+    "graphql": "^16.11.0"
   },
   "devDependencies": {
     "@types/node": "^22.19.7",
@@ -17,9 +21,5 @@
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
     "vitest": "^2.0.0"
-  },
-  "dependencies": {
-    "@vassembly/graphql": "workspace:*",
-    "@vassembly/server": "workspace:*"
   }
 }
