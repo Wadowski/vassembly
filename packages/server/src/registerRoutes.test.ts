@@ -3,6 +3,7 @@ import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod
 import { z } from "zod";
 import { describe, expect, it } from "vitest";
 
+import { applyFrameworkErrorHandler } from "./errorHandler";
 import { registerRoutes } from "./registerRoutes";
 import type { RouteDefinition } from "./types";
 
@@ -57,21 +58,21 @@ describe("registerRoutes", () => {
     const fastify = Fastify();
     fastify.setValidatorCompiler(validatorCompiler);
     fastify.setSerializerCompiler(serializerCompiler);
+    applyFrameworkErrorHandler({ fastify });
     const routes: RouteDefinition[] = [
       {
         method: "POST",
         url: "/num",
         schema: {
-          body: z.object({}),
-          querystring: z.object({ x: z.coerce.number() }),
+          body: z.object({ n: z.number() }),
           response: z.object({ doubled: z.number() }),
         },
-        handler: async ({ query }) => ({ doubled: (query as { x: number }).x * 2 }),
+        handler: async ({ body }) => ({ doubled: (body as { n: number }).n * 2 }),
       },
     ];
 
     await registerRoutes({ fastify, routes });
-    const ok = await fastify.inject({ method: "POST", url: "/num?x=5", payload: {} });
+    const ok = await fastify.inject({ method: "POST", url: "/num", payload: { n: 5 } });
     expect(ok.statusCode).toBe(200);
     expect(ok.json()).toEqual({ doubled: 10 });
 

@@ -1,31 +1,24 @@
-import { CommonError, InternalError } from "@vassembly/errors";
 import Fastify from "fastify";
-import type { FastifyReply, FastifyRequest } from "fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 
+import { applyFrameworkErrorHandler } from "./errorHandler";
 import { setupGraphQL } from "./graphql/setup";
 import { registerRoutes } from "./registerRoutes";
+import { setupSwaggerUi } from "./swagger/setupSwaggerUi";
 import type { ServerConfig } from "./types";
-
-const errorHandler = (err: unknown, _request: FastifyRequest, reply: FastifyReply) => {
-  const error = err instanceof CommonError ? err : new InternalError("Internal Server Error");
-  
-  return reply.status(error.statusCode).send({
-    type: error.type,
-    message: error.message,
-    error: error.error,
-    });
-};
+import { logger } from "./logger";
 
 export const createServer = async (config: ServerConfig) => {
-  const fastify = Fastify();
+  const fastify = Fastify({
+    logger,
+  });
 
   fastify.setValidatorCompiler(validatorCompiler);
   fastify.setSerializerCompiler(serializerCompiler);
 
-  fastify.setErrorHandler((error, _request, reply) => {
-    return errorHandler(error, _request, reply);
-  });
+  applyFrameworkErrorHandler({ fastify });
+
+  await setupSwaggerUi({ fastify, serviceName: config.serviceName });
 
   if (config.graphql) {
     await setupGraphQL({ fastify, config: config.graphql });

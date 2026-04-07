@@ -16,6 +16,7 @@ export interface RouteDefinition {
 export interface ServerConfig {
   routes?: RouteDefinition[];
   graphql?: GraphQLConfig;
+  serviceName?: string;
 }
 
 export interface StartServerProps {
@@ -32,6 +33,10 @@ export type RegisterFn = (
 export interface RegisterRoutesProps {
   fastify: FastifyInstance;
   routes: RouteDefinition[];
+}
+
+export interface ApplyFrameworkErrorHandlerProps {
+  fastify: FastifyInstance;
 }
 
 

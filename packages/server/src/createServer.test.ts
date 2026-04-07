@@ -12,6 +12,15 @@ describe("createServer", () => {
     await app.close();
   });
 
+  it("serves Swagger UI at /docs", async () => {
+    const app = await createServer({});
+    const res = await app.inject({ method: "GET", url: "/docs" });
+
+    expect(res.statusCode).toBe(200);
+    expect(String(res.headers["content-type"])).toContain("text/html");
+    await app.close();
+  });
+
   it("registers configured routes", async () => {
     const routes: RouteDefinition[] = [
       {
