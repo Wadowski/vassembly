@@ -11,11 +11,17 @@ const getMethodRegister = ({ fastify }: { fastify: FastifyInstance }): Record<HT
 });
 
 const toFastifySchema = (schema: NonNullable<RouteDefinition["schema"]>): FastifySchema => {
-  const result: FastifySchema = {
-    body: schema.body,
-    querystring: schema.querystring,
-    response: { 200: schema.response },
-  };
+  const result: FastifySchema = {};
+
+  if (schema.body !== undefined) {
+    result.body = schema.body;
+  }
+  if (schema.querystring !== undefined) {
+    result.querystring = schema.querystring;
+  }
+  if (schema.response !== undefined) {
+    result.response = { 200: schema.response };
+  }
 
   return result;
 };

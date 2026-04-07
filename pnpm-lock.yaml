@@ -11,6 +11,9 @@ importers:
       '@types/node':
         specifier: ^25.1.0
         version: 25.5.0
+      dotenv-cli:
+        specifier: ^8.0.0
+        version: 8.0.0
       prettier:
         specifier: ^3.7.4
         version: 3.8.1
@@ -33,6 +36,9 @@ importers:
         specifier: ^19.2.0
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@next/env':
+        specifier: 16.1.0
+        version: 16.1.0
       '@types/node':
         specifier: ^22.15.3
         version: 22.19.15
@@ -70,6 +76,9 @@ importers:
         specifier: ^19.2.0
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@next/env':
+        specifier: 16.1.0
+        version: 16.1.0
       '@types/node':
         specifier: ^22.15.3
         version: 22.19.15
@@ -94,6 +103,9 @@ importers:
 
   domains/auth-token:
     dependencies:
+      '@vassembly/client-encoder':
+        specifier: workspace:*
+        version: link:../../packages/client-encoder
       '@vassembly/client-jwt':
         specifier: workspace:*
         version: link:../../packages/client-jwt
@@ -128,6 +140,9 @@ importers:
 
   domains/refresh-token:
     dependencies:
+      '@vassembly/client-encoder':
+        specifier: workspace:*
+        version: link:../../packages/client-encoder
       '@vassembly/client-mongodb':
         specifier: workspace:*
         version: link:../../packages/client-mongodb
@@ -650,6 +665,9 @@ importers:
       graphql:
         specifier: ^16.11.0
         version: 16.13.2
+      graphql-scalars:
+        specifier: ^1.25.0
+        version: 1.25.0(graphql@16.13.2)
     devDependencies:
       '@types/node':
         specifier: ^22.19.7
@@ -4979,7 +4997,6 @@ packages:
 
   /@next/env@16.1.0:
     resolution: {integrity: sha512-Dd23XQeFHmhf3KBW76leYVkejHlCdB7erakC2At2apL1N08Bm+dLYNP+nNHh0tzUXfPQcNcXiQyacw0PG4Fcpw==}
-    dev: false
 
   /@next/eslint-plugin-next@15.5.14:
     resolution: {integrity: sha512-ogBjgsFrPPz19abP3VwcYSahbkUOMMvJjxCOYWYndw+PydeMuLuB4XrvNkNutFrTjC9St2KFULRdKID8Sd/CMQ==}
@@ -9651,6 +9668,16 @@ packages:
       tslib: 2.8.1
     dev: true
 
+  /dotenv-cli@8.0.0:
+    resolution: {integrity: sha512-aLqYbK7xKOiTMIRf1lDPbI+Y+Ip/wo5k3eyp6ePysVaSqbyxjyK3dK35BTxG+rmd7djf5q2UPs4noPNH+cj0Qw==}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.6
+      dotenv: 16.6.1
+      dotenv-expand: 10.0.0
+      minimist: 1.2.8
+    dev: true
+
   /dotenv-expand@10.0.0:
     resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
     engines: {node: '>=12'}
@@ -9658,6 +9685,11 @@ packages:
 
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+    dev: true
+
+  /dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
     dev: true
 
@@ -10836,6 +10868,16 @@ packages:
   /graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
     dev: true
+
+  /graphql-scalars@1.25.0(graphql@16.13.2):
+    resolution: {integrity: sha512-b0xyXZeRFkne4Eq7NAnL400gStGqG/Sx9VqX0A05nHyEbv57UJnWKsjNnrpVqv5e/8N1MUxkt0wwcRXbiyKcFg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      graphql: 16.13.2
+      tslib: 2.8.1
+    dev: false
 
   /graphql-tag@2.12.6(graphql@16.13.2):
     resolution: {integrity: sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==}

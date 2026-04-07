@@ -2,13 +2,13 @@
   "name": "vassembly",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "build": "npm run build-storybook",
+    "dev": "npm run storybook",
+    "lint": "npm run lint",
     "storybook": "storybook dev -p 6006",
-    "test": "turbo run test",
+    "test": "npm run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types",
+    "check-types": "npm run check-types",
     "build-storybook": "storybook build"
   },
   "devDependencies": {

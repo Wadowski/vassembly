@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@pothos/core": "^4.2.2",
-    "graphql": "^16.11.0"
+    "graphql": "^16.11.0",
+    "graphql-scalars": "^1.25.0"
   },
   "devDependencies": {
     "@types/node": "^22.19.7",
