@@ -1,10 +1,10 @@
 import "reflect-metadata";
-import { Field, ID } from "type-graphql";
 import { ObjectId } from "mongodb";
 import { mongoDbDocumentParamOmitDecorator, MongoDbOmit } from "./mongodb";
 import { COUNTRIES } from "@vassembly/constants";
 import { getTranslation, getTranslationList, getTranslationListList } from "./translationMapping";
 import { ValidatorResult } from "@vassembly/validation";
+import { WrongParamError } from "@vassembly/errors";
 
 export const MONGODB_VALUE_MAP = {
   value: (data: string) => new ObjectId(data),
@@ -28,16 +28,12 @@ export const MONGODB_VALUE_MAP = {
 };
 
 export abstract class Model {
-  @Field(() => ID)
   id?: string;
-
-  @Field(() => Date, { nullable: true })
+  
   createdAt?: Date;
-
-  @Field(() => Date, { nullable: true })
+  
   updatedAt?: Date;
-
-  @Field(() => Date, { nullable: true })
+  
   removedAt?: Date | null;
   
   @MongoDbOmit
@@ -62,7 +58,9 @@ export abstract class Model {
     const result = this.validator(this);
 
     if (options?.shouldThrow && !result.success) {
-      throw result.error;
+      const issuesMessages = result.error.error.issues.map((issue: any) => `${issue.path.join(".")}: ${issue.message}`).join(", ");
+      const errorMessage = `${this.constructor.name} :: ${issuesMessages}`;
+      throw new WrongParamError(errorMessage);
     }
 
     return result;
@@ -89,7 +87,7 @@ export abstract class Model {
         let newAcc = acc;
         let mappedValue = value;
 
-        if (mongoValue) {
+        if (mongoValue && value) {
           mappedValue = mongoValue(value as any);
         } else if ((value as any)?.toMongoDb) {
           mappedValue = (value as any).toMongoDb();

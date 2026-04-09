@@ -19,6 +19,7 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
-    "type-graphql": "2.0.0-rc.3"
+    "@vassembly/graphql": "workspace:*",
+    "@vassembly/server": "workspace:*"
   }
 }

@@ -19,11 +19,11 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/client-encoder": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/model": "workspace:*",
-    "@vassembly/queries": "workspace:*",
-    "type-graphql": "2.0.0-rc.3"
+    "@vassembly/queries": "workspace:*"
   }
 }

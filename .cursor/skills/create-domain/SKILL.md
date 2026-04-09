@@ -14,9 +14,10 @@ The skill handles:
 2. Prompting for commands if not provided
 3. Prompting for queries if not provided
 4. Prompting for clients if not provided
-4. If user includes domain model fields add them to model with relevant type-graphql type decorator
-5. Copying the domain-empty template to the domains directory
-6. Updating package.json of a coppied template with the correct domain name
+5. If user includes domain model fields add them to model
+6. Copying the domain-empty template to the domains directory
+7. Updating package.json of a coppied template with the correct domain name
+8. Creating GraphQL schema file with model definition
 
 If prompted to create a command or query use add-domain-command-query skill.
 
@@ -36,3 +37,28 @@ When invoked, the skill will:
 - In model and factories use domain name instead of "domain" text
 - Ask if model will have translations. If yes use ModelWithTranslations and keep translationFactory.
 - In clients use domain name instead of "domain" e.g. use domain name in plural format for collection name in mongodb client
+- Create `src/model/graphql.ts` with GraphQL schema definition using `defineModelSchema`
+- Add `@vassembly/graphql` dependency to `package.json`
+
+### GraphQL Schema
+
+After domain creation, a GraphQL schema file is automatically created at `src/model/sgraphql.ts`:
+
+```typescript
+import { defineModelSchema } from '@vassembly/graphql';
+import type { Builder } from '@vassembly/graphql';
+
+export const define{DomainName}Schema = (builder: Builder): void => {
+  defineModelSchema({
+    builder,
+    name: '{DomainName}',
+    fields: (t) => ({
+      // Add domain-specific fields here
+      // Common fields (id, createdAt, updatedAt, removedAt) are automatically included
+    }),
+  });
+};
+```
+
+Replace `{DomainName}` with the domain name in PascalCase and add domain-specific fields to the fields object.
+

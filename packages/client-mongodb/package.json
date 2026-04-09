@@ -8,6 +8,7 @@
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
+    "dev": "docker-compose up",
     "test:watch": "vitest"
   },
   "devDependencies": {

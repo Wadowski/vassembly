@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@vassembly/config": "workspace:*",
+    "@vassembly/errors": "workspace:*",
     "jsonwebtoken": "^9.0.3"
   },
   "devDependencies": {

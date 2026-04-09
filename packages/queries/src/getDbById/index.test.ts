@@ -41,7 +41,7 @@ describe('getDbById', () => {
 
   describe('successful queries', () => {
     it('should return data when instance is found', async () => {
-      const id = 'test-id-123';
+      const id = '507f1f77bcf86cd799439011';
       const daoResponse = {
         id,
         name: 'John Doe',
@@ -72,7 +72,7 @@ describe('getDbById', () => {
     });
 
     it('should handle instances with additional properties', async () => {
-      const id = 'test-id-456';
+      const id = '507f191e810c19729de860ea';
       const daoResponse = {
         id,
         name: 'Jane Smith',
@@ -100,7 +100,7 @@ describe('getDbById', () => {
 
   describe('error handling', () => {
     it('should throw WrongParamError when validation fails', async () => {
-      const id = 'test-id-789';
+      const id = '00000000000000000000000g';
       const validationError = new WrongParamError('Validation failed');
 
       const queryInstance = {
@@ -120,7 +120,7 @@ describe('getDbById', () => {
 
 
     it('should throw NotFoundError when instance is not found in dao', async () => {
-      const id = 'non-existent-id';
+      const id = '000000000000000000000001';
 
       const queryInstance = createMockInstance({ id } as TestModel);
       mockFactory.create.mockReturnValueOnce(queryInstance);
@@ -134,7 +134,7 @@ describe('getDbById', () => {
     });
 
     it('should propagate dao errors', async () => {
-      const id = 'test-id-error';
+      const id = 'ffffffffffffffffffffffff';
       const daoError = new Error('Database connection failed');
 
       const queryInstance = createMockInstance({ id } as TestModel);

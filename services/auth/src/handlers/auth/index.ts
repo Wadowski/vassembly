@@ -19,4 +19,3 @@ export const auth = async (input: AuthInput) => {
     refreshToken: newRefreshToken.token,
   };
 };
-
