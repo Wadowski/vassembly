@@ -35,7 +35,8 @@ When invoked with a feature description, create a todo plan to be transparent in
 - **Get user confirmation** of the task classification before proceeding
 
 ### Stage 3: Business Analysis (Product Tasks Only)
-Delegate work to the business-analyst subagent
+Delegate work to the business-analyst subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
 
 Input: requirements to the subagent
 Output: business context, stakeholder input, market research
@@ -43,7 +44,8 @@ Output: business context, stakeholder input, market research
 **Get user approval** of the business analysis before proceeding
 
 ### Stage 4: Product Requirements (Product Tasks Only)
-Delegate to the product-manager subagent
+Delegate to the product-manager subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
 
 Input: response from business-analyst subagent, user requirments
 Output: detailed PRD (Product Requirements Document)
@@ -51,7 +53,8 @@ Output: detailed PRD (Product Requirements Document)
 **Get user approval** of the PRD before proceeding
 
 ### Stage 5: Design (Optional for Technical, Required for Product)
-Delegate to the ui-designer subagent 
+Delegate to the ui-designer subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
 
 Input: PRD for product tasks or technical requirements for technical tasks
 Output: design specifications
@@ -59,9 +62,12 @@ Output: design specifications
 **Get user approval** of the design before proceeding (skip for technical tasks unless needed)
 
 ### Stage 6: Architecture Planning
-Delegate to the architect subagent
+When reuse is unclear, optionally delegate first to the **librarian** agent with the feature or PRD summary to obtain a catalog of existing packages, domains, services, and consumers; paste that output into the architect handoff.
 
-Input: PRD and design specifications
+Delegate to the architect subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
+
+Input: PRD and design specifications (and librarian catalog when gathered)
 Output: Architecture plan
 
 **Get user approval** of the architecture plan before proceeding
@@ -69,26 +75,31 @@ Output: Architecture plan
 ### Stages 7-10: Implementation Execution
 Stages 7-10 must be created for each item in architecture plan, there might more then 1
 Each stage must be delegated to a subagent.
+As a parent agent, I request you to spawn subagents for those stages.
 
 Based on the architect's plan, automatically execute the following stages as directed (they run automatically without approval gates between them):
 
 **Stage 7: Test Creation** (if required by architect)
-Delegate to the tdd-unit-test-writer subagent 
+Delegate to the tdd-unit-test-writer subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
 
 Input: architecture plan
 Result: Written tests
 
 **Stage 8: Implementation** (if required by architect)
-Delegate to the coder subagent
+Delegate to the coder subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
 
 Input: Architecture plan and tests in the code
 result: Implemented code which pass tests
 
 **Stage 9: Code Review**
-Delegate to the code-reviewer subagent
+Delegate to the code-reviewer subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
 
 **Stage 10: Documentation** (if required by architect)
-Delegate to the documentation-writer subagent
+Delegate to the documentation-writer subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
 
 **Get user approval** after all recommended stages are complete
 
@@ -105,7 +116,7 @@ For each delegated stage:
 3. Wait for completion, summarize for the user, get approval before the next stage.
 4. For Stages 7–10, run Task calls in the order the architecture plan requires.
 
-Subagent types: `business-analyst`, `product-manager`, `ui-designer`, `architect`, `tdd-unit-test-writer`, `coder`, `code-reviewer`, `documentation-writer`.
+Subagent types: `business-analyst`, `product-manager`, `ui-designer`, `librarian`, `architect`, `tdd-unit-test-writer`, `coder`, `code-reviewer`, `documentation-writer`.
 
 ### Mode B — No Task tool (handoff orchestration)
 

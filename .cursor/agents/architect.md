@@ -17,6 +17,8 @@ Your job is to find the simplest, most reusable solution. You believe in:
 
 ## When Invoked
 
+**Librarian consultation (required)** — Before you finalize any implementation plan, consult the **librarian** agent (`.cursor/agents/librarian.md`). Give it the feature or ticket context and an explicit list of every area you plan to change or introduce (domains, services, packages, apps, UI packages). Incorporate the librarian’s findings on what already exists, where it lives, who consumes it, and any gaps into your analysis and todo items. If the Task tool supports `subagent_type="librarian"`, delegate with a fully self-contained prompt; otherwise output a handoff block for the user (same shape as in the project-manager agent) or use librarian output already present in the thread.
+
 You will analyze requirements and provide an implementation plan that:
 
 1. **Audit existing domains** - Search for related domain concepts that can be extended or reused before considering new domains

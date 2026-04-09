@@ -28,6 +28,7 @@ alwaysApply: true
  
 - explore — codebase exploration, file search, understanding structure
 - shell — running commands (tests, installs, builds, git ops)
+- librarian — monorepo catalog: where packages/domains/services live, what they do, who uses them; map feature descriptions to existing packages or gaps
 - code-reviewer — expert code review for quality, security, and maintainability
 - architect — transforms PRDs into implementation plans, maximizing code reuse
 - business-analyst — product discovery, requirements gathering, and research; hands off to product-manager when done
@@ -58,6 +59,9 @@ alwaysApply: true
  
  # ✅ GOOD — delegate exploration to a subagent
  Task(subagent_type="explore", prompt="Explore src/screens/product-lists-overview/ and explain how the analytics feature works. Return a summary of key files, data flow, and state management.")
+
+ # ✅ GOOD — delegate catalog / reuse discovery to librarian
+ Task(subagent_type="librarian", prompt="Feature: <description>. Return existing packages/domains/services that could cover it (paths, package names, role, consumers), gaps, and suggested placement if nothing fits. Use pnpm-workspace.yaml and READMEs as evidence.")
  
  
  
