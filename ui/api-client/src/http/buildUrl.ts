@@ -15,7 +15,7 @@ export const buildUrl = ({
 
   if (query) {
     for (const [key, value] of Object.entries(query)) {
-      if (!value === undefined || value === null) {
+      if (value === undefined || value === null) {
         continue;
       }
 

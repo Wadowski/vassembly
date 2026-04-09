@@ -8,8 +8,6 @@ import { setContext } from '@apollo/client/link/context';
 import { InternalError } from '@vassembly/errors';
 
 import type { GraphQLClientConfig } from './types';
-import { HttpClientConfig } from '../http/types';
-
 
 const getAuthToken = async (config: GraphQLClientConfig): Promise<string | undefined> => {
   try {
@@ -26,14 +24,13 @@ export const createApolloInstance = (config: GraphQLClientConfig): ApolloClient 
   });
 
   const authLink = setContext(async (_, { headers }) => {
-    const authToken = getAuthToken(config);
-    const authorization = authToken ? `Bearer ${authToken}` : undefined;
+    const authorization = await getAuthToken(config);
 
     return {
       headers: {
         ...config.defaultHeaders,
         ...(headers as Record<string, string>),
-        ...(authorization ? { authorization } : {}),
+        ...(authorization ? { Authorization: authorization } : {}),
       },
     };
   });
