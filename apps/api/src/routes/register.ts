@@ -1,7 +1,7 @@
 import { defineRoute } from "@vassembly/server";
 import { z } from "zod";
 
-import { register } from "../handlers/register";
+import { handlers } from "@vassembly/service-auth";
 
 const bodySchema = z.object({
   email: z.string(),
@@ -15,5 +15,5 @@ export const registerRoute = defineRoute({
   method: "POST",
   url: "/register",
   schema: { body: bodySchema },
-  handler: ({ body }) => register(body),
+  handler: ({ body }) => handlers.register(body),
 });

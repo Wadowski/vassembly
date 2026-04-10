@@ -33,6 +33,7 @@ export const registerRoutes = async ({ fastify, routes }: RegisterRoutesProps): 
     const register = registerByMethod[route.method];
     const opts = { 
       schema: route.schema ? toFastifySchema(route.schema) : undefined,
+      prefix: route.prefix,
     };
 
     const handler: RouteHandlerMethod = async (request, reply) => {

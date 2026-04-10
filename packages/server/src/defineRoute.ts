@@ -8,3 +8,8 @@ interface DefineRouteProps<S extends RouteSchemaShape> {
 }
 
 export const defineRoute = <S extends RouteSchemaShape>(args: DefineRouteProps<S>): RouteDefinition => args as unknown as RouteDefinition;
+
+export const routesWithPrefix = (prefix: string, routes: RouteDefinition[]): RouteDefinition[] => routes.map((route) => ({
+  ...route,
+  prefix,
+}));

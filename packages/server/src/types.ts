@@ -11,6 +11,7 @@ export interface RouteDefinition {
   url: string;
   handler: (input: { body: unknown; query: unknown }) => Promise<unknown>;
   schema?: { body?: ZodTypeAny; querystring?: ZodTypeAny; response?: ZodTypeAny };
+  prefix?: string;
 }
 
 export interface ServerConfig {
