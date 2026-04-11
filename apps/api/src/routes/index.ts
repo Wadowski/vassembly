@@ -18,7 +18,7 @@ const startApp = async () => {
   });
 
   fastify.listen(
-    { port: config.services.auth.port },
+    { port: config.services.api.port },
     (err: Error | null, address: string) => {
       if (err) {
         console.error(err);

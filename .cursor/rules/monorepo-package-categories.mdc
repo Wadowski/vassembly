@@ -93,16 +93,25 @@ When creating a new package, it should go in one of the following categories bas
 
 ### 🚀 Apps (`apps/`)
 
-**Purpose**: End-user facing applications (web, mobile, desktop, etc.).
+**Purpose**: Full applications — both frontend UI apps and backend API gateways.
 
 **Characteristics**:
-- Full applications with UI and user interactions
+- Full applications with their own entry points and deployments
 - Consumers of domains, services, and utility packages
-- Often frontends (Next.js, React, etc.)
-- Deployed separately from backend services
+- Can be frontend UI (Next.js, React, etc.) or backend APIs
+- Deployed separately from domains, services, and packages
 
-**When to create**: When you need a new user-facing application.
+**Types of Apps**:
 
-**Example**: `apps/web/` (Next.js web app), `apps/docs/` (documentation site)
+#### Frontend Apps
+- Full user-facing applications with UI and interactions
+- Example: `apps/web/` (Next.js web app), `apps/docs/` (documentation site)
+
+#### Backend API Gateways
+- Single entry point for backend HTTP/GraphQL access
+- Wire together service handlers, routes, and resolvers
+- Example: `apps/api/` — exposes REST and GraphQL by importing handlers from `@vassembly/service-auth` and other services
+
+**When to create**: When you need a new user-facing application or a dedicated API gateway for backend services.
 
 ---

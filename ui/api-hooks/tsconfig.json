@@ -1,6 +1,7 @@
 {
-  "extends": "@vassembly/typescript-config/base",
+  "extends": "@vassembly/typescript-config/nextjs",
   "compilerOptions": {
+    "jsx": "react-jsx",
     "noEmit": true
   },
   "include": ["src", "vitest.config.ts"],

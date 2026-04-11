@@ -6,7 +6,9 @@ alwaysApply: false
 
 # Service Package Structure
 
-Service packages orchestrate business logic by combining domain operations and queries. They act as the application layer that handles user-facing actions and workflows. Services are server-agnostic and can be consumed by APIs, CLI tools, workers, or other interfaces.
+Service packages orchestrate business logic by combining domain operations and queries. They act as the application layer that handles user-facing actions and workflows. Services are **server-agnostic** and can be consumed by APIs, CLI tools, workers, or other interfaces.
+
+**Important**: Services contain ONLY handlers and types. HTTP routing and GraphQL schema definition belong in API Gateway packages in `apps/`, not in services.
 
 ## Directory Structure
 
@@ -31,6 +33,9 @@ services/[service-name]/
 ├── vitest.config.ts
 └── README.md
 ```
+
+**Note**: Services do NOT have `src/routes/` or `src/graphql/`. HTTP and GraphQL concerns belong in API Gateway packages (`apps/api/`).
+
 
 ## Main Entry Point (`src/index.ts`)
 

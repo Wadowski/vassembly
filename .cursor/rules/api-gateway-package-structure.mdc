@@ -1,0 +1,84 @@
+---
+description: Defines structure and conventions for API Gateway packages in apps/
+globs: apps/api/**
+alwaysApply: false
+---
+
+# API Gateway Package Structure
+
+API Gateway packages in `apps/` serve as the single HTTP/GraphQL entry point for the backend. They wire together service handlers, REST routes, and GraphQL resolvers without containing business logic themselves.
+
+## Architecture
+
+An API Gateway:
+- **Imports handlers** from service packages (e.g., `@vassembly/service-auth`)
+- **Exposes REST endpoints** using Fastify routes
+- **Exposes GraphQL** using a unified schema
+- **Contains NO business logic** — all logic stays in services and domains
+- **Is server-aware** — only package that deals with HTTP concerns
+
+## Directory Structure
+
+```
+apps/api/
+├── src/
+│   ├── index.ts            # Main export point
+│   ├── routes/
+│   │   ├── index.ts        # Server bootstrap: createServer + listen
+│   │   ├── auth.ts         # Route handlers using service handlers
+│   │   ├── login.ts
+│   │   ├── refresh.ts
+│   │   └── register.ts
+│   └── graphql/
+│       └── index.ts        # GraphQL schema and resolvers
+├── package.json
+├── tsconfig.json
+├── README.md
+└── vitest.config.ts (optional)
+```
+
+## Dependencies
+
+API Gateway packages should depend on:
+- `@vassembly/server` — Fastify integration
+- `@vassembly/config` — configuration
+- `@vassembly/graphql` — GraphQL builder and utilities
+- `@vassembly/service-*` — service handlers
+- `@vassembly/domain-*` — domain schema definitions (for GraphQL)
+- `zod` — schema validation
+
+Do NOT depend on:
+- Database clients (use through domains)
+- Direct external service clients (use through domains)
+
+## Key Principles
+
+### No Business Logic in Routes/GraphQL
+
+- All logic stays in services and domains
+- Routes and resolvers are thin adapters that call service handlers
+- If you're tempted to add logic, move it to a service handler
+
+### Service Handlers Only
+
+- Import `handlers` from service packages, not individual functions
+- Let services orchestrate domain operations
+- API Gateway coordinates service calls
+
+### Type Safety
+
+- Use Zod schemas for all route inputs
+- Define resolver args/response types in GraphQL
+- Leverage handler types from service packages
+
+### Error Handling
+
+- Service handlers throw typed errors
+- Server framework handles error responses
+- Don't catch and suppress errors in routes/resolvers
+
+### Scalability
+
+- Each service can have its own API Gateway if needed
+- One unified API Gateway can import from multiple services
+- Keep route definitions DRY by grouping related endpoints

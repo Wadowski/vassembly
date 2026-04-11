@@ -31,8 +31,8 @@ const config: Config = {
     secret: process.env.JWT_SECRET || '',
   },
   services: {
-    auth: {
-      port: 5001,
+    api: {
+      port: 5000,
     },
   },
 };

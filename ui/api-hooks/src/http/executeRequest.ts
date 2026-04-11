@@ -20,14 +20,14 @@ export const executeRequest = async <TBody, TResponse>({
   options,
 }: ExecuteRequestProps<TBody>): Promise<TResponse> => {
   const url = buildUrl({
-    baseUrl: config.baseUrl,
+    baseUrl: config.baseUrl ?? '',
     path: options.path,
     query: options.query,
   });
   const authorization = await getAuthToken(config);
   const headers = mergeHeaders({
-    defaultHeaders: config.defaultHeaders,
-    requestHeaders: options.headers,
+    defaultHeaders: config.defaultHeaders ?? {},
+    requestHeaders: options.headers ?? {},
     authorization,
   });
 

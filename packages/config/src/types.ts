@@ -14,7 +14,7 @@ export interface Config {
   encoder: EncoderConfig;
   jwt: JwtConfig;
   services: {
-    auth: ServiceConfig;
+    api: ServiceConfig;
   };
 }
 
