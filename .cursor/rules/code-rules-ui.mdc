@@ -1,6 +1,6 @@
 ---
-description: UI component structure (types/component/scss/stories) + hook-driven logic
-globs: "{ui,apps}/**/src/**/*.{ts,tsx
+description: UI component structure + hook-driven logic; Next.js app composes ui/* with shell-only exceptions
+globs: ui/**/src/**/*.{ts,tsx},apps/**/*.{ts,tsx}
 alwaysApply: false
 ---
 # UI code structure and responsibilities
@@ -10,9 +10,9 @@ alwaysApply: false
 - event handlers must be created before rendering. Do not add it inline in DOM
 - className must be resolved before added to DOM
 - split component into single responsibility.
-- more smaller components are better then one big component
+- more smaller components are better than one big component
 - any text in component use Text component
-- any complex className must be resolved usign function in ui-utils
+- any complex className must be resolved using function in ui-utils
 - Use scss files
 
 ## File split (required)
@@ -28,7 +28,7 @@ alwaysApply: false
 
 - If any constants are added to component:
   - Create a `constants.ts` file and move it all there.
-- For constats are consider: static text, numbers, map objects
+- For constants consider: static text, numbers, map objects
 
 ## Component vs hook responsibilities (required)
 
@@ -44,11 +44,38 @@ alwaysApply: false
 - Component is considered as subcomponent if it's:
   - list
   - item in list
-  - dom tree deeper then 3 layers
+  - dom tree deeper than 3 layers
 - If a component is composed of multiple meaningful parts, create subcomponents:
   - extract each part into its own `*.tsx` (and `*.module.scss` if needed)
   - subcomponents should also be render-focused; shared logic stays in hooks
 
-## Exports
+## Apps package rules (required)
 
-- Use named exports (no default exports), consistent with repo conventions.
+Apps packages under `apps/*` own routing and connect `ui/*` components to data and logic. They must not contain business logic or reusable UI components.
+
+### Routing
+
+- `apps/*` packages are the single place responsible for defining routes
+- Use file-based routing conventions of the underlying framework (e.g. Next.js App Router)
+- Route segments live in `app/` — only `page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, `route.ts`, `default.tsx`
+
+### page.tsx / layout.tsx rules (required)
+
+- Must contain **no logic** — no state, no effects, no derived values, no data fetching, no conditionals beyond trivial metadata
+- Must only import and compose components; delegate all logic to hooks or server-only helpers
+- Every page that requires logic must have a dedicated `use<Page>.ts` hook that holds all state, effects, and derived values; the page file only calls the hook and passes results to components
+
+### Components in `apps/*` (required)
+
+- Components defined inside `apps/*` are **structural connectors only**:
+  - They wire `ui/*` components to API clients, hooks, or other logic packages
+  - They may not define new visual language, new design primitives, or business rules
+- **No new reusable components** may be created inside `apps/*` — if a component could be used outside this specific route, create a new `ui/*` package for it
+- Page components must compose subcomponents; a page must never render a single monolithic template
+
+### API calls (required)
+
+- All API calls (GraphQL or HTTP) must use the `ui-api-client` package
+- Do not import API clients, fetch wrappers, or raw `fetch` directly into components or `page.tsx` files
+- API calls belong exclusively inside hooks (`use<Page>.ts` or dedicated `use<Feature>.ts`); components only receive data as props or from hooks
+

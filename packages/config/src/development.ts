@@ -1,13 +1,13 @@
-import { Config } from './types';
+import { Config, CustomHeaders } from './types';
 
 const config: Config = {
   apps: {
-web: {
-    port: 3000,
-  },
-  docs: {
-    port: 3001,
-  }
+    web: {
+      port: 3000,
+    },
+    docs: {
+      port: 3001,
+    }
   },
   encoder: {
     secret: 'test-secret',
@@ -31,8 +31,9 @@ web: {
     secret: process.env.JWT_SECRET || 'dev-jwt-secret',
   },
   services: {
-    auth: {
-      port: 5001,
+    api: {
+      port: 5000,
+      allowedOrigins: ['http://localhost:3000'],
     },
   },
 };

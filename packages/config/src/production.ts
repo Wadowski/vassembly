@@ -1,4 +1,4 @@
-import { Config } from './types';
+import { Config, CustomHeaders } from './types';
 
 const config: Config = {
   apps: {
@@ -31,8 +31,9 @@ const config: Config = {
     secret: process.env.JWT_SECRET || '',
   },
   services: {
-    auth: {
-      port: 5001,
+    api: {
+      port: 5000,
+      allowedOrigins: [],
     },
   },
 };

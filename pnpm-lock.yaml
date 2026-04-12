@@ -24,11 +24,60 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
+  apps/api:
+    dependencies:
+      '@vassembly/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@vassembly/constants':
+        specifier: workspace:^
+        version: link:../../packages/constants
+      '@vassembly/domain-user':
+        specifier: workspace:*
+        version: link:../../domains/user
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
+      '@vassembly/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
+      '@vassembly/server':
+        specifier: workspace:*
+        version: link:../../packages/server
+      '@vassembly/service-auth':
+        specifier: workspace:*
+        version: link:../../services/auth
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
   apps/docs:
     dependencies:
       next:
         specifier: 16.1.0
-        version: 16.1.0(react-dom@19.2.4)(react@19.2.4)
+        version: 16.1.0(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0)
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -66,9 +115,15 @@ importers:
       '@vassembly/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@vassembly/theme':
+        specifier: workspace:*
+        version: link:../../ui/system-design/theme
+      '@vassembly/ui-api-hooks':
+        specifier: workspace:*
+        version: link:../../ui/api-hooks
       next:
         specifier: 16.1.0
-        version: 16.1.0(react-dom@19.2.4)(react@19.2.4)
+        version: 16.1.0(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0)
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -97,6 +152,9 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.4
+      sass:
+        specifier: ^1.86.0
+        version: 1.98.0
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -792,6 +850,9 @@ importers:
       '@as-integrations/fastify':
         specifier: ^3.1.0
         version: 3.1.0(@apollo/server@4.13.0)(fastify@5.8.4)
+      '@fastify/cors':
+        specifier: ^11.2.0
+        version: 11.2.0
       '@fastify/swagger':
         specifier: ^9.7.0
         version: 9.7.0
@@ -871,9 +932,6 @@ importers:
 
   services/auth:
     dependencies:
-      '@vassembly/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
@@ -886,12 +944,6 @@ importers:
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
-      '@vassembly/graphql':
-        specifier: workspace:*
-        version: link:../../packages/graphql
-      '@vassembly/server':
-        specifier: workspace:*
-        version: link:../../packages/server
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -908,9 +960,6 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.4
-      tsx:
-        specifier: ^4.21.0
-        version: 4.21.0
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -918,11 +967,14 @@ importers:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@22.19.15)
 
-  ui/api-client:
+  ui/api-hooks:
     dependencies:
       '@apollo/client':
         specifier: ^3.11.0
-        version: 3.14.1(graphql@16.13.2)
+        version: 3.14.1(@types/react@19.2.2)(graphql@16.13.2)(react@19.2.4)
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
@@ -933,6 +985,9 @@ importers:
       '@types/node':
         specifier: ^22.19.7
         version: 22.19.15
+      '@types/react':
+        specifier: 19.2.2
+        version: 19.2.2
       '@vassembly/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -942,6 +997,9 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.4
+      react:
+        specifier: ^19.2.0
+        version: 19.2.4
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -2632,7 +2690,7 @@ packages:
       graphql: 16.13.2
     dev: false
 
-  /@apollo/client@3.14.1(graphql@16.13.2):
+  /@apollo/client@3.14.1(@types/react@19.2.2)(graphql@16.13.2)(react@19.2.4):
     resolution: {integrity: sha512-SgGX6E23JsZhUdG2anxiyHvEvvN6CUaI4ZfMsndZFeuHPXL3H0IsaiNAhLITSISbeyeYd+CBd9oERXQDdjXWZw==}
     peerDependencies:
       graphql: ^15.0.0 || ^16.0.0
@@ -2659,7 +2717,8 @@ packages:
       hoist-non-react-statics: 3.3.2
       optimism: 0.18.1
       prop-types: 15.8.1
-      rehackt: 0.1.0
+      react: 19.2.4
+      rehackt: 0.1.0(@types/react@19.2.2)(react@19.2.4)
       symbol-observable: 4.0.0
       ts-invariant: 0.10.3
       tslib: 2.8.1
@@ -4492,6 +4551,13 @@ packages:
       fast-uri: 3.1.0
     dev: false
 
+  /@fastify/cors@11.2.0:
+    resolution: {integrity: sha512-LbLHBuSAdGdSFZYTLVA3+Ch2t+sA6nq3Ejc6XLAKiQ6ViS2qFnvicpj0htsx03FyYeLs04HfRNBsz/a8SvbcUw==}
+    dependencies:
+      fastify-plugin: 5.1.0
+      toad-cache: 3.7.0
+    dev: false
+
   /@fastify/error@4.2.0:
     resolution: {integrity: sha512-RSo3sVDXfHskiBZKBPRgnQTtIqpi/7zhJOEmAxCiBcM7d0uwdGdxLlsCaLzGs8v8NnxIRlfG0N51p5yFaOentQ==}
     dev: false
@@ -5042,7 +5108,7 @@ packages:
       react: 18.3.1
     dev: true
 
-  /@mdx-js/react@3.1.1(@types/react@18.2.47)(react@19.2.4):
+  /@mdx-js/react@3.1.1(@types/react@18.2.47)(react@18.3.1):
     resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
     peerDependencies:
       '@types/react': '>=16'
@@ -5050,7 +5116,7 @@ packages:
     dependencies:
       '@types/mdx': 2.0.13
       '@types/react': 18.2.47
-      react: 19.2.4
+      react: 18.3.1
     dev: true
 
   /@mongodb-js/saslprep@1.4.6:
@@ -5167,7 +5233,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-darwin-arm64@2.5.6:
@@ -5176,7 +5241,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-darwin-x64@2.5.6:
@@ -5185,7 +5249,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-freebsd-x64@2.5.6:
@@ -5194,7 +5257,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-linux-arm-glibc@2.5.6:
@@ -5203,7 +5265,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-linux-arm-musl@2.5.6:
@@ -5212,7 +5273,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-linux-arm64-glibc@2.5.6:
@@ -5221,7 +5281,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-linux-arm64-musl@2.5.6:
@@ -5230,7 +5289,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-linux-x64-glibc@2.5.6:
@@ -5239,7 +5297,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-linux-x64-musl@2.5.6:
@@ -5248,7 +5305,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-win32-arm64@2.5.6:
@@ -5257,7 +5313,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-win32-ia32@2.5.6:
@@ -5266,7 +5321,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher-win32-x64@2.5.6:
@@ -5275,7 +5329,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@parcel/watcher@2.5.6:
@@ -5301,7 +5354,6 @@ packages:
       '@parcel/watcher-win32-arm64': 2.5.6
       '@parcel/watcher-win32-ia32': 2.5.6
       '@parcel/watcher-win32-x64': 2.5.6
-    dev: true
     optional: true
 
   /@pinojs/redact@0.4.0:
@@ -6848,12 +6900,12 @@ packages:
     peerDependencies:
       storybook: ^10.3.3
     dependencies:
-      '@mdx-js/react': 3.1.1(@types/react@18.2.47)(react@19.2.4)
+      '@mdx-js/react': 3.1.1(@types/react@18.2.47)(react@18.3.1)
       '@storybook/csf-plugin': 10.3.3(storybook@10.3.3)(webpack@5.105.4)
-      '@storybook/icons': 2.0.1(react-dom@19.2.4)(react@19.2.4)
-      '@storybook/react-dom-shim': 10.3.3(react-dom@19.2.4)(react@19.2.4)(storybook@10.3.3)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@storybook/icons': 2.0.1(react-dom@19.2.4)(react@18.3.1)
+      '@storybook/react-dom-shim': 10.3.3(react-dom@19.2.4)(react@18.3.1)(storybook@10.3.3)
+      react: 18.3.1
+      react-dom: 19.2.4(react@18.3.1)
       storybook: 10.3.3(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@18.3.1)(react@18.3.1)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
@@ -7277,14 +7329,14 @@ packages:
       react-dom: 18.3.1(react@18.3.1)
     dev: true
 
-  /@storybook/icons@2.0.1(react-dom@19.2.4)(react@19.2.4):
+  /@storybook/icons@2.0.1(react-dom@19.2.4)(react@18.3.1):
     resolution: {integrity: sha512-/smVjw88yK3CKsiuR71vNgWQ9+NuY2L+e8X7IMrFjexjm6ZR8ULrV2DRkTA61aV6ryefslzHEGDInGpnNeIocg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 18.3.1
+      react-dom: 19.2.4(react@18.3.1)
     dev: true
 
   /@storybook/manager-api@7.6.24(react-dom@18.3.1)(react@18.3.1):
@@ -7435,15 +7487,15 @@ packages:
       storybook: 10.3.3(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@18.3.1)(react@18.3.1)
     dev: true
 
-  /@storybook/react-dom-shim@10.3.3(react-dom@19.2.4)(react@19.2.4)(storybook@10.3.3):
+  /@storybook/react-dom-shim@10.3.3(react-dom@19.2.4)(react@18.3.1)(storybook@10.3.3):
     resolution: {integrity: sha512-lkhuh4G3UTreU9M3Iz5Dt32c6U+l/4XuvqLtbe1sDHENZH6aPj7y0b5FwnfHyvuTvYRhtbo29xZrF5Bp9kCC0w==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       storybook: ^10.3.3
     dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 18.3.1
+      react-dom: 19.2.4(react@18.3.1)
       storybook: 10.3.3(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@18.3.1)(react@18.3.1)
     dev: true
 
@@ -8112,7 +8164,6 @@ packages:
     resolution: {integrity: sha512-6mDvHUFSjyT2B2yeNx2nUgMxh9LtOWvkhIU3uePn2I2oyNymUAX1NIsdgviM4CH+JSrp2D2hsMvJOkxY+0wNRA==}
     dependencies:
       csstype: 3.2.3
-    dev: true
 
   /@types/resolve@1.20.6:
     resolution: {integrity: sha512-A4STmOXPhMUtHH+S6ymgE2GiBSMqf4oTvcQZMcHzokuTLVYzXTB8ttjcgxOVaAp2lGwEdzZ0J+cRbbeevQj1UQ==}
@@ -9247,7 +9298,6 @@ packages:
     engines: {node: '>= 14.16.0'}
     dependencies:
       readdirp: 4.1.2
-    dev: true
 
   /chownr@2.0.0:
     resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
@@ -9473,7 +9523,6 @@ packages:
 
   /csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
-    dev: true
 
   /d@1.0.2:
     resolution: {integrity: sha512-MOqHvMWF9/9MX6nza0KgvFH4HpMU0EF5uUDXqX/BtxtU8NfB0QzRtJ8Oe/6SuS4kbhyzVJwjd97EA4PKrzJ8bw==}
@@ -11197,7 +11246,6 @@ packages:
 
   /immutable@5.1.5:
     resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
-    dev: true
 
   /import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -11335,7 +11383,6 @@ packages:
   /is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /is-finalizationregistry@1.1.1:
     resolution: {integrity: sha512-1pC6N8qWJbWoPtEjgcL2xyhQOP491EQjeUo3qTKcmV8YSDDJrOepfG8pcC7h/QgnQHYSv0mJ3Z/ZWxmatVrysg==}
@@ -11364,7 +11411,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       is-extglob: 2.1.1
-    dev: true
 
   /is-inside-container@1.0.0:
     resolution: {integrity: sha512-KIYLCCJghfHZxqjYBE7rEy0OBuTd5xCHS7tHVgvCLkx7StIoaxwNW3hCALgEUjFfeRk+MG/Qxmp/vtETEF3tRA==}
@@ -12209,7 +12255,7 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
 
-  /next@16.1.0(react-dom@19.2.4)(react@19.2.4):
+  /next@16.1.0(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0):
     resolution: {integrity: sha512-Y+KbmDbefYtHDDQKLNrmzE/YYzG2msqo2VXhzh5yrJ54tx/6TmGdkR5+kP9ma7i7LwZpZMfoY3m/AoPPPKxtVw==}
     engines: {node: '>=20.9.0'}
     hasBin: true
@@ -12237,6 +12283,7 @@ packages:
       postcss: 8.4.31
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
+      sass: 1.98.0
       styled-jsx: 5.1.6(react@19.2.4)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.1.0
@@ -12270,7 +12317,6 @@ packages:
   /node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
     requiresBuild: true
-    dev: true
     optional: true
 
   /node-domexception@1.0.0:
@@ -12672,7 +12718,6 @@ packages:
   /picomatch@4.0.4:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
-    dev: true
 
   /pino-abstract-transport@3.0.0:
     resolution: {integrity: sha512-wlfUczU+n7Hy/Ha5j9a/gZNy7We5+cXp8YL+X+PG8S0KXxw7n/JXA3c46Y0zQznIJ83URJiwy7Lh56WLokNuxg==}
@@ -13015,6 +13060,15 @@ packages:
       react: 18.3.1
       scheduler: 0.23.2
 
+  /react-dom@19.2.4(react@18.3.1):
+    resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
+    peerDependencies:
+      react: ^19.2.4
+    dependencies:
+      react: 18.3.1
+      scheduler: 0.27.0
+    dev: true
+
   /react-dom@19.2.4(react@19.2.4):
     resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
     peerDependencies:
@@ -13022,6 +13076,7 @@ packages:
     dependencies:
       react: 19.2.4
       scheduler: 0.27.0
+    dev: false
 
   /react-element-to-jsx-string@15.0.0(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-UDg4lXB6BzlobN60P8fHWVPX3Kyw8ORrTeBtClmIlGdkOOE+GYQSFvmEU5iLLpwp/6v42DINwNcwOhOLfQ//FQ==}
@@ -13129,7 +13184,6 @@ packages:
   /readdirp@4.1.2:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
-    dev: true
 
   /real-require@0.2.0:
     resolution: {integrity: sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg==}
@@ -13185,7 +13239,7 @@ packages:
       set-function-name: 2.0.2
     dev: true
 
-  /rehackt@0.1.0:
+  /rehackt@0.1.0(@types/react@19.2.2)(react@19.2.4):
     resolution: {integrity: sha512-7kRDOuLHB87D/JESKxQoRwv4DzbIdwkAGQ7p6QKGdVlY1IZheUnVhlk/4UZlNUVxdAXpyxikE3URsG067ybVzw==}
     peerDependencies:
       '@types/react': '*'
@@ -13195,6 +13249,9 @@ packages:
         optional: true
       react:
         optional: true
+    dependencies:
+      '@types/react': 19.2.2
+      react: 19.2.4
     dev: false
 
   /relateurl@0.2.7:
@@ -13429,7 +13486,6 @@ packages:
       source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.5.6
-    dev: true
 
   /saxes@6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}

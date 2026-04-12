@@ -14,7 +14,7 @@ export interface Config {
   encoder: EncoderConfig;
   jwt: JwtConfig;
   services: {
-    auth: ServiceConfig;
+    api: ServiceConfig;
   };
 }
 
@@ -62,4 +62,5 @@ export interface JwtConfig {
 
 export interface ServiceConfig {
   port: number;
+  allowedOrigins?: string[];
 }

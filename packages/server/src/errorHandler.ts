@@ -28,15 +28,14 @@ export const applyFrameworkErrorHandler = ({ fastify }: ApplyFrameworkErrorHandl
     }
     if (isFastifyRequestValidationError(err)) {
       const error = new WrongParamError("Request doesn't match the schema", {
-        message: err.message,
         validation: err.validation,
       });
       return sendCommonErrorShape(reply, error);
     }
     if (isResponseSerializationError(err)) {
-      return sendCommonErrorShape(reply, new InternalError("Internal Server Error"));
+      return sendCommonErrorShape(reply, new InternalError("Internal Server Error", { error: err }));
     }
-    const error = err instanceof CommonError ? err : new InternalError("Internal Server Error");
+    const error = err instanceof CommonError ? err : new InternalError("Internal Server Error", { error: err });
     return sendCommonErrorShape(reply, error);
   });
 };
