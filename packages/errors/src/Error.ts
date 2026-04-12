@@ -10,7 +10,8 @@ export class CommonError extends Error implements ICommonError {
   constructor(statusCode: number, type: ErrorTypes, message: string, error?: any) {
     super(message);
 
-    console.error(message);
+    console.error({ statusCode, type, message, error });
+    console.error(this.stack);
 
     this.statusCode = statusCode;
     this.type = type;

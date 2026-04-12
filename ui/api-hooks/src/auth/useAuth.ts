@@ -9,8 +9,7 @@ interface AuthResponse {
 export const useAuth = () => {
   const httpClient = useHttpClient();
 
-  return useFetch<AuthResponse>({
-    requestFn: () => httpClient.post({ path: '/auth', body: {} }),
-    deps: [],
+  return useFetch<AuthResponse, never>({
+    requestFn: () => httpClient.post({ path: '/auth', withAuth: true }),
   });
 };

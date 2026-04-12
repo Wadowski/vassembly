@@ -19,11 +19,10 @@ interface LoginResponse {
 }
 
 
-export const useLogin = (params: LoginParams) => {
+export const useLogin = () => {
   const httpClient = useHttpClient();
 
-  return useFetch<LoginResponse>({
-    requestFn: () => httpClient.post({ path: '/user/login', body: params }),
-    deps: [],
+  return useFetch<LoginResponse, LoginParams>({
+    requestFn: ({ body }) => httpClient.post({ path: '/user/login', body }),
   });
 };

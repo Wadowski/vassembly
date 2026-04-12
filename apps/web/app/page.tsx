@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useGetUser, useAuth } from "@vassembly/ui-api-hooks";
+import { useGetUser, useAuth, useLogin } from "@vassembly/ui-api-hooks";
 import styles from "./page.module.css";
 import { GraphQLProvider, HttpClientProvider } from "@vassembly/ui-api-hooks";
 
 const Home = () => {
   // const { data } = useGetUser();
   useAuth();
+  const { fetch: login } = useLogin();
+  useEffect(() => {
+    login({ body: { email: "test@test.com", password: "test" } });
+  }, []);
 
   // useEffect(() => {
   //   getUser({ id: "1" });

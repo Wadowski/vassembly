@@ -20,7 +20,10 @@ export const useApolloQuery = <TData, TVariables extends OperationVariables = Op
     fetchPolicy: options?.fetchPolicy,
     pollInterval: options?.pollInterval,
     notifyOnNetworkStatusChange: options?.notifyOnNetworkStatusChange,
-    context: options?.context,
+    context: {
+      ...options?.context,
+      ...(options?.withAuth && { withAuth: true }),
+    },
     errorPolicy: options?.errorPolicy,
   });
 

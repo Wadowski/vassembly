@@ -5,6 +5,7 @@ export interface GraphQLClientConfig {
   endpoint: string;
   defaultHeaders?: Record<string, string>;
   getAuthToken?: () => string | undefined | Promise<string | undefined>;
+  getRefreshToken?: () => string | undefined | Promise<string | undefined>;
 }
 
 export interface GraphQLProviderProps {
@@ -19,6 +20,7 @@ export interface UseApolloQueryOptions<TVariables extends OperationVariables = O
   notifyOnNetworkStatusChange?: boolean;
   context?: Record<string, any>;
   errorPolicy?: 'none' | 'ignore' | 'all';
+  withAuth?: boolean;
 }
 
 export interface UseApolloQueryState<TData, TVariables extends OperationVariables = OperationVariables> {
@@ -35,6 +37,7 @@ export interface UseApolloMutationOptions<TVariables extends OperationVariables 
   errorPolicy?: 'none' | 'ignore' | 'all';
   onCompleted?: (data: any) => void;
   onError?: (error: CommonError) => void;
+  withAuth?: boolean;
 }
 
 export interface UseApolloLazyQueryState<TData, TVariables extends OperationVariables = OperationVariables> {

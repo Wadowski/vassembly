@@ -20,11 +20,10 @@ export interface RegisterResponse {
 }
 
 
-export const useRegister = (params: RegisterParams) => {
+export const useRegister = () => {
   const httpClient = useHttpClient();
 
-  return useFetch<RegisterResponse>({
-    requestFn: () => httpClient.post({ path: '/user/register', body: params }),
-    deps: [],
+  return useFetch<RegisterResponse, RegisterParams>({
+    requestFn: ({ body }) => httpClient.post({ path: '/user/register', body }),
   });
 };

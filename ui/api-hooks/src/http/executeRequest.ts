@@ -14,6 +14,21 @@ const getAuthToken = async (config: HttpClientConfig): Promise<string | undefine
   }
 };
 
+const getRawTokens = async (config: HttpClientConfig): Promise<{ authToken?: string; refreshToken?: string }> => {
+  try {
+    const [authToken, refreshToken] = await Promise.all([
+      config.getAuthToken ? config.getAuthToken() : Promise.resolve(undefined),
+      config.getRefreshToken ? config.getRefreshToken() : Promise.resolve(undefined),
+    ]);
+    return {
+      authToken: authToken && authToken !== '' ? authToken : undefined,
+      refreshToken: refreshToken && refreshToken !== '' ? refreshToken : undefined,
+    };
+  } catch (error) {
+    throw new InternalError('Failed to resolve auth tokens', error);
+  }
+};
+
 export const executeRequest = async <TBody, TResponse>({
   config,
   method,
@@ -24,11 +39,23 @@ export const executeRequest = async <TBody, TResponse>({
     path: options.path,
     query: options.query,
   });
-  const authorization = await getAuthToken(config);
+  let authToken: string | undefined;
+  let refreshToken: string | undefined;
+  let authorization: string | undefined;
+
+  if (options.withAuth) {
+  authorization = await getAuthToken(config);
+  const tokens = await getRawTokens(config);
+    authToken = tokens.authToken;
+    refreshToken = tokens.refreshToken;
+  }
+
   const headers = mergeHeaders({
     defaultHeaders: config.defaultHeaders ?? {},
     requestHeaders: options.headers ?? {},
     authorization,
+    authToken,
+    refreshToken,
   });
 
   try {

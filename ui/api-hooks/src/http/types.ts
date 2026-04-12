@@ -12,6 +12,7 @@ export interface HttpClientConfig {
   baseUrl?: string;
   defaultHeaders?: Record<string, string>;
   getAuthToken?: () => Promise<string | undefined>;
+  getRefreshToken?: () => Promise<string | undefined>;
 }
 
 export interface RequestOptions<TBody> {
@@ -19,6 +20,7 @@ export interface RequestOptions<TBody> {
   query?: Record<string, string | number | boolean>;
   headers?: Record<string, string>;
   body?: TBody;
+  withAuth?: boolean;
 }
 
 export interface ExecuteRequestProps<TBody> {
@@ -27,17 +29,15 @@ export interface ExecuteRequestProps<TBody> {
   options: RequestOptions<TBody>;
 }
 
-export interface UseQueryOptions<TResponse> {
-  requestFn: () => Promise<TResponse>;
-  deps: unknown[];
-  enabled?: boolean;
+export interface UseQueryOptions<TResponse, TParams> {
+  requestFn: (options: Pick<RequestOptions<TParams>, 'body' | 'query'>) => Promise<TResponse>;
 }
 
-export interface UseQueryState<TResponse> {
+export interface UseQueryState<TResponse, TParams> {
   data: TResponse | undefined;
   isLoading: boolean;
   error: CommonError | undefined;
-  refetch: () => Promise<void>;
+  fetch: (options: Pick<RequestOptions<TParams>, 'body' | 'query'>) => Promise<void>;
 }
 
 export interface UseMutationOptions<TParams, TResponse> {
@@ -71,4 +71,6 @@ export interface MergeHeadersProps {
   defaultHeaders: Record<string, string>;
   requestHeaders: Record<string, string>;
   authorization: string | undefined;
+  authToken?: string;
+  refreshToken?: string;
 }

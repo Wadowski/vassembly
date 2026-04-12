@@ -2,21 +2,19 @@ import { useState, useEffect } from 'react';
 import type { CommonError } from '@vassembly/errors';
 import type { UseQueryOptions, UseQueryState } from './types';
 
-export const useFetch = <TResponse,>({
+export const useFetch = <TResponse, TParams>({
   requestFn,
-  deps,
-  enabled = true,
-}: UseQueryOptions<TResponse>): UseQueryState<TResponse> => {
+}: UseQueryOptions<TResponse, TParams>): UseQueryState<TResponse, TParams> => {
   const [data, setData] = useState<TResponse | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(enabled);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<CommonError | undefined>(undefined);
 
-  const refetch = async () => {
+  const fetch: UseQueryState<TResponse, TParams>['fetch'] = async ({ body, query }) => {
     setIsLoading(true);
     setError(undefined);
 
     try {
-      const result = await requestFn();
+      const result = await requestFn({ body, query });
       setData(result);
     } catch (err) {
       setError(err as CommonError);
@@ -25,14 +23,5 @@ export const useFetch = <TResponse,>({
     }
   };
 
-  useEffect(() => {
-    if (!enabled) {
-      setIsLoading(false);
-      return;
-    }
-
-    refetch();
-  }, deps);
-
-  return { data, isLoading, error, refetch };
+  return { data, isLoading, error, fetch };
 };

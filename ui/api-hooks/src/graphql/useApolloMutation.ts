@@ -11,7 +11,10 @@ export const useApolloMutation = <TData, TVariables extends OperationVariables =
 
   const [apolloMutate, { loading, error, data, reset: apolloReset }] = useApolloClientMutation<TData, TVariables>(document, {
     variables: options?.variables,
-    context: options?.context,
+    context: {
+      ...options?.context,
+      ...(options?.withAuth && { withAuth: true }),
+    },
     errorPolicy: options?.errorPolicy,
     onCompleted: options?.onCompleted,
     onError: (apolloError) => {
