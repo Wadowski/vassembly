@@ -1,4 +1,4 @@
-import { Config } from './types';
+import { Config, CustomHeaders } from './types';
 
 const config: Config = {
   apps: {
@@ -33,6 +33,7 @@ const config: Config = {
   services: {
     api: {
       port: 5000,
+      allowedOrigins: [],
     },
   },
 };

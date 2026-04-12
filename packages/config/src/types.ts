@@ -62,4 +62,5 @@ export interface JwtConfig {
 
 export interface ServiceConfig {
   port: number;
+  allowedOrigins?: string[];
 }

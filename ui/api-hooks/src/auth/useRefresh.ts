@@ -11,7 +11,7 @@ interface RefreshResponse {
   id?: string;
 }
 
-export const useLogin = (params: RefreshParams) => {
+export const useRefresh = (params: RefreshParams) => {
   const httpClient = useHttpClient();
 
   return useFetch<RefreshResponse>({

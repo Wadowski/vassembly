@@ -37,6 +37,13 @@ export interface UseApolloMutationOptions<TVariables extends OperationVariables 
   onError?: (error: CommonError) => void;
 }
 
+export interface UseApolloLazyQueryState<TData, TVariables extends OperationVariables = OperationVariables> {
+  execute: (variables?: TVariables) => Promise<ApolloQueryResult<TData | undefined>>;
+  isLoading: boolean;
+  error: CommonError | undefined;
+  data: TData | undefined;
+}
+
 export interface UseApolloMutationState<TData, TVariables extends OperationVariables = OperationVariables> {
   mutate: (variables?: TVariables) => Promise<TData | undefined>;
   isLoading: boolean;

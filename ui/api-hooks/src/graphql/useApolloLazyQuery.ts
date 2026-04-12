@@ -1,13 +1,13 @@
 import { useMemo, useCallback } from 'react';
-import { useQuery as useApolloClientQuery } from '@apollo/client';
+import { useLazyQuery as useApolloClientLazyQuery } from '@apollo/client';
 import type { DocumentNode, OperationVariables, ApolloQueryResult } from '@apollo/client';
-import type { UseApolloQueryOptions, UseApolloQueryState } from './types';
+import type { UseApolloLazyQueryState, UseApolloQueryOptions } from './types';
 import { parseGraphQLDocument, mapGraphQLError } from './utils';
 
-export const useApolloQuery = <TData, TVariables extends OperationVariables = OperationVariables>(
+export const useApolloLazyQuery = <TData, TVariables extends OperationVariables = OperationVariables>(
   query: string | DocumentNode,
   options?: UseApolloQueryOptions<TVariables>,
-): UseApolloQueryState<TData, TVariables> => {
+): UseApolloLazyQueryState<TData, TVariables> => {
   // Memoize the document to prevent Apollo from re-initializing on every render
   const document = useMemo(
     () => parseGraphQLDocument(query),
@@ -15,7 +15,7 @@ export const useApolloQuery = <TData, TVariables extends OperationVariables = Op
     [typeof query === 'string' ? query : JSON.stringify(query)],
   );
 
-  const { data, loading, error, refetch: apolloRefetch, networkStatus } = useApolloClientQuery<TData, TVariables>(document, {
+  const [execute, { data, loading, error, networkStatus }] = useApolloClientLazyQuery<TData, TVariables>(document, {
     variables: options?.variables,
     fetchPolicy: options?.fetchPolicy,
     pollInterval: options?.pollInterval,
@@ -26,22 +26,21 @@ export const useApolloQuery = <TData, TVariables extends OperationVariables = Op
 
   const mappedError = mapGraphQLError(error);
 
-  const refetch = useCallback(
-    async (variables?: TVariables): Promise<ApolloQueryResult<TData>> => {
-      return apolloRefetch(variables);
+  const executeQuery = useCallback(
+    async (variables?: TVariables): Promise<ApolloQueryResult<TData | undefined>> => {
+      return execute({ variables });
     },
-    [apolloRefetch],
+    [execute],
   );
 
   const result = useMemo(
     () => ({
-      data,
+      execute: executeQuery,
+      data: data ?? undefined,
       isLoading: loading,
       error: mappedError,
-      refetch,
-      networkStatus,
     }),
-    [data, loading, mappedError, refetch, networkStatus],
+    [executeQuery, data, loading, mappedError],
   );
 
   return result;

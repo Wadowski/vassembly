@@ -5,6 +5,7 @@ import { applyFrameworkErrorHandler } from "./errorHandler";
 import { setupGraphQL } from "./graphql/setup";
 import { registerRoutes } from "./registerRoutes";
 import { setupSwaggerUi } from "./swagger/setupSwaggerUi";
+import { setupCors } from "./cors";
 import type { ServerConfig } from "./types";
 import { logger } from "./logger";
 
@@ -12,6 +13,8 @@ export const createServer = async (config: ServerConfig) => {
   const fastify = Fastify({
     logger,
   });
+
+  await setupCors({ fastify, allowedOrigins: config.allowedOrigins });
 
   fastify.setValidatorCompiler(validatorCompiler);
   fastify.setSerializerCompiler(serializerCompiler);

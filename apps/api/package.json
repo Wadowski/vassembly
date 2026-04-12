@@ -16,12 +16,13 @@
     "@vassembly/eslint-config": "workspace:*",
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
+    "tsx": "^4.21.0",
     "typescript": "5.9.2",
-    "vitest": "^2.0.0",
-    "tsx": "^4.21.0"
+    "vitest": "^2.0.0"
   },
   "dependencies": {
     "@vassembly/config": "workspace:*",
+    "@vassembly/constants": "workspace:^",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",

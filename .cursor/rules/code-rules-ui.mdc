@@ -1,6 +1,6 @@
 ---
 description: UI component structure + hook-driven logic; Next.js app composes ui/* with shell-only exceptions
-globs: ui/**/src/**/*.{ts,tsx},apps/web/**/*.{ts,tsx}
+globs: ui/**/src/**/*.{ts,tsx},apps/**/*.{ts,tsx}
 alwaysApply: false
 ---
 # UI code structure and responsibilities
@@ -49,40 +49,33 @@ alwaysApply: false
   - extract each part into its own `*.tsx` (and `*.module.scss` if needed)
   - subcomponents should also be render-focused; shared logic stays in hooks
 
-## Next.js web app (`apps/web`, App Router)
+## Apps package rules (required)
 
-### Composition-first (required)
+Apps packages under `apps/*` own routing and connect `ui/*` components to data and logic. They must not contain business logic or reusable UI components.
 
-- The web app **composes existing UI** from `ui/*` (and other shared packages): import components, pass props, and arrange them on the page or in layouts. **Do not add new reusable UI** (primitives, widgets, feature blocks, hooks-for-UI) under `apps/web`—implement those in a `ui/*` package and consume them here.
-- **Narrow exception — page shells only**: you may add a component under `apps/web` **only** when it exists solely to keep `page.tsx` / `layout.tsx` small by **grouping** already-built pieces into a recognizable region (examples: page header band, footer block, sidebar column, main + aside grid). Shells must be thin: mostly composition of `ui/*` children, optional wrapper markup, and light layout styling. No business rules, no new visual language, no hooks beyond trivial layout (e.g. open/close sidebar)—if it needs real logic or becomes reusable, move it to `ui/*`.
-- Do not use `apps/web` as a second component library: no Storybook targets here for shells unless you explicitly need them; real components follow the full file split and stories in `ui/*`.
+### Routing
 
-### Top-level layout
+- `apps/*` packages are the single place responsible for defining routes
+- Use file-based routing conventions of the underlying framework (e.g. Next.js App Router)
+- Route segments live in `app/` — only `page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, `route.ts`, `default.tsx`
 
-- `app/`: route segments only (`page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, `route.ts`, `default.tsx` where needed). Keep these files thin: metadata, segment wiring, and composition—no large component trees or business logic.
-- `app/globals.scss` (or `globals.css` if global tokens only): app-wide base styles; avoid piling feature styles here.
-- `lib/`: pure helpers, server/client-safe utilities, and small adapters (no JSX). Split by concern (`lib/auth/`, `lib/api/`, etc.) when a file would exceed the general line-length guideline.
-- **Shell components (exception only)**: colocate next to the route (e.g. `app/(dashboard)/_components/PageShell.tsx`) or under a small `apps/web/components/shells/` (or similar) if shared across a few routes. Names should reflect structure (`DashboardSidebar`, `MarketingFooter`), not feature implementation.
+### page.tsx / layout.tsx rules (required)
 
-### What lives where
+- Must contain **no logic** — no state, no effects, no derived values, no data fetching, no conditionals beyond trivial metadata
+- Must only import and compose components; delegate all logic to hooks or server-only helpers
+- Every page that requires logic must have a dedicated `use<Page>.ts` hook that holds all state, effects, and derived values; the page file only calls the hook and passes results to components
 
-- **Route file (`page.tsx`, etc.)**: fetch or delegate data loading (Server Components), pass props into components from `ui/*`, set `metadata` / `generateMetadata` in the same segment or a nearby `metadata.ts` pattern—keep orchestration readable; move heavy logic to `lib/` or server-only modules.
-- **Interactive UI**: the interactive piece should live in `ui/*` with `'use client'` on the smallest export that needs it; the route stays a Server Component when possible. Do not create ad-hoc client components in `apps/web` except allowed shells that only wrap `ui/*` clients.
-- **API / webhooks**: implement in `route.ts` next to the segment or under a dedicated `app/api/.../route.ts`; keep handlers thin and delegate to `lib/` or domain packages.
-- **Middleware**: `middleware.ts` at `apps/web` root for cross-cutting request logic only; keep it short and test helpers in `lib/`.
+### Components in `apps/*` (required)
 
-### File split inside the app
+- Components defined inside `apps/*` are **structural connectors only**:
+  - They wire `ui/*` components to API clients, hooks, or other logic packages
+  - They may not define new visual language, new design primitives, or business rules
+- **No new reusable components** may be created inside `apps/*` — if a component could be used outside this specific route, create a new `ui/*` package for it
+- Page components must compose subcomponents; a page must never render a single monolithic template
 
-- **Packages (`ui/*`)**: follow the full split in this document (`types.ts`, `<Component>.tsx`, `*.module.scss`, `use*.ts`, stories, tests).
-- **Allowed shells in `apps/web`**: keep minimal—often a single `<Shell>.tsx` plus `<Shell>.module.scss` if layout needs scoped styles; avoid extra files unless the shell would exceed the usual line-length limit, then split only for readability (still no new design primitives).
-- Do not define multiple unrelated pieces in `page.tsx` or `layout.tsx`: either import from `ui/*` or extract **only** an allowed shell that groups those imports.
+### API calls (required)
 
-### Server vs client modules
+- All API calls (GraphQL or HTTP) must use the `ui-api-client` package
+- Do not import API clients, fetch wrappers, or raw `fetch` directly into components or `page.tsx` files
+- API calls belong exclusively inside hooks (`use<Page>.ts` or dedicated `use<Feature>.ts`); components only receive data as props or from hooks
 
-- Default is Server Components; only mark files with `'use client'` when required. Prefer client boundaries on `ui/*` modules; in `apps/web`, `'use client'` on a shell is only for trivial layout state that cannot live in `ui/*`—otherwise extend `ui/*`.
-- Do not import server-only modules (secrets, direct DB, filesystem) into client components or shared modules that client code imports. Isolate server-only code in files that never ship to the client boundary (e.g. used only from `page.tsx` / `layout.tsx` / `route.ts` without re-export to client).
-
-## Exports
-
-- Use named exports (no default exports), consistent with repo conventions.
-- **Exception — Next.js route modules**: `page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, and `default.tsx` must use the `default` export required by the App Router. Implement real views as **named** exports in `ui/*` (with tests/stories there); route files default-export a thin composition. Allowed shells in `apps/web` use **named** exports.

@@ -9,7 +9,7 @@ export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export interface RouteDefinition {
   method: HTTPMethod;
   url: string;
-  handler: (input: { body: unknown; query: unknown }) => Promise<unknown>;
+  handler: (input: { body: unknown; query: unknown; headers: Record<string, string> }) => Promise<unknown>;
   schema?: { body?: ZodTypeAny; querystring?: ZodTypeAny; response?: ZodTypeAny };
   prefix?: string;
 }
@@ -18,6 +18,7 @@ export interface ServerConfig {
   routes?: RouteDefinition[];
   graphql?: GraphQLConfig;
   serviceName?: string;
+  allowedOrigins?: string[];
 }
 
 export interface StartServerProps {

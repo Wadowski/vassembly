@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react';
 import { useApolloQuery } from '../graphql';
 
 export interface GetUserVariables {
@@ -26,19 +27,28 @@ const GET_USER = `
   }
 `;
 
-export const useGetUser = ({ id }: GetUserVariables) => {
+export const useGetUser = () => {
   const { data, isLoading, error, refetch } = useApolloQuery<GetUserData, GetUserVariables>(
     GET_USER,
     {
-      variables: { id },
       fetchPolicy: 'no-cache',
     },
   );
 
-  return {
-    data,
-    isLoading,
-    error,
-    refetch,
-  };
+  // const getUser = useCallback(
+  //   ({ id }: GetUserVariables) => execute({ id }),
+  //   [execute],
+  // );
+
+  const result = useMemo(
+    () => ({
+      // getUser,
+      data,
+      isLoading,
+      error,
+    }),
+    [data, isLoading, error],
+  );
+
+  return result;
 };
