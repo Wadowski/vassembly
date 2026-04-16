@@ -1,0 +1,24 @@
+@import './drawer-navigation.tokens.scss';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: calc(#{$drawer-rail-inner-width} + #{$drawer-horizontal-padding} * 2);
+  max-width: 100%;
+  height: 100%;
+  min-height: 0;
+  background-color: $color-surface-container;
+  color: $color-text-primary;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: $spacing-4;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: $drawer-horizontal-padding;
+}

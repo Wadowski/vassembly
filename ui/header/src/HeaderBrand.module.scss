@@ -1,0 +1,34 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+@import './headerMotion.scss';
+
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: $spacing-2;
+  box-sizing: border-box;
+  color: $color-text-primary;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    border-radius: $border-radius-sm;
+    transition: color $header-motion-duration $header-motion-easing,
+      box-shadow $header-motion-duration $header-motion-easing;
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: $shadow-focus-ring;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand a {
+    transition-duration: $header-motion-duration-reduced;
+  }
+}

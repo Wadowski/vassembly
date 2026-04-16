@@ -1,0 +1,17 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+:global {
+  [id='app-navigation-drawer'] {
+    .root {
+      justify-content: flex-end;
+    }
+
+    .panel {
+      transform: translateX(100%);
+    }
+
+    .panelOpen {
+      transform: translateX(0);
+    }
+  }
+}

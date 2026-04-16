@@ -1,0 +1,85 @@
+.columnTitle {
+  text-transform: $text-transform-uppercase;
+  letter-spacing: $letter-spacing-tracked;
+  color: $color-text-secondary;
+}
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.linkListItem {
+  margin: 0;
+}
+
+.footerLink {
+  display: inline-flex;
+  text-decoration: none;
+  color: $color-primary-600;
+  border-radius: $border-radius-sm;
+  transition: color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:hover {
+    color: $color-text-primary;
+    background-color: rgba($color-primary-600, 0.08);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+}
+
+.companyLegalInner {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.legalGap {
+  margin-top: $spacing-2;
+}
+
+.contactInner {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.contactRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+}
+
+.contactLabel {
+  color: $color-text-tertiary;
+}
+
+.contactValue {
+  color: $color-text-primary;
+}
+
+.contactSocialInner {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.copyright {
+  margin: 0;
+  color: $color-text-tertiary;
+  font-size: $font-size-label-md;
+  line-height: $line-height-normal;
+}

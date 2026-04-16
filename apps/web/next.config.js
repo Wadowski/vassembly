@@ -9,6 +9,15 @@ const monorepoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 loadEnvConfig(monorepoRoot);
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  transpilePackages: [
+    "@vassembly/ui-footer",
+    "@vassembly/ui-header",
+    "@vassembly/ui-text",
+    "@vassembly/ui-utils",
+    "@vassembly/ui-icons",
+    "@vassembly/theme",
+  ],
+};
 
 export default nextConfig;

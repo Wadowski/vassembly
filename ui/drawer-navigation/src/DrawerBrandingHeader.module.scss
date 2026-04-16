@@ -1,0 +1,28 @@
+@import './drawer-navigation.tokens.scss';
+
+.root {
+  flex-shrink: 0;
+  padding: $spacing-4 $drawer-horizontal-padding $spacing-3;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.product {
+  margin: 0;
+  font-family: $font-family-display;
+  font-size: $font-size-heading-sm;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+}
+
+.tagline {
+  margin: $spacing-1 0 0;
+  font-family: $font-family-body;
+  font-size: $font-size-body-sm;
+  color: $color-text-secondary;
+}

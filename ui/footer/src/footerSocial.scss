@@ -1,0 +1,44 @@
+.socialRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.socialItem {
+  margin: 0;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  color: $color-primary-dim;
+  border-radius: $border-radius-sm;
+  transition: color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:hover {
+    color: $color-primary-600;
+    background-color: rgba($color-primary-600, 0.08);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+}
+
+.socialIcon {
+  display: flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+}

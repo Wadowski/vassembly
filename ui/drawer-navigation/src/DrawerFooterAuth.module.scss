@@ -1,0 +1,38 @@
+@import './drawer-navigation.tokens.scss';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface-container-low;
+}
+
+.rootGlass {
+  background-color: rgba($color-surface, 0.72);
+  backdrop-filter: blur(20px);
+}
+
+.register {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: $color-primary;
+  font-family: $font-family-body;
+  font-size: $font-size-body-md;
+  font-weight: $font-weight-medium;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+    border-radius: $border-radius-sm;
+  }
+}
