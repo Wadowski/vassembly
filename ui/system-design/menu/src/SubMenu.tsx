@@ -38,6 +38,7 @@ export const SubMenu = ({
       node.removeAttribute('inert');
       return;
     }
+
     node.setAttribute('inert', '');
   }, [isOpen]);
 
