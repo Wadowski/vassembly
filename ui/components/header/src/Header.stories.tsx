@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Header } from './Header';
 
 const meta: Meta<typeof Header> = {
-  title: 'System Design/Header',
+  title: 'Components/Header',
   component: Header,
   parameters: {
     layout: 'fullscreen',

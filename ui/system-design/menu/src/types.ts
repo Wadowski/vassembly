@@ -13,10 +13,10 @@ export type MenuBaseItem = {
 export type MenuProps = {
   children?: ReactNode;
   mode: MenuSelectionMode;
-  selectedKeys: string[];
-  openKeys: string[];
-  onSelectedKeysChange: (keys: string[]) => void;
-  onOpenKeysChange: (keys: string[]) => void;
+  selectedKeys?: string[];
+  openKeys?: string[];
+  onSelectedKeysChange?: (keys: string[]) => void;
+  onOpenKeysChange?: (keys: string[]) => void;
   ariaLabel?: string;
 };
 

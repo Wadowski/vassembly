@@ -11,6 +11,7 @@ const hasBrand = (brand: FooterProps['brand']): boolean => {
 };
 
 const hasContact = (contact: FooterProps['contact']): boolean => {
+  if (!contact) return false;
   return !!(contact.email || contact.phone || contact.address);
 };
 

@@ -11,10 +11,10 @@ type Registry = Map<string, HTMLElement>;
 export const Menu = ({
   children,
   mode,
-  selectedKeys,
-  openKeys,
-  onSelectedKeysChange,
-  onOpenKeysChange,
+  selectedKeys = [],
+  openKeys = [],
+  onSelectedKeysChange = () => {},
+  onOpenKeysChange = () => {},
   ariaLabel,
 }: MenuProps): JSX.Element => {
   const [announcement, setAnnouncement] = useState<string>('');

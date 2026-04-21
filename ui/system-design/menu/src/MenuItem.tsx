@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import type { MouseEvent } from 'react';
+import type { MouseEvent, RefObject } from 'react';
 import { resolveClassName } from '@vassembly/ui-utils';
 import { useMenuContext } from './MenuContext';
 import styles from './Menu.module.scss';
@@ -22,7 +22,7 @@ export const MenuItem = ({
   rel,
   onClick,
 }: MenuItemProps): JSX.Element => {
-  const { mode, selectedKeys, onSelectedKeysChange, announce, registerItem, unregisterItem } =
+  const { mode, selectedKeys = [], onSelectedKeysChange, announce, registerItem, unregisterItem } =
     useMenuContext();
   const ref = useRef<HTMLButtonElement | HTMLAnchorElement>(null);
   const isSelected = selectedKeys.includes(itemKey);
@@ -43,7 +43,7 @@ export const MenuItem = ({
       return;
     }
     const nextKeys = getNextSelectedKeys({ mode, selectedKeys, itemKey });
-    onSelectedKeysChange(nextKeys);
+    onSelectedKeysChange?.(nextKeys);
     onClick?.(event);
     announce(`${getTextContent({ node: ref.current })} selected`);
   };
@@ -67,7 +67,7 @@ export const MenuItem = ({
   if (href) {
     return (
       <a
-        ref={ref}
+        ref={ref as RefObject<HTMLAnchorElement>}
         href={href}
         target={target}
         rel={safeRel}
@@ -84,7 +84,7 @@ export const MenuItem = ({
 
   return (
     <button
-      ref={ref}
+      ref={ref as RefObject<HTMLButtonElement>}
       type="button"
       className={mergedClassName}
       aria-disabled={isDisabled ? 'true' : undefined}

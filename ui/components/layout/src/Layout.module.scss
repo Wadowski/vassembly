@@ -1,3 +1,13 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1 1 auto;
+}
+
 .wordmark {
   font-family: var(--font-family-display), system-ui, sans-serif;
   font-weight: 600;

@@ -7,7 +7,7 @@ import { storyNavSections, storyUser } from './drawerNavigationStoryFixtures';
 type DrawerNavigationProps = ComponentProps<typeof DrawerNavigation>;
 
 const meta = {
-  title: 'System Design/DrawerNavigation',
+  title: 'Components/DrawerNavigation',
   component: DrawerNavigation,
   parameters: {
     layout: 'fullscreen',

@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
-import {
-  SocialFacebookColorIcon,
-  SocialInstagramColorIcon,
-  SocialTwitterColorIcon,
-} from "@vassembly/ui-icons";
-import { Footer } from "@vassembly/ui-footer";
-import { LayoutContent } from "./LayoutContent";
+import { Layout } from "@vassembly/ui-layout";
 import "./globals.scss";
-import layoutStyles from "./layout.module.scss";
 import { Providers } from "./providers";
 
 const inter = Inter({
@@ -42,49 +35,7 @@ export default function RootLayout({
     >
       <body className={inter.className}>
         <Providers>
-          <LayoutContent>
-            <div className={layoutStyles.page}>
-              <main id="main-content" className={layoutStyles.main}>
-                {children}
-              </main>
-              <Footer
-                sitemap={[
-                  { label: "Home", href: "/" },
-                  { label: "Docs", href: "/docs" },
-                ]}
-                company={[{ label: "About us", href: "/about" }]}
-                legal={[
-                  { label: "Privacy", href: "/privacy" },
-                  { label: "Terms & conditions", href: "/terms" },
-                ]}
-                contact={{
-                  email: {
-                    label: "Email",
-                    value: "hello@vassembly.dev",
-                    href: "mailto:hello@vassembly.dev",
-                  },
-                }}
-                social={[
-                  {
-                    href: "https://twitter.com",
-                    ariaLabel: "X",
-                    icon: <SocialTwitterColorIcon />,
-                  },
-                  {
-                    href: "https://facebook.com",
-                    ariaLabel: "Facebook",
-                    icon: <SocialFacebookColorIcon />,
-                  },
-                  {
-                    href: "https://instagram.com",
-                    ariaLabel: "Instagram",
-                    icon: <SocialInstagramColorIcon />,
-                  },
-                ]}
-                copyright="© 2026 Vassembly. All rights reserved."
-              />
-            </div>
-          </LayoutContent>
+          <Layout variant="main">{children}</Layout>
         </Providers>
       </body>
     </html>

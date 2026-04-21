@@ -6,6 +6,7 @@
   gap: $spacing-3;
   border-radius: $border-radius-lg;
   background-color: $color-surface-container-low;
+  padding: $spacing-3;
 }
 
 .profile {
@@ -18,8 +19,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 58px;
+  height: 58px;
   flex-shrink: 0;
   border-radius: $border-radius-lg;
   overflow: hidden;
@@ -41,28 +42,23 @@
   flex-direction: column;
   gap: $spacing-1;
   min-width: 0;
-}
 
-.name {
-  margin: 0;
-  font-family: $font-family-body;
-  font-size: $font-size-body-md;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-}
+  & p {
+    line-height: 1;
 
-.email {
-  margin: 0;
-  font-family: $font-family-body;
-  font-size: $font-size-label-sm;
-  color: $color-text-secondary;
-}
+    &:first-child {
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
 
-.role {
-  margin: 0;
-  font-family: $font-family-body;
-  font-size: $font-size-label-sm;
-  color: $color-primary;
+      &:nth-child(2) {
+        color: $color-text-secondary;
+      }
+
+      &:nth-child(3) {
+        color: $color-secondary;
+      }
+  }
 }
 
 .row {

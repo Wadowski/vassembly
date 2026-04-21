@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { CogIcon, LogoutIcon } from '@vassembly/ui-icons';
 import { resolveClassName } from '@vassembly/ui-utils';
 import { Text } from '@vassembly/ui-text';
+import { Menu, MenuItem } from '@vassembly/ui-menu';
 import type { DrawerUser } from '../types';
 import styles from './DrawerFooterUser.module.scss';
 
@@ -41,27 +43,35 @@ export const DrawerFooterUser = (props: DrawerFooterUserProps): JSX.Element => {
           {user.avatarUrl ? (
             <img className={styles.avatarImg} src={user.avatarUrl} alt="" />
           ) : (
-            initials
+            <Text variant="body1">{initials}</Text>
           )}
         </div>
         <div className={styles.meta}>
-          <p className={styles.name}>{user.displayName}</p>
-          <p className={styles.email}>{user.email}</p>
-          {user.roleLabel ? <p className={styles.role}>{user.roleLabel}</p> : null}
+          <Text variant="body1">{user.displayName}</Text>
+          <Text variant="body2">{user.email}</Text>
+          {user.roleLabel ? <Text variant="caption">{user.roleLabel}</Text> : null}
         </div>
       </div>
-      <button type="button" className={styles.row} onClick={onSettings}>
-        <span className={styles.rowIcon}>
-          <CogIcon />
-        </span>
-        <Text variant="body1">Settings</Text>
-      </button>
-      <button type="button" className={resolveClassName(styles.row, styles.logout)} onClick={onLogout}>
-        <span className={styles.rowIcon}>
-          <LogoutIcon />
-        </span>
-        <Text variant="body1">Log out</Text>
-      </button>
+      <Menu
+        mode="single"
+        ariaLabel="Account actions"
+      >
+        <MenuItem
+          itemKey="settings"
+          icon={<CogIcon />}
+          onClick={onSettings}
+        >
+          Settings
+        </MenuItem>
+        <MenuItem
+          itemKey="logout"
+          icon={<LogoutIcon />}
+          onClick={onLogout}
+          className={styles.logout}
+        >
+          Log out
+        </MenuItem>
+      </Menu>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode, type MouseEvent } from 'react';
 import { NavSectionLabel } from '../nav-items/NavSectionLabel';
 import { NavListItems } from './NavListItems';
-import type { DrawerNavigateEvent, NavSection, RenderNavLinkArgs } from '../types';
+import type { DrawerNavigateEvent, NavSection } from '../types';
 
 export interface DrawerNavigationNavProps {
   sections: ReadonlyArray<NavSection>;

@@ -1,5 +1,6 @@
 declare const styles: {
   readonly root: string;
+  readonly column: string;
   readonly grid: string;
   readonly slotBrand: string;
   readonly slotSitemap: string;
