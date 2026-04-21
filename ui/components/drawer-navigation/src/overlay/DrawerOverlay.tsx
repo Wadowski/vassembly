@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, type ReactNode, type RefObject } from 'react';
+'use client';
+
+import { useCallback, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { resolveClassName } from '@vassembly/ui-utils';
 import type { DrawerOpenChangeEvent, DrawerOverlayCloseReason } from '../types';
@@ -17,6 +19,11 @@ export interface DrawerOverlayProps {
 export const DrawerOverlay = (props: DrawerOverlayProps): JSX.Element | null => {
   const { isOpen, onOpenChange, openerRef, className, scrimClassName, isReducedMotion, children } = props;
   const wasOpenRef = useRef(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const emitClose = useCallback(
     (reason: DrawerOverlayCloseReason): void => {
@@ -46,6 +53,10 @@ export const DrawerOverlay = (props: DrawerOverlayProps): JSX.Element | null => 
     }
     wasOpenRef.current = isOpen;
   }, [isOpen, openerRef]);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return createPortal(
     <div className={resolveClassName(styles.root, className)} role="presentation">
