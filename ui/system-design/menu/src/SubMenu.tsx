@@ -14,7 +14,7 @@ export const SubMenu = ({
   title,
   children,
 }: SubMenuProps): JSX.Element => {
-  const { openKeys, onOpenKeysChange, announce, registerItem, unregisterItem } = useMenuContext();
+  const { openKeys = [], onOpenKeysChange = () => {}, announce, registerItem, unregisterItem } = useMenuContext();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const regionRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
