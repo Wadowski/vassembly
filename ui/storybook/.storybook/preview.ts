@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react-webpack5'
+import { FontDecorator } from '../decorators/fontDecorator';
 
 const preview: Preview = {
   parameters: {
@@ -9,6 +10,9 @@ const preview: Preview = {
       },
     },
   },
+  decorators: [
+    FontDecorator,
+  ],
 };
 
 export default preview;

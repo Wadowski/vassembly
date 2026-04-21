@@ -1,0 +1,9 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.utilities {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: $spacing-2;
+  margin-inline-end: $spacing-2;
+}

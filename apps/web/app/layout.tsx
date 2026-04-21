@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { Layout } from "@vassembly/ui-layout";
 import "./globals.scss";
 import { Providers } from "./providers";
 
@@ -34,7 +35,7 @@ export default function RootLayout({
     >
       <body className={inter.className}>
         <Providers>
-          {children}
+          <Layout variant="main">{children}</Layout>
         </Providers>
       </body>
     </html>

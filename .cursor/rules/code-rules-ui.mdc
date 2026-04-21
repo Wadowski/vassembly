@@ -17,12 +17,13 @@ alwaysApply: false
 
 ## File split (required)
 
-- Keep UI code split into distinct files:
+- Keep UI code split into distinct files in a subfolder for all the component related files:
   - `types.ts`: types for the component/hook (props, state shape, options, return types)
   - `<Component>.tsx`: rendering only
   - `<Component>.module.scss`: all styles (scss modules)
   - `<Component>.stories.tsx`: Storybook stories for all supported variants/states
   - `<Component>.test.tsx`: tests colocated with the component when applicable
+- All files related to a component must be added to a folder with the same name as the component
 
 ## Constants (required)
 

@@ -1,5 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-webpack5';
-import { dirname, resolve } from 'path';
+import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 /**
@@ -26,6 +26,9 @@ const config: StorybookConfig = {
   webpackFinal: (config) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = config.resolve.alias || {};
+
+    config.resolve.alias['next/navigation'] = join(__dirname, 'mocks/next-navigation.ts');
+    config.resolve.alias['next/link'] = join(__dirname, 'mocks/next-link.tsx');
 
     config.resolve.alias['@vassembly/theme'] = themePackagePath;
 

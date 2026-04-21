@@ -46,8 +46,8 @@
 }
 
 // Color variants
-.color-primary {
-  &.variant-contained {
+.colorPrimary {
+  &.variantContained {
     background-color: $color-primary-600;
     color: $color-text-primary;
     border: 1px solid transparent;
@@ -69,7 +69,7 @@
     }
   }
 
-  &.variant-outlined {
+  &.variantOutlined {
     background-color: transparent;
     color: $color-primary-600;
     border: 1px solid $color-primary-600;
@@ -88,7 +88,7 @@
     }
   }
 
-  &.variant-text {
+  &.variantText {
     background-color: transparent;
     color: $color-primary-600;
     border: none;
@@ -107,8 +107,8 @@
   }
 }
 
-.color-secondary {
-  &.variant-contained {
+.colorSecondary {
+  &.variantContained {
     background-color: $color-secondary-600;
     color: $color-text-primary;
     border: 1px solid transparent;
@@ -130,7 +130,7 @@
     }
   }
 
-  &.variant-outlined {
+  &.variantOutlined {
     background-color: transparent;
     color: $color-secondary-600;
     border: 1px solid $color-secondary-600;
@@ -149,7 +149,7 @@
     }
   }
 
-  &.variant-text {
+  &.variantText {
     background-color: transparent;
     color: $color-secondary-600;
     border: none;
@@ -168,8 +168,8 @@
   }
 }
 
-.color-tertiary {
-  &.variant-contained {
+.colorTertiary {
+  &.variantContained {
     background-color: $color-tertiary-600;
     color: $color-text-primary;
     border: 1px solid transparent;
@@ -191,7 +191,7 @@
     }
   }
 
-  &.variant-outlined {
+  &.variantOutlined {
     background-color: transparent;
     color: $color-tertiary-600;
     border: 1px solid $color-tertiary-600;
@@ -210,7 +210,7 @@
     }
   }
 
-  &.variant-text {
+  &.variantText {
     background-color: transparent;
     color: $color-tertiary-600;
     border: none;
@@ -229,8 +229,8 @@
   }
 }
 
-.color-danger {
-  &.variant-contained {
+.colorDanger {
+  &.variantContained {
     background-color: $color-error-600;
     color: $color-text-primary;
     border: 1px solid transparent;
@@ -252,7 +252,7 @@
     }
   }
 
-  &.variant-outlined {
+  &.variantOutlined {
     background-color: transparent;
     color: $color-error-600;
     border: 1px solid $color-error-600;
@@ -271,7 +271,7 @@
     }
   }
 
-  &.variant-text {
+  &.variantText {
     background-color: transparent;
     color: $color-error-600;
     border: none;
@@ -291,21 +291,21 @@
 }
 
 // Sizes
-.size-small {
+.sizeSmall {
   padding: $spacing-2 $spacing-3;
   font-size: $font-size-label-sm;
   border-radius: $border-radius-button-secondary;
   min-height: 2rem;
 }
 
-.size-medium {
+.sizeMedium {
   padding: $spacing-3 $spacing-4;
   font-size: $font-size-label-md;
   border-radius: $border-radius-button-primary;
   min-height: 2.5rem;
 }
 
-.size-large {
+.sizeLarge {
   padding: $spacing-3 $spacing-6;
   font-size: $font-size-label-lg;
   border-radius: $border-radius-button-primary;

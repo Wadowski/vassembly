@@ -3,8 +3,8 @@ import type { KeyboardEvent, RefObject } from 'react';
 
 type UseMenuKeyboardNavigationArgs = {
   menuRef: RefObject<HTMLElement>;
-  openKeys: string[];
-  onOpenKeysChange: (keys: string[]) => void;
+  openKeys?: string[];
+  onOpenKeysChange?: (keys: string[]) => void;
 };
 
 const getInteractiveElements = ({ menu }: { menu: HTMLElement }): HTMLElement[] => {
@@ -13,8 +13,8 @@ const getInteractiveElements = ({ menu }: { menu: HTMLElement }): HTMLElement[] 
 
 export const useMenuKeyboardNavigation = ({
   menuRef,
-  openKeys,
-  onOpenKeysChange,
+  openKeys = [],
+  onOpenKeysChange = () => {},
 }: UseMenuKeyboardNavigationArgs): ((event: KeyboardEvent<HTMLElement>) => void) => {
   return useCallback(
     (event: KeyboardEvent<HTMLElement>): void => {

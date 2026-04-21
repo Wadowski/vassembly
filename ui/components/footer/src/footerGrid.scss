@@ -1,0 +1,63 @@
+.root {
+  width: 100%;
+  background-color: $color-surface-container;
+  color: $color-text-primary;
+  font-family: $font-family-body;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  padding: $spacing-8 $spacing-6;
+  --footer-cols: 1;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+@media #{$media-desktop} {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(var(--footer-cols), 1fr);
+    grid-template-rows: auto auto;
+    gap: $spacing-10 $spacing-8;
+    padding: $spacing-10 $spacing-8;
+  }
+
+  .slotCopyright {
+    grid-column: 1 / -1;
+  }
+
+  .slotBrand,
+  .slotSitemap,
+  .slotCompanyLegal,
+  .slotContactSocial,
+  .slotCopyright {
+    order: unset;
+  }
+}
+
+.slotBrand {
+  order: 4;
+}
+
+.slotSitemap {
+  order: 1;
+}
+
+.slotCompanyLegal {
+  order: 2;
+}
+
+.slotContactSocial {
+  order: 3;
+}
+
+.slotCopyright {
+  order: 5;
+  padding-top: $spacing-8;
+}

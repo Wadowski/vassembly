@@ -1,0 +1,8 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+$drawer-liquid-ease: cubic-bezier(0.22, 1, 0.36, 1);
+$drawer-duration: 400ms;
+$drawer-duration-reduced: 80ms;
+$drawer-slide-duration: 400ms;
+$drawer-rail-inner-width: 280px;
+$drawer-horizontal-padding: $spacing-4;

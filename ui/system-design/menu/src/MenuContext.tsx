@@ -3,10 +3,10 @@ import type { MenuSelectionMode } from './types';
 
 export type MenuContextValue = {
   mode: MenuSelectionMode;
-  selectedKeys: string[];
-  openKeys: string[];
-  onSelectedKeysChange: (keys: string[]) => void;
-  onOpenKeysChange: (keys: string[]) => void;
+  selectedKeys?: string[];
+  openKeys?: string[];
+  onSelectedKeysChange?: (keys: string[]) => void;
+  onOpenKeysChange?: (keys: string[]) => void;
   announce: (message: string) => void;
   registerItem: (itemKey: string, element: HTMLElement) => void;
   unregisterItem: (itemKey: string) => void;

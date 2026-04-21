@@ -1,5 +1,5 @@
 {
-  "name": "vassembly",
+  "name": "@vassembly/storybook",
   "private": true,
   "scripts": {
     "build": "npm run build-storybook",
@@ -34,5 +34,8 @@
     "extends": [
       "plugin:storybook/recommended"
     ]
+  },
+  "dependencies": {
+    "next": "16.1.0"
   }
 }
