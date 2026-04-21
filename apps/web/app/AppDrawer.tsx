@@ -1,11 +1,12 @@
 'use client';
 
-import { DrawerNavigation } from '../../../ui/drawer-navigation/src';
+import { DrawerNavigation } from '@vassembly/ui-drawer-navigation';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
-import type { DrawerNavigateEvent, DrawerOpenChangeEvent, RenderNavLinkArgs } from '../../../ui/drawer-navigation/src';
+import type { DrawerNavigateEvent, DrawerOpenChangeEvent } from '@vassembly/ui-drawer-navigation';
 import styles from './AppDrawer.module.scss';
+import { HouseIcon, LayoutDashboardIcon } from '@vassembly/ui-icons';
 
 interface AppDrawerProps {
   isOpen: boolean;
@@ -31,37 +32,29 @@ export const AppDrawer = ({ isOpen, onOpenChange }: AppDrawerProps): JSX.Element
 
   const sections = [
     {
-      id: 'main-nav',
-      label: 'Navigation',
+      id: 'workspace',
+      label: 'Workspace',
       items: [
         {
           kind: 'link' as const,
-          id: 'nav-home',
-          label: 'Home',
-          href: '/',
+          id: 'dash',
+          label: 'Dashboard',
+          href: '/dashboard',
+          icon: LayoutDashboardIcon,
         },
         {
           kind: 'link' as const,
-          id: 'nav-docs',
-          label: 'Docs',
-          href: '/docs',
+          id: 'home',
+          label: 'Home',
+          href: '/',
+          icon: HouseIcon,
         },
       ],
     },
   ];
 
-  const renderLink = (args: RenderNavLinkArgs) => {
-    const { href, onClick, children } = args;
-    return (
-      <Link href={href} onClick={onClick}>
-        {children}
-      </Link>
-    );
-  };
-
   return (
     <DrawerNavigation
-      id="app-navigation-drawer"
       layout="overlay"
       isOpen={isOpen}
       onOpenChange={handleOpenChange}
@@ -69,7 +62,8 @@ export const AppDrawer = ({ isOpen, onOpenChange }: AppDrawerProps): JSX.Element
       currentPath={pathname}
       isAuthenticated={false}
       onNavigate={handleNavigate}
-      renderLink={renderLink}
+      branding={{ productName: 'Vassembly', tagline: 'Your AI-powered workspace' }}
+      LinkComponent={Link}
       onLogin={() => {}}
       onRegister={() => {}}
     />

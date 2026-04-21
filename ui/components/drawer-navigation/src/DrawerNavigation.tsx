@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
-import { warnIfNavDepthInvalid } from './assertNavDepth';
-import { DrawerBrandingHeader } from './DrawerBrandingHeader';
-import { DrawerNavigationFooterSlot } from './DrawerNavigationFooterSlot';
-import { DrawerNavigationNav } from './DrawerNavigationNav';
+import { warnIfNavDepthInvalid } from './utils/assertNavDepth';
+import { DrawerBrandingHeader } from './header/DrawerBrandingHeader';
+import { DrawerNavigationFooterSlot } from './navigation/DrawerNavigationFooterSlot';
+import { DrawerNavigationNav } from './navigation/DrawerNavigationNav';
 import styles from './DrawerNavigation.module.scss';
-import { DrawerOverlay } from './DrawerOverlay';
-import { DrawerShell } from './DrawerShell';
+import { DrawerOverlay } from './overlay/DrawerOverlay';
+import { DrawerShell } from './shell/DrawerShell';
 import type { DrawerNavigationProps } from './types';
-import { useDrawerActiveLink } from './useDrawerActiveLink';
-import { useDrawerExpandedGroups } from './useDrawerExpandedGroups';
-import { useReducedMotion } from './useReducedMotion';
+import { useDrawerActiveLink } from './utils/useDrawerActiveLink';
+import { useDrawerExpandedGroups } from './utils/useDrawerExpandedGroups';
+import { useReducedMotion } from './utils/useReducedMotion';
 
 export const DrawerNavigation = (props: DrawerNavigationProps): JSX.Element => {
   const {
@@ -26,8 +26,7 @@ export const DrawerNavigation = (props: DrawerNavigationProps): JSX.Element => {
     onExpandedGroupIdsChange,
     defaultExpandedGroupIds,
     openerRef,
-    renderLink,
-    footerVariant,
+    LinkComponent,
   } = props;
 
   const isReducedMotion = useReducedMotion();
@@ -54,7 +53,6 @@ export const DrawerNavigation = (props: DrawerNavigationProps): JSX.Element => {
       onLogout={props.onLogout}
       onLogin={props.onLogin}
       onRegister={props.onRegister}
-      footerVariant={footerVariant}
     />
   );
 
@@ -68,7 +66,7 @@ export const DrawerNavigation = (props: DrawerNavigationProps): JSX.Element => {
         onToggleGroup={expansion.toggleGroup}
         isReducedMotion={isReducedMotion}
         onNavigate={onNavigate}
-        renderLink={renderLink}
+        LinkComponent={LinkComponent}
       />
       <div className={styles.spacer} aria-hidden />
     </div>

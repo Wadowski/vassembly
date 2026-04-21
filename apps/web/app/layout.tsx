@@ -5,7 +5,7 @@ import {
   SocialInstagramColorIcon,
   SocialTwitterColorIcon,
 } from "@vassembly/ui-icons";
-import { Footer } from "../../../ui/footer/src";
+import { Footer } from "@vassembly/ui-footer";
 import { LayoutContent } from "./LayoutContent";
 import "./globals.scss";
 import layoutStyles from "./layout.module.scss";

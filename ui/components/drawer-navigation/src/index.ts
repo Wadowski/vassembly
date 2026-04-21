@@ -1,18 +1,17 @@
 export { DrawerNavigation } from './DrawerNavigation';
-export { DrawerShell } from './DrawerShell';
-export { DrawerOverlay } from './DrawerOverlay';
-export { NavSectionLabel } from './NavSectionLabel';
-export { NavLinkRow } from './NavLinkRow';
-export { NavCollapsibleGroup } from './NavCollapsibleGroup';
-export { NavListItems } from './NavListItems';
-export { DrawerFooterAuth } from './DrawerFooterAuth';
-export { DrawerFooterUser } from './DrawerFooterUser';
-export { DrawerNavigationNav } from './DrawerNavigationNav';
-export { DrawerBrandingHeader } from './DrawerBrandingHeader';
+export { DrawerShell } from './shell/DrawerShell';
+export { DrawerOverlay } from './overlay/DrawerOverlay';
+export { NavSectionLabel } from './nav-items/NavSectionLabel';
+export { NavLinkRow } from './nav-items/NavLinkRow';
+export { NavCollapsibleGroup } from './nav-group/NavCollapsibleGroup';
+export { NavListItems } from './navigation/NavListItems';
+export { DrawerFooterAuth } from './footer/DrawerFooterAuth';
+export { DrawerFooterUser } from './footer/DrawerFooterUser';
+export { DrawerNavigationNav } from './navigation/DrawerNavigationNav';
+export { DrawerBrandingHeader } from './header/DrawerBrandingHeader';
 export type {
   NavIconComponent,
   DrawerBranding,
-  DrawerFooterVariant,
   DrawerNavigateEvent,
   DrawerNavigationCommonProps,
   DrawerNavigationOverlayProps,
@@ -27,9 +26,8 @@ export type {
   NavMatchMode,
   NavSection,
   NavigateReason,
-  RenderNavLinkArgs,
 } from './types';
-export { flattenNavLinks, pickActiveLinkId, defaultHrefMatchesPath, isLinkActiveByDefault } from './matchActiveNavItem';
-export { useDrawerExpandedGroups } from './useDrawerExpandedGroups';
-export { useDrawerActiveLink } from './useDrawerActiveLink';
-export { useReducedMotion } from './useReducedMotion';
+export { flattenNavLinks, pickActiveLinkId, defaultHrefMatchesPath, isLinkActiveByDefault } from './utils/matchActiveNavItem';
+export { useDrawerExpandedGroups } from './utils/useDrawerExpandedGroups';
+export { useDrawerActiveLink } from './utils/useDrawerActiveLink';
+export { useReducedMotion } from './utils/useReducedMotion';

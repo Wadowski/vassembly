@@ -8,8 +8,6 @@ export type NavigateReason = 'link' | 'logo' | 'settings' | 'login' | 'register'
 
 export type DrawerOverlayCloseReason = 'scrim' | 'escape' | 'programmatic';
 
-export type DrawerFooterVariant = 'solid' | 'glass';
-
 export interface NavBadge {
   value: string;
   ariaLabel?: string;
@@ -70,13 +68,6 @@ export interface DrawerOpenChangeEvent {
   reason: DrawerOverlayCloseReason;
 }
 
-export interface RenderNavLinkArgs {
-  href: string;
-  className: string;
-  children: ReactNode;
-  isExternal?: boolean;
-  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
-}
 
 export interface DrawerNavigationCommonProps {
   sections: ReadonlyArray<NavSection>;
@@ -100,8 +91,7 @@ export interface DrawerNavigationCommonProps {
   onExpandedGroupIdsChange?: (ids: ReadonlySet<string>) => void;
   defaultExpandedGroupIds?: ReadonlySet<string>;
   openerRef?: RefObject<HTMLElement | null>;
-  renderLink?: (args: RenderNavLinkArgs) => ReactNode;
-  footerVariant?: DrawerFooterVariant;
+  LinkComponent?: React.ComponentType<{ href: string; onClick: (event: MouseEvent<HTMLAnchorElement>) => void; className: string; children: ReactNode; target?: string; rel?: string; 'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean }>;
 }
 
 export interface DrawerNavigationPersistentProps extends DrawerNavigationCommonProps {

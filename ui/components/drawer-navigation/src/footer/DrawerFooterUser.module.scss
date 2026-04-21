@@ -1,0 +1,113 @@
+@import '../drawer-navigation.tokens.scss';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface-container-low;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  background-color: $color-surface-container-high;
+  color: $color-text-primary;
+  font-family: $font-family-display;
+  font-size: $font-size-body-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-family: $font-family-body;
+  font-size: $font-size-body-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.email {
+  margin: 0;
+  font-family: $font-family-body;
+  font-size: $font-size-label-sm;
+  color: $color-text-secondary;
+}
+
+.role {
+  margin: 0;
+  font-family: $font-family-body;
+  font-size: $font-size-label-sm;
+  color: $color-primary;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 $spacing-2;
+  margin: 0 (-$spacing-2);
+  border: none;
+  border-radius: $border-radius-md;
+  background: transparent;
+  color: rgba($color-text-primary, 0.87);
+  font-family: $font-family-body;
+  font-size: $font-size-body-md;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color $drawer-duration $drawer-liquid-ease,
+    color $drawer-duration $drawer-liquid-ease;
+
+  &:hover {
+    background-color: $color-surface-container-high;
+    color: $color-text-primary;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+}
+
+.rowIcon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  color: $color-primary-fixed-dim;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.logout:hover {
+  color: $color-error;
+}

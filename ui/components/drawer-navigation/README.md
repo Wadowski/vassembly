@@ -13,7 +13,7 @@ Add the workspace dependency and ensure your app injects theme CSS variables fro
 
 Pass **`sections`** (labels and nested links/groups), **`currentPath`** for active state, **`onNavigate`** when a row is activated, and either guest callbacks (**`onLogin`**, **`onRegister`**) or **`user`** plus **`onLogout`** / **`onOpenSettings`** when authenticated.
 
-For Next.js or other routers, implement **`renderLink`** so rows use your `Link` component; pass through the supplied **`onClick`** for internal routes so the host can navigate and close the overlay.
+For Next.js or other routers, pass **`LinkComponent`** to use your `Link` component; this component receives `href`, `onClick`, `className`, and children as props to enable routing integration.
 
 ## Public API
 

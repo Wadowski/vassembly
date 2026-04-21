@@ -1,6 +1,6 @@
 'use client';
 
-import { Header } from '../../../ui/header/src';
+import { Header } from '@vassembly/ui-header';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
