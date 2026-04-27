@@ -1,5 +1,4 @@
 export { UserAuthProvider } from './UserAuthProvider';
-export { UserAuthContext } from './UserAuthContext';
 export { useUserAuth } from './useUserAuth';
 export { useIsAuthorized } from './useIsAuthorized';
 export { RequireAuth } from './RequireAuth';
