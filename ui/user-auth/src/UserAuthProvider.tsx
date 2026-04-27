@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useState, ReactNode } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { UserAuthContext } from './UserAuthContext';
 import { UserAuthContextValue, UserAuthProviderProps, SetSessionParams, AuthStatus } from './types';
 
 export function UserAuthProvider({
   children,
   initialState,
-}: UserAuthProviderProps): ReactNode {
+}: UserAuthProviderProps) {
   const [status, setStatus] = useState<AuthStatus>(initialState?.status ?? 'unauthenticated');
   const [user, setUser] = useState(initialState?.user ?? null);
   const [roles, setRoles] = useState(initialState?.roles ?? []);

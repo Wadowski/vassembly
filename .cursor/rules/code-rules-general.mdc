@@ -35,6 +35,7 @@ description: General coding standards and best practices for the project
 - Always provide explicit type annotations for function parameters and return types
 - Use specific types instead of `any`; use `unknown` if the type is truly unknown
 - Avoid optional chaining without null checks in critical paths
+- Always reuse types
 
 ## Error Handling
 

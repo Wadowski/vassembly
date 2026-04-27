@@ -10,8 +10,8 @@ interface GraphQLProviderProps {
   children: React.ReactNode;
 }
 
-export const GraphQLProvider: React.FC<GraphQLProviderProps> = ({ config, children }) => {
+export function GraphQLProvider({ config, children }: GraphQLProviderProps) {
   const apolloClient = useMemo(() => createApolloInstance(config), [config]);
 
   return <ApolloProviderComponent client={apolloClient}>{children}</ApolloProviderComponent>;
-};
+}

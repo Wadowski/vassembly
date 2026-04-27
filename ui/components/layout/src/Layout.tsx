@@ -5,7 +5,7 @@ import { Footer } from '@vassembly/ui-footer';
 import { Header } from '@vassembly/ui-header';
 import type { DrawerNavigateEvent, DrawerOpenChangeEvent } from '@vassembly/ui-drawer-navigation';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { buildHeaderNavLinks } from './buildHeaderNavLinks';
 import styles from './Layout.module.scss';
@@ -20,6 +20,7 @@ export const Layout = ({
   header,
   drawer,
 }: LayoutProps): JSX.Element => {
+  const router = useRouter();
   const config = useMemo(
     () => resolveLayoutConfig({ variant, footer, header, drawer }),
     [variant, footer, header, drawer],
@@ -39,6 +40,13 @@ export const Layout = ({
   const handleOpenChange = useCallback((event: DrawerOpenChangeEvent) => {
     setIsDrawerOpen(event.isOpen);
   }, []);
+  const handleLogin = useCallback(() => {
+    const returnUrl = encodeURIComponent(pathname);
+    router.push(`/login?returnUrl=${returnUrl}`);
+  }, [pathname, router]);
+  const handleRegister = useCallback(() => {
+    router.push('/register');
+  }, [router]);
   const pageClassName = className
     ? `${styles.page} ${className}`
     : styles.page;
@@ -67,8 +75,8 @@ export const Layout = ({
         onNavigate={handleNavigate}
         branding={config.drawer.branding}
         LinkComponent={Link}
-        onLogin={config.drawer.onLogin}
-        onRegister={config.drawer.onRegister}
+        onLogin={handleLogin}
+        onRegister={handleRegister}
       />
       <div className={pageClassName}>
         <main id="main-content" className={styles.main}>
