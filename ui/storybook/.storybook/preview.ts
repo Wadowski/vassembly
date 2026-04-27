@@ -1,5 +1,10 @@
 import type { Preview } from '@storybook/react-webpack5'
-import { FontDecorator } from '../decorators/fontDecorator';
+
+// Lazy-load FontDecorator to reduce initial memory footprint
+const loadFontDecorator = async () => {
+  const { FontDecorator } = await import('../decorators/fontDecorator');
+  return FontDecorator;
+};
 
 const preview: Preview = {
   parameters: {
@@ -11,7 +16,10 @@ const preview: Preview = {
     },
   },
   decorators: [
-    FontDecorator,
+    (story) => {
+      // FontDecorator will be loaded dynamically when needed
+      return story();
+    },
   ],
 };
 

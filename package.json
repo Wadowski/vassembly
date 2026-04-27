@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "NODE_OPTIONS='--max-old-space-size=512' dotenv -- turbo run dev",
+    "dev": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -- turbo run dev",
     "lint": "turbo run lint",
     "storybook": "cd ui/storybook && pnpm storybook",
     "test": "turbo run test",
