@@ -14,7 +14,7 @@ export const Providers = ({ children }: ProvidersProps) => {
     <HttpClientProvider config={{ baseUrl: "http://localhost:5000" }}>
       <GraphQLProvider config={{ endpoint: "http://localhost:5000/graphql" }}>
         <UserAuthProvider>
-          <SnackbarProvider position="top-right">
+          <SnackbarProvider position="bottom-left">
             <>{children}</>
           </SnackbarProvider>
         </UserAuthProvider>

@@ -50,6 +50,7 @@ export const Layout = ({
   const pageClassName = className
     ? `${styles.page} ${className}`
     : styles.page;
+
   return (
     <>
       <Header

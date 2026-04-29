@@ -26,6 +26,10 @@ export const LoginForm = (props: LoginFormProps) => {
             Sign in
           </Text>
         ) : null}
+        <Text>
+          Don&apos;t have an account?{" "}
+          <Button as="a" variant="text" href="/register" text="Register" />
+        </Text>
         <TextField
           type="email"
           label="Email"
@@ -63,6 +67,7 @@ export const LoginForm = (props: LoginFormProps) => {
           aria-busy={isLoading}
           text={submitLabel ?? 'Sign in'}
         />
+        <Button as="a" variant="text" href="/forgot-password" text="Forgot password?" isFullWidth />
       </form>
     </section>
   );

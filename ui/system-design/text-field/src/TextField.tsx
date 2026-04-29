@@ -47,6 +47,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       suffixText,
       className,
       id,
+      'aria-describedby': ariaDescribedByProp,
       ...props
     },
     ref,
@@ -58,6 +59,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const hasError = isError || !!errorMessage;
     const hasSupportingText = !!helperText || !!errorMessage;
     const displayedSupportingText = errorMessage ?? helperText;
+
+    const describedByParts = [ariaDescribedByProp, hasSupportingText ? supportingTextId : undefined].filter(
+      (part): part is string => typeof part === 'string' && part.length > 0,
+    );
+    const mergedAriaDescribedBy = describedByParts.length > 0 ? describedByParts.join(' ') : undefined;
 
     const wrapperClassName = resolveClassName(styles.wrapper, isFullWidth && styles.isFullWidth, className);
 
@@ -77,7 +83,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       disabled: isDisabled,
       readOnly: isReadOnly,
       'aria-invalid': hasError ? (true as const) : undefined,
-      'aria-describedby': hasSupportingText ? supportingTextId : undefined,
+      'aria-describedby': mergedAriaDescribedBy,
       className: resolveClassName(styles.input, isMultiline && styles.inputMultiline),
     };
 

@@ -30,3 +30,7 @@
   font-size: $font-size-heading-md;
   line-height: $line-height-tight;
 }
+
+.strengthIndicator {
+  margin-top: calc(-1 * $spacing-2);
+}

@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import Link from 'next/link';
 import { Text } from '@vassembly/ui-text';
 import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Button.module.scss';
@@ -26,6 +27,7 @@ const SIZE_MAP = {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
+      as = 'button',
       color = 'primary',
       variant = 'contained',
       size = 'medium',
@@ -41,6 +43,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
+    const Component = as === 'a' ? 'a' : as === Link ? Link : 'button';
     const isButtonDisabled = isDisabled || isLoading;
 
     const buttonClassName = resolveClassName(
@@ -62,14 +65,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       return IconComponent;
     };
 
-    return (
-      <button
-        ref={ref}
-        className={buttonClassName}
-        disabled={isButtonDisabled}
-        type="button"
-        {...props}
-      >
+    const buttonContent = (
+      <>
         {isLoading && <div className={styles.loading} />} {/* TODO: Add spinner */}
         {!isLoading && IconComponent && iconPosition === 'left' && (
           <span className={styles.icon}>{renderIcon()}</span>
@@ -82,7 +79,45 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {!isLoading && IconComponent && iconPosition === 'right' && (
           <span className={styles.icon}>{renderIcon()}</span>
         )}
-      </button>
+      </>
+    );
+
+    if (Component === 'button') {
+      return (
+        <button
+          ref={ref}
+          className={buttonClassName}
+          disabled={isButtonDisabled}
+          type="button"
+          {...props}
+        >
+          {buttonContent}
+        </button>
+      );
+    }
+
+    if (Component === 'a') {
+      return (
+        <a
+          ref={ref}
+          className={buttonClassName}
+          aria-disabled={isButtonDisabled}
+          {...props}
+        >
+          {buttonContent}
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        ref={ref}
+        className={buttonClassName}
+        aria-disabled={isButtonDisabled}
+        {...props}
+      >
+        {buttonContent}
+      </Link>
     );
   },
 );

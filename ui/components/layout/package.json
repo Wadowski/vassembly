@@ -13,13 +13,9 @@
     "@vassembly/ui-footer": "workspace:*",
     "@vassembly/ui-header": "workspace:*",
     "@vassembly/ui-icons": "workspace:*",
+    "next": "16.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  },
-  "peerDependencies": {
-    "next": ">=14.0.0",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@storybook/react": "^7.0.0",
@@ -31,7 +27,6 @@
     "@vassembly/eslint-config": "workspace:*",
     "@vassembly/typescript-config": "workspace:*",
     "@vitejs/plugin-react": "^4.0.0",
-    "next": "16.1.0",
     "sass": "^1.69.0",
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"
