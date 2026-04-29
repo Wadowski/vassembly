@@ -115,6 +115,9 @@ importers:
       '@vassembly/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/theme':
         specifier: workspace:*
         version: link:../../ui/system-design/theme

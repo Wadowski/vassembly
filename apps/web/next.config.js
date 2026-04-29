@@ -20,6 +20,10 @@ const nextConfig = {
     "@vassembly/ui-utils",
     "@vassembly/ui-icons",
     "@vassembly/theme",
+    "@vassembly/constants",
+    "@vassembly/ui-api-hooks",
+    "@vassembly/ui-user-auth",
+    "@vassembly/errors",
   ],
 };
 

@@ -8,8 +8,9 @@ export const verify = async ({
   email,
   password,
 }: VerifyCredentialsQuery): Promise<UserModel> => {
-  const result = await getListByQuery({ email, limit: 1 });
+  const result = await getListByQuery({ email, limit: 1, includePasswordHash: true });
 
+  console.log("result", result);
   if (result.data.length === 0) {
     throw new UnauthorizedError("Invalid email or password", { email });
   }
@@ -26,5 +27,6 @@ export const verify = async ({
     throw new UnauthorizedError("Invalid email or password", { email });
   }
 
+  delete user.passwordHash;
   return user;
 };

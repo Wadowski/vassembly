@@ -1,12 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@vassembly/client-encoder");
 vi.mock("../updateDb");
 vi.mock("../../queries");
 
-const { mockHash } = vi.hoisted(() => {
-  const mockHash = vi.fn();
-  return { mockHash };
+const { mockEncode } = vi.hoisted(() => {
+  const mockEncode = vi.fn();
+  return { mockEncode };
 });
 
 const { mockUpdateRefreshToken } = vi.hoisted(() => {
@@ -14,21 +13,21 @@ const { mockUpdateRefreshToken } = vi.hoisted(() => {
   return { mockUpdateRefreshToken };
 });
 
-const { mockGetRefreshTokenByTokenHash } = vi.hoisted(() => {
-  const mockGetRefreshTokenByTokenHash = vi.fn();
-  return { mockGetRefreshTokenByTokenHash };
+const { mockGetByTokenHash } = vi.hoisted(() => {
+  const mockGetByTokenHash = vi.fn();
+  return { mockGetByTokenHash };
 });
 
 vi.mock("@vassembly/client-encoder", () => ({
-  hash: mockHash,
+  encode: mockEncode,
 }));
 
 vi.mock("../updateDb", () => ({
-  updateRefreshToken: mockUpdateRefreshToken,
+  update: mockUpdateRefreshToken,
 }));
 
 vi.mock("../../queries", () => ({
-  getRefreshTokenByTokenHash: mockGetRefreshTokenByTokenHash,
+  getByTokenHash: mockGetByTokenHash,
 }));
 
 import { revoke } from "./index";
@@ -44,8 +43,8 @@ describe("revokeRefreshToken", () => {
     const tokenHash = "hashed-token";
     const tokenId = "token-id-123";
 
-    mockHash.mockReturnValue(tokenHash);
-    mockGetRefreshTokenByTokenHash.mockResolvedValue({
+    mockEncode.mockReturnValue(tokenHash);
+    mockGetByTokenHash.mockResolvedValue({
       data: {
         id: tokenId,
         userId: "user-123",
@@ -75,8 +74,8 @@ describe("revokeRefreshToken", () => {
     const tokenString = "non-existent-token";
     const tokenHash = "hashed-token";
 
-    mockHash.mockReturnValue(tokenHash);
-    mockGetRefreshTokenByTokenHash.mockResolvedValue({
+    mockEncode.mockReturnValue(tokenHash);
+    mockGetByTokenHash.mockResolvedValue({
       data: { id: undefined },
     });
 

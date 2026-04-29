@@ -3,11 +3,19 @@
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RegisterForm } from "@vassembly/ui-register-form";
+import { setTokens } from "../../lib/auth/sessionStorage";
 
 function RegisterPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get("returnUrl");
+
+  const handleRegisterSuccess = (result: { authToken: string; refreshToken: string }) => {
+    setTokens({
+      authToken: result.authToken,
+      refreshToken: result.refreshToken,
+    });
+  };
 
   return (
     <RegisterForm
@@ -18,6 +26,7 @@ function RegisterPageContent() {
       onRedirect={(href) => {
         router.replace(href);
       }}
+      onSuccess={handleRegisterSuccess}
     />
   );
 }

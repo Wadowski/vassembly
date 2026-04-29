@@ -1,5 +1,5 @@
 import { createRefreshTokenDb } from "./createDb";
-import { randomString, hash } from "@vassembly/client-encoder";
+import { randomString, encode } from "@vassembly/client-encoder";
 import type { CreateRefreshTokenInput } from "./types";
 import { RefreshTokenModel } from "../../model";
 
@@ -11,7 +11,7 @@ const getExpiresAt = () => {
 
 const getTokenHash = () => {
   const token = randomString(36);
-  const tokenHash = hash(token);
+  const tokenHash = encode(token);
   return { token, tokenHash };
 };
 

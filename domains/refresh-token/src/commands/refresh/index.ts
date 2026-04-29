@@ -1,4 +1,4 @@
-import { hash } from "@vassembly/client-encoder";
+import { encode } from "@vassembly/client-encoder";
 import { create } from "../create";
 import { update } from "../updateDb";
 import { getByTokenHash } from "../../queries/getByTokenHash";
@@ -10,7 +10,11 @@ const EXPIRATION_GRACE_PERIOD = 30 * 1000;
 
 export const refresh = async (input: RefreshRefreshTokenInput): Promise<RefreshTokenModel> => {
   const { refreshToken: tokenString } = input;
-  const tokenHash = hash(tokenString);
+  const normalizedToken = tokenString.trim();
+  if (!normalizedToken) {
+    throw new WrongParamError("Refresh token is required");
+  }
+  const tokenHash = encode(normalizedToken);
   const refreshTokenDb = await getByTokenHash(tokenHash);
   
   if (!refreshTokenDb.data.id) {

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@vassembly/config": "workspace:*",
+    "@vassembly/constants": "workspace:*",
     "@vassembly/theme": "workspace:*",
     "@vassembly/ui-api-hooks": "workspace:*",
     "@vassembly/ui-button": "workspace:*",
