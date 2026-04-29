@@ -6,7 +6,6 @@ import { handlers } from "@vassembly/service-auth";
 const bodySchema = z.object({
   email: z.string(),
   password: z.string(),
-  confirmPassword: z.string(),
   firstName: z.string(),
   lastName: z.string(),
 });

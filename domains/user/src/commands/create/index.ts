@@ -36,9 +36,9 @@ const isEmailAlreadyExists = async (email: string): Promise<void> => {
   }
 };
 
-export const create = async ({ password, confirmPassword, ...data }: CreateDbUserCommand): Promise<ReturnType<typeof createDbUser>> => {
+export const create = async ({ password, ...data }: CreateDbUserCommand): Promise<ReturnType<typeof createDbUser>> => {
   await isEmailAlreadyExists(data.email);
-  await hasValidPassword({ password, confirmPassword, ...data });
+  await hasValidPassword({ password, ...data });
   const passwordHash = await hashPassword(password);
   const user = await createDbUser({ ...data, passwordHash });
   return user;
