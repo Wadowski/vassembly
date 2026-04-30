@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^3.11.0",
     "@vassembly/constants": "workspace:*",
+    "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "graphql": "^16.11.0"
   },

@@ -27,6 +27,7 @@ export function resolveLayoutConfig(
   const drawer: LayoutDrawerPreset = {
     ...base.drawer,
     ...params.drawer,
+    user: params.drawer?.user ?? base.drawer.user,
     sections: params.drawer?.sections ?? base.drawer.sections,
     branding: params.drawer?.branding ?? base.drawer.branding,
     isAuthenticated:

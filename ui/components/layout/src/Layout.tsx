@@ -70,6 +70,7 @@ export const Layout = ({
         layout="overlay"
         isOpen={isDrawerOpen}
         onOpenChange={handleOpenChange}
+        user={config.drawer.user}
         sections={config.drawer.sections}
         currentPath={pathname}
         isAuthenticated={config.drawer.isAuthenticated}

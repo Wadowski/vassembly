@@ -127,6 +127,9 @@ importers:
       '@vassembly/ui-button':
         specifier: workspace:*
         version: link:../../ui/system-design/button
+      '@vassembly/ui-drawer-navigation':
+        specifier: workspace:*
+        version: link:../../ui/components/drawer-navigation
       '@vassembly/ui-forgot-password':
         specifier: workspace:*
         version: link:../../ui/components/forgot-password
@@ -1002,6 +1005,9 @@ importers:
       '@vassembly/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@vassembly/domain-auth-token':
+        specifier: workspace:*
+        version: link:../../domains/auth-token
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors

@@ -10,7 +10,7 @@ export const SessionBootstrap = () => {
   const { data: authResponse, isLoading, error, fetch } = useAuth();
 
   useEffect(() => {
-    fetch?.({ body: {} });
+    fetch?.({ body: {} as any });
   }, []);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export const SessionBootstrap = () => {
       return;
     }
 
-    setStatus('loading');
+    setStatus(false);
   }, [setStatus, clearSession]);
 
   useEffect(() => {
@@ -39,16 +39,22 @@ export const SessionBootstrap = () => {
       return;
     }
 
-    if (authResponse.refreshToken) {
-      setTokens({ refreshToken: authResponse.refreshToken });
-    }
+    const newTokens = {
+      authToken: authResponse.authToken,
+      refreshToken: authResponse.refreshToken,
+    };
+    setTokens(newTokens);
 
     const tokens = getTokens();
     if (tokens.authToken) {
       setSession({
         user: {
-          id: 'verified',
-          roles: [],
+          id: authResponse.user?.id ?? authResponse.data.userId,
+          email: authResponse.user?.email ?? '',
+          firstName: authResponse.user?.firstName,
+          lastName: authResponse.user?.lastName,
+          verifiedAt: authResponse.user?.verifiedAt ? new Date(authResponse.user.verifiedAt) : undefined,
+          role: authResponse.user?.role,
         },
       });
     }

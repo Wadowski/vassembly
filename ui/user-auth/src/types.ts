@@ -5,7 +5,10 @@ export type UserId = string;
 export interface AuthUser {
   id: UserId;
   email?: string;
-  roles?: UserRole[];
+  firstName?: string;
+  lastName?: string;
+  role?: UserRole;
+  verifiedAt?: Date;
 }
 
 export type UserRole = string;
@@ -16,18 +19,18 @@ export interface SetSessionParams {
 }
 
 export interface UserAuthContextValue {
-  status: AuthStatus;
+  status: boolean;
   user: AuthUser | null;
-  roles: UserRole[];
+  role: UserRole;
   isAuthenticated: boolean;
   setSession: (params: SetSessionParams) => void;
   clearSession: () => void;
-  setStatus: (status: AuthStatus) => void;
+  setStatus: (status: boolean) => void;
 }
 
 export interface UserAuthProviderProps {
   children: React.ReactNode;
-  initialState?: Partial<Pick<UserAuthContextValue, 'status' | 'user' | 'roles'>>;
+  initialState?: Partial<Pick<UserAuthContextValue, 'status' | 'user' | 'role'>>;
 }
 
 export interface RequireAuthProps {

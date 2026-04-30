@@ -1,11 +1,9 @@
 import * as commands from "./commands";
 import * as queries from "./queries";
-import { gqlUserSchema } from "./model";
+import { gqlUserSchema as gqlSchema } from "./model";
 
-const user = {
+export {
   commands,
   queries,
-  gqlSchema: gqlUserSchema,
+  gqlSchema,
 };
-
-export default user;

@@ -1,28 +1,28 @@
 import { useCallback, useMemo, useState } from 'react';
 import { UserAuthContext } from './UserAuthContext';
-import { UserAuthContextValue, UserAuthProviderProps, SetSessionParams, AuthStatus } from './types';
+import { UserAuthContextValue, UserAuthProviderProps, SetSessionParams } from './types';
 
 export function UserAuthProvider({
   children,
   initialState,
 }: UserAuthProviderProps) {
-  const [status, setStatus] = useState<AuthStatus>(initialState?.status ?? 'unauthenticated');
+  const [status, setStatus] = useState(initialState?.status ?? false);
   const [user, setUser] = useState(initialState?.user ?? null);
-  const [roles, setRoles] = useState(initialState?.roles ?? []);
+  const [role, setRole] = useState(initialState?.role ?? '');
 
   const handleSetSession = useCallback((params: SetSessionParams) => {
     setUser(params.user);
-    setRoles(params.user.roles ?? []);
-    setStatus('authenticated');
+    setRole(params.user.role ?? '');
+    setStatus(true);
   }, []);
 
   const handleClearSession = useCallback(() => {
     setUser(null);
-    setRoles([]);
-    setStatus('unauthenticated');
+    setRole('');
+    setStatus(false);
   }, []);
 
-  const handleSetStatus = useCallback((newStatus: AuthStatus) => {
+  const handleSetStatus = useCallback((newStatus: boolean) => {
     setStatus(newStatus);
   }, []);
 
@@ -30,13 +30,13 @@ export function UserAuthProvider({
     () => ({
       status,
       user,
-      roles,
-      isAuthenticated: status === 'authenticated',
+      role,
+      isAuthenticated: status,
       setSession: handleSetSession,
       clearSession: handleClearSession,
       setStatus: handleSetStatus,
     }),
-    [status, user, roles, handleSetSession, handleClearSession, handleSetStatus],
+    [status, user, role, handleSetSession, handleClearSession, handleSetStatus],
   );
 
   return (

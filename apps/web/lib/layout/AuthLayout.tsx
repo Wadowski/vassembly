@@ -4,6 +4,7 @@ import { useUserAuth } from '@vassembly/ui-user-auth';
 import { Layout } from '@vassembly/ui-layout';
 import React from 'react';
 import type { LayoutDrawerPreset } from '@vassembly/ui-layout';
+import type { DrawerUser } from '@vassembly/ui-drawer-navigation';
 import { useRouter, usePathname } from 'next/navigation';
 
 interface AuthLayoutProps {
@@ -11,7 +12,7 @@ interface AuthLayoutProps {
 }
 
 export const AuthLayout = ({ children }: AuthLayoutProps) => {
-  const { isAuthenticated } = useUserAuth();
+  const { isAuthenticated, user } = useUserAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -24,8 +25,15 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
     router.push('/register');
   }, [router]);
 
+  const drawerUser: DrawerUser = {
+    displayName: [user?.firstName, user?.lastName].filter(Boolean).join(' '),
+    email: user?.email ?? '',
+    roleLabel: user?.role ?? 'User',
+  };
+
   const drawerConfig: Partial<LayoutDrawerPreset> = {
     isAuthenticated,
+    user: drawerUser,
     onLogin: handleLogin,
     onRegister: handleRegister,
   };

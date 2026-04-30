@@ -16,6 +16,7 @@
     "@vassembly/theme": "workspace:*",
     "@vassembly/ui-api-hooks": "workspace:*",
     "@vassembly/ui-button": "workspace:*",
+    "@vassembly/ui-drawer-navigation": "workspace:*",
     "@vassembly/ui-forgot-password": "workspace:*",
     "@vassembly/ui-layout": "workspace:*",
     "@vassembly/ui-login-form": "workspace:*",

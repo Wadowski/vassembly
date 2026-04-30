@@ -1,9 +1,11 @@
 import * as commands from "./commands";
 import * as queries from "./queries";
+import * as enums from "./model/enums";
 
-const authToken = {
+export {
   commands,
   queries,
+  enums,
 };
 
-export default authToken;
+// export default authToken;
