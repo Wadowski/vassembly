@@ -27,26 +27,40 @@ export const Layout = ({
   );
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  
   const navLinks = useMemo(
     () => buildHeaderNavLinks({ pathname, links: config.header.navLinks }),
     [config.header.navLinks, pathname],
   );
+  
   const handleMenuPress = useCallback(() => {
     setIsDrawerOpen((open) => !open);
   }, []);
+  
   const handleNavigate = useCallback((_event: DrawerNavigateEvent) => {
     setIsDrawerOpen(false);
   }, []);
+  
   const handleOpenChange = useCallback((event: DrawerOpenChangeEvent) => {
     setIsDrawerOpen(event.isOpen);
   }, []);
+  
   const handleLogin = useCallback(() => {
+    setIsDrawerOpen(false);
     const returnUrl = encodeURIComponent(pathname);
     router.push(`/login?returnUrl=${returnUrl}`);
   }, [pathname, router]);
+  
   const handleRegister = useCallback(() => {
+    setIsDrawerOpen(false);
     router.push('/register');
   }, [router]);
+  
+  const handleLogout = useCallback(async () => {
+    setIsDrawerOpen(false);
+    await config.drawer.onLogout?.();
+  }, []);
+  
   const pageClassName = className
     ? `${styles.page} ${className}`
     : styles.page;
@@ -79,7 +93,7 @@ export const Layout = ({
         LinkComponent={Link}
         onLogin={handleLogin}
         onRegister={handleRegister}
-        onLogout={config.drawer.onLogout}
+        onLogout={handleLogout}
       />
       <div className={pageClassName}>
         <main id="main-content" className={styles.main}>
