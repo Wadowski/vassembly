@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { ForgotPasswordForm } from "@vassembly/ui-forgot-password";
+import { ProtectedAuthRoute } from "../../lib/auth/ProtectedAuthRoute";
 
 function ForgotPasswordPageContent() {
   const router = useRouter();
@@ -18,8 +19,10 @@ function ForgotPasswordPageContent() {
 
 export default function ForgotPasswordPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ForgotPasswordPageContent />
-    </Suspense>
+    <ProtectedAuthRoute>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ForgotPasswordPageContent />
+      </Suspense>
+    </ProtectedAuthRoute>
   );
 }

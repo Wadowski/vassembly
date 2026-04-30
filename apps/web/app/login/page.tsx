@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoginForm } from "@vassembly/ui-login-form";
+import { ProtectedAuthRoute } from "../../lib/auth/ProtectedAuthRoute";
 import { setTokens } from "../../lib/auth/sessionStorage";
 
 function LoginPageContent() {
@@ -30,8 +31,10 @@ function LoginPageContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginPageContent />
-    </Suspense>
+    <ProtectedAuthRoute>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LoginPageContent />
+      </Suspense>
+    </ProtectedAuthRoute>
   );
 }

@@ -8,6 +8,10 @@ const STORAGE_KEYS = {
   refreshToken: 'auth:refreshToken',
 } as const;
 
+const COOKIE_KEYS = {
+  authToken: 'auth-token',
+} as const;
+
 export const getTokens = (): Partial<StoredTokens> => {
   try {
     if (typeof window === 'undefined') return {};
@@ -31,6 +35,7 @@ export const setTokens = (tokens: Partial<StoredTokens>): void => {
 
     if (tokens.authToken) {
       localStorage.setItem(STORAGE_KEYS.authToken, tokens.authToken);
+      document.cookie = `${COOKIE_KEYS.authToken}=${tokens.authToken}; path=/; SameSite=Strict`;
     }
     if (tokens.refreshToken) {
       localStorage.setItem(STORAGE_KEYS.refreshToken, tokens.refreshToken);
@@ -46,6 +51,7 @@ export const clearTokens = (): void => {
 
     localStorage.removeItem(STORAGE_KEYS.authToken);
     localStorage.removeItem(STORAGE_KEYS.refreshToken);
+    document.cookie = `${COOKIE_KEYS.authToken}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
   } catch (error) {
     console.error('Failed to clear tokens', error);
   }
