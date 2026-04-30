@@ -34,6 +34,7 @@ export function resolveLayoutConfig(
       params.drawer?.isAuthenticated ?? base.drawer.isAuthenticated,
     onLogin: params.drawer?.onLogin ?? base.drawer.onLogin,
     onRegister: params.drawer?.onRegister ?? base.drawer.onRegister,
+    onLogout: params.drawer?.onLogout ?? base.drawer.onLogout,
   };
   return {
     footer: { ...base.footer, ...params.footer },

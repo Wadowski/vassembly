@@ -1,6 +1,5 @@
 import {
   HouseIcon,
-  LayoutDashboardIcon,
   SocialFacebookColorIcon,
   SocialInstagramColorIcon,
   SocialTwitterColorIcon,
@@ -61,13 +60,6 @@ export const MAIN_LAYOUT_PRESET: LayoutPreset = {
         items: [
           {
             kind: 'link' as const,
-            id: 'dash',
-            label: 'Dashboard',
-            href: '/dashboard',
-            icon: LayoutDashboardIcon,
-          },
-          {
-            kind: 'link' as const,
             id: 'home',
             label: 'Home',
             href: '/',
@@ -80,5 +72,6 @@ export const MAIN_LAYOUT_PRESET: LayoutPreset = {
     isAuthenticated: false,
     onLogin: noop,
     onRegister: noop,
+    onLogout: noop,
   },
 };

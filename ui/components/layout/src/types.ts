@@ -24,6 +24,7 @@ export interface LayoutDrawerPreset {
   isAuthenticated: boolean;
   onLogin: () => void;
   onRegister: () => void;
+  onLogout?: () => void | Promise<void>;
 }
 
 export interface LayoutPreset {

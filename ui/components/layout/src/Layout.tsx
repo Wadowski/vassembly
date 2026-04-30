@@ -79,6 +79,7 @@ export const Layout = ({
         LinkComponent={Link}
         onLogin={handleLogin}
         onRegister={handleRegister}
+        onLogout={config.drawer.onLogout}
       />
       <div className={pageClassName}>
         <main id="main-content" className={styles.main}>

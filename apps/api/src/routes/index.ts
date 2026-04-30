@@ -4,10 +4,11 @@ import { config } from "@vassembly/config";
 import { authRoute } from "./auth/auth";
 import { loginRoute } from "./user/login";
 import { refreshRoute } from "./auth/refresh";
+import { logoutRoute } from "./auth/logout";
 import { registerRoute } from "./user/register";
 import { graphqlConfig } from "../graphql";
 
-const authRoutes = routesWithPrefix("/auth", [authRoute, refreshRoute]);
+const authRoutes = routesWithPrefix("/auth", [authRoute, refreshRoute, logoutRoute]);
 const userRoutes = routesWithPrefix("/user", [loginRoute, registerRoute]);
 
 const routes = [...authRoutes, ...userRoutes];
