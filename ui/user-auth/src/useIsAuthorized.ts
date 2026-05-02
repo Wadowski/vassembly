@@ -4,16 +4,16 @@ import { UserRole } from './types';
 import { hasRoleAccess } from './requireAuthUtils';
 
 export function useIsAuthorized(requiredRoles?: UserRole[], match: 'any' | 'all' = 'any'): boolean {
-  const { isAuthenticated, roles } = useUserAuth();
+  const { isAuthenticated, role } = useUserAuth();
 
   return useMemo(
     () =>
       isAuthenticated &&
       hasRoleAccess({
-        userRoles: roles,
+        userRole: role,
         requiredRoles,
         match,
       }),
-    [isAuthenticated, roles, requiredRoles, match],
+    [isAuthenticated, role, requiredRoles, match],
   );
 }

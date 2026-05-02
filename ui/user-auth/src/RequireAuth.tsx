@@ -8,31 +8,19 @@ export function RequireAuth({
   fallback,
   roles,
   match = 'any',
-  loading,
-  showFallbackWhenLoading = true,
 }: RequireAuthProps): ReactNode {
-  const { status, isAuthenticated, roles: userRoles } = useUserAuth();
+  const { isAuthenticated, role: userRole } = useUserAuth();
 
   const isAuthorized = useMemo(
     () =>
       isAuthenticated &&
       hasRoleAccess({
-        userRoles,
+        userRole,
         requiredRoles: roles,
         match,
       }),
-    [isAuthenticated, userRoles, roles, match],
+    [isAuthenticated, userRole, roles, match],
   );
-
-  if (status === 'loading') {
-    if (loading !== undefined) {
-      return <>{loading}</>;
-    }
-    if (showFallbackWhenLoading) {
-      return <>{fallback}</>;
-    }
-    return <>{children}</>;
-  }
 
   if (!isAuthorized) {
     return <>{fallback}</>;

@@ -1,13 +1,13 @@
 import { UserRole } from './types';
 
 export interface HasRoleAccessParams {
-  userRoles: UserRole[];
+  userRole: UserRole;
   requiredRoles?: UserRole[];
   match?: 'any' | 'all';
 }
 
 export function hasRoleAccess({
-  userRoles,
+  userRole,
   requiredRoles,
   match = 'any',
 }: HasRoleAccessParams): boolean {
@@ -16,8 +16,8 @@ export function hasRoleAccess({
   }
 
   if (match === 'any') {
-    return requiredRoles.some((role) => userRoles.includes(role));
+    return requiredRoles.some((role) => userRole === role);
   }
 
-  return requiredRoles.every((role) => userRoles.includes(role));
+  return requiredRoles.every((role) => userRole === role);
 }

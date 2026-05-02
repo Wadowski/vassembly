@@ -38,6 +38,4 @@ export interface RequireAuthProps {
   fallback: React.ReactNode;
   roles?: UserRole[];
   match?: 'any' | 'all';
-  loading?: React.ReactNode;
-  showFallbackWhenLoading?: boolean;
 }
