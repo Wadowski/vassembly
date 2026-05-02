@@ -29,7 +29,7 @@ export const useForgotPasswordForm = (params: UseForgotPasswordFormParams): UseF
 
       const validation = validateForgotPasswordForm({ email });
       if (!validation.isValid) {
-        snackbar.show({ message: validation.message, variant: 'error' });
+        snackbar.show({ message: validation.message ?? '', variant: 'error' });
         return;
       }
 
