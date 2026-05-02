@@ -4,19 +4,21 @@ import { useFetch } from '../http/useFetch';
 export interface RegisterParams {
   email: string;
   password: string;
-  confirmPassword: string;
   firstName: string;
   lastName: string;
 }
 
 export interface RegisterResponse {
+  authToken: string;
+  refreshToken: string;
   user: {
     id: string;
     email: string;
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
     verifiedAt?: Date | null;
   };
+  requiresEmailVerification?: boolean;
 }
 
 

@@ -8,10 +8,10 @@ const { mockCreateRefreshTokenDb } = vi.hoisted(() => {
   return { mockCreateRefreshTokenDb };
 });
 
-const { mockRandomString, mockHash } = vi.hoisted(() => {
+const { mockRandomString, mockEncode } = vi.hoisted(() => {
   const mockRandomString = vi.fn();
-  const mockHash = vi.fn();
-  return { mockRandomString, mockHash };
+  const mockEncode = vi.fn();
+  return { mockRandomString, mockEncode };
 });
 
 vi.mock("./createDb", () => ({
@@ -20,7 +20,7 @@ vi.mock("./createDb", () => ({
 
 vi.mock("@vassembly/client-encoder", () => ({
   randomString: mockRandomString,
-  hash: mockHash,
+  encode: mockEncode,
 }));
 
 import { create } from "./index";
@@ -37,7 +37,7 @@ describe("createRefreshToken", () => {
     const mockUserId = "user-123";
 
     mockRandomString.mockReturnValue(mockToken);
-    mockHash.mockReturnValue(mockTokenHash);
+    mockEncode.mockReturnValue(mockTokenHash);
 
     const mockExpiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
     const mockCreatedToken: RefreshTokenModel = {
@@ -70,7 +70,7 @@ describe("createRefreshToken", () => {
     const description = "API Token for Mobile App";
 
     mockRandomString.mockReturnValue(mockToken);
-    mockHash.mockReturnValue(mockTokenHash);
+    mockEncode.mockReturnValue(mockTokenHash);
 
     const mockExpiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
     const mockCreatedToken: RefreshTokenModel = {

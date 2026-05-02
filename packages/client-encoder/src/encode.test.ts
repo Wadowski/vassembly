@@ -11,9 +11,17 @@ describe('encode', () => {
     expect(encoded).toContain(':');
   });
 
-  it('should encode different text with different results', () => {
+  it('should produce the same encoding for the same text', () => {
+    const text = 'Hello, World!';
+    const encoded1 = encode(text);
+    const encoded2 = encode(text);
+
+    expect(encoded1).toBe(encoded2);
+  });
+
+  it('should encode different texts to different encodings', () => {
     const text1 = 'Hello, World!';
-    const text2 = 'Hello, World!';
+    const text2 = 'Hello, World?';
     const encoded1 = encode(text1);
     const encoded2 = encode(text2);
 

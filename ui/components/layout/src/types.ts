@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { FooterProps } from '@vassembly/ui-footer';
-import type { DrawerBranding, NavSection } from '@vassembly/ui-drawer-navigation';
+import type { DrawerBranding, DrawerUser, NavSection } from '@vassembly/ui-drawer-navigation';
 
 export type LayoutVariant = 'main';
 
@@ -18,11 +18,13 @@ export interface LayoutHeaderPreset {
 }
 
 export interface LayoutDrawerPreset {
+  user?: DrawerUser;
   sections: ReadonlyArray<NavSection>;
   branding?: DrawerBranding;
   isAuthenticated: boolean;
   onLogin: () => void;
   onRegister: () => void;
+  onLogout?: () => void | Promise<void>;
 }
 
 export interface LayoutPreset {

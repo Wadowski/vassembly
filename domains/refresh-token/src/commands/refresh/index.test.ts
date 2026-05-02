@@ -10,7 +10,7 @@ vi.mock("@vassembly/client-mongodb/src/connection.js", () => ({
 }));
 
 vi.mock("@vassembly/client-encoder", () => ({
-  hash: vi.fn(),
+  encode: vi.fn(),
   randomString: vi.fn(),
 }));
 
@@ -38,18 +38,18 @@ vi.mock("../updateDb", () => ({
 }));
 
 import { refresh } from "./index";
-import { hash } from "@vassembly/client-encoder";
+import { encode } from "@vassembly/client-encoder";
 import { WrongParamError, NotFoundError } from "@vassembly/errors";
 
 describe("refreshRefreshToken", () => {
-  const mockHash = vi.mocked(hash);
+  const mockEncode = vi.mocked(encode);
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("should refresh an active token", async () => {
-    mockHash.mockReturnValue("token-hash");
+    mockEncode.mockReturnValue("token-hash");
     
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
     mockGetRefreshTokenByTokenHash.mockResolvedValue({
@@ -86,7 +86,7 @@ describe("refreshRefreshToken", () => {
   });
 
   it("should throw NotFoundError when token does not exist", async () => {
-    mockHash.mockReturnValue("token-hash");
+    mockEncode.mockReturnValue("token-hash");
     mockGetRefreshTokenByTokenHash.mockResolvedValue({
       data: { id: undefined },
     });
@@ -99,7 +99,7 @@ describe("refreshRefreshToken", () => {
   });
 
   it("should throw WrongParamError when token is revoked", async () => {
-    mockHash.mockReturnValue("token-hash");
+    mockEncode.mockReturnValue("token-hash");
     mockGetRefreshTokenByTokenHash.mockResolvedValue({
       data: {
         id: "old-token-id",
@@ -118,7 +118,7 @@ describe("refreshRefreshToken", () => {
   });
 
   it("should throw WrongParamError when token is expired beyond grace period", async () => {
-    mockHash.mockReturnValue("token-hash");
+    mockEncode.mockReturnValue("token-hash");
 
     mockGetRefreshTokenByTokenHash.mockResolvedValue({
       data: {
@@ -138,7 +138,7 @@ describe("refreshRefreshToken", () => {
   });
 
   it("should accept token within grace period", async () => {
-    mockHash.mockReturnValue("token-hash");
+    mockEncode.mockReturnValue("token-hash");
 
     const expiresAt = new Date(Date.now() - 15 * 1000);
     mockGetRefreshTokenByTokenHash.mockResolvedValue({

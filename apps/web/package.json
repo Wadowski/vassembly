@@ -12,9 +12,18 @@
   },
   "dependencies": {
     "@vassembly/config": "workspace:*",
+    "@vassembly/constants": "workspace:*",
     "@vassembly/theme": "workspace:*",
     "@vassembly/ui-api-hooks": "workspace:*",
+    "@vassembly/ui-button": "workspace:*",
+    "@vassembly/ui-drawer-navigation": "workspace:*",
+    "@vassembly/ui-forgot-password": "workspace:*",
     "@vassembly/ui-layout": "workspace:*",
+    "@vassembly/ui-login-form": "workspace:*",
+    "@vassembly/ui-register-form": "workspace:*",
+    "@vassembly/ui-snackbar": "workspace:*",
+    "@vassembly/ui-user-auth": "workspace:*",
+    "@vassembly/ui-text": "workspace:*",
     "next": "16.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

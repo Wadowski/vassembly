@@ -1,9 +1,7 @@
 import * as commands from "./commands";
 import * as queries from "./queries";
 
-const refreshToken = {
+export {
   commands,
   queries,
 };
-
-export default refreshToken;

@@ -11,6 +11,7 @@ loadEnvConfig(monorepoRoot);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: [
+    "@vassembly/ui-register-form",
     "@vassembly/ui-layout",
     "@vassembly/ui-footer",
     "@vassembly/ui-header",
@@ -19,6 +20,10 @@ const nextConfig = {
     "@vassembly/ui-utils",
     "@vassembly/ui-icons",
     "@vassembly/theme",
+    "@vassembly/constants",
+    "@vassembly/ui-api-hooks",
+    "@vassembly/ui-user-auth",
+    "@vassembly/errors",
   ],
 };
 

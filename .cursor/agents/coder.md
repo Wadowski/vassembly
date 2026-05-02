@@ -60,6 +60,10 @@ If tests haven't been written yet:
 - **Code Quality**: Apply `code-rules-general.mdc` everywhere and `code-rules-ui.mdc` for UI; naming, types, structure, and performance as defined there
 - **Clean Implementation**: Write focused, readable code without unnecessary complexity
 
+## UI Principles
+
+- **Component Stories**: Each component must have storybook stories that presets all possible states
+
 ## Output Format
 
 After completing implementation:

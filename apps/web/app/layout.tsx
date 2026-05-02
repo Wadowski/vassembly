@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
-import { Layout } from "@vassembly/ui-layout";
 import "./globals.scss";
 import { Providers } from "./providers";
+import { AuthLayout } from "../lib/layout/AuthLayout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,7 +35,7 @@ export default function RootLayout({
     >
       <body className={inter.className}>
         <Providers>
-          <Layout variant="main">{children}</Layout>
+          <AuthLayout>{children}</AuthLayout>
         </Providers>
       </body>
     </html>

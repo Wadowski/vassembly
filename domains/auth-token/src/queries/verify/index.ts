@@ -1,6 +1,6 @@
 import { jwtClient } from "../../clients";
 import type { VerifyAuthTokenInput, VerifyAuthTokenResult } from "./types";
-import { authTokenFactory } from "../../model";
+import { authTokenFactory, AuthTokenRole } from "../../model";
 import { ForbiddenError } from "@vassembly/errors";
 
 export const verify = async ({ token, options }: VerifyAuthTokenInput): VerifyAuthTokenResult => {
@@ -11,7 +11,7 @@ export const verify = async ({ token, options }: VerifyAuthTokenInput): VerifyAu
   }
 
   const result = authTokenFactory.create({
-    role: decoded.role as string,
+    role: decoded.role as AuthTokenRole,
     userId: decoded.sub as string,
     refreshTokenId: decoded.jti as string,
     expiresAt: new Date(decoded.exp as number),

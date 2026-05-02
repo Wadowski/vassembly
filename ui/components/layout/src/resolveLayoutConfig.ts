@@ -27,12 +27,14 @@ export function resolveLayoutConfig(
   const drawer: LayoutDrawerPreset = {
     ...base.drawer,
     ...params.drawer,
+    user: params.drawer?.user ?? base.drawer.user,
     sections: params.drawer?.sections ?? base.drawer.sections,
     branding: params.drawer?.branding ?? base.drawer.branding,
     isAuthenticated:
       params.drawer?.isAuthenticated ?? base.drawer.isAuthenticated,
     onLogin: params.drawer?.onLogin ?? base.drawer.onLogin,
     onRegister: params.drawer?.onRegister ?? base.drawer.onRegister,
+    onLogout: params.drawer?.onLogout ?? base.drawer.onLogout,
   };
   return {
     footer: { ...base.footer, ...params.footer },

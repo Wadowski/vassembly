@@ -1,0 +1,36 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: $color-surface;
+  padding: $spacing-4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-component-gap-md;
+  width: 100%;
+  max-width: 25rem;
+  padding: $spacing-6;
+  background-color: $color-surface-container-high;
+  border-radius: $border-radius-lg;
+
+  @media #{$media-tablet} {
+    padding: $spacing-8;
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: $font-family-display;
+  font-size: $font-size-heading-md;
+  line-height: $line-height-tight;
+}
+
+.strengthIndicator {
+  margin-top: calc(-1 * $spacing-2);
+}

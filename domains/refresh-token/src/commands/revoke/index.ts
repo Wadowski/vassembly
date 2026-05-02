@@ -1,18 +1,22 @@
-import { hash } from "@vassembly/client-encoder";
-import { updateRefreshToken } from "../updateDb";
-import { getRefreshTokenByTokenHash } from '../../queries';
+import { encode } from "@vassembly/client-encoder";
+import { update } from "../updateDb";
+import { getByTokenHash } from '../../queries';
 import type { RevokeRefreshTokenInput } from "./types";
-import { NotFoundError } from "@vassembly/errors";
+import { NotFoundError, WrongParamError } from "@vassembly/errors";
 
 export const revoke = async (input: RevokeRefreshTokenInput) => {
   const { refreshToken: tokenString } = input;
-  const tokenHash = hash(tokenString);
-  const refreshTokenDb = await getRefreshTokenByTokenHash(tokenHash);
+  const normalizedToken = tokenString.trim();
+  if (!normalizedToken) {
+    throw new WrongParamError("Refresh token is required");
+  }
+  const tokenHash = encode(normalizedToken);
+  const refreshTokenDb = await getByTokenHash(tokenHash);
   if (!refreshTokenDb.data.id) {
     throw new NotFoundError("Refresh token not found");
   }
 
-  const refreshTokenUpdated = await updateRefreshToken({ 
+  const refreshTokenUpdated = await update({ 
     id: refreshTokenDb.data.id, 
     data: { revokedAt: new Date() },
   });

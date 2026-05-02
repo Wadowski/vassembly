@@ -1,5 +1,4 @@
 import z from "zod";
-import { getListDbByQuery } from "@vassembly/queries";
 import { getById } from "./getById";
 import { refreshTokenMongodbDao } from "../clients";
 import { RefreshTokenModel, refreshTokenFactory } from "../model";
@@ -9,19 +8,19 @@ const VALIDATION_SCHEMA = z.object({
   tokenHash: z.string(),
 });
 
-export const getByTokenHashDb = getListDbByQuery<RefreshTokenModel>({
-  dao: refreshTokenMongodbDao,
-  factory: refreshTokenFactory,
-  validationSchema: VALIDATION_SCHEMA,
-});
-
 export const getByTokenHash = async (tokenHash: string): Promise<ReturnType<typeof getById>> => {
-  const { data } = await getByTokenHashDb({ tokenHash });
-  const [refreshToken] = data;
-  
-  if (!refreshToken) {
+  const queryInstance = refreshTokenFactory.create(
+    { tokenHash },
+    { validationSchema: VALIDATION_SCHEMA }
+  );
+  queryInstance.isValid({ shouldThrow: true });
+
+  const daoResponse = await refreshTokenMongodbDao.get(queryInstance);
+
+  if (!daoResponse) {
     throw new NotFoundError("Refresh token not found");
   }
-  
+
+  const refreshToken = refreshTokenFactory.create(daoResponse);
   return { data: refreshToken };
 };

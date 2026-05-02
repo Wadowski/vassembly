@@ -5,7 +5,7 @@ import type { UpdateDbHandler } from "./types";
 import { z } from "zod";
 
 const VALIDATION_SCHEMA = z.object({
-  id: z.uuid(),
+  id: z.string(),
 });
 
 export const updateDbById = <T extends Model>({

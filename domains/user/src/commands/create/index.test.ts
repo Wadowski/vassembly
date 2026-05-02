@@ -64,7 +64,6 @@ describe("createUser", () => {
     const input = {
       email: "user@example.com",
       password: "ValidPass123!",
-      confirmPassword: "ValidPass123!",
       firstName: "John",
       lastName: "Doe",
     };
@@ -106,7 +105,6 @@ describe("createUser", () => {
     const input = {
       email: "existing@example.com",
       password: "ValidPass123!",
-      confirmPassword: "ValidPass123!",
       firstName: "Jane",
       lastName: "Doe",
     };
@@ -124,7 +122,6 @@ describe("createUser", () => {
     const input = {
       email: "user@example.com",
       password: "weak",
-      confirmPassword: "weak",
       firstName: "John",
       lastName: "Doe",
     };
@@ -146,7 +143,6 @@ describe("createUser", () => {
     const input = {
       email: "user@example.com",
       password: "ValidPass123!",
-      confirmPassword: "DifferentPass123!",
       firstName: "John",
       lastName: "Doe",
     };
@@ -168,7 +164,6 @@ describe("createUser", () => {
     const input = {
       email: "user@example.com",
       password: "ValidPass123!",
-      confirmPassword: "ValidPass123!",
       firstName: "John",
       lastName: "Doe",
     };
