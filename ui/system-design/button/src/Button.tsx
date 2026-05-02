@@ -24,7 +24,7 @@ const SIZE_MAP = {
   large: styles.sizeLarge,
 };
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
   (
     {
       as = 'button',
@@ -39,6 +39,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       text,
       textVariant = 'label',
       className,
+      type,
+      disabled,
+      form,
+      formAction,
+      formEncType,
+      formMethod,
+      formNoValidate,
       ...props
     },
     ref,
@@ -85,7 +92,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     if (Component === 'button') {
       return (
         <button
-          ref={ref}
+          ref={ref as React.LegacyRef<HTMLButtonElement>}
           className={buttonClassName}
           disabled={isButtonDisabled}
           type="button"
@@ -99,10 +106,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     if (Component === 'a') {
       return (
         <a
-          ref={ref}
+          ref={ref as React.LegacyRef<HTMLAnchorElement>}
           className={buttonClassName}
           aria-disabled={isButtonDisabled}
-          {...props}
+          {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
         >
           {buttonContent}
         </a>
@@ -110,8 +117,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     return (
+      // @ts-ignore - Next.js Link type mismatch with React 19
       <Link
-        ref={ref}
+        ref={ref as React.Ref<HTMLAnchorElement>}
         className={buttonClassName}
         aria-disabled={isButtonDisabled}
         {...props}
