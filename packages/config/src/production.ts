@@ -1,4 +1,4 @@
-import { Config, CustomHeaders } from './types';
+import { Config } from './types';
 
 const config: Config = {
   apps: {
