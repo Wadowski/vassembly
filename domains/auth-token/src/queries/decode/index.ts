@@ -1,6 +1,7 @@
 import { jwtClient } from "../../clients";
 import type { DecodeAuthTokenInput, DecodeAuthTokenResult } from "./types";
 import { authTokenFactory } from "../../model";
+import { AuthTokenRole } from "../../model/enums";
 
 export const decode = async ({ token }: DecodeAuthTokenInput): Promise<DecodeAuthTokenResult> => {
   const decoded = await jwtClient.decode(token);
@@ -10,7 +11,7 @@ export const decode = async ({ token }: DecodeAuthTokenInput): Promise<DecodeAut
   }
   
   const result = authTokenFactory.create({
-    role: decoded.role as string,
+    role: decoded.role as AuthTokenRole,
     userId: decoded.sub as string,
     refreshTokenId: decoded.jti as string,
     expiresAt: new Date(decoded.expiresAt as number),
