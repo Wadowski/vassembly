@@ -16,7 +16,8 @@
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "zod": "^4.3.6"
   },
   "dependencies": {
     "@vassembly/constants": "workspace:*",

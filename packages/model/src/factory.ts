@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { validatorFactory } from "@vassembly/validation";
 import { COUNTRIES } from "@vassembly/constants";
 import { Model, ModelWithTranslation, ModelFactory, ModelTranslationFactory, CreateOptions } from "./types";
