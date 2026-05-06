@@ -1,5 +1,10 @@
+import type { MouseEvent } from 'react';
 import { Checkbox } from '@vassembly/ui-checkbox';
 import type { CheckboxChecked } from '@vassembly/ui-checkbox';
+import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-button';
+
+import styles from './RegisterFormPolicyAcceptanceBlock.module.scss';
 
 export interface RegisterFormPolicyAcceptanceBlockProps {
   acceptedPrivacyPolicy: boolean;
@@ -30,19 +35,61 @@ export const RegisterFormPolicyAcceptanceBlock = (
     onAcceptedTermsChange(mapToBoolean(next));
   };
 
+  const handlePolicyLinkClick = (event: React.MouseEvent<HTMLElement>): void => {
+    event.stopPropagation();
+  };
+
+  const policyLinkClassName = styles.policyLink;
+
+  const privacyPolicyLabel = (
+    <>
+      <Text variant="label" as="span">
+        I agree to the{' '}
+      </Text>
+      <Button
+        as="a"
+        href="/privacy"
+        variant="text"
+        color="tertiary"
+        text="Privacy Policy"
+        textVariant="label"
+        onClick={handlePolicyLinkClick}
+        className={policyLinkClassName}
+      />
+    </>
+  );
+
+  const termsLabel = (
+    <>
+      <Text variant="label" as="span">
+        I agree to the{' '}
+      </Text>
+      <Button
+        as="a"
+        href="/terms"
+        variant="text"
+        color="tertiary"
+        text="Terms and Conditions"
+        textVariant="label"
+        onClick={handlePolicyLinkClick}
+        className={policyLinkClassName}
+      />
+    </>
+  );
+
   return (
     <>
       <Checkbox
         checked={acceptedPrivacyPolicy}
         onCheckedChange={handlePrivacyChange}
-        label="I accept the Privacy Policy"
+        label={privacyPolicyLabel}
         isRequired
         isDisabled={isLoading}
       />
       <Checkbox
         checked={acceptedTerms}
         onCheckedChange={handleTermsChange}
-        label="I accept the Terms and Conditions"
+        label={termsLabel}
         isRequired
         isDisabled={isLoading}
       />

@@ -1,0 +1,19 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.policyLink {
+  padding: 0;
+  min-height: auto;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: $color-primary-600;
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-radius: 2px;
+    box-shadow: $shadow-focus-ring;
+  }
+}
