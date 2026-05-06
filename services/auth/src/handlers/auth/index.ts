@@ -1,6 +1,6 @@
 import * as authTokenDomain from "@vassembly/domain-auth-token";
 import * as refreshTokenDomain from "@vassembly/domain-refresh-token";
-import * as userDomain from "@vassembly/domain-user";
+import userDomain from "@vassembly/domain-user";
 import { InternalError, NotFoundError } from "@vassembly/errors";
 
 import type { AuthInput, AuthOutput, AuthPublicUser } from "./types";

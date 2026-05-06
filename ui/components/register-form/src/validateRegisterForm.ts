@@ -8,6 +8,14 @@ const registerFormSchema = z
     email: z.string().trim().min(1, 'Email is required.').email('Enter a valid email address.'),
     password: z.string().trim().min(1, 'Password is required.'),
     confirmPassword: z.string().trim().min(1, 'Please confirm your password.'),
+    acceptedPrivacyPolicy: z
+      .boolean()
+      .refine((val) => val === true, {
+        message: 'You must accept the Privacy Policy',
+      }),
+    acceptedTerms: z.boolean().refine((val) => val === true, {
+      message: 'You must accept the Terms and Conditions',
+    }),
     firstName: z.string().trim().min(1, 'First name is required.'),
     lastName: z.string().trim().min(1, 'Last name is required.'),
   })

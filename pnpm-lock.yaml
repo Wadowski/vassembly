@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@vassembly/ui-checkbox':
+        specifier: workspace:^
+        version: link:ui/system-design/checkbox
+      '@vassembly/ui-register-form':
+        specifier: link:ui/components/register-form
+        version: link:ui/components/register-form
     devDependencies:
       '@types/node':
         specifier: ^25.1.0
@@ -26,12 +33,18 @@ importers:
 
   apps/api:
     dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/client-mongodb
       '@vassembly/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@vassembly/constants':
         specifier: workspace:^
         version: link:../../packages/constants
+      '@vassembly/domain-auth-token':
+        specifier: workspace:*
+        version: link:../../domains/auth-token
       '@vassembly/domain-user':
         specifier: workspace:*
         version: link:../../domains/user
@@ -77,7 +90,7 @@ importers:
     dependencies:
       next:
         specifier: 16.1.0
-        version: 16.1.0(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0)
+        version: 16.1.0(@babel/core@7.29.0)(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0)
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -121,49 +134,91 @@ importers:
       '@vassembly/theme':
         specifier: workspace:*
         version: link:../../ui/system-design/theme
+      '@vassembly/ui-alert':
+        specifier: workspace:^
+        version: link:../../ui/system-design/alert
+      '@vassembly/ui-anchor-list':
+        specifier: workspace:^
+        version: link:../../ui/system-design/anchor-list
       '@vassembly/ui-api-hooks':
         specifier: workspace:*
         version: link:../../ui/api-hooks
       '@vassembly/ui-button':
         specifier: workspace:*
         version: link:../../ui/system-design/button
+      '@vassembly/ui-checkbox':
+        specifier: workspace:^
+        version: link:../../ui/system-design/checkbox
       '@vassembly/ui-drawer-navigation':
         specifier: workspace:*
         version: link:../../ui/components/drawer-navigation
       '@vassembly/ui-forgot-password':
         specifier: workspace:*
         version: link:../../ui/components/forgot-password
+      '@vassembly/ui-icons':
+        specifier: workspace:^
+        version: link:../../ui/system-design/icons
       '@vassembly/ui-layout':
         specifier: workspace:*
         version: link:../../ui/components/layout
       '@vassembly/ui-login-form':
         specifier: workspace:*
         version: link:../../ui/components/login-form
+      '@vassembly/ui-modal':
+        specifier: workspace:^
+        version: link:../../ui/system-design/modal
       '@vassembly/ui-register-form':
         specifier: workspace:*
         version: link:../../ui/components/register-form
+      '@vassembly/ui-reset-password-form':
+        specifier: workspace:*
+        version: link:../../ui/components/reset-password-form
       '@vassembly/ui-snackbar':
         specifier: workspace:*
         version: link:../../ui/system-design/snackbar
+      '@vassembly/ui-switch':
+        specifier: workspace:^
+        version: link:../../ui/system-design/switch
       '@vassembly/ui-text':
         specifier: workspace:*
         version: link:../../ui/system-design/text
+      '@vassembly/ui-text-field':
+        specifier: workspace:^
+        version: link:../../ui/system-design/text-field
       '@vassembly/ui-user-auth':
         specifier: workspace:*
         version: link:../../ui/user-auth
+      '@vassembly/ui-utils':
+        specifier: workspace:^
+        version: link:../../ui/system-design/utils
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
       next:
         specifier: 16.1.0
-        version: 16.1.0(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0)
+        version: 16.1.0(@babel/core@7.29.0)(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0)
       react:
         specifier: ^19.2.0
         version: 19.2.4
       react-dom:
         specifier: ^19.2.0
         version: 19.2.4(react@19.2.4)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@next/env':
         specifier: 16.1.0
         version: 16.1.0
+      '@testing-library/jest-dom':
+        specifier: ^6.0.0
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: ^16.3.2
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.4)(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: ^14.0.0
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/node':
         specifier: ^22.15.3
         version: 22.19.15
@@ -179,15 +234,24 @@ importers:
       '@vassembly/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@vitejs/plugin-react':
+        specifier: ^4.0.0
+        version: 4.7.0(vite@7.3.2)
       eslint:
         specifier: ^9.39.1
         version: 9.39.4
+      jsdom:
+        specifier: '20'
+        version: 20.0.3
       sass:
         specifier: ^1.86.0
         version: 1.98.0
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+      vitest:
+        specifier: ^4.1.5
+        version: 4.1.5(@types/node@22.19.15)(jsdom@20.0.3)(vite@7.3.2)
 
   domains/auth-token:
     dependencies:
@@ -268,6 +332,9 @@ importers:
 
   domains/user:
     dependencies:
+      '@vassembly/client-aws-ses':
+        specifier: workspace:*
+        version: link:../../packages/client-aws-ses
       '@vassembly/client-encoder':
         specifier: workspace:*
         version: link:../../packages/client-encoder
@@ -277,6 +344,9 @@ importers:
       '@vassembly/commands':
         specifier: workspace:*
         version: link:../../packages/commands
+      '@vassembly/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
@@ -292,9 +362,9 @@ importers:
       '@vassembly/validation':
         specifier: workspace:*
         version: link:../../packages/validation
-      bcryptjs:
-        specifier: ^3.0.3
-        version: 3.0.3
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@types/node':
         specifier: ^22.19.7
@@ -965,6 +1035,12 @@ importers:
 
   services/auth:
     dependencies:
+      '@vassembly/client-aws-ses':
+        specifier: workspace:*
+        version: link:../../packages/client-aws-ses
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
@@ -977,6 +1053,9 @@ importers:
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -1020,7 +1099,7 @@ importers:
     devDependencies:
       '@testing-library/react':
         specifier: ^16.0.0
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react@19.2.2)(react-dom@19.2.4)(react@19.2.4)
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.4)(react@19.2.4)
       '@types/node':
         specifier: ^22.19.7
         version: 22.19.15
@@ -1102,7 +1181,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1160,7 +1239,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1233,7 +1312,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1291,7 +1370,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1304,6 +1383,9 @@ importers:
 
   ui/components/layout:
     dependencies:
+      '@vassembly/theme':
+        specifier: workspace:*
+        version: link:../../system-design/theme
       '@vassembly/ui-drawer-navigation':
         specifier: workspace:*
         version: link:../drawer-navigation
@@ -1352,7 +1434,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1425,7 +1507,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1450,6 +1532,9 @@ importers:
       '@vassembly/ui-button':
         specifier: workspace:*
         version: link:../../system-design/button
+      '@vassembly/ui-checkbox':
+        specifier: workspace:^
+        version: link:../../system-design/checkbox
       '@vassembly/ui-snackbar':
         specifier: workspace:*
         version: link:../../system-design/snackbar
@@ -1498,7 +1583,80 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
+      sass:
+        specifier: ^1.69.0
+        version: 1.98.0
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.2
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@25.5.0)(jsdom@20.0.3)(sass@1.98.0)
+
+  ui/components/reset-password-form:
+    dependencies:
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../../packages/errors
+      '@vassembly/theme':
+        specifier: workspace:*
+        version: link:../../system-design/theme
+      '@vassembly/ui-api-hooks':
+        specifier: workspace:*
+        version: link:../../api-hooks
+      '@vassembly/ui-button':
+        specifier: workspace:*
+        version: link:../../system-design/button
+      '@vassembly/ui-icons':
+        specifier: workspace:*
+        version: link:../../system-design/icons
+      '@vassembly/ui-snackbar':
+        specifier: workspace:*
+        version: link:../../system-design/snackbar
+      '@vassembly/ui-text':
+        specifier: workspace:*
+        version: link:../../system-design/text
+      '@vassembly/ui-text-field':
+        specifier: workspace:*
+        version: link:../../system-design/text-field
+      '@vassembly/ui-utils':
+        specifier: workspace:*
+        version: link:../../system-design/utils
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../../packages/validation
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: ^6.0.0
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: ^14.0.0
+        version: 14.3.1(@types/react@18.2.47)(react-dom@18.3.1)(react@18.3.1)
+      '@testing-library/user-event':
+        specifier: ^14.0.0
+        version: 14.6.1(@testing-library/dom@10.4.1)
+      '@types/react':
+        specifier: ^18.0.0
+        version: 18.2.47
+      '@types/react-dom':
+        specifier: ^18.0.0
+        version: 18.3.7(@types/react@18.2.47)
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../../packages/typescript-config
+      '@vitejs/plugin-react':
+        specifier: ^4.0.0
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1608,7 +1766,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1675,7 +1833,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1739,7 +1897,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1803,7 +1961,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1870,7 +2028,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -1937,7 +2095,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2001,7 +2159,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2071,7 +2229,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2157,7 +2315,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2224,7 +2382,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2285,7 +2443,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2358,7 +2516,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2425,7 +2583,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2486,7 +2644,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2550,7 +2708,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2608,7 +2766,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2675,7 +2833,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2742,7 +2900,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2806,7 +2964,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2876,7 +3034,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -2940,7 +3098,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -3007,7 +3165,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -3068,7 +3226,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       jsdom:
         specifier: '20'
         version: 20.0.3
@@ -3135,7 +3293,7 @@ importers:
         version: link:../../../packages/typescript-config
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.7.0(vite@5.4.21)
+        version: 4.7.0(vite@7.3.2)
       sass:
         specifier: ^1.69.0
         version: 1.98.0
@@ -7379,6 +7537,10 @@ packages:
       tslib: 2.8.1
     dev: false
 
+  /@standard-schema/spec@1.1.0:
+    resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+    dev: true
+
   /@storybook/addon-a11y@10.3.3(storybook@10.3.3):
     resolution: {integrity: sha512-1yELCE8NXUJKcfS2k97pujtVw4z95PCwyoy2I6VAPiG/nRnJI8M6ned08YmCMEJhLBgGA1+GBh9HO4uk+xPcYA==}
     peerDependencies:
@@ -8500,7 +8662,7 @@ packages:
       react-dom: 19.2.4(react@19.2.4)
     dev: true
 
-  /@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react@19.2.2)(react-dom@19.2.4)(react@19.2.4):
+  /@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.4)(react@19.2.4):
     resolution: {integrity: sha512-XU5/SytQM+ykqMnAnvB2umaJNIOsLF3PVv//1Ew4CTcpz0/BRyy/af40qqrt7SjKpDdT1saBMc42CUok5gaw+g==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -8518,6 +8680,7 @@ packages:
       '@babel/runtime': 7.29.2
       '@testing-library/dom': 10.4.1
       '@types/react': 19.2.2
+      '@types/react-dom': 19.2.2(@types/react@19.2.2)
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
     dev: true
@@ -9043,7 +9206,7 @@ packages:
       eslint-visitor-keys: 5.0.1
     dev: true
 
-  /@vitejs/plugin-react@4.7.0(vite@5.4.21):
+  /@vitejs/plugin-react@4.7.0(vite@7.3.2):
     resolution: {integrity: sha512-gUu9hwfWvvEDBBmgtAowQCojwZmJ5mcLn3aufeCsitijs3+f2NsrPtlAWIR6OPiqljl96GVCUbLe0HyqIpVaoA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -9055,7 +9218,7 @@ packages:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 5.4.21(@types/node@25.5.0)(sass@1.98.0)
+      vite: 7.3.2(@types/node@25.5.0)(sass@1.98.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9087,6 +9250,17 @@ packages:
       tinyrainbow: 2.0.0
     dev: true
 
+  /@vitest/expect@4.1.5:
+    resolution: {integrity: sha512-PWBaRY5JoKuRnHlUHfpV/KohFylaDZTupcXN1H9vYryNLOnitSw60Mw9IAE2r67NbwwzBw/Cc/8q9BK3kIX8Kw==}
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@types/chai': 5.2.3
+      '@vitest/spy': 4.1.5
+      '@vitest/utils': 4.1.5
+      chai: 6.2.2
+      tinyrainbow: 3.1.0
+    dev: true
+
   /@vitest/mocker@2.1.9(vite@5.4.21):
     resolution: {integrity: sha512-tVL6uJgoUdi6icpxmdrn5YNo3g3Dxv+IHJBr0GXHaEdTcw3F+cPKnsXFhli6nO+f/6SDKPHEK1UN+k+TQv0Ehg==}
     peerDependencies:
@@ -9104,6 +9278,23 @@ packages:
       vite: 5.4.21(@types/node@22.19.15)
     dev: true
 
+  /@vitest/mocker@4.1.5(vite@7.3.2):
+    resolution: {integrity: sha512-/x2EmFC4mT4NNzqvC3fmesuV97w5FC903KPmey4gsnJiMQ3Be1IlDKVaDaG8iqaLFHqJ2FVEkxZk5VmeLjIItw==}
+    peerDependencies:
+      msw: ^2.4.9
+      vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+    peerDependenciesMeta:
+      msw:
+        optional: true
+      vite:
+        optional: true
+    dependencies:
+      '@vitest/spy': 4.1.5
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+      vite: 7.3.2(@types/node@22.19.15)(sass@1.98.0)
+    dev: true
+
   /@vitest/pretty-format@2.1.9:
     resolution: {integrity: sha512-KhRIdGV2U9HOUzxfiHmY8IFHTdqtOhIzCpd8WRdJiE7D/HUcZVD0EgQCVjm+Q9gkUXWgBvMmTtZgIG48wq7sOQ==}
     dependencies:
@@ -9114,6 +9305,12 @@ packages:
     resolution: {integrity: sha512-IVNZik8IVRJRTr9fxlitMKeJeXFFFN0JaB9PHPGQ8NKQbGpfjlTx9zO4RefN8gp7eqjNy8nyK3NZmBzOPeIxtA==}
     dependencies:
       tinyrainbow: 2.0.0
+    dev: true
+
+  /@vitest/pretty-format@4.1.5:
+    resolution: {integrity: sha512-7I3q6l5qr03dVfMX2wCo9FxwSJbPdwKjy2uu/YPpU3wfHvIL4QHwVRp57OfGrDFeUJ8/8QdfBKIV12FTtLn00g==}
+    dependencies:
+      tinyrainbow: 3.1.0
     dev: true
 
   /@vitest/runner@1.6.1:
@@ -9129,6 +9326,13 @@ packages:
     dependencies:
       '@vitest/utils': 2.1.9
       pathe: 1.1.2
+    dev: true
+
+  /@vitest/runner@4.1.5:
+    resolution: {integrity: sha512-2D+o7Pr82IEO46YPpoA/YU0neeyr6FTerQb5Ro7BUnBuv6NQtT/kmVnczngiMEBhzgqz2UZYl5gArejsyERDSQ==}
+    dependencies:
+      '@vitest/utils': 4.1.5
+      pathe: 2.0.3
     dev: true
 
   /@vitest/snapshot@1.6.1:
@@ -9147,6 +9351,15 @@ packages:
       pathe: 1.1.2
     dev: true
 
+  /@vitest/snapshot@4.1.5:
+    resolution: {integrity: sha512-zypXEt4KH/XgKGPUz4eC2AvErYx0My5hfL8oDb1HzGFpEk1P62bxSohdyOmvz+d9UJwanI68MKwr2EquOaOgMQ==}
+    dependencies:
+      '@vitest/pretty-format': 4.1.5
+      '@vitest/utils': 4.1.5
+      magic-string: 0.30.21
+      pathe: 2.0.3
+    dev: true
+
   /@vitest/spy@1.6.1:
     resolution: {integrity: sha512-MGcMmpGkZebsMZhbQKkAf9CX5zGvjkBTqf8Zx3ApYWXr3wG+QvEu2eXWfnIIWYSJExIp4V9FCKDEeygzkYrXMw==}
     dependencies:
@@ -9163,6 +9376,10 @@ packages:
     resolution: {integrity: sha512-vAfasCOe6AIK70iP5UD11Ac4siNUNJ9i/9PZ3NKx07sG6sUxeag1LWdNrMWeKKYBLlzuK+Gn65Yd5nyL6ds+nw==}
     dependencies:
       tinyspy: 4.0.4
+    dev: true
+
+  /@vitest/spy@4.1.5:
+    resolution: {integrity: sha512-2lNOsh6+R2Idnf1TCZqSwYlKN2E/iDlD8sgU59kYVl+OMDmvldO1VDk39smRfpUNwYpNRVn3w4YfuC7KfbBnkQ==}
     dev: true
 
   /@vitest/utils@1.6.1:
@@ -9188,6 +9405,14 @@ packages:
       '@vitest/pretty-format': 3.2.4
       loupe: 3.2.1
       tinyrainbow: 2.0.0
+    dev: true
+
+  /@vitest/utils@4.1.5:
+    resolution: {integrity: sha512-76wdkrmfXfqGjueGgnb45ITPyUi1ycZ4IHgC2bhPDUfWHklY/q3MdLOAB+TF1e6xfl8NxNY0ZYaPCFNWSsw3Ug==}
+    dependencies:
+      '@vitest/pretty-format': 4.1.5
+      convert-source-map: 2.0.0
+      tinyrainbow: 3.1.0
     dev: true
 
   /@webassemblyjs/ast@1.14.1:
@@ -9763,11 +9988,6 @@ packages:
       - supports-color
     dev: false
 
-  /bcryptjs@3.0.3:
-    resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
-    hasBin: true
-    dev: false
-
   /body-parser@1.20.4:
     resolution: {integrity: sha512-ZTgYYLMOXY9qKU/57FAo8F+HA2dGX7bqGc71txDRC1rS4frdFI5R7NhluHxH6M0YItAP0sHB4uqAOcYKxO6uGA==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
@@ -9945,6 +10165,11 @@ packages:
       deep-eql: 5.0.2
       loupe: 3.2.1
       pathval: 2.0.1
+    dev: true
+
+  /chai@6.2.2:
+    resolution: {integrity: sha512-NUPRluOfOiTKBKvWPtSD4PhFvWCqOi0BGStNWs57X9js7XGTprSmFoz5F0tWhR4WPjNeR9jXqdC7/UpSJTnlRg==}
+    engines: {node: '>=18'}
     dev: true
 
   /chalk@4.1.2:
@@ -10379,6 +10604,7 @@ packages:
   /detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
+    requiresBuild: true
 
   /detect-node-es@1.1.0:
     resolution: {integrity: sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==}
@@ -13011,51 +13237,6 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /next@16.1.0(react-dom@19.2.4)(react@19.2.4)(sass@1.98.0):
-    resolution: {integrity: sha512-Y+KbmDbefYtHDDQKLNrmzE/YYzG2msqo2VXhzh5yrJ54tx/6TmGdkR5+kP9ma7i7LwZpZMfoY3m/AoPPPKxtVw==}
-    engines: {node: '>=20.9.0'}
-    hasBin: true
-    peerDependencies:
-      '@opentelemetry/api': ^1.1.0
-      '@playwright/test': ^1.51.1
-      babel-plugin-react-compiler: '*'
-      react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
-      react-dom: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
-      sass: ^1.3.0
-    peerDependenciesMeta:
-      '@opentelemetry/api':
-        optional: true
-      '@playwright/test':
-        optional: true
-      babel-plugin-react-compiler:
-        optional: true
-      sass:
-        optional: true
-    dependencies:
-      '@next/env': 16.1.0
-      '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.10.10
-      caniuse-lite: 1.0.30001781
-      postcss: 8.4.31
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      sass: 1.98.0
-      styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.4)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.1.0
-      '@next/swc-darwin-x64': 16.1.0
-      '@next/swc-linux-arm64-gnu': 16.1.0
-      '@next/swc-linux-arm64-musl': 16.1.0
-      '@next/swc-linux-x64-gnu': 16.1.0
-      '@next/swc-linux-x64-musl': 16.1.0
-      '@next/swc-win32-arm64-msvc': 16.1.0
-      '@next/swc-win32-x64-msvc': 16.1.0
-      sharp: 0.34.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-    dev: false
-
   /no-case@3.0.4:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
     dependencies:
@@ -13214,6 +13395,10 @@ packages:
 
   /objectorarray@1.0.5:
     resolution: {integrity: sha512-eJJDYkhJFFbBBAxeh8xW+weHlkI28n2ZdQV/J/DNfWfSKlGEf2xcfAbZTv3riEXHAhL9SVOTs2pRmXiSTf78xg==}
+    dev: true
+
+  /obug@2.1.1:
+    resolution: {integrity: sha512-uTqF9MuPraAQ+IsnPf366RG4cP9RtUi7MLO1N3KEc+wb0a6yKpeL0lmk2IB1jY5KHPAlTc6T/JRdC/YqxHNwkQ==}
     dev: true
 
   /on-exit-leak-free@2.1.2:
@@ -14290,6 +14475,7 @@ packages:
     resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
     engines: {node: '>=10'}
     hasBin: true
+    requiresBuild: true
 
   /send@0.19.2:
     resolution: {integrity: sha512-VMbMxbDeehAxpOtWJXlcUS5E8iXh6QmN+BkRX1GARS3wRaXEEgzCcB10gTQazO42tpNIya8xIyNx8fll1OFPrg==}
@@ -14496,6 +14682,7 @@ packages:
   /source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dev: true
 
   /space-separated-tokens@1.1.5:
@@ -14527,6 +14714,10 @@ packages:
 
   /std-env@3.10.0:
     resolution: {integrity: sha512-5GS12FdOZNliM5mAOxFRg7Ir0pWz8MdpYm6AY6VPkGpbA7ZzmbzNcBJQ0GPvvyWgcY7QAhCgf9Uy89I03faLkg==}
+    dev: true
+
+  /std-env@4.1.0:
+    resolution: {integrity: sha512-Rq7ybcX2RuC55r9oaPVEW7/xu3tj8u4GeBYHBWCychFtzMIr86A7e3PPEBPT37sHStKX3+TiX/Fr/ACmJLVlLQ==}
     dev: true
 
   /stop-iteration-iterator@1.1.0:
@@ -14958,6 +15149,11 @@ packages:
     resolution: {integrity: sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA==}
     dev: true
 
+  /tinyexec@1.1.2:
+    resolution: {integrity: sha512-dAqSqE/RabpBKI8+h26GfLq6Vb3JVXs30XYQjdMjaj/c2tS8IYYMbIzP599KtRj7c57/wYApb3QjgRgXmrCukA==}
+    engines: {node: '>=18'}
+    dev: true
+
   /tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
@@ -14983,6 +15179,11 @@ packages:
 
   /tinyrainbow@2.0.0:
     resolution: {integrity: sha512-op4nsTR47R6p0vMUUoYl/a+ljLFVtlfaXkLQmqfLR1qHma1h/ysYk4hEXZ880bf2CYgTskvTa/e196Vd5dDQXw==}
+    engines: {node: '>=14.0.0'}
+    dev: true
+
+  /tinyrainbow@3.1.0:
+    resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
     engines: {node: '>=14.0.0'}
     dev: true
 
@@ -15538,6 +15739,110 @@ packages:
       fsevents: 2.3.3
     dev: true
 
+  /vite@7.3.2(@types/node@22.19.15)(sass@1.98.0):
+    resolution: {integrity: sha512-Bby3NOsna2jsjfLVOHKes8sGwgl4TT0E6vvpYgnAYDIF/tie7MRaFthmKuHx1NSXjiTueXH3do80FMQgvEktRg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^20.19.0 || >=22.12.0
+      jiti: '>=1.21.0'
+      less: ^4.0.0
+      lightningcss: ^1.21.0
+      sass: ^1.70.0
+      sass-embedded: ^1.70.0
+      stylus: '>=0.54.8'
+      sugarss: ^5.0.0
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
+    dependencies:
+      '@types/node': 22.19.15
+      esbuild: 0.27.4
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
+      postcss: 8.5.8
+      rollup: 4.60.0
+      sass: 1.98.0
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
+
+  /vite@7.3.2(@types/node@25.5.0)(sass@1.98.0):
+    resolution: {integrity: sha512-Bby3NOsna2jsjfLVOHKes8sGwgl4TT0E6vvpYgnAYDIF/tie7MRaFthmKuHx1NSXjiTueXH3do80FMQgvEktRg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^20.19.0 || >=22.12.0
+      jiti: '>=1.21.0'
+      less: ^4.0.0
+      lightningcss: ^1.21.0
+      sass: ^1.70.0
+      sass-embedded: ^1.70.0
+      stylus: '>=0.54.8'
+      sugarss: ^5.0.0
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
+    dependencies:
+      '@types/node': 25.5.0
+      esbuild: 0.27.4
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
+      postcss: 8.5.8
+      rollup: 4.60.0
+      sass: 1.98.0
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
+
   /vitest@1.6.1(@types/node@25.5.0)(jsdom@20.0.3)(sass@1.98.0):
     resolution: {integrity: sha512-Ljb1cnSJSivGN0LqXd/zmDbWEM0RNNg2t1QW/XUhYl/qPqyu7CsqeWtqQXHVaJsecLPuDoak2oJcZN2QoRIOag==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -15652,6 +15957,73 @@ packages:
       - sugarss
       - supports-color
       - terser
+    dev: true
+
+  /vitest@4.1.5(@types/node@22.19.15)(jsdom@20.0.3)(vite@7.3.2):
+    resolution: {integrity: sha512-9Xx1v3/ih3m9hN+SbfkUyy0JAs72ap3r7joc87XL6jwF0jGg6mFBvQ1SrwaX+h8BlkX6Hz9shdd1uo6AF+ZGpg==}
+    engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
+    hasBin: true
+    peerDependencies:
+      '@edge-runtime/vm': '*'
+      '@opentelemetry/api': ^1.9.0
+      '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
+      '@vitest/browser-playwright': 4.1.5
+      '@vitest/browser-preview': 4.1.5
+      '@vitest/browser-webdriverio': 4.1.5
+      '@vitest/coverage-istanbul': 4.1.5
+      '@vitest/coverage-v8': 4.1.5
+      '@vitest/ui': 4.1.5
+      happy-dom: '*'
+      jsdom: '*'
+      vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+    peerDependenciesMeta:
+      '@edge-runtime/vm':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+      '@types/node':
+        optional: true
+      '@vitest/browser-playwright':
+        optional: true
+      '@vitest/browser-preview':
+        optional: true
+      '@vitest/browser-webdriverio':
+        optional: true
+      '@vitest/coverage-istanbul':
+        optional: true
+      '@vitest/coverage-v8':
+        optional: true
+      '@vitest/ui':
+        optional: true
+      happy-dom:
+        optional: true
+      jsdom:
+        optional: true
+    dependencies:
+      '@types/node': 22.19.15
+      '@vitest/expect': 4.1.5
+      '@vitest/mocker': 4.1.5(vite@7.3.2)
+      '@vitest/pretty-format': 4.1.5
+      '@vitest/runner': 4.1.5
+      '@vitest/snapshot': 4.1.5
+      '@vitest/spy': 4.1.5
+      '@vitest/utils': 4.1.5
+      es-module-lexer: 2.0.0
+      expect-type: 1.3.0
+      jsdom: 20.0.3
+      magic-string: 0.30.21
+      obug: 2.1.1
+      pathe: 2.0.3
+      picomatch: 4.0.4
+      std-env: 4.1.0
+      tinybench: 2.9.0
+      tinyexec: 1.1.2
+      tinyglobby: 0.2.15
+      tinyrainbow: 3.1.0
+      vite: 7.3.2(@types/node@22.19.15)(sass@1.98.0)
+      why-is-node-running: 2.3.0
+    transitivePeerDependencies:
+      - msw
     dev: true
 
   /w3c-xmlserializer@4.0.0:

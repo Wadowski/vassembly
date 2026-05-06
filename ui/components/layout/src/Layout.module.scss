@@ -1,3 +1,5 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
 .page {
   display: flex;
   min-height: 100vh;
@@ -6,6 +8,7 @@
 
 .main {
   flex: 1 1 auto;
+  padding: $spacing-6 $spacing-8;
 }
 
 .wordmark {

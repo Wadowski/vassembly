@@ -22,12 +22,16 @@ export const RegisterForm = (props: RegisterFormProps) => {
     confirmPassword,
     firstName,
     lastName,
+    acceptedPrivacyPolicy,
+    acceptedTerms,
     passwordStrength: strengthFromHook,
     handleEmailChange,
     handlePasswordChange,
     handleConfirmPasswordChange,
     handleFirstNameChange,
     handleLastNameChange,
+    handleAcceptedPrivacyPolicyChange,
+    handleAcceptedTermsChange,
     handleSubmit,
     isLoading,
   } = useRegisterForm({ returnUrl, fallbackPath, verificationPendingPath, onRedirect, onSuccess });
@@ -43,12 +47,16 @@ export const RegisterForm = (props: RegisterFormProps) => {
         confirmPassword={confirmPassword}
         firstName={firstName}
         lastName={lastName}
+        acceptedPrivacyPolicy={acceptedPrivacyPolicy}
+        acceptedTerms={acceptedTerms}
         passwordStrength={passwordStrength}
         handleEmailChange={handleEmailChange}
         handlePasswordChange={handlePasswordChange}
         handleConfirmPasswordChange={handleConfirmPasswordChange}
         handleFirstNameChange={handleFirstNameChange}
         handleLastNameChange={handleLastNameChange}
+        handleAcceptedPrivacyPolicyChange={handleAcceptedPrivacyPolicyChange}
+        handleAcceptedTermsChange={handleAcceptedTermsChange}
         handleSubmit={handleSubmit}
         isLoading={isLoading}
       />

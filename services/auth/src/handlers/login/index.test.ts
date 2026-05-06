@@ -19,29 +19,32 @@ const { mockCreateAuthToken } = vi.hoisted(() => {
   return { mockCreateAuthToken };
 });
 
-vi.mock("@vassembly/domain-user", () => ({
-  default: {
+vi.mock("@vassembly/domain-user", () => {
+  const impl = {
     queries: {
       verify: mockVerifyCredentials,
     },
-  },
-}));
+  };
+  return { ...impl, default: impl };
+});
 
-vi.mock("@vassembly/domain-refresh-token", () => ({
-  default: {
+vi.mock("@vassembly/domain-refresh-token", () => {
+  const impl = {
     commands: {
       create: mockCreateRefreshToken,
     },
-  },
-}));
+  };
+  return { ...impl, default: impl };
+});
 
-vi.mock("@vassembly/domain-auth-token", () => ({
-  default: {
+vi.mock("@vassembly/domain-auth-token", () => {
+  const impl = {
     commands: {
       create: mockCreateAuthToken,
     },
-  },
-}));
+  };
+  return { ...impl, default: impl };
+});
 
 import { login } from "./index";
 
@@ -83,7 +86,16 @@ describe("login", () => {
 
     const result = await login(input);
 
-    expect(result.user).toEqual(mockUser);
+    expect(result.user).toEqual({
+      id: mockUser.id,
+      email: mockUser.email,
+      firstName: mockUser.firstName,
+      lastName: mockUser.lastName,
+      createdAt: undefined,
+      updatedAt: undefined,
+      removedAt: undefined,
+      verifiedAt: undefined,
+    });
     expect(result.authToken).toBe("auth-token-value");
     expect(result.refreshToken).toBe("refresh-token-value");
 

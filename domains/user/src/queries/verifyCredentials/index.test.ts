@@ -10,25 +10,23 @@ vi.mock("@vassembly/client-mongodb/src/connection.js", () => ({
 
 vi.mock("@vassembly/client-encoder");
 vi.mock("../../clients");
-vi.mock("../../model");
-vi.mock("../getListQuery");
 
 const { mockCompareHash } = vi.hoisted(() => {
   const mockCompareHash = vi.fn();
   return { mockCompareHash };
 });
 
-const { mockGetListUsersByQuery } = vi.hoisted(() => {
-  const mockGetListUsersByQuery = vi.fn();
-  return { mockGetListUsersByQuery };
+const { mockGetByEmail } = vi.hoisted(() => {
+  const mockGetByEmail = vi.fn();
+  return { mockGetByEmail };
 });
 
 vi.mock("@vassembly/client-encoder", () => ({
   compareHash: mockCompareHash,
 }));
 
-vi.mock("../getListQuery", () => ({
-  getListByQuery: mockGetListUsersByQuery,
+vi.mock("../getByEmail", () => ({
+  getByEmail: mockGetByEmail,
 }));
 
 import { verify } from "./index";
@@ -46,31 +44,30 @@ describe("verifyCredentials", () => {
       password: "ValidPassword123!",
     };
 
+    const passwordHash = "hashed-password";
     const mockUser = {
       id: "user-id-123",
       email: input.email,
-      passwordHash: "hashed-password",
+      passwordHash,
       firstName: "John",
       lastName: "Doe",
     } as unknown as UserModel;
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [mockUser],
-    });
+    mockGetByEmail.mockResolvedValue(mockUser);
 
     mockCompareHash.mockResolvedValue(true);
 
     const result = await verify(input);
 
-    expect(result).toEqual(mockUser);
+    expect("passwordHash" in result).toBe(false);
     expect(result.id).toBe("user-id-123");
-    expect(mockGetListUsersByQuery).toHaveBeenCalledWith({
+    expect(mockGetByEmail).toHaveBeenCalledWith({
       email: input.email,
-      limit: 1,
+      includePasswordHash: true,
     });
     expect(mockCompareHash).toHaveBeenCalledWith({
       text: input.password,
-      hash: mockUser.passwordHash,
+      hash: passwordHash,
     });
   });
 
@@ -80,9 +77,7 @@ describe("verifyCredentials", () => {
       password: "ValidPassword123!",
     };
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [],
-    });
+    mockGetByEmail.mockResolvedValue(null);
 
     await expect(verify(input)).rejects.toThrow(UnauthorizedError);
     await expect(verify(input)).rejects.toThrow(
@@ -105,9 +100,7 @@ describe("verifyCredentials", () => {
       lastName: "Doe",
     } as unknown as UserModel;
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [mockUser],
-    });
+    mockGetByEmail.mockResolvedValue(mockUser);
 
     mockCompareHash.mockResolvedValue(false);
 
@@ -135,9 +128,7 @@ describe("verifyCredentials", () => {
       lastName: "Doe",
     } as unknown as UserModel;
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [mockUserWithoutHash],
-    });
+    mockGetByEmail.mockResolvedValue(mockUserWithoutHash);
 
     await expect(verify(input)).rejects.toThrow(UnauthorizedError);
     await expect(verify(input)).rejects.toThrow(
@@ -145,4 +136,26 @@ describe("verifyCredentials", () => {
     );
     expect(mockCompareHash).not.toHaveBeenCalled();
   });
+
+  it("should throw UnauthorizedError when user is removed", async () => {
+    const input = {
+      email: "user@example.com",
+      password: "ValidPassword123!",
+    };
+
+    const mockUser = {
+      id: "user-id-123",
+      email: input.email,
+      passwordHash: "hashed-password",
+      firstName: "John",
+      lastName: "Doe",
+      removedAt: new Date(),
+    } as unknown as UserModel;
+
+    mockGetByEmail.mockResolvedValue(mockUser);
+
+    await expect(verify(input)).rejects.toThrow(UnauthorizedError);
+    expect(mockCompareHash).not.toHaveBeenCalled();
+  });
 });
+

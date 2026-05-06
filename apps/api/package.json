@@ -21,8 +21,10 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/config": "workspace:*",
     "@vassembly/constants": "workspace:^",
+    "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",

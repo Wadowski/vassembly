@@ -41,6 +41,8 @@ export type ValidateRegisterFormParams = {
   confirmPassword: string;
   firstName: string;
   lastName: string;
+  acceptedPrivacyPolicy: boolean;
+  acceptedTerms: boolean;
 };
 
 export type ValidateRegisterFormResult = { isValid: boolean; message?: string };
@@ -64,12 +66,16 @@ export interface RegisterFormFieldsProps {
   confirmPassword: string;
   firstName: string;
   lastName: string;
+  acceptedPrivacyPolicy: boolean;
+  acceptedTerms: boolean;
   passwordStrength: PasswordStrengthResult;
   handleEmailChange: (value: string) => void;
   handlePasswordChange: (value: string) => void;
   handleConfirmPasswordChange: (value: string) => void;
   handleFirstNameChange: (value: string) => void;
   handleLastNameChange: (value: string) => void;
+  handleAcceptedPrivacyPolicyChange: (isChecked: boolean) => void;
+  handleAcceptedTermsChange: (isChecked: boolean) => void;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   isLoading: boolean;
 }
@@ -88,12 +94,16 @@ export interface UseRegisterFormReturn {
   confirmPassword: string;
   firstName: string;
   lastName: string;
+  acceptedPrivacyPolicy: boolean;
+  acceptedTerms: boolean;
   passwordStrength?: PasswordStrengthResult;
   handleEmailChange: (value: string) => void;
   handlePasswordChange: (value: string) => void;
   handleConfirmPasswordChange: (value: string) => void;
   handleFirstNameChange: (value: string) => void;
   handleLastNameChange: (value: string) => void;
+  handleAcceptedPrivacyPolicyChange: (isChecked: boolean) => void;
+  handleAcceptedTermsChange: (isChecked: boolean) => void;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   isLoading: boolean;
 }

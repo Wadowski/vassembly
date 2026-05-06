@@ -1,11 +1,11 @@
-import * as userDomain from "@vassembly/domain-user";
+import userDomain from "@vassembly/domain-user";
 import * as refreshTokenDomain from "@vassembly/domain-refresh-token";
 import * as authTokenDomain from "@vassembly/domain-auth-token";
 import { InternalError } from "@vassembly/errors";
 
-import type { LoginInput } from "./types";
+import type { LoginInput, LoginOutput } from "./types";
 
-export const login = async (input: LoginInput) => {
+export const login = async (input: LoginInput): Promise<LoginOutput> => {
   const { email, password } = input;
 
   const user = await userDomain.queries.verify({ email, password });
@@ -13,12 +13,15 @@ export const login = async (input: LoginInput) => {
     throw new InternalError("Failed to verify credentials");
   }
   const refreshToken = await refreshTokenDomain.commands.create({ userId: user.id });
-  if (!refreshToken.id) {
+  if (!refreshToken.id || !refreshToken.token) {
     throw new InternalError("Failed to create refresh token");
   }
   const authToken = await authTokenDomain.commands.create({ 
     input: { userId: user.id, refreshTokenId: refreshToken.id, role: 'user' }
   });
+  if (!authToken.token) {
+    throw new InternalError("Failed to create auth token");
+  }
 
   return {
     user,

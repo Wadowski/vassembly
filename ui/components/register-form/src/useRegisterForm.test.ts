@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CommonError, ErrorTypes } from '@vassembly/errors';
+import type { UseRegisterFormReturn } from './types';
 import { useRegisterForm } from './useRegisterForm';
 
 const validPassword = 'Str0ng!Pass';
@@ -61,6 +62,8 @@ describe('useRegisterForm', () => {
     expect(result.current.confirmPassword).toBe('');
     expect(result.current.firstName).toBe('');
     expect(result.current.lastName).toBe('');
+    expect(result.current.acceptedPrivacyPolicy).toBe(false);
+    expect(result.current.acceptedTerms).toBe(false);
   });
 
   it('should update email when handleEmailChange is called with a new value', () => {
@@ -118,6 +121,8 @@ describe('useRegisterForm', () => {
       result.current.handleConfirmPasswordChange(`  ${validPassword}  `);
       result.current.handleFirstNameChange('  Jane  ');
       result.current.handleLastNameChange('  Doe  ');
+      result.current.handleAcceptedPrivacyPolicyChange(true);
+      result.current.handleAcceptedTermsChange(true);
     });
     await act(async () => {
       await result.current.handleSubmit(
@@ -218,6 +223,8 @@ describe('useRegisterForm', () => {
       result.current.handleConfirmPasswordChange(validPassword);
       result.current.handleFirstNameChange('J');
       result.current.handleLastNameChange('D');
+      result.current.handleAcceptedPrivacyPolicyChange(true);
+      result.current.handleAcceptedTermsChange(true);
     });
     await act(async () => {
       await result.current.handleSubmit(
@@ -254,6 +261,8 @@ describe('useRegisterForm', () => {
       result.current.handleConfirmPasswordChange(validPassword);
       result.current.handleFirstNameChange('U');
       result.current.handleLastNameChange('E');
+      result.current.handleAcceptedPrivacyPolicyChange(true);
+      result.current.handleAcceptedTermsChange(true);
     });
     await act(async () => {
       await result.current.handleSubmit(
@@ -280,6 +289,8 @@ describe('useRegisterForm', () => {
       result.current.handleConfirmPasswordChange(validPassword);
       result.current.handleFirstNameChange('J');
       result.current.handleLastNameChange('D');
+      result.current.handleAcceptedPrivacyPolicyChange(true);
+      result.current.handleAcceptedTermsChange(true);
     });
     await act(async () => {
       await result.current.handleSubmit(
@@ -293,5 +304,169 @@ describe('useRegisterForm', () => {
       expect(h.show).toHaveBeenCalled();
     });
     expect(onRedirect).not.toHaveBeenCalled();
+  });
+
+  describe('Submit Guard with Policy Acceptance', () => {
+    const fillValidFieldsExceptPolicies = (result: { current: UseRegisterFormReturn }) => {
+      result.current.handleEmailChange('new.user@example.com');
+      result.current.handlePasswordChange(validPassword);
+      result.current.handleConfirmPasswordChange(validPassword);
+      result.current.handleFirstNameChange('Jane');
+      result.current.handleLastNameChange('Doe');
+    };
+
+    it('should show privacy policy snackbar and not call register when privacy is not accepted', async () => {
+      h.register.fetch = vi.fn();
+      const { result } = renderHook(() => useRegisterForm({}));
+      act(() => {
+        fillValidFieldsExceptPolicies(result);
+        result.current.handleAcceptedPrivacyPolicyChange(false);
+        result.current.handleAcceptedTermsChange(true);
+      });
+      await act(async () => {
+        await result.current.handleSubmit(
+          { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>,
+        );
+      });
+      expect(h.show).toHaveBeenCalledWith({
+        message: 'You must accept the Privacy Policy',
+        variant: 'error',
+      });
+      expect(h.register.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should show terms snackbar and not call register when terms are not accepted', async () => {
+      h.register.fetch = vi.fn();
+      const { result } = renderHook(() => useRegisterForm({}));
+      act(() => {
+        fillValidFieldsExceptPolicies(result);
+        result.current.handleAcceptedPrivacyPolicyChange(true);
+        result.current.handleAcceptedTermsChange(false);
+      });
+      await act(async () => {
+        await result.current.handleSubmit(
+          { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>,
+        );
+      });
+      expect(h.show).toHaveBeenCalledWith({
+        message: 'You must accept the Terms and Conditions',
+        variant: 'error',
+      });
+      expect(h.register.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should show the first policy error snackbar and not call register when both policies are unchecked', async () => {
+      h.register.fetch = vi.fn();
+      const { result } = renderHook(() => useRegisterForm({}));
+      act(() => {
+        fillValidFieldsExceptPolicies(result);
+        result.current.handleAcceptedPrivacyPolicyChange(false);
+        result.current.handleAcceptedTermsChange(false);
+      });
+      await act(async () => {
+        await result.current.handleSubmit(
+          { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>,
+        );
+      });
+      expect(h.show).toHaveBeenCalledWith({
+        message: 'You must accept the Privacy Policy',
+        variant: 'error',
+      });
+      expect(h.register.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should call register fetch when both policies are accepted and the rest of the form is valid', async () => {
+      h.register.fetch = vi.fn(async () => {
+        h.register.data = {
+          authToken: 'tok',
+          refreshToken: 'ref',
+          user: { id: 'u1', email: 'new.user@example.com', firstName: 'Jane', lastName: 'Doe' },
+        };
+      });
+      const { result } = renderHook(() => useRegisterForm({ fallbackPath: '/' }));
+      act(() => {
+        fillValidFieldsExceptPolicies(result);
+        result.current.handleAcceptedPrivacyPolicyChange(true);
+        result.current.handleAcceptedTermsChange(true);
+      });
+      await act(async () => {
+        await result.current.handleSubmit(
+          { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>,
+        );
+      });
+      expect(h.register.fetch).toHaveBeenCalledWith({
+        body: {
+          email: 'new.user@example.com',
+          password: validPassword,
+          firstName: 'Jane',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    it('should show an error snackbar after register fails when policies were accepted', async () => {
+      h.register.fetch = vi.fn(async () => {
+        h.register.error = new CommonError(409, ErrorTypes.WRONG_PARAM, 'email taken');
+      });
+      const { result, rerender } = renderHook(() => useRegisterForm({}));
+      act(() => {
+        fillValidFieldsExceptPolicies(result);
+        result.current.handleAcceptedPrivacyPolicyChange(true);
+        result.current.handleAcceptedTermsChange(true);
+      });
+      await act(async () => {
+        await result.current.handleSubmit(
+          { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>,
+        );
+      });
+      expect(h.register.fetch).toHaveBeenCalled();
+      await act(() => {
+        rerender();
+      });
+      await waitFor(() => {
+        expect(h.show).toHaveBeenCalledWith(
+          expect.objectContaining({
+            variant: 'error',
+          }),
+        );
+      });
+    });
+
+    it('should allow submission after acceptance handlers enable both policies', async () => {
+      h.register.fetch = vi.fn(async () => {
+        h.register.data = {
+          authToken: 't',
+          refreshToken: 'r',
+          user: { id: '1', email: 'new.user@example.com', firstName: 'Jane', lastName: 'Doe' },
+        };
+      });
+      const { result } = renderHook(() => useRegisterForm({ fallbackPath: '/' }));
+      act(() => {
+        fillValidFieldsExceptPolicies(result);
+      });
+      await act(async () => {
+        await result.current.handleSubmit(
+          { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>,
+        );
+      });
+      expect(h.register.fetch).not.toHaveBeenCalled();
+      expect(h.show).toHaveBeenCalledWith({
+        message: 'You must accept the Privacy Policy',
+        variant: 'error',
+      });
+      vi.clearAllMocks();
+      act(() => {
+        result.current.handleAcceptedPrivacyPolicyChange(true);
+        result.current.handleAcceptedTermsChange(true);
+      });
+      expect(result.current.acceptedPrivacyPolicy).toBe(true);
+      expect(result.current.acceptedTerms).toBe(true);
+      await act(async () => {
+        await result.current.handleSubmit(
+          { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>,
+        );
+      });
+      expect(h.register.fetch).toHaveBeenCalled();
+    });
   });
 });

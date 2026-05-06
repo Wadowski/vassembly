@@ -18,12 +18,12 @@ export const SessionBootstrap = () => {
 
     const tokens = getTokens();
     if (tokens.authToken && tokens.refreshToken) {
-      fetch?.({ body: {} as any });
+      fetch?.({ body: {} });
     } else {
       setStatus(false);
       clearSession();
     }
-  }, []);
+  }, [clearSession, fetch, setStatus]);
 
   useEffect(() => {
     if (isLoading) {

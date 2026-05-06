@@ -20,5 +20,9 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@vassembly/ui-checkbox": "workspace:^",
+    "@vassembly/ui-register-form": "link:ui/components/register-form"
   }
 }

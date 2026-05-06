@@ -95,7 +95,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
           ref={ref as React.LegacyRef<HTMLButtonElement>}
           className={buttonClassName}
           disabled={isButtonDisabled}
-          type="button"
+          type={type ?? 'button'}
           {...props}
         >
           {buttonContent}

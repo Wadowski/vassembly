@@ -1,10 +1,22 @@
 # User Settings — Architecture Specification
 
 **Status:** Draft — implementation specification  
-**Last updated:** 2026-05-02  
+**Last updated:** 2026-05-06  
 **Related:** [PRD](./prd.md) · [Design](./design.md)
 
 This document defines system architecture, data flow, package boundaries, and phased delivery for the User Settings feature. It incorporates the **librarian catalog audit** (existing packages, gaps, risks) and aligns with monorepo rules (domains, services, `apps/api` gateway, `apps/web`).
+
+---
+
+## Account Deletion Feature
+
+**Note:** Account deletion is now a **separate feature** with its own PRD and architecture specification.
+
+**See:**
+- **[Account Deletion PRD](../account-deletion/prd.md)** — product requirements (R1–R12), acceptance criteria, UX rules.
+- **[Account Deletion Architecture](../account-deletion/architecture.md)** — technical specification, backend/frontend implementation, testing strategy.
+
+**In User Settings:** The **Account deletion** section (UI-only confirmation modal, REST `POST /user/delete-account`, session teardown) is **fully specified** in the account deletion docs.
 
 ---
 
@@ -12,15 +24,15 @@ This document defines system architecture, data flow, package boundaries, and ph
 
 ### Audit of existing domains and services
 
-| Area | Package / path | Current capability | Gap vs PRD |
-|------|----------------|-------------------|------------|
-| User entity | `@vassembly/domain-user` (`domains/user/`) | `create`, `update` (Zod: `firstName`, `lastName`, `verifiedAt` only), `remove` (hard delete via `removeDb`), password-reset commands, `getById`, `verifyCredentials` | No `displayName`-style field on `UserModel` today; no password-change command; `remove` is immediate hard delete — not staged deletion with confirmation tokens |
-| Auth orchestration | `@vassembly/service-auth` (`services/auth/`) | `login`, `register`, `refresh`, `auth`, `logout`, `getUser` | No handlers for profile update, change password, or account deletion workflow |
-| API gateway | `@vassembly/api` (`apps/api/`) | REST: user login/register, auth routes; GraphQL: `user(id)` query via `registerUserResolvers` | **No GraphQL mutations** registered yet for user mutations |
-| Web auth shell | `apps/web` | `ProtectedAuthRoute` (`apps/web/lib/auth/ProtectedAuthRoute.tsx`) with `requireAuthenticated`; JWT in `sessionStorage` / `localStorage` patterns | No `app/settings/` route; drawer **Settings** footers expect `onOpenSettings` but `AuthLayout` / `Layout` do not thread it (no-op until wired) |
-| Client data | `@vassembly/ui-api-hooks` | `useGetUser`, `useApolloMutation` available, REST `useFetch` for login | No settings mutations or profile hooks |
-| Auth context | `@vassembly/ui-user-auth` | `UserAuthProvider`, `AuthUser` (`id`, `email`, `firstName`, `lastName`, `role`, `verifiedAt`) | May need `refetch` / `updateLocalUser` after profile save; **role** is `string` — PRD matrix assumes richer roles |
-| Theme | `@vassembly/theme` | Tokens / CSS variable system | Integrate with local theme preference hook and document attribute/class application on `document` or root |
+|| Area | Package / path | Current capability | Gap vs PRD |
+||------|----------------|-------------------|------------|
+|| User entity | `@vassembly/domain-user` (`domains/user/`) | `create`, `update`, password-reset commands, `getById`, `verifyCredentials`; generic `remove` helper exists | No `displayName`-style field on `UserModel` today; no password-change command in historical snapshot; **account deletion:** see **[Account Deletion feature](../account-deletion/prd.md)** (separate, immediate `removedAt` soft-delete) |
+|| Auth orchestration | `@vassembly/service-auth` (`services/auth/`) | `login`, `register`, `refresh`, `auth`, `logout`, `getUser` | No handlers for profile update, change password, or account deletion workflow |
+|| API gateway | `@vassembly/api` (`apps/api/`) | REST: user login/register, auth routes; GraphQL: `user(id)` query via `registerUserResolvers` | **No GraphQL mutations** registered yet for user mutations |
+|| Web auth shell | `apps/web` | `ProtectedAuthRoute` (`apps/web/lib/auth/ProtectedAuthRoute.tsx`) with `requireAuthenticated`; JWT in `sessionStorage` / `localStorage` patterns | No `app/settings/` route; drawer **Settings** footers expect `onOpenSettings` but `AuthLayout` / `Layout` do not thread it (no-op until wired) |
+|| Client data | `@vassembly/ui-api-hooks` | `useGetUser`, `useApolloMutation` available, REST `useFetch` for login | No settings mutations or profile hooks |
+|| Auth context | `@vassembly/ui-user-auth` | `UserAuthProvider`, `AuthUser` (`id`, `email`, `firstName`, `lastName`, `role`, `verifiedAt`) | May need `refetch` / `updateLocalUser` after profile save; **role** is `string` — PRD matrix assumes richer roles |
+|| Theme | `@vassembly/theme` | Tokens / CSS variable system | Integrate with local theme preference hook and document attribute/class application on `document` or root |
 
 ### What can be reused (~70%)
 
@@ -33,7 +45,7 @@ This document defines system architecture, data flow, package boundaries, and ph
 
 ### What must be new (~30%)
 
-- Domain commands (or specialized use of existing `update`) + password verification + deletion flow.
+- Domain commands (or specialized use of existing `update`) + password verification.
 - Service handlers wrapping those commands with authorization checks (actor == subject).
 - GraphQL mutations (or REST parity — **recommend GraphQL** for alignment with `useGetUser` and single client surface; REST acceptable if team standardizes on REST for mutations only — see §Open Decisions).
 - `apps/web/app/settings/` page composition, section components, modals.
@@ -47,7 +59,7 @@ This document defines system architecture, data flow, package boundaries, and ph
 ### Librarian-identified risks (mitigate in rollout)
 
 - **GraphQL schema evolution:** adding `Mutation` types affects Apollo documents — coordinate `ui/api-hooks` and API deploy order.
-- **`commands.remove` semantics:** do not expose naive hard delete to UI; implement PRD confirmation + policy in dedicated commands/handlers.
+- **Account deletion:** follow **[Account Deletion Architecture](../account-deletion/architecture.md)** (immediate `removedAt` soft-delete, single route/handler); hard-delete via naive `remove` must stay non-UI-facing.
 - **Import consistency:** some code uses `default` import of `@vassembly/domain-user` while domain exports named symbols too — migrate consistently when touching handlers.
 - **Route alignment:** PRD route is **`/settings`**; some tests reference `/app/settings` — standardize on **`/settings`** (App Router).
 
@@ -82,12 +94,10 @@ flowchart TB
   subgraph svc["@vassembly/service-auth"]
     HProf["updateUserProfile"]
     HPwd["changePassword"]
-    HDelReq["requestAccountDeletion"]
-    HDelConf["confirmAccountDeletion"]
   end
 
   subgraph dom["@vassembly/domain-user"]
-    CmdUpd["commands: profile / password / deletion"]
+    CmdUpd["commands: profile / password"]
     Q["queries: getById, verifyCredentials"]
   end
 
@@ -100,18 +110,14 @@ flowchart TB
   GQL --> GQLServer
   Resolvers --> HProf
   Resolvers --> HPwd
-  Resolvers --> HDelReq
-  Resolvers --> HDelConf
   HProf --> CmdUpd
   HPwd --> CmdUpd
-  HDelReq --> CmdUpd
-  HDelConf --> CmdUpd
   HProf --> Q
 ```
 
 ### 1.2 Data flow (user action → UI)
 
-**Server-backed (profile / password / deletion)**
+**Server-backed (profile / password)**
 
 1. User edits form in section component (local React state).
 2. Client validation (Zod or shared validators where appropriate).
@@ -132,13 +138,13 @@ flowchart TB
 - **Source of truth for role in UI:** JWT claims + `AuthUser.role` in `UserAuthProvider` (extend login/session parsing if claims add canonical role enum).
 - **Notifications section:** build **category list from a registry** `{ id, label, rolesAllowed[] }`; filter **before render** (hide supervisor-only rows for worker — PRD §3.3).
 - **Deep links:** hash targets (e.g. `#notifications`) do not bypass filtering; optional `?category=` query cleared with **Alert** if role lacks access (design §4.3).
-- **Backend:** mutations must **not** trust client role for authorization of *other users’* data; only verify **subject == resource user id**. Role affects **UI only** for MVP local notification labels unless future server validates preference payloads.
+- **Backend:** mutations must **not** trust client role for authorization of *other users'* data; only verify **subject == resource user id**. Role affects **UI only** for MVP local notification labels unless future server validates preference payloads.
 
 ### 1.4 Local storage integration points
 
 - **Read:** on `UserAuthProvider` authenticated transition, load preferences key scoped by `user.id` (PRD §8.2 shared devices).
 - **Write:** inside each preference hook on change; use `try/catch` + quota detection (§9).
-- **Logout / account deletion:** `clearSession` path must call **preference + session cleanup** for that user’s namespaced keys (PRD §11).
+- **Logout / account deletion:** `clearSession` path must call **preference + session cleanup** for that user's namespaced keys (PRD §11).
 
 ---
 
@@ -146,10 +152,10 @@ flowchart TB
 
 ### 2.1 Entry point
 
-| File | Responsibility |
-|------|----------------|
-| `apps/web/app/settings/page.tsx` | Client page; wraps content with `ProtectedAuthRoute` (`requireAuthenticated={true}`, `redirectPath='/login'` or product default); composes layout sections |
-| `apps/web/app/settings/layout.tsx` (optional) | Shared metadata, suspense boundary, or auth shell if needed |
+|| File | Responsibility |
+||------|----------------|
+|| `apps/web/app/settings/page.tsx` | Client page; wraps content with `ProtectedAuthRoute` (`requireAuthenticated={true}`, `redirectPath='/login'` or product default); composes layout sections |
+|| `apps/web/app/settings/layout.tsx` (optional) | Shared metadata, suspense boundary, or auth shell if needed |
 
 Design default: **single scrollable page** with anchor IDs; desktop **AnchorList** from `@vassembly/ui-anchor-list`.
 
@@ -157,17 +163,17 @@ Design default: **single scrollable page** with anchor IDs; desktop **AnchorList
 
 Keep each file **focused** (workspace rule: ≤100 lines per file — split if needed):
 
-| Component | Suggested path | PRD / design anchor |
-|-----------|----------------|---------------------|
-| `SettingsPageHeader` | `apps/web/app/settings/_components/SettingsPageHeader.tsx` | Title, subtitle |
-| `SettingsProfileSection` | `.../SettingsProfileSection.tsx` | `#profile` |
-| `SettingsSecuritySection` | `.../SettingsSecuritySection.tsx` | `#security` |
-| `SettingsNotificationsSection` | `.../SettingsNotificationsSection.tsx` | `#notifications` |
-| `SettingsPrivacySection` | `.../SettingsPrivacySection.tsx` | `#privacy` |
-| `SettingsSessionSection` | `.../SettingsSessionSection.tsx` | `#session` — sign out |
-| `SettingsAccountDeletionSection` | `.../SettingsAccountDeletionSection.tsx` | `#account-deletion` — danger zone |
-| `SettingsDesktopNav` | `.../SettingsDesktopNav.tsx` | Sticky `AnchorList` ≥1024px |
-| `notificationCategoryRegistry` | `.../notificationCategoryRegistry.ts` | Role → visible category ids (pure data, testable) |
+|| Component | Suggested path | PRD / design anchor |
+||-----------|----------------|---------------------|
+|| `SettingsPageHeader` | `apps/web/app/settings/_components/SettingsPageHeader.tsx` | Title, subtitle |
+|| `SettingsProfileSection` | `.../SettingsProfileSection.tsx` | `#profile` |
+|| `SettingsSecuritySection` | `.../SettingsSecuritySection.tsx` | `#security` |
+|| `SettingsNotificationsSection` | `.../SettingsNotificationsSection.tsx` | `#notifications` |
+|| `SettingsPrivacySection` | `.../SettingsPrivacySection.tsx` | `#privacy` |
+|| `SettingsSessionSection` | `.../SettingsSessionSection.tsx` | `#session` — sign out |
+|| `SettingsAccountDeletionSection` | `.../SettingsAccountDeletionSection.tsx` | `#account-deletion` — **see [Account Deletion feature](../account-deletion/architecture.md)** |
+|| `SettingsDesktopNav` | `.../SettingsDesktopNav.tsx` | Sticky `AnchorList` ≥1024px |
+|| `notificationCategoryRegistry` | `.../notificationCategoryRegistry.ts` | Role → visible category ids (pure data, testable) |
 
 ### 2.3 Shared form pattern / hooks
 
@@ -176,7 +182,7 @@ Keep each file **focused** (workspace rule: ≤100 lines per file — split if n
 
 ### 2.4 Modals
 
-- **Account deletion:** `@vassembly/ui-modal` — focus trap, checkbox ack, typed phrase, loading/pending (design §4.7).
+- **Account deletion:** **see [Account Deletion Architecture](../account-deletion/architecture.md)** for modal spec (UX-only confirmation, single API call).
 - **Sign-out (recommended):** same Modal pattern for shared-device mis-tap protection (PRD Q-6).
 
 ---
@@ -189,17 +195,9 @@ Keep each file **focused** (workspace rule: ≤100 lines per file — split if n
 
 - Add fields as required by PRD after **Open Decision** on display name:
   - **Option A:** `displayName?: string` (single editable field).
-  - **Option B:** keep `firstName` / `lastName` only; UI “display name” maps to both fields (simpler persistence, different UX).
+  - **Option B:** keep `firstName` / `lastName` only; UI "display name" maps to both fields (simpler persistence, different UX).
 
 Additional fields if product requires email change in MVP (usually **not**): `pendingEmail`, etc. — defer unless PRD confirms.
-
-**Account deletion (staged)**
-
-- Avoid using generic `remove` directly from handlers without checks.
-- Introduce explicit commands, for example:
-  - `requestAccountDeletion` — creates signed/tokenized intent or stores `deletionRequestedAt` + token hash; validates user exists.
-  - `confirmAccountDeletion` — verifies confirmation token + optional typed phrase already validated in handler; performs `removeDb` or soft-delete per policy.
-- If MVP is **immediate self-serve** without email step, `request` may generate short-lived server token returned to client for immediate `confirm` in same session — still two-step **in UX** (modal) even if one session.
 
 **Password**
 
@@ -222,12 +220,10 @@ Additional fields if product requires email change in MVP (usually **not**): `pe
 
 New handlers (each: `index.ts`, `types.ts`, `index.test.ts`):
 
-| Handler | Input highlights | Behavior |
-|---------|------------------|----------|
-| `updateUserProfile` | `userId`, profile fields, **caller identity** from auth context | Verify caller owns `userId`; call domain commands.update / updateProfile |
-| `changePassword` | `userId`, `currentPassword`, `newPassword` | Verify ownership; call domain changePassword |
-| `requestAccountDeletion` | `userId` | Verify ownership; call domain request; return `{ confirmationToken }` or `{ status: 'pending_email' }` per policy |
-| `confirmAccountDeletion` | `userId`, `confirmationToken`, metadata | Verify token; call domain confirm + cleanup |
+|| Handler | Input highlights | Behavior |
+||---------|------------------|----------|
+|| `updateUserProfile` | `userId`, profile fields, **caller identity** from auth context | Verify caller owns `userId`; call domain commands.update / updateProfile |
+|| `changePassword` | `userId`, `currentPassword`, `newPassword` | Verify ownership; call domain changePassword |
 
 **Errors:** `UnauthorizedError`, `ValidationError`, `NotFoundError`, domain errors — no silent catches.
 
@@ -237,12 +233,10 @@ New handlers (each: `index.ts`, `types.ts`, `index.test.ts`):
 
 Register alongside existing `registerUserResolvers`:
 
-| Mutation | Input | Output |
-|----------|-------|--------|
-| `updateUserProfile` | `UpdateUserProfileInput` (displayName, optional first/last names per final model) | `User` or `UpdateUserProfilePayload { user }` |
-| `changePassword` | `ChangePasswordInput` (currentPassword, newPassword) | `ChangePasswordPayload { success: Boolean }` |
-| `requestAccountDeletion` | `RequestAccountDeletionInput` | `RequestAccountDeletionPayload { confirmationToken?, expiresAt?, status }` |
-| `confirmAccountDeletion` | `ConfirmAccountDeletionInput` (token, optional confirmationPhrase hash — phrase checked in handler) | `ConfirmAccountDeletionPayload { success }` |
+|| Mutation | Input | Output |
+||----------|-------|--------|
+|| `updateUserProfile` | `UpdateUserProfileInput` (displayName, optional first/last names per final model) | `User` or `UpdateUserProfilePayload { user }` |
+|| `changePassword` | `ChangePasswordInput` (currentPassword, newPassword) | `ChangePasswordPayload { success: Boolean }` |
 
 **Auth:** resolvers read Fastify/request context (existing `auth` plugin) — **reject** if unauthenticated or subject mismatch.
 
@@ -282,15 +276,15 @@ Category keys must match **`notificationCategoryRegistry`** ids (PRD §10.2 / Q-
 ### 4.2 Storage keys and versioning
 
 - **Key pattern:** `vassembly:user-settings:${userId}:v1` (PRD §8.2).
-- **Versioning:** `schemaVersion` inside JSON; on read, if missing or incompatible, **reset to defaults** and optionally one-time Snackbar “Preferences reset on this device.”
+- **Versioning:** `schemaVersion` inside JSON; on read, if missing or incompatible, **reset to defaults** and optionally one-time Snackbar "Preferences reset on this device."
 - **Constants file:** `apps/web/lib/preferences/storageKeys.ts` + `DEFAULT_USER_SETTINGS_V1`.
 
 ### 4.3 Preference hooks
 
-| Hook | Responsibility |
-|------|----------------|
-| `useNotificationPreferences` | Read/write `notifications` subtree; master toggle disables category UI |
-| `usePrivacyPreferences` | Read/write `privacy` subtree |
+|| Hook | Responsibility |
+||------|----------------|
+|| `useNotificationPreferences` | Read/write `notifications` subtree; master toggle disables category UI |
+|| `usePrivacyPreferences` | Read/write `privacy` subtree |
 
 Implementation sketch: single `useUserSettingsStorage(userId)` internal + thin wrappers to avoid multiple JSON parses (performance).
 
@@ -304,13 +298,13 @@ Implementation sketch: single `useUserSettingsStorage(userId)` internal + thin w
 
 ## 5. State management
 
-| Concern | Location |
-|---------|----------|
-| Authenticated user | `UserAuthProvider` — **source of truth** for id, email, names, role |
-| Profile/security forms | Local `useState` / `useReducer` per section; dirty tracking for Save/Cancel |
-| Local preferences | `useSyncExternalStore` or `useState` + effects to localStorage (hooks §4.3) |
-| Theme application | Prefer **attribute on `document.documentElement`** or existing theme provider; hook runs on layout mount |
-| Server after save | **Refetch GraphQL `GetUser`** then `setSession({ user: mappedUser })` **or** extend context with `refreshUser()` |
+|| Concern | Location |
+||---------|----------|
+|| Authenticated user | `UserAuthProvider` — **source of truth** for id, email, names, role |
+|| Profile/security forms | Local `useState` / `useReducer` per section; dirty tracking for Save/Cancel |
+|| Local preferences | `useSyncExternalStore` or `useState` + effects to localStorage (hooks §4.3) |
+|| Theme application | Prefer **attribute on `document.documentElement`** or existing theme provider; hook runs on layout mount |
+|| Server after save | **Refetch GraphQL `GetUser`** then `setSession({ user: mappedUser })` **or** extend context with `refreshUser()` |
 
 **UserAuthProvider extension:** add `refreshUser` that calls `useGetUser` lazy query or passes Apollo client from web providers — avoid duplicating user shape mapping.
 
@@ -337,8 +331,6 @@ input ChangePasswordInput {
 }
 ```
 
-**Deletion payloads** depend on Open Decision Q-4 (token vs email workflow).
-
 ### 6.2 Error handling and user feedback
 
 - Map known errors to **Alert** (section-level) and **inline** (password wrong).
@@ -350,13 +342,13 @@ input ChangePasswordInput {
 
 ## 7. Routing and authentication
 
-| Requirement | Implementation |
-|-------------|----------------|
-| Protected `/settings` | `ProtectedAuthRoute` with `requireAuthenticated={true}`; `redirectPath` = login (or register) |
-| Drawer entry | Pass **`onOpenSettings`** from `AuthLayout` / `Layout` to drawer → `router.push('/settings')` (fix current no-op) |
-| Role visibility | Filter sections/categories in render; optional **central registry** |
-| Deep-link protection | Invalid hash/query shows **Alert**; do not mount hidden controls |
-| Auth failure | Redirect unauthenticated users; no settings HTML in RSC payload beyond gated client tree — align with Next App Router patterns already used |
+|| Requirement | Implementation |
+||-------------|----------------|
+|| Protected `/settings` | `ProtectedAuthRoute` with `requireAuthenticated={true}`; `redirectPath` = login (or register) |
+|| Drawer entry | Pass **`onOpenSettings`** from `AuthLayout` / `Layout` to drawer → `router.push('/settings')` (fix current no-op) |
+|| Role visibility | Filter sections/categories in render; optional **central registry** |
+|| Deep-link protection | Invalid hash/query shows **Alert**; do not mount hidden controls |
+|| Auth failure | Redirect unauthenticated users; no settings HTML in RSC payload beyond gated client tree — align with Next App Router patterns already used |
 
 **Tests:** align any **`/app/settings`** references to **`/settings`**.
 
@@ -364,17 +356,17 @@ input ChangePasswordInput {
 
 ## 8. UI component integration
 
-| Section | Reuse |
-|---------|--------|
-| Profile | `TextField`, `Text`, `Button`, `Alert` |
-| Security | `TextField` (password), SSO `Alert` |
-| Notifications | `Switch`, optional `Accordion` mobile |
-| Privacy | `Switch`, honest copy |
-| Theme | `RadioButton` group or styled radios |
-| Language | `Menu` / `Dropdown` |
-| Session | `Button`, `Modal` |
-| Account deletion | `Modal`, `Checkbox`, `TextField`, `Loader` |
-| Feedback | `Snackbar`, `Alert` |
+|| Section | Reuse |
+||---------|--------|
+|| Profile | `TextField`, `Text`, `Button`, `Alert` |
+|| Security | `TextField` (password), SSO `Alert` |
+|| Notifications | `Switch`, optional `Accordion` mobile |
+|| Privacy | `Switch`, honest copy |
+|| Theme | `RadioButton` group or styled radios |
+|| Language | `Menu` / `Dropdown` |
+|| Session | `Button`, `Modal` |
+|| Account deletion | **see [Account Deletion Architecture](../account-deletion/architecture.md)** |
+|| Feedback | `Snackbar`, `Alert` |
 
 **New UI packages:** avoid unless a second consumer appears; prefer **page-local** `_components` under `apps/web/app/settings/`.
 
@@ -382,22 +374,21 @@ input ChangePasswordInput {
 
 ## 9. Error handling and edge cases
 
-| Scenario | Behavior |
-|----------|----------|
-| Offline | Block success path; Alert with retry |
-| Field validation | First invalid focus; `TextField` error slots |
-| Wrong current password | Inline + Alert |
-| 5xx | Generic retry message |
-| Session expiry | Re-auth prompt; no false “saved” |
-| localStorage quota / disabled | Snackbar/Alert; session-only fallback if feasible; disclose limitation |
-| Worker deep link to supervisor category | Info `Alert` (design §4.3) |
-| Deletion pending async | Modal pending state + email copy if request workflow |
+|| Scenario | Behavior |
+||----------|----------|
+|| Offline | Block success path; Alert with retry |
+|| Field validation | First invalid focus; `TextField` error slots |
+|| Wrong current password | Inline + Alert |
+|| 5xx | Generic retry message |
+|| Session expiry | Re-auth prompt; no false "saved" |
+|| localStorage quota / disabled | Snackbar/Alert; session-only fallback if feasible; disclose limitation |
+|| Worker deep link to supervisor category | Info `Alert` (design §4.3) |
 
 ---
 
 ## 10. Performance and scalability
 
-- **Lazy load** heavy sections with `dynamic(() => import(...), { ssr: false })` only if profiling shows need; goal PRD T-5: shell &lt; 2s, section switch &lt; 200ms perceived.
+- **Lazy load** heavy sections with `dynamic(() => import(...), { ssr: false })` only if profiling shows need; goal PRD T-5: shell < 2s, section switch < 200ms perceived.
 - **Memoize** category lists derived from role.
 - **Bundle:** prefer tree-shakable imports from `@vassembly/ui-*` per component.
 - **Future:** multi-device sync via optional package and service (out of MVP).
@@ -406,14 +397,14 @@ input ChangePasswordInput {
 
 ## 11. Testing strategy
 
-| Layer | Scope |
-|-------|--------|
-| Unit | Domain commands (password change, deletion token), Zod validation; **preference hook** + storage key migration with mocked `localStorage` |
-| Unit | `notificationCategoryRegistry` pure functions |
-| Component | Section forms (React Testing Library): disabled states, SSO hidden password |
-| Integration | Handler tests in `service-auth` with mocked `domain-user` |
-| API | Resolver tests or contract tests calling handlers |
-| E2E (later) | Profile save, password change, deletion modal, worker vs supervisor notifications |
+|| Layer | Scope |
+||-------|--------|
+|| Unit | Domain commands (password change), Zod validation; **preference hook** + storage key migration with mocked `localStorage` |
+|| Unit | `notificationCategoryRegistry` pure functions |
+|| Component | Section forms (React Testing Library): disabled states, SSO hidden password |
+|| Integration | Handler tests in `service-auth` with mocked `domain-user` |
+|| API | Resolver tests or contract tests calling handlers |
+|| E2E (later) | Profile save, password change, worker vs supervisor notifications |
 
 Vitest everywhere per workspace standards.
 
@@ -423,7 +414,6 @@ Vitest everywhere per workspace standards.
 
 - **Password:** bcrypt (existing domain pattern); never log passwords; rate-limit change-password at gateway if abuse is a concern.
 - **CSRF:** follow existing API cookie/header strategy; if JWT in header only, CSRF scope differs — align with `apps/api` security baseline.
-- **Deletion:** server-side confirmation token; phrase match in client is **UX**; server must enforce authorization + token validity.
 - **localStorage:** store **no secrets**; only preference JSON and public-ish ids — session tokens stay existing storage module.
 - **RBAC:** backend enforces **user can only mutate self**; UI role matrix is additive for notifications only.
 
@@ -434,7 +424,7 @@ Vitest everywhere per workspace standards.
 ### Phase 1 — Backend infrastructure
 
 1. Finalize **display name** model decision; update `UserModel`, factories, GraphQL `User` fields.
-2. Implement domain: `changePassword`, staged deletion commands, extend profile update.
+2. Implement domain: `changePassword`, extend profile update.
 3. Unit tests for new commands.
 4. Implement `service-auth` handlers + tests (mock domains where appropriate).
 5. Align default imports / exports for `@vassembly/domain-user` if touched.
@@ -442,7 +432,7 @@ Vitest everywhere per workspace standards.
 ### Phase 2 — API and client hooks
 
 1. Add GraphQL mutations (or REST) in `apps/api`; wire auth context.
-2. Extend `@vassembly/ui-api-hooks` with `useUpdateUserProfile`, `useChangePassword`, `useRequestAccountDeletion`, `useConfirmAccountDeletion` (names illustrative).
+2. Extend `@vassembly/ui-api-hooks` with `useUpdateUserProfile`, `useChangePassword`.
 3. Update `GetUser` document/fragments if new user fields.
 
 ### Phase 3 — Web preferences and shell
@@ -502,31 +492,30 @@ apps/api
 
 ## 15. Open decisions and assumptions
 
-| ID | Topic | Architecture stance |
-|----|--------|----------------------|
-| Q-1 | Role enum | Define `worker | supervisor | planner | quality | maintenance | admin` in shared types package or `ui-user-auth` when JWT carries them; until then, **string** role with safe defaults (treat unknown as full or restricted per product call). |
-| Q-2 | Maintenance notification tier | Default **full** in registry; one-line flag to switch to worker subset. |
-| Q-3 | SSO vs password | **Hide** password form + `Alert` when `AuthUser` indicates SSO-only (needs claim from backend). |
-| Q-4 | Account deletion | Prefer **two-step server flow** with token; if legal requires email, `request` returns `pending` and UI explains next step. |
-| Q-5 | Channels | Toggle visibility driven by **feature flags** or backend capability endpoint; hide if unsupported (PRD 10.1). |
-| Q-6 | Sign-out confirm | **Modal confirm** default for manufacturing shared devices. |
-| Q-7 | Category names | Central `notificationCategoryRegistry` — single source for UI + analytics enums. |
-| — | GraphQL vs REST mutations | **Default GraphQL** for consistency with `user` query; REST acceptable if explicitly chosen. |
-| — | Display name storage | **Decide in Phase 1** before coding profile (§3.1 Option A vs B). |
-| — | Theme provider location | Apply in root layout **after** reading persisted preference; coordination with `@vassembly/theme` — document DOM contract in a single `THEME_APPLICATION.md` only if team asks (else inline in web lib). |
+|| ID | Topic | Architecture stance |
+||----|--------|----------------------|
+|| Q-1 | Role enum | Define `worker | supervisor | planner | quality | maintenance | admin` in shared types package or `ui-user-auth` when JWT carries them; until then, **string** role with safe defaults (treat unknown as full or restricted per product call). |
+|| Q-2 | Maintenance notification tier | Default **full** in registry; one-line flag to switch to worker subset. |
+|| Q-3 | SSO vs password | **Hide** password form + `Alert` when `AuthUser` indicates SSO-only (needs claim from backend). |
+|| Q-5 | Channels | Toggle visibility driven by **feature flags** or backend capability endpoint; hide if unsupported (PRD 10.1). |
+|| Q-6 | Sign-out confirm | **Modal confirm** default for manufacturing shared devices. |
+|| Q-7 | Category names | Central `notificationCategoryRegistry` — single source for UI + analytics enums. |
+|| — | GraphQL vs REST mutations | **Default GraphQL** for consistency with `user` query; REST acceptable if explicitly chosen. |
+|| — | Display name storage | **Decide in Phase 1** before coding profile (§3.1 Option A vs B). |
+|| — | Theme provider location | Apply in root layout **after** reading persisted preference; coordination with `@vassembly/theme` — document DOM contract in a single `THEME_APPLICATION.md` only if team asks (else inline in web lib). |
 
 ---
 
 ## Todo Plan (per-package delegation)
 
 1. **`@vassembly/domain-user`** — extend domain  
-   - Changes: Model fields (display name decision); commands `changePassword`, `requestAccountDeletion`, `confirmAccountDeletion`; extend profile update; GraphQL `User` fields; DAO compatibility.  
+   - Changes: Model fields (display name decision); commands `changePassword`; extend profile update; GraphQL `User` fields; DAO compatibility.  
    - Files: `domains/user/src/model/model.ts`, `domains/user/src/model/graphql.ts`, `domains/user/src/model/factories.ts`, `domains/user/src/commands/**`, `domains/user/src/commands/index.ts`, `domains/user/src/index.ts`  
    - Workflow: tdd-unit-test-writer → coder ↔ code-reviewer (max 2) → documentation-writer (README)  
-   - Dependencies: None (blocked only on Open Decision display name + deletion policy)
+   - Dependencies: None (blocked only on Open Decision display name)
 
 2. **`@vassembly/service-auth`** — extend service  
-   - Changes: Handlers `updateUserProfile`, `changePassword`, `requestAccountDeletion`, `confirmAccountDeletion`; types; tests.  
+   - Changes: Handlers `updateUserProfile`, `changePassword`; types; tests.  
    - Files: `services/auth/src/handlers/**`, `services/auth/src/handlers/index.ts`  
    - Workflow: tdd-unit-test-writer → coder ↔ code-reviewer → documentation-writer  
    - Dependencies: Todo 1
@@ -554,8 +543,10 @@ apps/api
    - Workflow: coder  
    - Dependencies: None if only web wiring
 
+**Note:** Account deletion implementation tasks are documented separately in **[Account Deletion Architecture](../account-deletion/architecture.md)** §Todo plan.
+
 ---
 
 ## Recommendation
 
-**Extend** `@vassembly/domain-user` and `@vassembly/service-auth` in place; **add GraphQL mutations** in `apps/api`; **compose** the settings page in `apps/web` with **page-local** preference hooks under `lib/preferences/` until a second app needs them. This maximizes reuse of existing auth, GraphQL query, and UI primitives while keeping MVP scope honest (local-only prefs, role-filtered UI, staged deletion). Incorporate librarian risks into PR reviewchecklist: schema coordination, deletion safety, import consistency, route `/settings`.
+**Extend** `@vassembly/domain-user` and `@vassembly/service-auth` in place; **add GraphQL mutations** in `apps/api`; **compose** the settings page in `apps/web` with **page-local** preference hooks under `lib/preferences/` until a second app needs them. This maximizes reuse of existing auth, GraphQL query, and UI primitives while keeping MVP scope honest (local-only prefs, role-filtered UI). Incorporate librarian risks into PR review checklist: schema coordination, import consistency, route `/settings`. Account deletion is **separately planned** and tracked in its own feature branch/PR.

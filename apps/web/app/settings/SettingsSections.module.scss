@@ -1,0 +1,97 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.settingsOuter {
+  display: grid;
+  gap: $spacing-6;
+}
+
+.settingsHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.settingsLayoutSplit {
+  display: grid;
+  gap: $spacing-6;
+
+  @media #{$media-desktop} {
+    grid-template-columns: minmax(12rem, 16rem) minmax(0, 52rem);
+    align-items: start;
+  }
+}
+
+.desktopStickyNav {
+  display: none;
+
+  @media #{$media-desktop} {
+    display: block;
+    position: sticky;
+    top: $spacing-12;
+    padding-right: $spacing-4;
+  }
+}
+
+.sectionStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.sectionCard,
+.dangerPanel {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface-container-high;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.dangerPanel {
+  border: 1px solid $color-error-200;
+}
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-component-gap-md;
+}
+
+.preferenceStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.toolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+}
+
+.modalStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.consequenceList {
+  margin: 0;
+  padding-left: $spacing-5;
+}
+
+.inlineGhostButton {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: $spacing-2;
+
+  &:focus-visible {
+    outline: 2px solid $color-primary-300;
+    outline-offset: 2px;
+  }
+}
+
+

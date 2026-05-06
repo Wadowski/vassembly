@@ -25,6 +25,7 @@ export interface LayoutDrawerPreset {
   onLogin: () => void;
   onRegister: () => void;
   onLogout?: () => void | Promise<void>;
+  onOpenSettings?: () => void;
 }
 
 export interface LayoutPreset {

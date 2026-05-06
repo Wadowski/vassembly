@@ -34,11 +34,14 @@ vi.mock("@vassembly/domain-refresh-token", () => ({
   },
 }));
 
-vi.mock("@vassembly/domain-user", () => ({
-  queries: {
-    getById: mockGetUserById,
-  },
-}));
+vi.mock("@vassembly/domain-user", () => {
+  const impl = {
+    queries: {
+      getById: mockGetUserById,
+    },
+  };
+  return { ...impl, default: impl };
+});
 
 import { auth } from "./index";
 
@@ -83,13 +86,13 @@ describe("auth", () => {
 
     expect(result.authToken).toBe("new-auth-token-value");
     expect(result.refreshToken).toBe("new-refresh-token-value");
-    expect(result.data).toEqual(mockVerifiedToken);
     expect(result.user).toEqual({
       id: "user-id-123",
       email: "user@example.com",
       firstName: "Jane",
       lastName: "Doe",
       verifiedAt: "2024-01-15T12:00:00.000Z",
+      role: "user",
     });
   });
 

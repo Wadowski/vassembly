@@ -9,8 +9,9 @@ export const registerUserResolvers = (builder: Builder): void => {
       user: t.field({
         type: 'User',
         args: { id: t.arg.id({ required: true }) },
-        resolve: async (_: unknown, args: { id: string }) => {
-          return await handlers.getUser({ id: args.id });
+        resolve: async (_root: unknown, args: { id: string }) => {
+          const result = await handlers.getUser({ id: args.id });
+          return result.user;
         },
       }),
     }),

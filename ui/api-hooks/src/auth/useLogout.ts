@@ -8,7 +8,7 @@ interface LogoutResponse {
 export const useLogout = () => {
   const httpClient = useHttpClient();
 
-  return useFetch<LogoutResponse, { body: {} }>({
+  return useFetch<LogoutResponse, object>({
     requestFn: ({ body }) => httpClient.post({ path: '/auth/logout', body, withAuth: true }),
   });
 };

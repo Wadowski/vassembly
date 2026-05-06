@@ -1,0 +1,9 @@
+export const SHOULD_SHOW_PRIVACY_ANALYTICS = true;
+
+export const SHOULD_SHOW_PRIVACY_CRASH = true;
+
+export const SHOULD_SHOW_PRIVACY_MARKETING = true;
+
+export const SHOULD_SHOW_NOTIFICATION_CHANNEL_PUSH = true;
+
+export const SHOULD_SHOW_NOTIFICATION_CHANNEL_SMS = true;
