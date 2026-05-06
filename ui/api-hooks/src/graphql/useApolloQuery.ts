@@ -25,6 +25,7 @@ export const useApolloQuery = <TData, TVariables extends OperationVariables = Op
       ...(options?.withAuth && { withAuth: true }),
     },
     errorPolicy: options?.errorPolicy,
+    skip: options?.skip,
   });
 
   const mappedError = mapGraphQLError(error);

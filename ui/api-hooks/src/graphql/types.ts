@@ -1,4 +1,4 @@
-import type { OperationVariables, ApolloQueryResult } from '@apollo/client';
+import type { OperationVariables, ApolloQueryResult, MutationHookOptions } from '@apollo/client';
 import type { CommonError } from '@vassembly/errors';
 
 export interface GraphQLClientConfig {
@@ -21,6 +21,7 @@ export interface UseApolloQueryOptions<TVariables extends OperationVariables = O
   context?: Record<string, any>;
   errorPolicy?: 'none' | 'ignore' | 'all';
   withAuth?: boolean;
+  skip?: boolean;
 }
 
 export interface UseApolloQueryState<TData, TVariables extends OperationVariables = OperationVariables> {
@@ -38,6 +39,7 @@ export interface UseApolloMutationOptions<TVariables extends OperationVariables 
   onCompleted?: (data: any) => void;
   onError?: (error: CommonError) => void;
   withAuth?: boolean;
+  refetchQueries?: MutationHookOptions['refetchQueries'];
 }
 
 export interface UseApolloLazyQueryState<TData, TVariables extends OperationVariables = OperationVariables> {

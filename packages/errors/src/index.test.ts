@@ -3,6 +3,7 @@ import { CommonError } from './Error';
 import { ErrorTypes, ErrorStatusCodes } from './errorTypes';
 import {
   WrongParamError,
+  ValidationError,
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
@@ -11,6 +12,18 @@ import {
 } from './index';
 
 describe('Error Classes', () => {
+  describe('ValidationError', () => {
+    it('should create an error with VALIDATION type and 422 status code', () => {
+      const error = new ValidationError('Validation failed');
+
+      expect(error).toBeInstanceOf(ValidationError);
+      expect(error).toBeInstanceOf(CommonError);
+      expect(error.type).toBe(ErrorTypes.VALIDATION);
+      expect(error.statusCode).toBe(422);
+      expect(error.message).toBe('Validation failed');
+    });
+  });
+
   describe('WrongParamError', () => {
     it('should create an error with WRONG_PARAM type and 400 status code', () => {
       const error = new WrongParamError('Invalid parameter');
@@ -93,6 +106,7 @@ describe('Error Classes', () => {
   describe('ErrorStatusCodes', () => {
     it('should have correct status codes for all error types', () => {
       expect(ErrorStatusCodes[ErrorTypes.WRONG_PARAM]).toBe(400);
+      expect(ErrorStatusCodes[ErrorTypes.VALIDATION]).toBe(422);
       expect(ErrorStatusCodes[ErrorTypes.NOT_FOUND]).toBe(404);
       expect(ErrorStatusCodes[ErrorTypes.UNAUTHORIZED]).toBe(401);
       expect(ErrorStatusCodes[ErrorTypes.FORBIDDEN]).toBe(403);

@@ -8,20 +8,17 @@ vi.mock("@vassembly/client-mongodb/src/connection.js", () => ({
   },
 }));
 
-vi.mock("bcryptjs");
 vi.mock("../../clients");
-vi.mock("../../model");
 vi.mock("../../queries");
 
-const { mockBcryptGenSalt, mockBcryptHash } = vi.hoisted(() => {
-  const mockBcryptGenSalt = vi.fn();
-  const mockBcryptHash = vi.fn();
-  return { mockBcryptGenSalt, mockBcryptHash };
+const { mockHash } = vi.hoisted(() => {
+  const mockHash = vi.fn();
+  return { mockHash };
 });
 
-const { mockGetListUsersByQuery } = vi.hoisted(() => {
-  const mockGetListUsersByQuery = vi.fn();
-  return { mockGetListUsersByQuery };
+const { mockGetByEmail } = vi.hoisted(() => {
+  const mockGetByEmail = vi.fn();
+  return { mockGetByEmail };
 });
 
 const { mockValidatePassword, mockCreateDbUser } = vi.hoisted(() => {
@@ -30,11 +27,8 @@ const { mockValidatePassword, mockCreateDbUser } = vi.hoisted(() => {
   return { mockValidatePassword, mockCreateDbUser };
 });
 
-vi.mock("bcryptjs", () => ({
-  default: {
-    genSalt: mockBcryptGenSalt,
-    hash: mockBcryptHash,
-  },
+vi.mock("@vassembly/client-encoder", () => ({
+  hash: mockHash,
 }));
 
 vi.mock("@vassembly/validation", () => ({
@@ -46,7 +40,7 @@ vi.mock("@vassembly/commands", () => ({
 }));
 
 vi.mock("../../queries", () => ({
-  getListByQuery: mockGetListUsersByQuery,
+  getByEmail: mockGetByEmail,
 }));
 
 vi.mock("./constants");
@@ -68,26 +62,22 @@ describe("createUser", () => {
       lastName: "Doe",
     };
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [],
-    });
+    mockGetByEmail.mockResolvedValue(null);
 
     mockValidatePassword.mockResolvedValue({
       success: true,
     });
 
-    const salt = "mock-salt";
     const passwordHash = "hashed-password";
-    mockBcryptGenSalt.mockResolvedValue(salt);
-    mockBcryptHash.mockResolvedValue(passwordHash);
+    mockHash.mockResolvedValue(passwordHash);
 
-    const mockUser: UserModel = {
+    const mockUser = {
       id: "user-id-123",
       email: input.email,
       passwordHash,
       firstName: input.firstName,
       lastName: input.lastName,
-    };
+    } as unknown as UserModel;
 
     mockCreateDbUser.mockResolvedValue({
       data: mockUser,
@@ -109,9 +99,7 @@ describe("createUser", () => {
       lastName: "Doe",
     };
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [{ id: "existing-user-id", email: input.email }],
-    });
+    mockGetByEmail.mockResolvedValue({ id: "existing-user-id", email: input.email } as UserModel);
 
     await expect(create(input)).rejects.toThrow(
       new WrongParamError("Email already exists")
@@ -126,9 +114,7 @@ describe("createUser", () => {
       lastName: "Doe",
     };
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [],
-    });
+    mockGetByEmail.mockResolvedValue(null);
 
     const validationError = new Error("Password must be at least 8 characters");
     mockValidatePassword.mockResolvedValue({
@@ -147,9 +133,7 @@ describe("createUser", () => {
       lastName: "Doe",
     };
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [],
-    });
+    mockGetByEmail.mockResolvedValue(null);
 
     const validationError = new Error("Passwords do not match");
     mockValidatePassword.mockResolvedValue({
@@ -168,17 +152,14 @@ describe("createUser", () => {
       lastName: "Doe",
     };
 
-    mockGetListUsersByQuery.mockResolvedValue({
-      data: [],
-    });
+    mockGetByEmail.mockResolvedValue(null);
 
     mockValidatePassword.mockResolvedValue({
       success: true,
     });
 
     const passwordHash = "hashed-password-value";
-    mockBcryptGenSalt.mockResolvedValue("salt");
-    mockBcryptHash.mockResolvedValue(passwordHash);
+    mockHash.mockResolvedValue(passwordHash);
 
     mockCreateDbUser.mockResolvedValue({
       data: {
@@ -192,7 +173,38 @@ describe("createUser", () => {
 
     const result = await create(input);
 
-    expect(result.data.passwordHash).toBe(passwordHash);
+    expect("passwordHash" in result.data).toBe(false);
+    expect(result.data.email).toBe(input.email);
+  });
+
+  it("should create when email belongs only to removed accounts (active lookup is empty)", async () => {
+    const input = {
+      email: "reuse@example.com",
+      password: "ValidPass123!",
+      firstName: "Re",
+      lastName: "Use",
+    };
+
+    mockGetByEmail.mockResolvedValue(null);
+
+    mockValidatePassword.mockResolvedValue({
+      success: true,
+    });
+
+    mockHash.mockResolvedValue("hashed-password");
+
+    mockCreateDbUser.mockResolvedValue({
+      data: {
+        id: "new-id-456",
+        email: input.email,
+        firstName: input.firstName,
+        lastName: input.lastName,
+      },
+    });
+
+    const result = await create(input);
+
+    expect(result.data.id).toBe("new-id-456");
     expect(result.data.email).toBe(input.email);
   });
 });

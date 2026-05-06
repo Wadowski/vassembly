@@ -22,6 +22,7 @@ export interface AwsConfig {
   accessKeyId: string;
   secretAccessKey: string;
   region: string;
+  ses: SesConfig;
 }
 
 export interface S3Config {
@@ -34,10 +35,13 @@ export interface SqsConfig {
 
 export interface SesConfig {
   configurationSetName?: string;
+  passwordResetTemplateName: string;
+  fromEmail: string;
 }
 
 export interface WebConfig {
   port: number;
+  passwordResetUrl?: string;
 }
 
 export interface MongoDbConfig {

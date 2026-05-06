@@ -1,0 +1,35 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.main {
+  width: 100%;
+}
+
+.article {
+  max-width: 52rem;
+  margin-inline: auto;
+  padding-block: $spacing-8;
+  padding-inline: $spacing-4;
+
+  @media #{$media-desktop} {
+    padding-inline: $spacing-6;
+  }
+}
+
+.documentTitle {
+  margin-block-end: $spacing-8;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  margin-block-end: $spacing-10;
+}
+
+.sectionTitle {
+  margin-block-end: $spacing-1;
+}
+
+.paragraph {
+  display: block;
+}

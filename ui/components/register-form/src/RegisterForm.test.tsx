@@ -20,11 +20,15 @@ type UseRegisterFormViewModel = {
   confirmPassword: string;
   firstName: string;
   lastName: string;
+  acceptedPrivacyPolicy: boolean;
+  acceptedTerms: boolean;
   handleEmailChange: (value: string) => void;
   handlePasswordChange: (value: string) => void;
   handleConfirmPasswordChange: (value: string) => void;
   handleFirstNameChange: (value: string) => void;
   handleLastNameChange: (value: string) => void;
+  handleAcceptedPrivacyPolicyChange: (isChecked: boolean) => void;
+  handleAcceptedTermsChange: (isChecked: boolean) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   isLoading: boolean;
 };
@@ -38,11 +42,15 @@ const mockUseRegisterFormReturn = (
     confirmPassword: '',
     firstName: '',
     lastName: '',
+    acceptedPrivacyPolicy: false,
+    acceptedTerms: false,
     handleEmailChange: vi.fn(),
     handlePasswordChange: vi.fn(),
     handleConfirmPasswordChange: vi.fn(),
     handleFirstNameChange: vi.fn(),
     handleLastNameChange: vi.fn(),
+    handleAcceptedPrivacyPolicyChange: vi.fn(),
+    handleAcceptedTermsChange: vi.fn(),
     handleSubmit: vi.fn(async (e) => e.preventDefault()),
     isLoading: false,
     ...overrides,
@@ -174,5 +182,11 @@ describe('RegisterForm (component)', () => {
   it('should render a custom submit label when provided', () => {
     render(<RegisterForm submitLabel="Sign up" />);
     expect(screen.getByRole('button', { name: /sign up/i })).toBeInTheDocument();
+  });
+
+  it('should render privacy policy and terms acceptance checkboxes', () => {
+    render(<RegisterForm />);
+    expect(screen.getByRole('checkbox', { name: /privacy policy/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /terms and conditions/i })).toBeInTheDocument();
   });
 });

@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
 import { useApolloQuery } from '../graphql';
+
+import { GET_USER_QUERY } from './getUserQuery';
 
 export interface GetUserVariables {
   id: string;
@@ -15,36 +16,15 @@ export interface GetUserData {
   };
 }
 
-const GET_USER = `
-  query GetUser($id: ID!) {
-    user(id: $id) {
-      id
-      email
-      firstName
-      lastName
-      verifiedAt
-    }
-  }
-`;
+interface UseGetUserOptions {
+  userId: string;
+}
 
-export const useGetUser = () => {
-  const { data, isLoading, error, refetch } = useApolloQuery<GetUserData, GetUserVariables>(
-    GET_USER,
-    {
-      fetchPolicy: 'no-cache',
-      withAuth: true,
-    },
-  );
-
-  const result = useMemo(
-    () => ({
-      data,
-      isLoading,
-      error,
-      refetch,
-    }),
-    [data, isLoading, error, refetch],
-  );
-
-  return result;
+export const useGetUser = ({ userId }: UseGetUserOptions) => {
+  return useApolloQuery<GetUserData, GetUserVariables>(GET_USER_QUERY, {
+    variables: { id: userId },
+    fetchPolicy: 'no-cache',
+    withAuth: true,
+    skip: !userId,
+  });
 };

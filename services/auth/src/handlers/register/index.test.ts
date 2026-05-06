@@ -22,7 +22,6 @@ describe("register", () => {
   const validInput: RegisterInput = {
     email: "user@example.com",
     password: "SecurePass123",
-    confirmPassword: "SecurePass123",
     firstName: "John",
     lastName: "Doe",
   };
@@ -37,6 +36,10 @@ describe("register", () => {
       email: "user@example.com",
       firstName: "John",
       lastName: "Doe",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      removedAt: undefined,
+      verifiedAt: undefined,
     };
 
     mockCreateUser.mockResolvedValue({
@@ -45,7 +48,16 @@ describe("register", () => {
 
     const result = await register(validInput);
 
-    expect(result.user).toEqual(userData);
+    expect(result.user).toEqual({
+      id: userData.id,
+      email: userData.email,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
+      removedAt: userData.removedAt,
+      verifiedAt: userData.verifiedAt,
+    });
   });
 
   it("should throw error when email already exists", async () => {

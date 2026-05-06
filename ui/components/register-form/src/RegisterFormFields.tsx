@@ -3,6 +3,7 @@ import { Button } from '@vassembly/ui-button';
 import { Text } from '@vassembly/ui-text';
 import { TextField } from '@vassembly/ui-text-field';
 import { RegisterFormPasswordBlock } from './RegisterFormPasswordBlock';
+import { RegisterFormPolicyAcceptanceBlock } from './RegisterFormPolicyAcceptanceBlock';
 import styles from './RegisterForm.module.scss';
 import type { RegisterFormFieldsProps } from './types';
 
@@ -15,12 +16,16 @@ export const RegisterFormFields = (props: RegisterFormFieldsProps) => {
     confirmPassword,
     firstName,
     lastName,
+    acceptedPrivacyPolicy,
+    acceptedTerms,
     passwordStrength,
     handleEmailChange,
     handlePasswordChange,
     handleConfirmPasswordChange,
     handleFirstNameChange,
     handleLastNameChange,
+    handleAcceptedPrivacyPolicyChange,
+    handleAcceptedTermsChange,
     handleSubmit,
     isLoading,
   } = props;
@@ -77,6 +82,13 @@ export const RegisterFormFields = (props: RegisterFormFieldsProps) => {
         handlePasswordChange={handlePasswordChange}
         handleConfirmPasswordChange={handleConfirmPasswordChange}
         isLoading={isLoading}
+      />
+      <RegisterFormPolicyAcceptanceBlock
+        acceptedPrivacyPolicy={acceptedPrivacyPolicy}
+        acceptedTerms={acceptedTerms}
+        isLoading={isLoading}
+        onAcceptedPrivacyPolicyChange={handleAcceptedPrivacyPolicyChange}
+        onAcceptedTermsChange={handleAcceptedTermsChange}
       />
       <Button
         type="submit"

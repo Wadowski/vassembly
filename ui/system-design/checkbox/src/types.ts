@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export type CheckboxChecked = boolean | 'indeterminate';
 export type CheckboxSize = 'small' | 'medium' | 'large';
 export type CheckboxVariant = 'default' | 'error' | 'success';
@@ -6,7 +8,7 @@ export type CheckboxLabelPosition = 'left' | 'right';
 export interface CheckboxProps {
   checked: CheckboxChecked;
   onCheckedChange?: (next: CheckboxChecked) => void;
-  label?: string;
+  label?: ReactNode;
   description?: string;
   errorMessage?: string;
   labelPosition?: CheckboxLabelPosition;
@@ -18,7 +20,7 @@ export interface CheckboxProps {
 }
 
 export interface CheckboxLabelProps {
-  label?: string;
+  label?: ReactNode;
   labelId: string;
   isRequired: boolean;
   onClick: () => void;

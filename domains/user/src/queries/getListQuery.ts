@@ -1,6 +1,5 @@
-import { getListDbByQuery as getListDbByQueryHelper } from "@vassembly/queries";
 import { userMongodbDao } from "../clients";
-import { UserModel, userFactory } from "../model";
+import { UserModel, userFactory, createUserFactory } from "../model";
 import z from "zod";
 
 interface GetListByQueryParams {
@@ -14,25 +13,31 @@ const VALIDATION_SCHEMA = z.object({
   email: z.email().optional(),
 });
 
-const defaultGetListByQuery = getListDbByQueryHelper<UserModel>({
-  dao: userMongodbDao,
-  factory: userFactory,
-  validationSchema: VALIDATION_SCHEMA,
-});
-
 export const getListByQuery = async ({
   email,
   limit = 10,
   offset = 0,
   includePasswordHash = false,
-}: GetListByQueryParams = {}): Promise<ReturnType<typeof defaultGetListByQuery>> => {
-  const result = await defaultGetListByQuery({ email, limit, offset });
-  
-  if (!includePasswordHash && result.data) {
-    result.data.forEach((user) => {
-      delete user.passwordHash;
-    });
+}: GetListByQueryParams = {}): Promise<{ data: Array<UserModel> }> => {
+  const queryInstance = userFactory.create({ email }, {
+    validationSchema: VALIDATION_SCHEMA,
+  });
+  queryInstance.isValid({ shouldThrow: true });
+
+  const match: Record<string, unknown> = {
+    $or: [{ removedAt: { $exists: false } }, { removedAt: null }],
+  };
+  if (email !== undefined) {
+    match.email = email;
   }
-  
-  return result;
+
+  const daoResponse = await userMongodbDao.getManyRaw(match, { limit, offset });
+
+  const userFactoryInstance = createUserFactory({ includePasswordHash });
+  const data = daoResponse.map(
+    (row) =>
+      userFactoryInstance.toPublicResponse(row as UserModel) as UserModel,
+  );
+
+  return { data };
 };

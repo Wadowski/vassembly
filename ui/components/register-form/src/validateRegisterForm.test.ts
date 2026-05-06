@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { ValidateRegisterFormParams } from './types';
 import { validateRegisterForm } from './validateRegisterForm';
 
 const validStrongPassword = 'Str0ng!Pass';
@@ -9,6 +10,8 @@ const baseValidInput = {
   confirmPassword: validStrongPassword,
   firstName: 'Jane',
   lastName: "O'Brien",
+  acceptedPrivacyPolicy: true,
+  acceptedTerms: true,
 };
 
 describe('validateRegisterForm', () => {
@@ -171,6 +174,8 @@ describe('validateRegisterForm', () => {
       confirmPassword: validStrongPassword,
       firstName: '  Jane  ',
       lastName: '  Doe  ',
+      acceptedPrivacyPolicy: true,
+      acceptedTerms: true,
     });
     expect(result).toEqual({ isValid: true });
   });
@@ -207,5 +212,84 @@ describe('validateRegisterForm', () => {
       throw new Error('expected invalid');
     }
     expect(result.message).toMatch(/password/i);
+  });
+
+  describe('Policy Acceptance Validation', () => {
+    it('should return valid result when both policy acceptance flags are true', () => {
+      const result = validateRegisterForm({
+        ...baseValidInput,
+        acceptedPrivacyPolicy: true,
+        acceptedTerms: true,
+      });
+      expect(result).toEqual({ isValid: true });
+    });
+
+    it('should fail with privacy policy message when privacy is not accepted and terms are accepted', () => {
+      const result = validateRegisterForm({
+        ...baseValidInput,
+        acceptedPrivacyPolicy: false,
+        acceptedTerms: true,
+      });
+      expect(result.isValid).toBe(false);
+      if (result.isValid) {
+        throw new Error('expected invalid');
+      }
+      expect(result.message).toBe('You must accept the Privacy Policy');
+    });
+
+    it('should fail with terms message when terms are not accepted and privacy is accepted', () => {
+      const result = validateRegisterForm({
+        ...baseValidInput,
+        acceptedPrivacyPolicy: true,
+        acceptedTerms: false,
+      });
+      expect(result.isValid).toBe(false);
+      if (result.isValid) {
+        throw new Error('expected invalid');
+      }
+      expect(result.message).toBe('You must accept the Terms and Conditions');
+    });
+
+    it('should fail with the first policy error when both acceptance flags are false', () => {
+      const result = validateRegisterForm({
+        ...baseValidInput,
+        acceptedPrivacyPolicy: false,
+        acceptedTerms: false,
+      });
+      expect(result.isValid).toBe(false);
+      if (result.isValid) {
+        throw new Error('expected invalid');
+      }
+      expect(result.message).toBe('You must accept the Privacy Policy');
+    });
+
+    it('should fail when acceptance fields are missing from the payload', () => {
+      const inputWithoutAcceptance = {
+        email: baseValidInput.email,
+        password: baseValidInput.password,
+        confirmPassword: baseValidInput.confirmPassword,
+        firstName: baseValidInput.firstName,
+        lastName: baseValidInput.lastName,
+      };
+      const result = validateRegisterForm(inputWithoutAcceptance as unknown as ValidateRegisterFormParams);
+      expect(result.isValid).toBe(false);
+      if (result.isValid) {
+        throw new Error('expected invalid');
+      }
+      expect(result.message?.length).toBeGreaterThan(0);
+    });
+
+    it('should return valid result when the full form is valid and both policies are accepted', () => {
+      const result = validateRegisterForm({
+        email: 'jane.doe@example.com',
+        password: validStrongPassword,
+        confirmPassword: validStrongPassword,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        acceptedPrivacyPolicy: true,
+        acceptedTerms: true,
+      });
+      expect(result).toEqual({ isValid: true });
+    });
   });
 });

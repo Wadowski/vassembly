@@ -59,7 +59,12 @@ export const Layout = ({
   const handleLogout = useCallback(async () => {
     setIsDrawerOpen(false);
     await config.drawer.onLogout?.();
-  }, []);
+  }, [config.drawer]);
+
+  const handleOpenSettings = useCallback(() => {
+    setIsDrawerOpen(false);
+    config.drawer.onOpenSettings?.();
+  }, [config.drawer]);
   
   const pageClassName = className
     ? `${styles.page} ${className}`
@@ -94,6 +99,7 @@ export const Layout = ({
         onLogin={handleLogin}
         onRegister={handleRegister}
         onLogout={handleLogout}
+        onOpenSettings={handleOpenSettings}
       />
       <div className={pageClassName}>
         <main id="main-content" className={styles.main}>

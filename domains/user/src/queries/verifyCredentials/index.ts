@@ -1,22 +1,26 @@
 import { compareHash } from "@vassembly/client-encoder";
-import { UserModel } from "../../model";
-import { getListByQuery } from "../getListQuery";
-import { VerifyCredentialsQuery } from "./types";
 import { UnauthorizedError } from "@vassembly/errors";
+
+import { createUserFactory, type UserPublicResponse } from "../../model";
+import { getByEmail } from "../getByEmail";
+import { VerifyCredentialsQuery } from "./types";
+
+const userPublicFactory = createUserFactory();
 
 export const verify = async ({
   email,
   password,
-}: VerifyCredentialsQuery): Promise<UserModel> => {
-  const result = await getListByQuery({ email, limit: 1, includePasswordHash: true });
+}: VerifyCredentialsQuery): Promise<UserPublicResponse> => {
+  const user = await getByEmail({ email, includePasswordHash: true });
 
-  console.log("result", result);
-  if (result.data.length === 0) {
+  if (!user) {
     throw new UnauthorizedError("Invalid email or password", { email });
   }
 
-  const user = result.data[0]!;
-  
+  if (user.removedAt) {
+    throw new UnauthorizedError("Invalid email or password", { email });
+  }
+
   if (!user.passwordHash) {
     throw new UnauthorizedError("Invalid email or password", { email });
   }
@@ -28,5 +32,5 @@ export const verify = async ({
   }
 
   delete user.passwordHash;
-  return user;
+  return userPublicFactory.toPublicResponse(user);
 };

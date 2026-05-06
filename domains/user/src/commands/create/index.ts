@@ -1,13 +1,13 @@
-import bcrypt from "bcryptjs";
+import { hash } from "@vassembly/client-encoder";
 import { createDb } from "@vassembly/commands";
 import { validatorFactory } from "@vassembly/validation";
-import { WrongParamError } from "@vassembly/errors";
+import { InternalError, WrongParamError } from "@vassembly/errors";
 
 import { userMongodbDao } from "../../clients";
-import { UserModel, userFactory } from "../../model";
-import { getListByQuery } from "../../queries";
+import { UserModel, userFactory, createUserFactory } from "../../model";
+import { getByEmail } from "../../queries";
 import { CREATE_USER_VALIDATION_SCHEMA, PASSWORD_VALIDATION_SCHEMA } from "./constants";
-import { CreateDbUserCommand } from "./types";
+import type { CreateDbUserCommand, CreateUserCommandResult } from "./types";
 
 const validatePassword = validatorFactory(PASSWORD_VALIDATION_SCHEMA);
 const createDbUser = createDb<UserModel>({
@@ -23,23 +23,26 @@ const hasValidPassword = async (data: CreateDbUserCommand): Promise<void> => {
   }
 };
 
-const hashPassword = async (password: string): Promise<string> => {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
-};
-
 const isEmailAlreadyExists = async (email: string): Promise<void> => {
-  const users = await getListByQuery({ email });
+  const user = await getByEmail({ email });
 
-  if (users.data.length > 0) {
+  if (user) {
     throw new WrongParamError("Email already exists");
   }
 };
 
-export const create = async ({ password, ...data }: CreateDbUserCommand): Promise<ReturnType<typeof createDbUser>> => {
+const userPublicFactory = createUserFactory();
+
+export const create = async ({
+  password,
+  ...data
+}: CreateDbUserCommand): Promise<CreateUserCommandResult> => {
   await isEmailAlreadyExists(data.email);
   await hasValidPassword({ password, ...data });
-  const passwordHash = await hashPassword(password);
+  const passwordHash = await hash({ text: password });
   const user = await createDbUser({ ...data, passwordHash });
-  return user;
+  if (!user.data) {
+    throw new InternalError("User creation returned no data");
+  }
+  return { data: userPublicFactory.toPublicResponse(user.data) };
 };

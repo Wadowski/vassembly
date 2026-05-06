@@ -9,6 +9,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@vassembly/theme": "workspace:*",
     "@vassembly/ui-drawer-navigation": "workspace:*",
     "@vassembly/ui-footer": "workspace:*",
     "@vassembly/ui-header": "workspace:*",

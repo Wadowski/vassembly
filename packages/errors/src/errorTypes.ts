@@ -1,5 +1,6 @@
 export enum ErrorTypes {
   WRONG_PARAM = 'WRONG_PARAM',
+  VALIDATION = 'VALIDATION',
   NOT_FOUND = 'NOT_FOUND',
   UNAUTHORIZED = 'UNAUTHORIZED',
   FORBIDDEN = 'FORBIDDEN',
@@ -9,6 +10,7 @@ export enum ErrorTypes {
 
 export const ErrorStatusCodes: Record<ErrorTypes, number> = {
   [ErrorTypes.WRONG_PARAM]: 400,
+  [ErrorTypes.VALIDATION]: 422,
   [ErrorTypes.NOT_FOUND]: 404,
   [ErrorTypes.UNAUTHORIZED]: 401,
   [ErrorTypes.FORBIDDEN]: 403,

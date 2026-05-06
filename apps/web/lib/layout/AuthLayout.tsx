@@ -1,13 +1,14 @@
 'use client';
 
-import { useUserAuth } from '@vassembly/ui-user-auth';
+import type { DrawerUser } from '@vassembly/ui-drawer-navigation';
 import { useLogout } from '@vassembly/ui-api-hooks';
 import { Layout } from '@vassembly/ui-layout';
-import React from 'react';
 import type { LayoutDrawerPreset } from '@vassembly/ui-layout';
-import type { DrawerUser } from '@vassembly/ui-drawer-navigation';
+import { useUserAuth } from '@vassembly/ui-user-auth';
 import { useRouter, usePathname } from 'next/navigation';
+import React from 'react';
 import { clearTokens } from '../auth/sessionStorage';
+import { clearStoredUserPreferences } from '../preferences';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -29,16 +30,22 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
   }, [router]);
 
   const handleLogout = React.useCallback(async () => {
+    const subjectId = user?.id;
     try {
-      await logout({ body: {} as any });
+      await logout({ body: {} });
     } catch (error) {
       console.error('Logout request failed:', error);
     } finally {
       clearTokens();
+      if (subjectId) clearStoredUserPreferences({ userId: subjectId });
       clearSession();
       router.push('/login');
     }
-  }, [logout, clearSession, router]);
+  }, [logout, clearSession, router, user?.id]);
+
+  const handleOpenSettings = React.useCallback(() => {
+    router.push('/settings');
+  }, [router]);
 
   const drawerUser: DrawerUser = {
     displayName: [user?.firstName, user?.lastName].filter(Boolean).join(' '),
@@ -52,6 +59,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
     onLogin: handleLogin,
     onRegister: handleRegister,
     onLogout: handleLogout,
+    onOpenSettings: handleOpenSettings,
   };
 
   return (

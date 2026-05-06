@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const AUTH_PAGES = ['/login', '/register', '/forgot-password'];
+const AUTH_PAGES = ['/login', '/register', '/forgot-password', '/reset-password'];
 const AUTH_TOKEN_KEY = 'authToken';
 
 export function middleware(request: NextRequest) {
@@ -16,5 +16,14 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/login', '/register', '/forgot-password', '/login/:path*', '/register/:path*', '/forgot-password/:path*'],
+  matcher: [
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/login/:path*',
+    '/register/:path*',
+    '/forgot-password/:path*',
+    '/reset-password/:path*',
+  ],
 };

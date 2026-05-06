@@ -15,6 +15,8 @@ export const useRegisterForm = (params: UseRegisterFormParams): UseRegisterFormR
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [acceptedPrivacyPolicy, setAcceptedPrivacyPolicy] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const register = useRegister();
   const { setSession } = useUserAuth();
   const snackbar = useSnackbar();
@@ -35,6 +37,12 @@ export const useRegisterForm = (params: UseRegisterFormParams): UseRegisterFormR
   const handleLastNameChange = useCallback((value: string) => {
     setLastName(value);
   }, []);
+  const handleAcceptedPrivacyPolicyChange = useCallback((isChecked: boolean) => {
+    setAcceptedPrivacyPolicy(isChecked);
+  }, []);
+  const handleAcceptedTermsChange = useCallback((isChecked: boolean) => {
+    setAcceptedTerms(isChecked);
+  }, []);
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -47,6 +55,8 @@ export const useRegisterForm = (params: UseRegisterFormParams): UseRegisterFormR
         confirmPassword,
         firstName,
         lastName,
+        acceptedPrivacyPolicy,
+        acceptedTerms,
       });
       if (validation.isValid === false) {
         snackbar.show({
@@ -65,7 +75,17 @@ export const useRegisterForm = (params: UseRegisterFormParams): UseRegisterFormR
         },
       });
     },
-    [email, password, confirmPassword, firstName, lastName, register, snackbar],
+    [
+      email,
+      password,
+      confirmPassword,
+      firstName,
+      lastName,
+      acceptedPrivacyPolicy,
+      acceptedTerms,
+      register,
+      snackbar,
+    ],
   );
   useRegisterFormCompletionEffect({
     register,
@@ -84,12 +104,16 @@ export const useRegisterForm = (params: UseRegisterFormParams): UseRegisterFormR
     confirmPassword,
     firstName,
     lastName,
+    acceptedPrivacyPolicy,
+    acceptedTerms,
     passwordStrength,
     handleEmailChange,
     handlePasswordChange,
     handleConfirmPasswordChange,
     handleFirstNameChange,
     handleLastNameChange,
+    handleAcceptedPrivacyPolicyChange,
+    handleAcceptedTermsChange,
     handleSubmit,
     isLoading: register.isLoading,
   };

@@ -23,7 +23,7 @@ interface AuthResponse {
 export const useAuth = () => {
   const httpClient = useHttpClient();
 
-  return useFetch<AuthResponse, { body: {} }>({
+  return useFetch<AuthResponse, object>({
     requestFn: ({ body }) => httpClient.post({ path: '/auth', body, withAuth: true }),
   });
 };
