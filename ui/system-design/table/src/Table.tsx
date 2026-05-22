@@ -16,14 +16,36 @@ export function Table<TRow>({
   className,
   caption,
   emptyState,
+  currentPage,
+  totalPages: totalPagesProp,
+  onPageChange,
 }: TableProps<TRow>): JSX.Element {
-  const { currentPage, totalPages, paginatedRows, onPageChange } = useTable({
+  const isControlled =
+    currentPage !== undefined && totalPagesProp !== undefined;
+
+  const {
+    currentPage: resolvedPage,
+    totalPages,
+    paginatedRows,
+    onPageChange: handleInternalPageChange,
+  } = useTable({
     data,
     pageSize,
+    isControlled,
+    currentPage,
+    totalPages: totalPagesProp,
   });
 
   const tableClassName = resolveClassName(styles.table, className);
   const isEmpty = data.length === 0;
+
+  const handlePaginationChange = (newPage: number): void => {
+    if (isControlled && onPageChange) {
+      onPageChange(newPage);
+      return;
+    }
+    handleInternalPageChange(newPage);
+  };
 
   return (
     <>
@@ -36,11 +58,13 @@ export function Table<TRow>({
           <TableBody columns={columns} rows={paginatedRows} />
         )}
       </table>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-      />
+      <div className={styles.pagination}>
+        <Pagination
+          currentPage={resolvedPage}
+          totalPages={totalPages}
+          onPageChange={handlePaginationChange}
+        />
+      </div>
     </>
   );
 }

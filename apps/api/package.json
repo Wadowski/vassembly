@@ -25,11 +25,13 @@
     "@vassembly/config": "workspace:*",
     "@vassembly/constants": "workspace:^",
     "@vassembly/domain-auth-token": "workspace:*",
+    "@vassembly/domain-agent": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",
     "@vassembly/server": "workspace:*",
     "@vassembly/service-auth": "workspace:*",
+    "@vassembly/service-agent": "workspace:*",
     "zod": "^4.3.6"
   }
 }

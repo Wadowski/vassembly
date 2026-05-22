@@ -1,4 +1,5 @@
 import { KeyboardArrowLeftIcon, KeyboardArrowRightIcon } from '@vassembly/ui-icons';
+import { Button } from '@vassembly/ui-button';
 import { resolveClassName } from '@vassembly/ui-utils';
 import { getVisiblePageItems } from './getVisiblePageItems';
 import { PaginationPageList } from './PaginationPageList';
@@ -44,29 +45,31 @@ export const Pagination = (props: PaginationProps): JSX.Element | null => {
 
   return (
     <nav aria-label={ariaLabel} className={navClassName}>
-      <button
-        type="button"
-        className={styles.navButton}
-        aria-label="Previous page"
-        disabled={isPreviousDisabled}
+      <Button
+        icon={KeyboardArrowLeftIcon}
+        variant="text"
+        size="small"
+        color="primary"
+        isDisabled={isPreviousDisabled}
         onClick={handlePrevious}
-      >
-        <KeyboardArrowLeftIcon />
-      </button>
+        text="Previous"
+        aria-label="Previous"
+      />
       <PaginationPageList
         pageItems={pageItems}
         currentPage={currentPage}
         onPageChange={onPageChange}
       />
-      <button
-        type="button"
-        className={styles.navButton}
-        aria-label="Next page"
-        disabled={isNextDisabled}
+      <Button
+        icon={KeyboardArrowRightIcon}
+        variant="text"
+        size="small"
+        color="primary"
+        isDisabled={isNextDisabled}
         onClick={handleNext}
-      >
-        <KeyboardArrowRightIcon />
-      </button>
+        text="Next"
+        aria-label="Next"
+      />
     </nav>
   );
 };

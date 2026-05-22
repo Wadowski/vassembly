@@ -1,12 +1,53 @@
+import type { NavLinkItem, NavSection } from '@vassembly/ui-drawer-navigation';
 import {
   HouseIcon,
   SocialFacebookColorIcon,
   SocialInstagramColorIcon,
   SocialTwitterColorIcon,
+  TeamMeetingChatIcon,
 } from '@vassembly/ui-icons';
 import type { LayoutPreset } from '../types';
 
 const noop = (): void => {};
+
+const WORKSPACE_PUBLIC_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [
+  {
+    kind: 'link',
+    id: 'home',
+    label: 'Home',
+    href: '/',
+    icon: HouseIcon,
+  },
+];
+
+const WORKSPACE_AUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [
+  {
+    kind: 'link',
+    id: 'agents',
+    label: 'Agents',
+    href: '/agents',
+    icon: TeamMeetingChatIcon,
+  },
+];
+
+const WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [];
+
+export interface BuildMainDrawerSectionsParams {
+  isAuthenticated: boolean;
+}
+
+export const buildMainDrawerSections = ({
+  isAuthenticated,
+}: BuildMainDrawerSectionsParams): ReadonlyArray<NavSection> => [
+  {
+    id: 'workspace',
+    label: 'Workspace',
+    items: [
+      ...WORKSPACE_PUBLIC_NAV_ITEMS,
+      ...(isAuthenticated ? WORKSPACE_AUTHENTICATED_NAV_ITEMS : WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS),
+    ],
+  },
+];
 
 export const MAIN_LAYOUT_PRESET: LayoutPreset = {
   footer: {
@@ -53,21 +94,7 @@ export const MAIN_LAYOUT_PRESET: LayoutPreset = {
     logo: { href: '/', text: 'Vassembly' },
   },
   drawer: {
-    sections: [
-      {
-        id: 'workspace',
-        label: 'Workspace',
-        items: [
-          {
-            kind: 'link' as const,
-            id: 'home',
-            label: 'Home',
-            href: '/',
-            icon: HouseIcon,
-          },
-        ],
-      },
-    ],
+    sections: buildMainDrawerSections({ isAuthenticated: false }),
     branding: { productName: 'Vassembly', tagline: 'Your AI-powered workspace' },
     isAuthenticated: false,
     onLogin: noop,

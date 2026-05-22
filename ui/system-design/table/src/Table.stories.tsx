@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Text } from '@vassembly/ui-text';
 import { Table } from './Table';
-import type { ColumnDef } from './types';
+import type { ColumnDef, TableProps } from './types';
 
 type StoryRow = { id: number; name: string };
 
@@ -10,7 +10,7 @@ const baseColumns: ColumnDef<StoryRow>[] = [
   { key: 'name', header: 'Name' },
 ];
 
-const meta: Meta<typeof Table> = {
+const meta: Meta<TableProps<StoryRow>> = {
   title: 'System Design/Table',
   component: Table,
   parameters: {
@@ -21,7 +21,7 @@ const meta: Meta<typeof Table> = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<TableProps<StoryRow>>;
 
 const smallData: StoryRow[] = [
   { id: 1, name: 'Alpha' },
@@ -72,6 +72,19 @@ export const WithCaption: Story = {
     data: smallData,
     pageSize: 10,
     caption: 'Team members',
+  },
+};
+
+export const ServerPagination: Story = {
+  args: {
+    columns: baseColumns,
+    data: manyRows.slice(0, 10),
+    pageSize: 10,
+    currentPage: 1,
+    totalPages: Math.ceil(manyRows.length / 10),
+    onPageChange: (page: number): void => {
+      void page;
+    },
   },
 };
 

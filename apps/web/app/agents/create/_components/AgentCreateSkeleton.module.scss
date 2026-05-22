@@ -1,0 +1,15 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.container {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}

@@ -15,7 +15,8 @@
     "@vassembly/constants": "workspace:*",
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/errors": "workspace:*",
-    "graphql": "^16.11.0"
+    "graphql": "^16.11.0",
+    "zod": "^4.3.6"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

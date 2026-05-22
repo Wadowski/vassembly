@@ -18,6 +18,7 @@ export type DropdownProps = {
   className?: string;
   id?: string;
   name?: string;
+  onBlur?: () => void;
 };
 
 export type DropdownOptionsListProps = {

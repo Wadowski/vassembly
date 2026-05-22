@@ -44,8 +44,8 @@ export const executeRequest = async <TBody, TResponse>({
   let authorization: string | undefined;
 
   if (options.withAuth) {
-  authorization = await getAuthToken(config);
-  const tokens = await getRawTokens(config);
+    authorization = await getAuthToken(config);
+    const tokens = await getRawTokens(config);
     authToken = tokens.authToken;
     refreshToken = tokens.refreshToken;
   }
@@ -56,6 +56,7 @@ export const executeRequest = async <TBody, TResponse>({
     authorization,
     authToken,
     refreshToken,
+    hasBody: options.body !== undefined,
   });
 
   try {

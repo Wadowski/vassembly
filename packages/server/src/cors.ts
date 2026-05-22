@@ -6,8 +6,11 @@ export interface SetupCorsProps {
   allowedOrigins?: string[];
 }
 
-export const setupCors = async ({ fastify, allowedOrigins }: SetupCorsProps) => {
+const CORS_ALLOWED_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"] as const;
+
+export const setupCors = async ({ fastify, allowedOrigins }: SetupCorsProps): Promise<void> => {
   await fastify.register(cors, {
-    origin: allowedOrigins,
+    methods: [...CORS_ALLOWED_METHODS],
+    ...(allowedOrigins !== undefined ? { origin: allowedOrigins } : {}),
   });
 };

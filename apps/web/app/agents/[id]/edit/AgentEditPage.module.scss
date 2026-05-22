@@ -1,0 +1,9 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.sectionCard {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}

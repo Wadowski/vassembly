@@ -292,9 +292,9 @@
 
 // Sizes
 .sizeSmall {
-  padding: $spacing-2 $spacing-3;
+  padding: $spacing-1 $spacing-3;
   font-size: $font-size-label-sm;
-  border-radius: $border-radius-button-secondary;
+  border-radius: $border-radius-button-primary;
   min-height: 2rem;
 }
 
@@ -336,4 +336,5 @@
 // Full width
 .fullWidth {
   width: 100%;
+  justify-content: space-between;
 }
