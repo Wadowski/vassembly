@@ -1,4 +1,4 @@
-import { AgentCategory, AgentStatus } from '@vassembly/ui-api-hooks';
+import { AGENT_LIST_ALL_STATUSES, AgentCategory, AgentStatus } from '@vassembly/ui-api-hooks';
 import type { TagVariant } from '@vassembly/ui-tag';
 
 import { AGENT_LIST_STATUS_OPTIONS } from './agentListTypes';
@@ -22,10 +22,10 @@ const AGENT_CATEGORY_LABEL: Record<AgentCategory, string> = {
 };
 
 const statusLabelByValue = new Map(
-  AGENT_LIST_STATUS_OPTIONS.filter((option) => option.value !== '').map((option) => [
-    option.value as AgentStatus,
-    option.label,
-  ]),
+  AGENT_LIST_STATUS_OPTIONS.filter(
+    (option): option is { value: AgentStatus; label: string } =>
+      option.value !== AGENT_LIST_ALL_STATUSES,
+  ).map((option) => [option.value, option.label]),
 );
 
 export const getAgentStatusTagVariant = (status: AgentStatus): TagVariant =>
