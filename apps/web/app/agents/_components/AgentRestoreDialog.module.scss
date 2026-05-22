@@ -1,0 +1,15 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.modalStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.toolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -1,6 +1,58 @@
 import '@testing-library/jest-dom/vitest';
 
-import { vi } from 'vitest';
+import * as matchers from '@testing-library/jest-dom/matchers';
+import { expect, vi } from 'vitest';
+
+expect.extend(matchers);
+
+const testApiHooksStubs = vi.hoisted(() => {
+  const mockAgentsFetch = vi.fn().mockResolvedValue(undefined);
+  const mockHttpClient = {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  };
+
+  return {
+    mockAgentsFetch,
+    mockHttpClient,
+  };
+});
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    replace: vi.fn(),
+    push: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+  }),
+  usePathname: (): string => '/',
+  useParams: (): Record<string, string> => ({}),
+}));
+
+vi.mock('@vassembly/ui-snackbar', () => ({
+  SnackbarProvider: ({ children }: { children: unknown }) => children,
+  useSnackbar: vi.fn(() => ({
+    show: vi.fn(),
+    dismiss: vi.fn(),
+  })),
+}));
+
+vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('@vassembly/ui-api-hooks')>();
+  return {
+    ...mod,
+    useAgents: vi.fn(() => ({
+      data: undefined,
+      isLoading: false,
+      error: undefined,
+      fetch: testApiHooksStubs.mockAgentsFetch,
+    })),
+    useHttpClient: vi.fn(() => testApiHooksStubs.mockHttpClient),
+  };
+});
 
 const buildMediaQueryStub = (): ReturnType<(typeof vi)['fn']> => {
   return vi.fn((queryInput: string) => ({
@@ -20,4 +72,3 @@ Object.defineProperty(window, 'matchMedia', {
   configurable: true,
   value: buildMediaQueryStub(),
 });
-

@@ -20,6 +20,7 @@ export const Dropdown = ({
   className,
   id,
   name,
+  onBlur,
 }: DropdownProps) => {
   const {
     rootRef,
@@ -95,6 +96,7 @@ export const Dropdown = ({
           iconPosition="right"
           onClick={toggleMenu}
           onKeyDown={handleTriggerKeyDown}
+          onBlur={onBlur}
         />
         {isOpen && options.length > 0 ? (
           <DropdownOptionsList

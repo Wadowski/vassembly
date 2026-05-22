@@ -1,4 +1,4 @@
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-button';
 import { resolveClassName } from '@vassembly/ui-utils';
 import styles from './Pagination.module.scss';
 import type { PaginationPageItemProps } from './types';
@@ -9,24 +9,21 @@ export const PaginationPageItem = (props: PaginationPageItemProps): JSX.Element 
 
   return (
     <li className={styles.item}>
-      <button
-        type="button"
-        className={resolveClassName(
-          styles.pageButton,
-          isCurrent && styles.pageButtonCurrent,
-        )}
-        aria-label={`Page ${pageNumber}`}
-        aria-current={isCurrent ? 'page' : undefined}
+      <Button
+        text={String(pageNumber)}
+        variant="text"
+        size="small"
+        color="primary"
+        isDisabled={isCurrent}
         onClick={() => {
           if (!isCurrent) {
             onPageChange(pageNumber);
           }
         }}
-      >
-        <Text variant="body2" as="span">
-          {pageNumber}
-        </Text>
-      </button>
+        className={resolveClassName(isCurrent && styles.pageButtonCurrent)}
+        aria-label={`Page ${pageNumber}`}
+        aria-current={isCurrent ? 'page' : undefined}
+      />
     </li>
   );
 };

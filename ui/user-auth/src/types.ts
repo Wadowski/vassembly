@@ -25,9 +25,11 @@ export interface UserAuthContextValue {
   user: AuthUser | null;
   role: UserRole;
   isAuthenticated: boolean;
+  bootstrapLoading: boolean;
   setSession: (params: SetSessionParams) => void;
   clearSession: () => void;
   setStatus: (status: boolean) => void;
+  setBootstrapLoading: (loading: boolean) => void;
 }
 
 export interface UserAuthProviderProps {

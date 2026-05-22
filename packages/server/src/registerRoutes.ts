@@ -63,8 +63,10 @@ export const registerRoutes = async ({ fastify, routes }: RegisterRoutesProps): 
         body: request.body,
         query: request.query,
         headers: toHeaderRecord(request.headers),
+        params: request.params as Record<string, string> | undefined,
       });
-      return reply.send(result);
+      const statusCode = route.statusCode ?? 200;
+      return reply.code(statusCode).send(result);
     };
 
     register(buildRoutePath(route), opts, handler);

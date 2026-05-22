@@ -37,9 +37,10 @@ export const Layout = ({
     setIsDrawerOpen((open) => !open);
   }, []);
   
-  const handleNavigate = useCallback((_event: DrawerNavigateEvent) => {
+  const handleNavigate = useCallback((event: DrawerNavigateEvent) => {
     setIsDrawerOpen(false);
-  }, []);
+    router.push(event.href);
+  }, [router]);
   
   const handleOpenChange = useCallback((event: DrawerOpenChangeEvent) => {
     setIsDrawerOpen(event.isOpen);

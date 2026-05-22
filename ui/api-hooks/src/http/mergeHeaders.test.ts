@@ -16,6 +16,16 @@ describe('mergeHeaders', () => {
     });
   });
 
+  it('should set Content-Type when the request has a body', () => {
+    const merged = mergeHeaders({
+      defaultHeaders: {},
+      requestHeaders: {},
+      hasBody: true,
+    });
+
+    expect(merged['Content-Type']).toBe('application/json');
+  });
+
   it('should set Authorization when authorization value is provided', () => {
     const merged = mergeHeaders({
       defaultHeaders: { 'X-A': '1' },
@@ -33,6 +43,8 @@ describe('mergeHeaders', () => {
       requestHeaders: { 'X-A': '1' },
     });
 
-    expect(merged).toEqual({ 'X-A': '1' });
+    expect(merged).toEqual({
+      'X-A': '1',
+    });
   });
 });

@@ -4,34 +4,51 @@ import type { UseTableArgs, UseTableResult } from './types';
 export function useTable<TRow>({
   data,
   pageSize,
+  isControlled = false,
+  currentPage: controlledPage,
+  totalPages: controlledTotalPages,
 }: UseTableArgs<TRow>): UseTableResult<TRow> {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages =
-    data.length === 0 ? 0 : Math.ceil(data.length / pageSize);
+  const [internalPage, setInternalPage] = useState(1);
+
+  const isServerPaginated =
+    isControlled &&
+    controlledPage !== undefined &&
+    controlledTotalPages !== undefined;
+
+  const totalPages = isServerPaginated
+    ? controlledTotalPages
+    : data.length === 0
+      ? 0
+      : Math.ceil(data.length / pageSize);
 
   useEffect(() => {
-    if (totalPages === 0) {
+    if (isServerPaginated || totalPages === 0) {
       return;
     }
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
+    if (internalPage > totalPages) {
+      setInternalPage(totalPages);
     }
-  }, [currentPage, totalPages]);
+  }, [internalPage, isServerPaginated, totalPages]);
 
-  const safePage =
-    totalPages === 0
+  const safePage = isServerPaginated
+    ? totalPages === 0
       ? 1
-      : Math.min(Math.max(1, currentPage), totalPages);
+      : Math.min(Math.max(1, controlledPage), totalPages)
+    : totalPages === 0
+      ? 1
+      : Math.min(Math.max(1, internalPage), totalPages);
 
   const startIndex = (safePage - 1) * pageSize;
-  const paginatedRows = data.slice(startIndex, startIndex + pageSize);
+  const paginatedRows = isServerPaginated
+    ? data
+    : data.slice(startIndex, startIndex + pageSize);
 
   const handlePageChange = (page: number): void => {
-    if (totalPages === 0) {
+    if (isServerPaginated || totalPages === 0) {
       return;
     }
     const nextPage = Math.max(1, Math.min(page, totalPages));
-    setCurrentPage(nextPage);
+    setInternalPage(nextPage);
   };
 
   return {

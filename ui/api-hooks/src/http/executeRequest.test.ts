@@ -91,6 +91,27 @@ describe('executeRequest', () => {
     ).rejects.toThrow(InternalError);
   });
 
+  it('should omit Content-Type for requests without a body', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      mockFetchResponse({
+        ok: true,
+        status: 200,
+        bodyText: JSON.stringify({ success: true }),
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await executeRequest({
+      config: baseConfig,
+      method: 'DELETE',
+      options: { path: '/agents/agent-1' },
+    });
+
+    const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(requestInit.headers).not.toHaveProperty('Content-Type');
+    expect(requestInit.body).toBeUndefined();
+  });
+
   it('should throw InternalError when fetch rejects', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
 

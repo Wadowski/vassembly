@@ -29,15 +29,20 @@ export interface ExecuteRequestProps<TBody> {
   options: RequestOptions<TBody>;
 }
 
-export interface UseQueryOptions<TResponse, TParams> {
-  requestFn: (options: Pick<RequestOptions<TParams>, 'body' | 'query'>) => Promise<TResponse>;
+export interface UseQueryFetchOptions<TBody = never, TQuery = Record<string, string | number | boolean>> {
+  body?: TBody;
+  query?: TQuery;
 }
 
-export interface UseQueryState<TResponse, TParams> {
+export interface UseQueryOptions<TResponse, TBody = never, TQuery = Record<string, string | number | boolean>> {
+  requestFn: (options: UseQueryFetchOptions<TBody, TQuery>) => Promise<TResponse>;
+}
+
+export interface UseQueryState<TResponse, TBody = never, TQuery = Record<string, string | number | boolean>> {
   data: TResponse | undefined;
   isLoading: boolean;
   error: CommonError | undefined;
-  fetch: (options: Pick<RequestOptions<TParams>, 'body' | 'query'>) => Promise<void>;
+  fetch: (options: UseQueryFetchOptions<TBody, TQuery>) => Promise<void>;
 }
 
 export interface UseMutationOptions<TParams, TResponse> {
@@ -70,7 +75,8 @@ export interface BuildUrlProps {
 export interface MergeHeadersProps {
   defaultHeaders: Record<string, string>;
   requestHeaders: Record<string, string>;
-  authorization: string | undefined;
+  authorization?: string;
   authToken?: string;
   refreshToken?: string;
+  hasBody?: boolean;
 }

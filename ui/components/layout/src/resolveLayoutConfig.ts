@@ -5,6 +5,7 @@ import type {
   LayoutPreset,
   LayoutVariant,
 } from './types';
+import { buildMainDrawerSections } from './presets/main';
 import { LAYOUT_VARIANT_PRESETS } from './variantPresets';
 
 export interface ResolveLayoutConfigParams {
@@ -24,14 +25,19 @@ export function resolveLayoutConfig(
     logo: { ...base.header.logo, ...params.header?.logo },
     navLinks: params.header?.navLinks ?? base.header.navLinks,
   };
+  const isAuthenticated =
+    params.drawer?.isAuthenticated ?? base.drawer.isAuthenticated;
+  const drawerSections =
+    params.variant === 'main'
+      ? buildMainDrawerSections({ isAuthenticated })
+      : base.drawer.sections;
   const drawer: LayoutDrawerPreset = {
     ...base.drawer,
     ...params.drawer,
     user: params.drawer?.user ?? base.drawer.user,
-    sections: params.drawer?.sections ?? base.drawer.sections,
+    sections: params.drawer?.sections ?? drawerSections,
     branding: params.drawer?.branding ?? base.drawer.branding,
-    isAuthenticated:
-      params.drawer?.isAuthenticated ?? base.drawer.isAuthenticated,
+    isAuthenticated,
     onLogin: params.drawer?.onLogin ?? base.drawer.onLogin,
     onRegister: params.drawer?.onRegister ?? base.drawer.onRegister,
     onLogout: params.drawer?.onLogout ?? base.drawer.onLogout,

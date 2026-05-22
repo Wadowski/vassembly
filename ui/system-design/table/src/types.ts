@@ -13,11 +13,17 @@ export type TableProps<TRow> = {
   className?: string;
   caption?: string;
   emptyState?: ReactNode;
+  currentPage?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
 };
 
 export type UseTableArgs<TRow> = {
   data: TRow[];
   pageSize: number;
+  isControlled?: boolean;
+  currentPage?: number;
+  totalPages?: number;
 };
 
 export type UseTableResult<TRow> = {

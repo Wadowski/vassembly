@@ -9,9 +9,15 @@ export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export interface RouteDefinition {
   method: HTTPMethod;
   url: string;
-  handler: (input: { body: unknown; query: unknown; headers: Record<string, string> }) => Promise<unknown>;
+  handler: (input: {
+    body: unknown;
+    query: unknown;
+    headers: Record<string, string>;
+    params?: Record<string, string>;
+  }) => Promise<unknown>;
   schema?: { body?: ZodTypeAny; querystring?: ZodTypeAny; response?: ZodTypeAny };
   prefix?: string;
+  statusCode?: number;
 }
 
 export interface ServerConfig {

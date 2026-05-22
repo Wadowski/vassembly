@@ -1,7 +1,15 @@
 import { init as initMongoDb } from "@vassembly/client-mongodb";
 import { createServer, routesWithPrefix } from "@vassembly/server";
 import { config } from "@vassembly/config";
-import { mongodbIndexes } from "@vassembly/domain-user";
+import { mongodbIndexes as agentMongodbIndexes } from "@vassembly/domain-agent";
+import { mongodbIndexes as userMongodbIndexes } from "@vassembly/domain-user";
+
+import { agentCreateRoute } from "./agents/create";
+import { agentDeleteRoute } from "./agents/delete";
+import { agentGetByIdRoute } from "./agents/getById";
+import { agentListRoute } from "./agents/list";
+import { agentRestoreRoute } from "./agents/restore";
+import { agentPatchRoute } from "./agents/update";
 
 import { authRoute } from "./auth/auth";
 import { forgotPasswordRoute } from "./user/forgotPassword";
@@ -25,12 +33,20 @@ const userRoutes = routesWithPrefix("/user", [
   deleteAccountRoute,
   updateProfileRoute,
 ]);
+const agentRoutes = routesWithPrefix("/agents", [
+  agentCreateRoute,
+  agentListRoute,
+  agentGetByIdRoute,
+  agentPatchRoute,
+  agentDeleteRoute,
+  agentRestoreRoute,
+]);
 
-const routes = [...authRoutes, ...userRoutes];
+const routes = [...authRoutes, ...userRoutes, ...agentRoutes];
 
 const startApp = async () => {
   await initMongoDb({
-    indexFunctions: [mongodbIndexes],
+    indexFunctions: [userMongodbIndexes, agentMongodbIndexes],
   });
 
   const fastify = await createServer({

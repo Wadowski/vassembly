@@ -42,6 +42,9 @@ importers:
       '@vassembly/constants':
         specifier: workspace:^
         version: link:../../packages/constants
+      '@vassembly/domain-agent':
+        specifier: workspace:*
+        version: link:../../domains/agent
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
@@ -57,6 +60,9 @@ importers:
       '@vassembly/server':
         specifier: workspace:*
         version: link:../../packages/server
+      '@vassembly/service-agent':
+        specifier: workspace:*
+        version: link:../../services/agent
       '@vassembly/service-auth':
         specifier: workspace:*
         version: link:../../services/auth
@@ -152,6 +158,9 @@ importers:
       '@vassembly/ui-drawer-navigation':
         specifier: workspace:*
         version: link:../../ui/components/drawer-navigation
+      '@vassembly/ui-dropdown':
+        specifier: workspace:^
+        version: link:../../ui/system-design/dropdown
       '@vassembly/ui-forgot-password':
         specifier: workspace:*
         version: link:../../ui/components/forgot-password
@@ -161,6 +170,9 @@ importers:
       '@vassembly/ui-layout':
         specifier: workspace:*
         version: link:../../ui/components/layout
+      '@vassembly/ui-loader':
+        specifier: workspace:^
+        version: link:../../ui/system-design/loader
       '@vassembly/ui-login-form':
         specifier: workspace:*
         version: link:../../ui/components/login-form
@@ -173,12 +185,21 @@ importers:
       '@vassembly/ui-reset-password-form':
         specifier: workspace:*
         version: link:../../ui/components/reset-password-form
+      '@vassembly/ui-skeleton':
+        specifier: workspace:*
+        version: link:../../ui/system-design/skeleton
       '@vassembly/ui-snackbar':
         specifier: workspace:*
         version: link:../../ui/system-design/snackbar
       '@vassembly/ui-switch':
         specifier: workspace:^
         version: link:../../ui/system-design/switch
+      '@vassembly/ui-table':
+        specifier: workspace:^
+        version: link:../../ui/system-design/table
+      '@vassembly/ui-tag':
+        specifier: workspace:^
+        version: link:../../ui/system-design/tag
       '@vassembly/ui-text':
         specifier: workspace:*
         version: link:../../ui/system-design/text
@@ -252,6 +273,52 @@ importers:
       vitest:
         specifier: ^4.1.5
         version: 4.1.5(@types/node@22.19.15)(jsdom@20.0.3)(vite@7.3.2)
+
+  domains/agent:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/client-mongodb
+      '@vassembly/commands':
+        specifier: workspace:*
+        version: link:../../packages/commands
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
+      '@vassembly/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
+      '@vassembly/model':
+        specifier: workspace:*
+        version: link:../../packages/model
+      '@vassembly/queries':
+        specifier: workspace:*
+        version: link:../../packages/queries
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
 
   domains/auth-token:
     dependencies:
@@ -696,6 +763,9 @@ importers:
       '@vassembly/queries':
         specifier: workspace:^
         version: link:../queries
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@types/node':
         specifier: ^22.19.7
@@ -1033,6 +1103,37 @@ importers:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@22.19.15)
 
+  services/agent:
+    dependencies:
+      '@vassembly/domain-agent':
+        specifier: workspace:*
+        version: link:../../domains/agent
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
   services/auth:
     dependencies:
       '@vassembly/client-aws-ses':
@@ -1096,6 +1197,9 @@ importers:
       graphql:
         specifier: ^16.11.0
         version: 16.13.2
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@testing-library/react':
         specifier: ^16.0.0
@@ -2532,6 +2636,9 @@ importers:
       '@vassembly/theme':
         specifier: workspace:*
         version: link:../theme
+      '@vassembly/ui-button':
+        specifier: workspace:*
+        version: link:../button
       '@vassembly/ui-icons':
         specifier: workspace:*
         version: link:../icons
@@ -9218,7 +9325,7 @@ packages:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 7.3.2(@types/node@25.5.0)(sass@1.98.0)
+      vite: 7.3.2(@types/node@22.19.15)(sass@1.98.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -15780,58 +15887,6 @@ packages:
         optional: true
     dependencies:
       '@types/node': 22.19.15
-      esbuild: 0.27.4
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-      postcss: 8.5.8
-      rollup: 4.60.0
-      sass: 1.98.0
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
-  /vite@7.3.2(@types/node@25.5.0)(sass@1.98.0):
-    resolution: {integrity: sha512-Bby3NOsna2jsjfLVOHKes8sGwgl4TT0E6vvpYgnAYDIF/tie7MRaFthmKuHx1NSXjiTueXH3do80FMQgvEktRg==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^20.19.0 || >=22.12.0
-      jiti: '>=1.21.0'
-      less: ^4.0.0
-      lightningcss: ^1.21.0
-      sass: ^1.70.0
-      sass-embedded: ^1.70.0
-      stylus: '>=0.54.8'
-      sugarss: ^5.0.0
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
-        optional: true
-    dependencies:
-      '@types/node': 25.5.0
       esbuild: 0.27.4
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4

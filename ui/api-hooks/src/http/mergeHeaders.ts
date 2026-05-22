@@ -7,8 +7,13 @@ export const mergeHeaders = ({
   authorization,
   authToken,
   refreshToken,
+  hasBody = false,
 }: MergeHeadersProps): Record<string, string> => {
-  const merged: Record<string, string> = { 'Content-Type': 'application/json', ...defaultHeaders, ...requestHeaders };
+  const merged: Record<string, string> = { ...defaultHeaders, ...requestHeaders };
+
+  if (hasBody && merged['Content-Type'] === undefined) {
+    merged['Content-Type'] = 'application/json';
+  }
 
   if (authorization) {
     merged.Authorization = authorization;

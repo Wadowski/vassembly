@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { getTokens, setTokens, clearTokens } from './sessionStorage';
 
 export const SessionBootstrap = () => {
-  const { setSession, clearSession, setStatus } = useUserAuth();
+  const { setSession, clearSession, setStatus, setBootstrapLoading } = useUserAuth();
   const { data: authResponse, isLoading, error, fetch } = useAuth();
   const initializingRef = useRef(false);
 
@@ -22,8 +22,9 @@ export const SessionBootstrap = () => {
     } else {
       setStatus(false);
       clearSession();
+      setBootstrapLoading(false);
     }
-  }, [clearSession, fetch, setStatus]);
+  }, [clearSession, fetch, setStatus, setBootstrapLoading]);
 
   useEffect(() => {
     if (isLoading) {
@@ -33,6 +34,7 @@ export const SessionBootstrap = () => {
     if (error) {
       clearTokens();
       clearSession();
+      setBootstrapLoading(false);
       return;
     }
 
@@ -59,7 +61,8 @@ export const SessionBootstrap = () => {
         },
       });
     }
-  }, [authResponse, isLoading, error, setSession, clearSession]);
+    setBootstrapLoading(false);
+  }, [authResponse, isLoading, error, setSession, clearSession, setBootstrapLoading]);
 
   return null;
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Table } from './Table';
 import type { ColumnDef } from './types';
 
@@ -250,6 +250,88 @@ describe('Table', () => {
       const bodyRows = getBodyRows(table);
       expect(bodyRows).toHaveLength(2);
       expect(within(bodyRows[0]).getAllByRole('cell')).toHaveLength(2);
+    });
+  });
+
+  describe('controlled pagination', () => {
+    it('renders all provided rows without client-side slicing', () => {
+      const data = makeRows(3);
+      render(
+        <Table
+          columns={defaultColumns}
+          data={data}
+          pageSize={10}
+          currentPage={2}
+          totalPages={5}
+          onPageChange={() => {}}
+        />,
+      );
+
+      const table = screen.getByRole('table');
+      expect(getBodyRows(table)).toHaveLength(3);
+      expect(screen.getByText('Row 0')).toBeInTheDocument();
+      expect(screen.getByText('Row 2')).toBeInTheDocument();
+    });
+
+    it('uses currentPage and totalPages for pagination controls', () => {
+      const data = makeRows(2);
+      render(
+        <Table
+          columns={defaultColumns}
+          data={data}
+          pageSize={10}
+          currentPage={2}
+          totalPages={5}
+          onPageChange={() => {}}
+        />,
+      );
+
+      expect(
+        screen.getByRole('navigation', { name: 'Pagination' }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Page 2' })).toHaveAttribute(
+        'aria-current',
+        'page',
+      );
+    });
+
+    it('invokes onPageChange with 1-based page when a page button is clicked', async () => {
+      const user = userEvent.setup();
+      const onPageChange = vi.fn();
+      const data = makeRows(2);
+
+      render(
+        <Table
+          columns={defaultColumns}
+          data={data}
+          pageSize={10}
+          currentPage={1}
+          totalPages={5}
+          onPageChange={onPageChange}
+        />,
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Page 3' }));
+
+      expect(onPageChange).toHaveBeenCalledWith(3);
+    });
+
+    it('does not render pagination when totalPages is less than 2', () => {
+      const data = makeRows(2);
+      render(
+        <Table
+          columns={defaultColumns}
+          data={data}
+          pageSize={10}
+          currentPage={1}
+          totalPages={1}
+          onPageChange={() => {}}
+        />,
+      );
+
+      expect(
+        screen.queryByRole('navigation', { name: 'Pagination' }),
+      ).not.toBeInTheDocument();
     });
   });
 

@@ -1,0 +1,89 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.sectionCard,
+.dangerPanel {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.dangerPanel {
+  border: 1px solid $color-error-200;
+}
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-component-gap-md;
+}
+
+.toolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filtersGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+  align-self: flex-end;
+}
+
+.statusFilter {
+  width: 150px;
+}
+
+.createAgentButton {
+  align-self: flex-end;
+}
+
+.agentTable {
+  table-layout: fixed;
+  width: 100%;
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 10rem;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 6.5rem;
+    white-space: nowrap;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 7rem;
+    white-space: nowrap;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    white-space: nowrap;
+    text-align: right;
+  }
+}
+
+.descriptionCell {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.actionsCell {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: $spacing-1;
+  align-items: flex-end;
+}

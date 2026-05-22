@@ -9,6 +9,7 @@ export function UserAuthProvider({
   const [status, setStatus] = useState(initialState?.status ?? false);
   const [user, setUser] = useState(initialState?.user ?? null);
   const [role, setRole] = useState(initialState?.role ?? '');
+  const [bootstrapLoading, setBootstrapLoading] = useState(true);
 
   const handleSetSession = useCallback((params: SetSessionParams) => {
     setUser(params.user);
@@ -26,17 +27,23 @@ export function UserAuthProvider({
     setStatus(newStatus);
   }, []);
 
+  const handleSetBootstrapLoading = useCallback((loading: boolean) => {
+    setBootstrapLoading(loading);
+  }, []);
+
   const value: UserAuthContextValue = useMemo(
     () => ({
       status,
       user,
       role,
       isAuthenticated: status,
+      bootstrapLoading,
       setSession: handleSetSession,
       clearSession: handleClearSession,
       setStatus: handleSetStatus,
+      setBootstrapLoading: handleSetBootstrapLoading,
     }),
-    [status, user, role, handleSetSession, handleClearSession, handleSetStatus],
+    [status, user, role, bootstrapLoading, handleSetSession, handleClearSession, handleSetStatus, handleSetBootstrapLoading],
   );
 
   return (
