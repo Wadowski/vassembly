@@ -45,7 +45,7 @@ export function AgentList(): JSX.Element {
   };
 
   return (
-    <main className={styles.sectionCard}>
+    <section className={styles.sectionCard}>
       <Text variant="h1">Agents</Text>
       <div className={styles.toolbarRow}>
         <Button
@@ -99,6 +99,6 @@ export function AgentList(): JSX.Element {
         isConfirmBusy={catalog.restoreBusy}
         onConfirm={catalog.confirmRestore}
       />
-    </main>
+    </section>
   );
 }

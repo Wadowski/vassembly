@@ -24,4 +24,6 @@ export class AgentModel extends ModelWithTranslation {
   userId?: string;
 
   status?: AgentStatus;
+
+  integrationCredentialId?: string;
 }

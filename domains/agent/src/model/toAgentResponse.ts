@@ -10,6 +10,7 @@ export const toAgentResponse = (agent: AgentModel): AgentResponse => {
     rule: agent.rule,
     userId: agent.userId,
     status: agent.status,
+    integrationCredentialId: agent.integrationCredentialId,
     createdAt: agent.createdAt,
     updatedAt: agent.updatedAt,
     removedAt: agent.removedAt ?? null,

@@ -1,3 +1,4 @@
+import { validatorFactory } from '@vassembly/validation';
 import { z } from 'zod';
 
 const NAME_FIELD_RULE = z
@@ -48,3 +49,7 @@ export const SETTINGS_CHANGE_PASSWORD_FORM_SCHEMA =
   );
 
 export const SETTINGS_ACCOUNT_DELETE_CONFIRMATION_SCHEMA = z.literal('DELETE');
+
+export const validateSettingsProfileNames = validatorFactory(SETTINGS_PROFILE_NAMES_SCHEMA);
+
+export const validateSettingsChangePasswordForm = validatorFactory(SETTINGS_CHANGE_PASSWORD_FORM_SCHEMA);

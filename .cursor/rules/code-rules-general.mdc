@@ -83,6 +83,13 @@ description: General coding standards and best practices for the project
 - Use index files to export public API
 - Colocate tests next to implementation files with `.test.ts` suffix
 - Each file should be no longer than 100 lines. If longer split it
+- **No duplicated code** - if the same code (function, type, etc) is written in at least two places, extract it to a separate file and reuse.
+
+## Constants
+
+- Prefer **enums** for fixed sets of related values when applicable
+- Extract static values into named **const** declarations instead of inline literals
+- UI copy and user-facing text are excluded from this rule
 
 ## Comments and Documentation
 

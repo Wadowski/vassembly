@@ -15,6 +15,7 @@ export const agentPatchBodySchema = z
     description: z.string().min(1).max(500).optional(),
     rule: z.string().min(1).max(2000).optional(),
     status: z.enum(Object.values(AgentStatus) as [AgentStatus, ...AgentStatus[]]).optional(),
+    integrationCredentialId: z.string().optional(),
   })
   .strict();
 

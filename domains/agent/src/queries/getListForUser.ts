@@ -1,4 +1,4 @@
-import { ValidationError } from '@vassembly/errors';
+import { validatorFactory } from '@vassembly/validation';
 import { z } from 'zod';
 
 import { agentMongodbDao } from '../clients';
@@ -30,6 +30,8 @@ const QUERY_INPUT_SCHEMA = z.object({
   status: z.enum(STATUS_FILTER_VALUES).optional(),
 });
 
+const validateQueryInput = validatorFactory(QUERY_INPUT_SCHEMA);
+
 const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 interface BuildFilterParams {
@@ -59,9 +61,9 @@ const buildFilter = (params: BuildFilterParams): Record<string, unknown> => {
 };
 
 export const getListForUser = async (input: GetListForUserQueryInput): Promise<GetListForUserQueryResult> => {
-  const parsed = QUERY_INPUT_SCHEMA.safeParse(input);
+  const parsed = validateQueryInput(input);
   if (!parsed.success) {
-    throw new ValidationError('Invalid list query', parsed.error);
+    throw parsed.error;
   }
 
   const cappedSize = Math.min(parsed.data.size, MAX_PAGE_SIZE);

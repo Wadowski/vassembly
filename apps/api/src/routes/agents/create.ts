@@ -10,6 +10,7 @@ export const agentCreateBodySchema = z.object({
   category: z.enum(Object.values(AgentCategory) as [AgentCategory, ...AgentCategory[]]),
   description: z.string().min(1).max(500),
   rule: z.string().min(1).max(2000),
+  integrationCredentialId: z.string().optional(),
 });
 
 export const agentCreateRoute = defineRoute({

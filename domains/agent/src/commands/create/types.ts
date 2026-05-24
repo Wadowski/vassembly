@@ -7,5 +7,6 @@ export interface CreateAgentCommandInput {
   description: string;
   rule: string;
   status?: AgentStatus;
+  integrationCredentialId?: string;
   removedAt?: null;
 }

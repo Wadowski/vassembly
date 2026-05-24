@@ -13,6 +13,7 @@ const CREATE_SCHEMA = z.object({
   description: z.string().max(500),
   rule: z.string().max(2000),
   status: z.enum(Object.values(AgentStatus) as [string, ...string[]]),
+  integrationCredentialId: z.string().optional(),
   removedAt: z.null().default(null),
 });
 

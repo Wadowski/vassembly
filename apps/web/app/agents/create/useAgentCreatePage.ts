@@ -33,6 +33,7 @@ export function useAgentCreatePage(): UseAgentCreatePageResult {
             category: payload.category as AgentCategory,
             description: payload.description,
             rule: payload.rule,
+            integrationCredentialId: payload.integrationCredentialId,
           },
         });
         snackbar.show({ variant: 'success', message: 'Agent created successfully', duration: 4000 });

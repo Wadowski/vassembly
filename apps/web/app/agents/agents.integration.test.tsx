@@ -14,6 +14,7 @@ const buildAgent = (overrides: Partial<AgentDto>): AgentDto => ({
   rule: 'rule',
   userId: 'user-1',
   status: AgentStatus.Active,
+  integrationCredentialId: null,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
   removedAt: null,

@@ -19,7 +19,7 @@ describe('AgentForm', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: /create agent/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /create agent/i }).hasAttribute('disabled')).toBe(true);
 
     fireEvent.blur(screen.getByLabelText(/name/i), { target: { value: '' } });
     expect(screen.getByText(/name is required/i)).not.toBeNull();
@@ -67,6 +67,7 @@ describe('AgentForm', () => {
           rule: 'Idle',
           userId: 'user-1',
           status: AgentStatus.Archived,
+          integrationCredentialId: null,
           createdAt: '2026-01-01T00:00:00.000Z',
           updatedAt: '2026-03-01T00:00:00.000Z',
           removedAt: '2026-03-01T00:00:00.000Z',
@@ -102,6 +103,7 @@ describe('AgentForm', () => {
           rule: 'Stay consistent',
           userId: 'user-1',
           status: AgentStatus.Active,
+          integrationCredentialId: 'cred-1',
           createdAt: '2026-01-01T00:00:00.000Z',
           updatedAt: '2026-01-05T00:00:00.000Z',
           removedAt: null,

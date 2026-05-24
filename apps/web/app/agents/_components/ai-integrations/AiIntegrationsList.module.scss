@@ -1,0 +1,98 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.sectionCard {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.toolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filtersGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.filterField {
+  min-width: 10rem;
+  flex: 1;
+  max-width: 14rem;
+}
+
+.filterDropdown {
+  width: 10rem;
+}
+
+.createButton {
+  flex-shrink: 0;
+}
+
+.integrationTable {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.archivedStatus {
+  opacity: 0.7;
+}
+
+.archivedStatusText {
+  text-decoration: line-through;
+}
+
+.connectionBadge,
+.providerTag,
+.agentUsageBadge {
+  white-space: nowrap;
+}
+
+.actionsCell {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: $spacing-1;
+  align-items: flex-end;
+}
+
+.createdCell {
+  white-space: nowrap;
+}
+
+.backLink {
+  align-self: flex-start;
+}
+
+@media #{$media-mobile-only} {
+  .sectionCard {
+    padding: $spacing-4;
+  }
+
+  .filtersGroup {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterField,
+  .filterDropdown {
+    max-width: none;
+    width: 100%;
+  }
+
+  .toolbarRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

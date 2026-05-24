@@ -15,6 +15,7 @@
     "@vassembly/constants": "workspace:*",
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/errors": "workspace:*",
+    "@vassembly/validation": "workspace:*",
     "graphql": "^16.11.0",
     "zod": "^4.3.6"
   },

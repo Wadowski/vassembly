@@ -9,7 +9,7 @@ import { TextField } from '@vassembly/ui-text-field';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 import { type FormEvent, useState } from 'react';
 import { resolveOfflineRestrictionMessage } from '../../../lib/network/onlineStatus';
-import { SETTINGS_PROFILE_NAMES_SCHEMA } from '../formSchemas';
+import { validateSettingsProfileNames } from '../formSchemas';
 import { useProfileDraftState } from './settingsProfile/useProfileDraftState';
 import styles from '../SettingsSections.module.scss';
 
@@ -46,13 +46,14 @@ export const SettingsProfileSection = ({
       return;
     }
 
-    const validation = SETTINGS_PROFILE_NAMES_SCHEMA.safeParse({
+    const validation = validateSettingsProfileNames({
       firstName: draftFirstName,
       lastName: draftLastName,
     });
     if (!validation.success) {
-      const firstNameIssue = validation.error.issues.find((issue) => issue.path[0] === 'firstName');
-      const lastNameIssue = validation.error.issues.find((issue) => issue.path[0] === 'lastName');
+      const issues = validation.error.error?.issues ?? [];
+      const firstNameIssue = issues.find((issue) => issue.path[0] === 'firstName');
+      const lastNameIssue = issues.find((issue) => issue.path[0] === 'lastName');
 
       setFirstNameErrorMessage(
         typeof firstNameIssue?.message === 'string' ? firstNameIssue.message : undefined,

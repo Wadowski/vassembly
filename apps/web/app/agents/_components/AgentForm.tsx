@@ -1,17 +1,20 @@
 'use client';
 
 import type { ChangeEvent, FormEvent } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { AGENT_CATEGORY_OPTIONS, AGENT_DESCRIPTION_MAX, AGENT_RULE_MAX, useAgentForm } from '@vassembly/ui-api-hooks';
+import { useAiIntegrations } from '@vassembly/ui-api-hooks';
 import { Alert } from '@vassembly/ui-alert';
 import { Button } from '@vassembly/ui-button';
 import { Dropdown } from '@vassembly/ui-dropdown';
 import { Text } from '@vassembly/ui-text';
 import { TextField } from '@vassembly/ui-text-field';
 
+import { AGENT_CATEGORY_OPTIONS, AGENT_DESCRIPTION_MAX, AGENT_RULE_MAX } from './agentFormConstants';
+import { useAgentForm } from './_hooks/useAgentForm';
 import styles from './AgentForm.module.scss';
 import { AgentFormMode, type AgentFormProps } from './AgentForm.types';
+import { IntegrationCredentialPicker } from './IntegrationCredentialPicker';
 
 const CATEGORY_OPTIONS = AGENT_CATEGORY_OPTIONS.map((option) => ({
   value: option.value,
@@ -43,7 +46,33 @@ export function AgentForm({
     category: initialAgent?.category ?? '',
     description: initialAgent?.description ?? '',
     rule: initialAgent?.rule ?? '',
+    integrationCredentialId: initialAgent?.integrationCredentialId ?? null,
   });
+
+  const { data: integrationsData, fetch: fetchIntegrations, isLoading: isIntegrationsLoading } = useAiIntegrations();
+
+  useEffect(() => {
+    void fetchIntegrations({ status: 'active', size: 100 });
+  }, [fetchIntegrations]);
+
+  const connectedIntegrations = useMemo(() => {
+    const activeConnected = (integrationsData?.items ?? []).filter(
+      (credential) => credential.connectionStatus === 'connected' && credential.status === 'active',
+    );
+    const selectedId = values.integrationCredentialId;
+    if (selectedId === null) {
+      return activeConnected;
+    }
+    const isSelectedIncluded = activeConnected.some((credential) => credential.id === selectedId);
+    if (isSelectedIncluded) {
+      return activeConnected;
+    }
+    const selectedFromAll = (integrationsData?.items ?? []).find((credential) => credential.id === selectedId);
+    if (selectedFromAll === undefined) {
+      return activeConnected;
+    }
+    return [...activeConnected, selectedFromAll];
+  }, [integrationsData?.items, values.integrationCredentialId]);
 
   useEffect(() => {
     if (initialAgent === undefined) {
@@ -54,6 +83,7 @@ export function AgentForm({
       category: initialAgent.category,
       description: initialAgent.description,
       rule: initialAgent.rule,
+      integrationCredentialId: initialAgent.integrationCredentialId,
     });
   }, [initialAgent, reset]);
 
@@ -106,8 +136,17 @@ export function AgentForm({
     blurField('rule');
   };
 
+  const handleIntegrationChange = (nextValue: string | null): void => {
+    setField('integrationCredentialId', nextValue);
+  };
+
+  const handleIntegrationBlur = (): void => {
+    blurField('integrationCredentialId');
+  };
+
   const isSubmitBlocked = archived || isSubmitting || !isValid;
   const categoryMsg = getFieldErrorMessage('category');
+  const integrationMsg = getFieldErrorMessage('integrationCredentialId');
 
   return (
     <form className={styles.formStack} onSubmit={handleSubmit}>
@@ -147,6 +186,16 @@ export function AgentForm({
         onBlur={handleCategoryBlur}
       />
       {categoryMsg !== undefined ? <Text variant="body2">{categoryMsg}</Text> : null}
+      <div onBlur={handleIntegrationBlur}>
+        <IntegrationCredentialPicker
+          value={values.integrationCredentialId}
+          onChange={handleIntegrationChange}
+          credentials={connectedIntegrations}
+          isLoading={isIntegrationsLoading}
+          isDisabled={archived}
+          errorMessage={integrationMsg}
+        />
+      </div>
       <TextField
         label="Description"
         value={values.description}

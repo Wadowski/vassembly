@@ -10,6 +10,25 @@ loadEnvConfig(monorepoRoot);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/settings/ai-integrations',
+        destination: '/agents#ai-integrations',
+        permanent: true,
+      },
+      {
+        source: '/settings/ai-integrations/create',
+        destination: '/agents/ai-integrations/create',
+        permanent: true,
+      },
+      {
+        source: '/settings/ai-integrations/:id/edit',
+        destination: '/agents/ai-integrations/:id/edit',
+        permanent: true,
+      },
+    ];
+  },
   transpilePackages: [
     "@vassembly/constants",
     "@vassembly/theme",

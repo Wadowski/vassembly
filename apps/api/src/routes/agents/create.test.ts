@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { UnauthorizedError } from '@vassembly/errors';
+import { validatorFactory } from '@vassembly/validation';
 
 const { mockAuthorize, mockCreateAgent } = vi.hoisted(() => ({
   mockAuthorize: vi.fn(),
@@ -88,7 +89,8 @@ describe('POST /agents route', () => {
   });
 
   it('should reject bodies that violate documented maximum lengths', () => {
-    const parsed = agentCreateBodySchema.safeParse({
+    const validateAgentCreateBody = validatorFactory(agentCreateBodySchema);
+    const parsed = validateAgentCreateBody({
       name: 'x'.repeat(101),
       category: 'coding',
       description: 'ok',

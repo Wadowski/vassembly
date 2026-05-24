@@ -17,6 +17,7 @@ const hoisted = vi.hoisted(() => ({
             rule: string;
             userId: string;
             status: string;
+            integrationCredentialId: string | null;
             createdAt: string;
             updatedAt: string;
             removedAt: string | null;
@@ -63,6 +64,7 @@ describe('useAgents', () => {
             createdAt: '2026-01-01T00:00:00.000Z',
             updatedAt: '2026-01-02T00:00:00.000Z',
             removedAt: null,
+            integrationCredentialId: null,
           },
         ],
         totalCount: 1,
@@ -81,6 +83,7 @@ describe('useAgents', () => {
           rule: 'Organize',
           userId: 'user-1',
           status: AgentStatus.Active,
+          integrationCredentialId: null,
           createdAt: '2026-01-01T00:00:00.000Z',
           updatedAt: '2026-01-02T00:00:00.000Z',
           removedAt: null,

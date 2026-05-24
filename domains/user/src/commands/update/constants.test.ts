@@ -1,11 +1,14 @@
 import { describe, it, expect } from "vitest";
+import { validatorFactory } from "@vassembly/validation";
 
 import { UPDATE_USER_VALIDATION_SCHEMA } from "./constants";
+
+const validateUpdateUser = validatorFactory(UPDATE_USER_VALIDATION_SCHEMA);
 
 describe("UPDATE_USER_VALIDATION_SCHEMA", () => {
   it("should accept trimmed names within length bounds", () => {
     expect(
-      UPDATE_USER_VALIDATION_SCHEMA.safeParse({
+      validateUpdateUser({
         firstName: "  Pat  ",
       }).success,
     ).toBe(true);
@@ -13,7 +16,7 @@ describe("UPDATE_USER_VALIDATION_SCHEMA", () => {
 
   it("should reject names longer than 80 characters", () => {
     expect(
-      UPDATE_USER_VALIDATION_SCHEMA.safeParse({
+      validateUpdateUser({
         firstName: "x".repeat(81),
       }).success,
     ).toBe(false);
@@ -21,7 +24,7 @@ describe("UPDATE_USER_VALIDATION_SCHEMA", () => {
 
   it("should reject names that are empty after trimming", () => {
     expect(
-      UPDATE_USER_VALIDATION_SCHEMA.safeParse({
+      validateUpdateUser({
         firstName: "     ",
       }).success,
     ).toBe(false);
@@ -29,7 +32,7 @@ describe("UPDATE_USER_VALIDATION_SCHEMA", () => {
 
   it("should accept updates without firstName", () => {
     expect(
-      UPDATE_USER_VALIDATION_SCHEMA.safeParse({
+      validateUpdateUser({
         lastName: "Example",
       }).success,
     ).toBe(true);
@@ -37,7 +40,7 @@ describe("UPDATE_USER_VALIDATION_SCHEMA", () => {
 
   it("should accept updates without any name fields", () => {
     expect(
-      UPDATE_USER_VALIDATION_SCHEMA.safeParse({
+      validateUpdateUser({
         verifiedAt: new Date(),
       }).success,
     ).toBe(true);
