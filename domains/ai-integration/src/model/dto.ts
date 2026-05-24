@@ -17,6 +17,7 @@ export interface AiIntegrationCredentialResponse {
   connectionStatus?: AiIntegrationConnectionStatusValue;
   lastTestedAt?: string;
   lastConnectionError?: string;
+  model?: string;
   agentUsageCount?: number;
   createdAt?: Date;
   updatedAt?: Date;

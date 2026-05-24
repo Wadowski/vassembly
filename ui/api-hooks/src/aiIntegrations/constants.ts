@@ -27,6 +27,7 @@ export const FORM_LIMITS = {
   apiKeyMaxLength: 500,
   baseUrlMaxLength: 500,
   organizationIdMaxLength: 100,
+  modelMaxLength: 200,
 };
 
 export const PAGE_SIZE = 10;

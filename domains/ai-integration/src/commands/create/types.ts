@@ -7,4 +7,5 @@ export interface CreateAiIntegrationCommandInput {
   apiKey?: string;
   baseUrl?: string;
   organizationId?: string;
+  model: string;
 }

@@ -8,7 +8,8 @@ import { Text } from '@vassembly/ui-text';
 import { TextField } from '@vassembly/ui-text-field';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 import { type FormEvent, useState } from 'react';
-import { resolveOfflineRestrictionMessage } from '../../../lib/network/onlineStatus';
+import type { z } from 'zod';
+import { resolveOfflineRestrictionMessage } from '../onlineStatus';
 import { validateSettingsProfileNames } from '../formSchemas';
 import { useProfileDraftState } from './settingsProfile/useProfileDraftState';
 import styles from '../SettingsSections.module.scss';
@@ -51,7 +52,7 @@ export const SettingsProfileSection = ({
       lastName: draftLastName,
     });
     if (!validation.success) {
-      const issues = validation.error.error?.issues ?? [];
+      const issues = (validation.error.error?.issues ?? []) as z.ZodIssue[];
       const firstNameIssue = issues.find((issue) => issue.path[0] === 'firstName');
       const lastNameIssue = issues.find((issue) => issue.path[0] === 'lastName');
 

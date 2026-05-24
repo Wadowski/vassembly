@@ -6,6 +6,7 @@ export interface UpdateAiIntegrationCommandData {
   apiKey?: string;
   baseUrl?: string;
   organizationId?: string;
+  model?: string;
   status?: AiIntegrationStatusValue;
   connectionStatus?: string;
   lastTestedAt?: Date;

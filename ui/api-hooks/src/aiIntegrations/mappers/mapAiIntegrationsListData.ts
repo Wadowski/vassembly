@@ -28,6 +28,7 @@ const toCredentialDto = (row: GraphQLAiIntegrationCredential): AiIntegrationCred
   connectionStatus: row.connectionStatus ?? '',
   lastTestedAt: row.lastTestedAt ?? null,
   lastConnectionError: row.lastConnectionError ?? null,
+  model: row.model ?? undefined,
   agentUsageCount: row.agentUsageCount ?? undefined,
   createdAt: row.createdAt ?? '',
   updatedAt: row.updatedAt ?? '',

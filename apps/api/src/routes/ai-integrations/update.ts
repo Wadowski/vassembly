@@ -11,6 +11,7 @@ export const aiIntegrationPatchBodySchema = z
     apiKey: z.string().min(1).max(500).optional(),
     baseUrl: z.string().url().max(500).optional().nullable(),
     organizationId: z.string().max(100).optional().nullable(),
+    model: z.string().min(1).max(200).optional(),
   })
   .strict();
 

@@ -26,4 +26,6 @@ export class AiIntegrationCredentialModel extends Model {
   lastTestedAt?: Date;
 
   lastConnectionError?: string;
+
+  model?: string;
 }

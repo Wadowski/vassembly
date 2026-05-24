@@ -77,4 +77,19 @@ describe('update ai integration command', () => {
     });
     expect(result.data.connectionStatus).toBe('untested');
   });
+
+  it('should update model without resetting connection status', async () => {
+    await update({
+      userId: 'user-1',
+      id: 'cred-1',
+      data: { model: 'gemini-pro' },
+    });
+
+    expect(mockUpdate).toHaveBeenCalledWith({
+      id: 'cred-1',
+      data: {
+        model: 'gemini-pro',
+      },
+    });
+  });
 });

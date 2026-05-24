@@ -13,6 +13,7 @@ export interface AiIntegrationCredentialDto {
   connectionStatus: string;
   lastTestedAt?: string | null;
   lastConnectionError?: string | null;
+  model?: string | null;
   agentUsageCount?: number;
   createdAt: string;
   updatedAt: string;
@@ -45,6 +46,7 @@ export interface GraphQLAiIntegrationCredential {
   connectionStatus?: string | null;
   lastTestedAt?: string | null;
   lastConnectionError?: string | null;
+  model?: string | null;
   agentUsageCount?: number | null;
   createdAt?: string | null;
   updatedAt?: string | null;
@@ -74,6 +76,7 @@ export interface AiIntegrationFormInput {
   apiKey: string;
   baseUrl?: string | null;
   organizationId?: string | null;
+  model: string;
 }
 
 export interface AiIntegrationUpdateInput {
@@ -81,4 +84,5 @@ export interface AiIntegrationUpdateInput {
   apiKey?: string;
   baseUrl?: string | null;
   organizationId?: string | null;
+  model?: string;
 }

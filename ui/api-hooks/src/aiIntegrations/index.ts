@@ -3,7 +3,7 @@ export { useAiIntegrationUpdate } from './http/updateCredential';
 export { useAiIntegrationDelete } from './http/deleteCredential';
 export { useAiIntegrationRestore } from './http/restoreCredential';
 export { useTestConnection } from './http/testConnection';
-export { useAiIntegrations } from './hooks/useAiIntegrations';
+export { useAiIntegrations } from './graphql/useAiIntegrations';
 export * from './constants';
 export * from './types';
 export type {

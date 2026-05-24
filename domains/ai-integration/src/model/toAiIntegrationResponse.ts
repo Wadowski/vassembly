@@ -20,6 +20,7 @@ export const toAiIntegrationResponse = (
     connectionStatus: credential.connectionStatus,
     lastTestedAt: credential.lastTestedAt ? credential.lastTestedAt.toISOString() : undefined,
     lastConnectionError: credential.lastConnectionError,
+    model: credential.model,
     createdAt: credential.createdAt,
     updatedAt: credential.updatedAt,
     removedAt: credential.removedAt,

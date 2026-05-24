@@ -1,4 +1,5 @@
 import aiIntegrationDomain from '@vassembly/domain-ai-integration';
+import { WrongParamError } from '@vassembly/errors';
 
 import { getAgentUsageCount } from '../../helpers/getAgentUsageCount';
 
@@ -18,8 +19,8 @@ export const deleteCredential = async (
   });
 
   if (agentUsageCount > 0) {
-    console.warn(
-      `Deleting AI integration credential ${input.credentialId} used by ${agentUsageCount} agents`,
+    throw new WrongParamError(
+      `Credential is used by ${agentUsageCount} agents and cannot be deleted`,
     );
   }
 

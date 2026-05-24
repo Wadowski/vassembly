@@ -68,7 +68,6 @@ const testSavedConnection = async (
         ? AiIntegrationConnectionStatus.Connected
         : AiIntegrationConnectionStatus.Failed,
       lastTestedAt: new Date(),
-      lastConnectionError: result.success ? null : (result.error ?? 'Connection test failed'),
     },
   });
 

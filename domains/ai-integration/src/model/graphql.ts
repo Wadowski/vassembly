@@ -17,6 +17,7 @@ export const gqlAiIntegrationSchema = (builder: Builder): void => {
       connectionStatus: t.exposeString('connectionStatus', { nullable: true }),
       lastTestedAt: t.exposeString('lastTestedAt', { nullable: true }),
       lastConnectionError: t.exposeString('lastConnectionError', { nullable: true }),
+      model: t.exposeString('model', { nullable: true }),
       agentUsageCount: t.exposeInt('agentUsageCount', { nullable: true }),
     }),
   });

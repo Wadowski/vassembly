@@ -6,7 +6,7 @@ import { useSnackbar } from '@vassembly/ui-snackbar';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getRequestErrorMessage } from '../../../../lib/agents/errorMessage';
+import { getRequestErrorMessage } from '../../getRequestErrorMessage';
 
 const REDIRECT_AFTER_UPDATE_MS = 1500;
 

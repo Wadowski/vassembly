@@ -36,6 +36,7 @@ const BASE_INPUT = {
   name: 'Personal Gemini',
   provider: 'gemini' as const,
   apiKey: 'sk-test-api-key-1234',
+  model: 'gemini-pro',
 };
 
 describe('create ai integration command', () => {
@@ -49,6 +50,7 @@ describe('create ai integration command', () => {
       name: 'Personal Gemini',
       provider: 'gemini',
       encryptedApiKey: 'encrypted-key-value-abcd',
+      model: 'gemini-pro',
       status: 'active',
       connectionStatus: 'untested',
       removedAt: null,
@@ -64,6 +66,7 @@ describe('create ai integration command', () => {
     expect(result.data.encryptedApiKey).toBe('encrypted-key-value-abcd');
     expect(result.data.status).toBe('active');
     expect(result.data.connectionStatus).toBe('untested');
+    expect(result.data.model).toBe('gemini-pro');
     expect(result.data.userId).toBe('user-1');
   });
 
@@ -73,6 +76,19 @@ describe('create ai integration command', () => {
         userId: 'user-1',
         name: 'Missing Key',
         provider: 'gemini',
+        model: 'gemini-pro',
+      }),
+    ).rejects.toThrow(WrongParamError);
+  });
+
+  it('should reject create when model is missing', async () => {
+    await expect(
+      create({
+        userId: 'user-1',
+        name: 'Missing Model',
+        provider: 'gemini',
+        apiKey: 'sk-test-api-key-1234',
+        model: '',
       }),
     ).rejects.toThrow(WrongParamError);
   });
@@ -83,6 +99,7 @@ describe('create ai integration command', () => {
         userId: 'user-1',
         name: 'Local LM',
         provider: 'lm_studio',
+        model: 'local-model',
       }),
     ).rejects.toThrow(WrongParamError);
   });

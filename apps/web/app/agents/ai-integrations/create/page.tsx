@@ -1,8 +1,8 @@
 'use client';
 
 import { ProtectedAuthRoute } from '../../../../lib/auth/ProtectedAuthRoute';
-import { AI_INTEGRATIONS_CREATE_PATH } from '../../../../lib/routes/aiIntegrations';
-import { AiIntegrationCreatePageContent } from '../../_components/ai-integrations/useAiIntegrationCreatePage';
+import { AI_INTEGRATIONS_CREATE_PATH } from '../../aiIntegrationRoutes';
+import { AiIntegrationCreatePageContent } from '../../_components/ai-integrations/_components/createPage';
 
 const LOGIN_ROUTE = `/login?returnUrl=${encodeURIComponent(AI_INTEGRATIONS_CREATE_PATH)}`;
 

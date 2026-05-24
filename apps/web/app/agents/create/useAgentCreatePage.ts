@@ -6,7 +6,7 @@ import { useSnackbar } from '@vassembly/ui-snackbar';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
-import { getRequestErrorMessage } from '../../../lib/agents/errorMessage';
+import { getRequestErrorMessage } from '../getRequestErrorMessage';
 
 const REDIRECT_AFTER_CREATE_MS = 1500;
 

@@ -14,6 +14,7 @@ export const aiIntegrationCreateBodySchema = z
     apiKey: z.string().min(1).max(500).optional(),
     baseUrl: z.string().url().max(500).optional(),
     organizationId: z.string().max(100).optional(),
+    model: z.string().min(1).max(200),
   })
   .superRefine((data, ctx) => {
     if (data.provider === AiIntegrationProvider.Gemini && !data.apiKey?.trim()) {

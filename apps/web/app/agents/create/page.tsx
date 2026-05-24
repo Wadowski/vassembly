@@ -5,7 +5,7 @@ import { Text } from '@vassembly/ui-text';
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
 import styles from './AgentCreatePage.module.scss';
 import { AgentForm } from '../_components/AgentForm';
-import { AgentFormMode } from '../_components/AgentForm.types';
+import { AgentFormMode } from '../_components/AgentForm';
 import { AgentCreateSkeleton } from './_components/AgentCreateSkeleton';
 import { useAgentCreatePage } from './useAgentCreatePage';
 

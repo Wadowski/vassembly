@@ -17,6 +17,7 @@ const UPDATE_DB_SCHEMA = z.object({
   encryptedApiKey: z.string().optional(),
   baseUrl: z.string().url().optional(),
   organizationId: z.string().optional(),
+  model: z.string().min(1).max(200).optional(),
   status: z.enum(Object.values(AiIntegrationStatus) as [string, ...string[]]).optional(),
   connectionStatus: z.enum(Object.values(AiIntegrationConnectionStatus) as [string, ...string[]]).optional(),
   lastTestedAt: z.date().optional(),

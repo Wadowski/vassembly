@@ -3,7 +3,11 @@ import { z } from 'zod';
 
 import type { AiIntegrationCredentialResponse } from '@vassembly/domain-ai-integration';
 
-const PROVIDER_VALUES = Object.values(AiIntegrationProvider) as [string, ...string[]];
+const PROVIDER_VALUES = [
+  AiIntegrationProvider.Gemini,
+  AiIntegrationProvider.ChatGpt,
+  AiIntegrationProvider.LmStudio,
+] as const;
 
 export const CREATE_CREDENTIAL_BODY_SCHEMA = z
   .object({
@@ -12,6 +16,7 @@ export const CREATE_CREDENTIAL_BODY_SCHEMA = z
     apiKey: z.string().optional(),
     baseUrl: z.string().url().optional().nullable(),
     organizationId: z.string().optional().nullable(),
+    model: z.string().min(1).max(200),
   })
   .superRefine((data, ctx) => {
     if (data.provider === AiIntegrationProvider.Gemini && !data.apiKey?.trim()) {
@@ -25,13 +30,7 @@ export const CREATE_CREDENTIAL_BODY_SCHEMA = z
     }
   });
 
-export interface CreateCredentialBody {
-  name: string;
-  provider: string;
-  apiKey?: string;
-  baseUrl?: string | null;
-  organizationId?: string | null;
-}
+export type CreateCredentialBody = z.infer<typeof CREATE_CREDENTIAL_BODY_SCHEMA>;
 
 export interface CreateCredentialHandlerInput {
   userId: string;

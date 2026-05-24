@@ -1,6 +1,7 @@
 import aiIntegrationDomain, { AiIntegrationConnectionStatus } from '@vassembly/domain-ai-integration';
 import { validatorFactory } from '@vassembly/validation';
 
+import { assertModelInProviderList } from '../../helpers/assertModelInProviderList';
 import { assertProviderConnection } from '../../helpers/assertProviderConnection';
 import { enrichCredentialResponse } from '../../helpers/enrichCredentialResponse';
 
@@ -28,7 +29,7 @@ export const updateCredential = async (
   const needsRetest = shouldRetestConnection({ existing, body: parsed });
 
   if (needsRetest) {
-    await assertProviderConnection({
+    const connectionResult = await assertProviderConnection({
       provider: existing.provider ?? '',
       apiKey: resolveApiKeyForTest({
         bodyApiKey: parsed.apiKey,
@@ -37,12 +38,20 @@ export const updateCredential = async (
       baseUrl: parsed.baseUrl ?? existing.baseUrl,
       organizationId: parsed.organizationId ?? existing.organizationId,
     });
+
+    if (parsed.model !== undefined) {
+      assertModelInProviderList({ model: parsed.model, models: connectionResult.models });
+    }
   }
 
   const updateResult = await aiIntegrationDomain.commands.update({
     id: input.credentialId,
     userId: input.userId,
-    data: parsed,
+    data: {
+      ...parsed,
+      baseUrl: parsed.baseUrl === null ? undefined : parsed.baseUrl,
+      organizationId: parsed.organizationId === null ? undefined : parsed.organizationId,
+    },
   });
 
   let credential = updateResult.data;
@@ -53,7 +62,6 @@ export const updateCredential = async (
       data: {
         connectionStatus: AiIntegrationConnectionStatus.Connected,
         lastTestedAt: new Date(),
-        lastConnectionError: null,
       },
     });
     credential = connectedResult.data;

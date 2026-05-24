@@ -2,6 +2,7 @@ import aiIntegrationDomain, { AiIntegrationConnectionStatus } from '@vassembly/d
 import { ValidationError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
 
+import { assertModelInProviderList } from '../../helpers/assertModelInProviderList';
 import { assertProviderConnection } from '../../helpers/assertProviderConnection';
 import { enrichCredentialResponse } from '../../helpers/enrichCredentialResponse';
 
@@ -20,20 +21,23 @@ export const createCredential = async (
   }
   const parsed = parsedResult.data;
 
-  await assertProviderConnection({
+  const connectionResult = await assertProviderConnection({
     provider: parsed.provider,
     apiKey: parsed.apiKey,
     baseUrl: parsed.baseUrl,
     organizationId: parsed.organizationId,
   });
 
+  assertModelInProviderList({ model: parsed.model, models: connectionResult.models });
+
   const createResult = await aiIntegrationDomain.commands.create({
     userId: input.userId,
     name: parsed.name,
     provider: parsed.provider,
     apiKey: parsed.apiKey,
-    baseUrl: parsed.baseUrl,
-    organizationId: parsed.organizationId,
+    baseUrl: parsed.baseUrl ?? undefined,
+    organizationId: parsed.organizationId ?? undefined,
+    model: parsed.model,
   });
 
   const credentialId = createResult.data.id;
@@ -47,7 +51,6 @@ export const createCredential = async (
     data: {
       connectionStatus: AiIntegrationConnectionStatus.Connected,
       lastTestedAt: new Date(),
-      lastConnectionError: null,
     },
   });
 

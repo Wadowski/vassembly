@@ -1,7 +1,7 @@
 'use client';
 
 import type { FormEvent } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import {
@@ -13,17 +13,17 @@ import {
   type TestConnectionResult,
 } from '@vassembly/ui-api-hooks';
 
-import { useAiIntegrationForm } from '../../../_components/ai-integrations/_hooks/useAiIntegrationForm';
+import { useAiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
 import { Alert } from '@vassembly/ui-alert';
 import { Button } from '@vassembly/ui-button';
 import { Loader } from '@vassembly/ui-loader';
 import { Text } from '@vassembly/ui-text';
 import { useSnackbar } from '@vassembly/ui-snackbar';
 
-import { getRequestErrorMessage } from '../../../../../lib/agents/errorMessage';
-import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../../../lib/routes/aiIntegrations';
-import styles from '../../../_components/ai-integrations/AiIntegrationsList.module.scss';
-import { AiIntegrationForm } from '../../../_components/ai-integrations/AiIntegrationForm';
+import { getRequestErrorMessage } from '../../../getRequestErrorMessage';
+import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../aiIntegrationRoutes';
+import styles from '../../../_components/ai-integrations/_components/AiIntegrationsList/styles.module.scss';
+import { AiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
 
 const REDIRECT_AFTER_UPDATE_MS = 1500;
 
@@ -45,6 +45,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
   const [credential, setCredential] = useState<AiIntegrationCredentialDto | undefined>(undefined);
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
   const [testResult, setTestResult] = useState<TestConnectionResult | undefined>(undefined);
+  const hasLoadedCredential = useRef(false);
 
   const form = useAiIntegrationForm({
     mode: 'edit',
@@ -55,12 +56,25 @@ export function AiIntegrationEditPageContent(): JSX.Element {
           apiKey: '',
           baseUrl: credential.baseUrl,
           organizationId: credential.organizationId,
+          model: credential.model ?? '',
         }
       : undefined,
   });
 
   const { mutate: update, isLoading: isUpdating } = useAiIntegrationUpdate();
   const { mutate: testConnection, isLoading: isTesting } = useTestConnection();
+
+  useEffect(() => {
+    if (credential === undefined) {
+      return;
+    }
+    if (!hasLoadedCredential.current) {
+      hasLoadedCredential.current = true;
+      return;
+    }
+    setTestResult(undefined);
+    form.handleChange('model', '');
+  }, [credential, form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
 
   useEffect(() => {
     if (credentialId === '') {
@@ -82,6 +96,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
             apiKey: '',
             baseUrl: found.baseUrl,
             organizationId: found.organizationId,
+            model: found.model ?? '',
           });
         }
       } catch (error) {
@@ -144,6 +159,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
         name: patchBody.name,
         baseUrl: patchBody.baseUrl,
         organizationId: patchBody.organizationId,
+        model: patchBody.model,
         ...(patchBody.apiKey.trim() !== '' ? { apiKey: patchBody.apiKey } : {}),
       };
 

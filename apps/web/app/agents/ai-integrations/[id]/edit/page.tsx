@@ -1,7 +1,7 @@
 'use client';
 
 import { ProtectedAuthRoute } from '../../../../../lib/auth/ProtectedAuthRoute';
-import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../../../lib/routes/aiIntegrations';
+import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../aiIntegrationRoutes';
 import { AiIntegrationEditPageContent } from './useAiIntegrationEditPage';
 
 const LOGIN_ROUTE = `/login?returnUrl=${encodeURIComponent(AI_INTEGRATIONS_LIST_ANCHOR)}`;
