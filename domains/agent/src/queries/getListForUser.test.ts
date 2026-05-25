@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { ValidationError } from '@vassembly/errors';
+import { WrongParamError } from '@vassembly/errors';
 
 import { AgentCategory, AgentStatus, type AgentModel } from '../model';
 import { AGENT_LIST_ALL_STATUSES } from './getListForUser.types';
@@ -136,7 +136,7 @@ describe('getListForUser agent query', () => {
   });
 
   it('should reject invalid pagination parameters before querying MongoDB', async () => {
-    await expect(getListForUser({ userId: 'user-1', page: -1, size: 10 })).rejects.toThrow(ValidationError);
+    await expect(getListForUser({ userId: 'user-1', page: -1, size: 10 })).rejects.toThrow(WrongParamError);
   });
 
   it('should cap page size to service maximum', async () => {

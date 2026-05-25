@@ -11,6 +11,7 @@ export interface UpdateAgentHandlerInput {
     description: string;
     rule: string;
     status: AgentStatus;
+    integrationCredentialId: string;
   }>;
 }
 

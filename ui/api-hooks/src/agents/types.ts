@@ -20,6 +20,7 @@ export interface AgentDto {
   rule: string;
   userId: string;
   status: AgentStatus;
+  integrationCredentialId: string | null;
   createdAt: string;
   updatedAt: string;
   removedAt: string | null;
@@ -37,6 +38,7 @@ export interface AgentFormValues {
   category: AgentCategory | '';
   description: string;
   rule: string;
+  integrationCredentialId: string | null;
 }
 
 export interface UseAgentFormResult {
@@ -67,6 +69,7 @@ export interface GraphQLAgentRow {
   rule?: string | null;
   userId?: string | null;
   status?: string | null;
+  integrationCredentialId?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
   removedAt?: string | null;

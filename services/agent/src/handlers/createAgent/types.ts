@@ -9,5 +9,6 @@ export interface CreateAgentHandlerInput {
     category: AgentCategory;
     description: string;
     rule: string;
+    integrationCredentialId?: string;
   };
 }

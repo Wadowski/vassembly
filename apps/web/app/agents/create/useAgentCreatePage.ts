@@ -6,7 +6,7 @@ import { useSnackbar } from '@vassembly/ui-snackbar';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
-import { getRequestErrorMessage } from '../../../lib/agents/errorMessage';
+import { getRequestErrorMessage } from '../getRequestErrorMessage';
 
 const REDIRECT_AFTER_CREATE_MS = 1500;
 
@@ -33,6 +33,7 @@ export function useAgentCreatePage(): UseAgentCreatePageResult {
             category: payload.category as AgentCategory,
             description: payload.description,
             rule: payload.rule,
+            integrationCredentialId: payload.integrationCredentialId,
           },
         });
         snackbar.show({ variant: 'success', message: 'Agent created successfully', duration: 4000 });

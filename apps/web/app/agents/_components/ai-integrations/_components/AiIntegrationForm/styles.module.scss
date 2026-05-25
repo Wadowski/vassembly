@@ -1,0 +1,53 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-component-gap-md;
+}
+
+.providerDropdown {
+  max-width: 200px;
+}
+
+.modelDropdown {
+  max-width: 100%;
+}
+
+.formCard {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  padding-top: $spacing-2;
+}
+
+.testConnectionRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.testSuccess {
+  color: $color-success-300;
+  font-size: $font-size-body-sm;
+}
+
+.testError {
+  color: $color-error-300;
+  font-size: $font-size-body-sm;
+}
+
+@media #{$media-mobile-only} {
+  .formCard {
+    padding: $spacing-4;
+  }
+}

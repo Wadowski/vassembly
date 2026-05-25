@@ -50,6 +50,24 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       error: undefined,
       fetch: testApiHooksStubs.mockAgentsFetch,
     })),
+    useAiIntegrations: vi.fn(() => ({
+      data: { items: [], totalCount: 0, page: 0, size: 10 },
+      isLoading: false,
+      error: undefined,
+      fetch: vi.fn().mockResolvedValue(undefined),
+    })),
+    useAiIntegrationDelete: vi.fn(() => ({
+      mutate: vi.fn().mockResolvedValue(undefined),
+      isLoading: false,
+    })),
+    useAiIntegrationRestore: vi.fn(() => ({
+      mutate: vi.fn().mockResolvedValue(undefined),
+      isLoading: false,
+    })),
+    useTestConnection: vi.fn(() => ({
+      mutate: vi.fn().mockResolvedValue(undefined),
+      isLoading: false,
+    })),
     useHttpClient: vi.fn(() => testApiHooksStubs.mockHttpClient),
   };
 });

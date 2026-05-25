@@ -8,9 +8,10 @@ import { Button } from '@vassembly/ui-button';
 import { useSnackbar } from '@vassembly/ui-snackbar';
 import { Text } from '@vassembly/ui-text';
 import { useState } from 'react';
+import type { z } from 'zod';
 
-import { resolveOfflineRestrictionMessage } from '../../../../lib/network/onlineStatus';
-import { SETTINGS_CHANGE_PASSWORD_FORM_SCHEMA } from '../../formSchemas';
+import { resolveOfflineRestrictionMessage } from '../../onlineStatus';
+import { validateSettingsChangePasswordForm } from '../../formSchemas';
 import styles from '../../SettingsSections.module.scss';
 import { SecurityControlledPasswordField } from './SecurityControlledPasswordField';
 
@@ -34,14 +35,14 @@ export const SettingsSecurityInteractiveBody = (): JSX.Element => {
 
     setFormAmbientCopy(undefined);
 
-    const validated = SETTINGS_CHANGE_PASSWORD_FORM_SCHEMA.safeParse({
+    const validated = validateSettingsChangePasswordForm({
       currentPassword,
       newPassword,
       confirmPassword,
     });
 
     if (!validated.success) {
-      const keyedEntries = validated.error.issues
+      const keyedEntries = ((validated.error.error?.issues ?? []) as z.ZodIssue[])
         .map((singleIssue): [string, string] | undefined => {
           const piece = singleIssue.path[0];
           if (typeof piece !== 'string') {

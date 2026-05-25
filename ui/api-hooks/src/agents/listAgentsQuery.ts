@@ -9,6 +9,7 @@ export const LIST_AGENTS_QUERY = `
         rule
         userId
         status
+        integrationCredentialId
         createdAt
         updatedAt
         removedAt

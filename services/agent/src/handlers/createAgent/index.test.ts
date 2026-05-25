@@ -2,8 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ValidationError } from '@vassembly/errors';
 
-const { mockCreate } = vi.hoisted(() => ({
+const { mockCreate, mockGetCredentialById } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
+  mockGetCredentialById: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-ai-integration', () => ({
+  default: {
+    queries: {
+      getById: mockGetCredentialById,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-agent', async () => {

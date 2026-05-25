@@ -30,6 +30,7 @@ describe('AgentsPage protected routing', () => {
     render(<AgentsPage />);
 
     expect(screen.queryByRole('heading', { name: /agents/i })).toBeNull();
+    expect(screen.queryByRole('heading', { name: /ai integrations/i })).toBeNull();
   });
 
   it('should render authenticated catalog chrome once sessions satisfy ProtectedAuthRoute', () => {
@@ -38,6 +39,7 @@ describe('AgentsPage protected routing', () => {
     render(<AgentsPage />);
 
     expect(screen.queryByRole('heading', { name: /agents/i })).not.toBeNull();
+    expect(screen.queryByRole('heading', { name: /ai integrations/i })).not.toBeNull();
   });
 
   it('should show loading skeleton while bootstrap is in progress', () => {
@@ -46,5 +48,6 @@ describe('AgentsPage protected routing', () => {
     render(<AgentsPage />);
 
     expect(screen.queryByRole('heading', { name: /agents/i })).toBeNull();
+    expect(screen.queryByRole('heading', { name: /ai integrations/i })).toBeNull();
   });
 });

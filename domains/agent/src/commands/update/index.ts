@@ -11,6 +11,7 @@ const UPDATE_DB_SCHEMA = z.object({
   description: z.string().max(500).optional(),
   rule: z.string().max(2000).optional(),
   status: z.enum(Object.values(AgentStatus) as [string, ...string[]]).optional(),
+  integrationCredentialId: z.string().optional(),
 });
 
 export const update = updateDbById<AgentModel>({

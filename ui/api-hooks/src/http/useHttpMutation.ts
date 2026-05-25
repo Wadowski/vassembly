@@ -14,6 +14,7 @@ export interface UseHttpMutationConfig<
   THttpResponse,
 > {
   path: string;
+  resolvePath?: (variables: TVariables | undefined) => string | undefined;
   method?: HttpMutationMethod;
   withAuth?: boolean;
   query?: Record<string, string | number | boolean>;
@@ -49,13 +50,19 @@ export const useHttpMutation = <
         return undefined;
       }
 
+      const path = config.resolvePath?.(variables) ?? config.path;
+
+      if (path === undefined || path === '') {
+        return undefined;
+      }
+
       setIsLoading(true);
       setError(undefined);
 
       try {
         const method = config.method ?? 'post';
         const requestOptions = {
-          path: config.path,
+          path,
           body,
           ...(config.withAuth !== undefined && { withAuth: config.withAuth }),
           ...(config.query && { query: config.query }),

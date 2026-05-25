@@ -1,3 +1,4 @@
+import { validatorFactory } from '@vassembly/validation';
 import { z } from 'zod';
 
 import type { UserSettingsV1 } from './types';
@@ -21,6 +22,8 @@ const STORED_SETTINGS_SCHEMA = z.object({
   }),
 });
 
+const validateStoredSettings = validatorFactory(STORED_SETTINGS_SCHEMA);
+
 export const parseStoredUserSettingsJson = ({
   rawJson,
 }: {
@@ -28,7 +31,7 @@ export const parseStoredUserSettingsJson = ({
 }): UserSettingsV1 | null => {
   try {
     const parsedUnknown = JSON.parse(rawJson) as unknown;
-    const parsed = STORED_SETTINGS_SCHEMA.safeParse(parsedUnknown);
+    const parsed = validateStoredSettings(parsedUnknown);
     if (!parsed.success) {
       return null;
     }

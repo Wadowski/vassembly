@@ -6,7 +6,7 @@ import { useSnackbar } from '@vassembly/ui-snackbar';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getRequestErrorMessage } from '../../../../lib/agents/errorMessage';
+import { getRequestErrorMessage } from '../../getRequestErrorMessage';
 
 const REDIRECT_AFTER_UPDATE_MS = 1500;
 
@@ -86,6 +86,7 @@ export function useAgentEditPage(): UseAgentEditPageResult {
             category: payload.category as AgentCategory,
             description: payload.description,
             rule: payload.rule,
+            integrationCredentialId: payload.integrationCredentialId,
           },
         });
         snackbar.show({ variant: 'success', message: 'Agent updated successfully', duration: 4000 });

@@ -8,7 +8,7 @@ import { useUserAuth } from '@vassembly/ui-user-auth';
 import {
   SETTINGS_DESKTOP_MIN_WIDTH_MEDIA,
   useMatchesMinWidth,
-} from '../../lib/hooks/useMatchesMinWidth';
+} from './useMatchesMinWidth';
 import { UserSettingsPreferenceProvider } from '../../lib/preferences';
 import styles from './SettingsSections.module.scss';
 import { SettingsAccountDeletionSection } from './_components/SettingsAccountDeletionSection';
