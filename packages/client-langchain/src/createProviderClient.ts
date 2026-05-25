@@ -1,10 +1,15 @@
-import { AiIntegrationProvider } from "@vassembly/domain-ai-integration/src/constants";
 import { WrongParamError } from "@vassembly/errors";
 
 import { createChatGptProvider } from "./providers/createChatGptProvider";
 import { createGeminiProvider } from "./providers/createGeminiProvider";
 import { createLmStudioProvider } from "./providers/createLmStudioProvider";
 import type { AiProviderClient, CreateProviderClientParams } from "./types";
+
+const PROVIDER_SLUGS = {
+  Gemini: "gemini",
+  ChatGpt: "chatgpt",
+  LmStudio: "lm_studio",
+} as const;
 
 const createGeminiClient = (
   input: CreateProviderClientParams,
@@ -46,9 +51,9 @@ const PROVIDER_CLIENT_CREATORS: Record<
   string,
   (input: CreateProviderClientParams) => AiProviderClient
 > = {
-  [AiIntegrationProvider.Gemini]: createGeminiClient,
-  [AiIntegrationProvider.ChatGpt]: createChatGptClient,
-  [AiIntegrationProvider.LmStudio]: createLmStudioClient,
+  [PROVIDER_SLUGS.Gemini]: createGeminiClient,
+  [PROVIDER_SLUGS.ChatGpt]: createChatGptClient,
+  [PROVIDER_SLUGS.LmStudio]: createLmStudioClient,
 };
 
 export const createProviderClient = (

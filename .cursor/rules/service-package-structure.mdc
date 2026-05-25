@@ -164,6 +164,38 @@ export type { RefreshInput } from "./refresh/types";
 - Domains never depend on services
 - This creates a clean separation: domains are reusable, services are use-case specific
 
+### External Client Prohibition
+
+- **Services MUST NOT import `@vassembly/client-*` packages directly**
+- External integrations (AI providers, email, payment, storage, etc.) are **accessed only through domain commands/queries**
+- If a handler needs to call an external API, add or extend a domain operation — do not import the client in the service
+- Utility packages (`@vassembly/errors`, `@vassembly/validation`, `@vassembly/client-encoder`, etc.) remain allowed
+
+**Bad Example:**
+```typescript
+import { createProviderClient } from "@vassembly/client-langchain";
+
+export const invoke = async (input) => {
+  const client = createProviderClient(input);  // ❌ Services never create clients
+  return client.invoke(input.message);
+};
+```
+
+**Good Example:**
+```typescript
+import aiIntegrationDomain from "@vassembly/domain-ai-integration";
+
+export const invoke = async (input) => {
+  const result = await aiIntegrationDomain.commands.invoke({
+    providerClient: /* injected */,
+    agentId: input.agentId,
+    userId: input.userId,
+    model: input.model,
+  });
+  return result;
+};
+```
+
 ### Error Handling
 
 - Handlers should throw appropriate errors from `@vassembly/errors`

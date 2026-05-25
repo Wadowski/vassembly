@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@vassembly/client-encoder": "workspace:*",
+    "@vassembly/client-langchain": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",

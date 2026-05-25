@@ -210,6 +210,60 @@ export const userMongodbDao = MongoDbDAO<UserModel>({
 });
 ```
 
+### External Client Packages
+
+**All `@vassembly/client-*` packages must be imported only inside `src/clients/`** (or consumed indirectly via commands/queries that use those client modules). This ensures:
+
+- **Single responsibility**: Only the domain that owns a concept instantiates its external clients
+- **Reusability**: Services inject clients or call domain operations instead of creating clients directly
+- **Testability**: Domain logic can be tested with mock client implementations
+
+#### Pattern: Re-export Client Factories
+
+Create a thin wrapper that re-exports the client factory. This centralizes client instantiation in the domain:
+
+```typescript
+// domains/example/src/clients/externalClient.ts
+import { createExternalClient } from "@vassembly/client-external";
+
+import type { ExternalClient, CreateExternalClientParams } from "@vassembly/client-external";
+
+export const getExternalClient = (params: CreateExternalClientParams): ExternalClient =>
+  createExternalClient(params);
+
+export type { ExternalClient, CreateExternalClientParams };
+```
+
+Then export from `index.ts`:
+
+```typescript
+// domains/example/src/clients/index.ts
+export { exampleMongodbDao } from "./mongodb";
+export { getExternalClient } from "./externalClient";
+export type { ExternalClient, CreateExternalClientParams } from "./externalClient";
+```
+
+#### Boundary: Injecting Clients into Commands
+
+When a command needs an external client, accept it as an injected dependency:
+
+```typescript
+// domains/example/src/commands/invokeExternal/index.ts
+import type { ExternalClient } from "../../clients";
+
+export interface InvokeExternalParams {
+  client: ExternalClient;  // Injected by the service layer
+  data: string;
+}
+
+export const invokeExternal = async (params: InvokeExternalParams) => {
+  const { client, data } = params;
+  return client.invoke(data);
+};
+```
+
+This design keeps the domain focused on **what** to do with the client, not **how** to create it.
+
 ### index.ts
 
 Export all clients:

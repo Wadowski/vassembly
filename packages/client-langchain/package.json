@@ -23,7 +23,6 @@
     "@langchain/core": "^0.3.80",
     "@langchain/google-genai": "^0.2.18",
     "@langchain/openai": "^0.6.17",
-    "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "openai": "^4.52.0"
   }

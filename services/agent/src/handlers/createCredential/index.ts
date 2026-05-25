@@ -3,7 +3,6 @@ import { ValidationError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
 
 import { assertModelInProviderList } from '../../helpers/assertModelInProviderList';
-import { assertProviderConnection } from '../../helpers/assertProviderConnection';
 import { enrichCredentialResponse } from '../../helpers/enrichCredentialResponse';
 
 import { CREATE_CREDENTIAL_BODY_SCHEMA } from './types';
@@ -21,7 +20,7 @@ export const createCredential = async (
   }
   const parsed = parsedResult.data;
 
-  const connectionResult = await assertProviderConnection({
+  const connectionResult = await aiIntegrationDomain.commands.assertProviderConnection({
     provider: parsed.provider,
     apiKey: parsed.apiKey,
     baseUrl: parsed.baseUrl,

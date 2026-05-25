@@ -2,7 +2,6 @@ import aiIntegrationDomain, { AiIntegrationConnectionStatus } from '@vassembly/d
 import { validatorFactory } from '@vassembly/validation';
 
 import { assertModelInProviderList } from '../../helpers/assertModelInProviderList';
-import { assertProviderConnection } from '../../helpers/assertProviderConnection';
 import { enrichCredentialResponse } from '../../helpers/enrichCredentialResponse';
 
 import { resolveApiKeyForTest, shouldRetestConnection } from './helpers';
@@ -29,7 +28,7 @@ export const updateCredential = async (
   const needsRetest = shouldRetestConnection({ existing, body: parsed });
 
   if (needsRetest) {
-    const connectionResult = await assertProviderConnection({
+    const connectionResult = await aiIntegrationDomain.commands.assertProviderConnection({
       provider: existing.provider ?? '',
       apiKey: resolveApiKeyForTest({
         bodyApiKey: parsed.apiKey,

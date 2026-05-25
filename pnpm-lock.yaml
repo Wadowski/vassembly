@@ -331,6 +331,9 @@ importers:
       '@vassembly/client-encoder':
         specifier: workspace:*
         version: link:../../packages/client-encoder
+      '@vassembly/client-langchain':
+        specifier: workspace:*
+        version: link:../../packages/client-langchain
       '@vassembly/client-mongodb':
         specifier: workspace:*
         version: link:../../packages/client-mongodb
@@ -722,9 +725,6 @@ importers:
       '@langchain/openai':
         specifier: ^0.6.17
         version: 0.6.17(@langchain/core@0.3.80)
-      '@vassembly/domain-ai-integration':
-        specifier: workspace:*
-        version: link:../../domains/ai-integration
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../errors
@@ -1175,9 +1175,6 @@ importers:
       '@vassembly/client-encoder':
         specifier: workspace:*
         version: link:../../packages/client-encoder
-      '@vassembly/client-langchain':
-        specifier: workspace:*
-        version: link:../../packages/client-langchain
       '@vassembly/domain-agent':
         specifier: workspace:*
         version: link:../../domains/agent
