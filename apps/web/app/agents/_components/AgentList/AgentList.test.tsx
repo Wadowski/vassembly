@@ -8,6 +8,7 @@ describe('AgentList', () => {
     render(<AgentList />);
 
     expect(screen.getByRole('heading', { name: /agents/i })).not.toBeNull();
+    expect(screen.getByText(/create, configure, and manage agents/i)).not.toBeNull();
     expect(screen.getByRole('button', { name: /create agent/i })).not.toBeNull();
     expect(screen.getByPlaceholderText(/search by name or description/i)).not.toBeNull();
   });

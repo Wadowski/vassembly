@@ -36,26 +36,20 @@ export function AgentList(): JSX.Element {
     [catalog.openDeleteFor, catalog.openRestoreFor, catalog.router],
   );
 
-  const handleCreateAgentClick = (): void => {
-    catalog.handleNavigateCreate();
-  };
-
-  const handleStatusFilterChange = (value: string): void => {
-    catalog.handleStatusChange(value as AgentListStatusFilter);
-  };
-
   return (
     <section className={styles.sectionCard}>
-      <Text variant="h1">Agents</Text>
+      <Text variant="h2" as="h1">Agents</Text>
+      <Text variant="body2">Create, configure, and manage agents before connecting them to AI integrations.</Text>
       <div className={styles.toolbarRow}>
         <Button
           className={styles.createAgentButton}
           variant="contained"
           text="Create Agent"
-          onClick={handleCreateAgentClick}
+          onClick={catalog.handleNavigateCreate}
         />
         <div className={styles.filtersGroup}>
           <TextField
+            className={styles.filterField}
             size="small"
             placeholder="Search by name or description…"
             isDisabled={catalog.isLoading}
@@ -70,7 +64,7 @@ export function AgentList(): JSX.Element {
               isDisabled={catalog.isLoading}
               isFullWidth
               value={catalog.statusFilter}
-              onValueChange={handleStatusFilterChange}
+              onValueChange={(value) => catalog.handleStatusChange(value as AgentListStatusFilter)}
             />
           </div>
         </div>

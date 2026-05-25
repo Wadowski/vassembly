@@ -7,8 +7,8 @@ import styles from './AgentsPageView.module.scss';
 export function AgentsPageView(): JSX.Element {
   return (
     <main className={styles.pageStack}>
-      <AgentList />
       <AiIntegrationsSection />
+      <AgentList />
     </main>
   );
 }
