@@ -18,6 +18,10 @@ export function IntegrationCredentialPicker({
   isLoading = false,
   errorMessage,
   isDisabled = false,
+  label = 'AI integration',
+  helperText,
+  manageHref = AI_INTEGRATIONS_LIST_ANCHOR,
+  manageLabel = 'Manage integrations',
 }: IntegrationCredentialPickerProps): JSX.Element {
   const router = useRouter();
 
@@ -33,7 +37,7 @@ export function IntegrationCredentialPicker({
     <div className={styles.pickerStack}>
       <Dropdown
         id="agent-integration-credential"
-        label="AI integration"
+        label={label}
         placeholder="Select an integration…"
         options={options}
         value={value ?? ''}
@@ -46,11 +50,16 @@ export function IntegrationCredentialPicker({
           {errorMessage}
         </Text>
       ) : null}
+      {helperText !== undefined ? (
+        <Text variant="caption" className={styles.helperText}>
+          {helperText}
+        </Text>
+      ) : null}
       <Button
         size="small"
         variant="outlined"
-        text="Manage integrations"
-        onClick={() => router.push(AI_INTEGRATIONS_LIST_ANCHOR)}
+        text={manageLabel}
+        onClick={() => router.push(manageHref)}
       />
     </div>
   );

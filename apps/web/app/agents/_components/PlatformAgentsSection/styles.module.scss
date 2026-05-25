@@ -1,0 +1,163 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.sectionCard {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface-container-high;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  scroll-margin-top: $spacing-12;
+}
+
+.overline {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-on-surface-variant;
+}
+
+.headerRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.toolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filtersGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.filterField {
+  min-width: 10rem;
+  flex: 1;
+  max-width: 14rem;
+}
+
+.filterDropdown {
+  width: 10rem;
+}
+
+.createButton {
+  flex-shrink: 0;
+}
+
+.cardGrid {
+  display: grid;
+  gap: $spacing-4;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 48rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  align-items: flex-start;
+}
+
+.modalStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.modalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  justify-content: flex-end;
+}
+
+.agentCard {
+  padding: $spacing-4;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface-container-high;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  min-height: 100%;
+  transition: box-shadow 300ms ease;
+
+  &:hover {
+    box-shadow: 0 0 24px rgba($color-primary-400, 0.12);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-2;
+  align-items: flex-start;
+}
+
+.cardTitle {
+  font-family: $font-family-display;
+}
+
+.cardDescription {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: $color-on-surface-variant;
+}
+
+.cardFooter {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+  align-items: center;
+}
+
+.adminActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.auditFields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  color: $color-on-surface-variant;
+}
+
+@media #{$media-mobile-only} {
+  .sectionCard {
+    padding: $spacing-4;
+  }
+
+  .filtersGroup {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterField,
+  .filterDropdown {
+    max-width: none;
+    width: 100%;
+  }
+
+  .toolbarRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

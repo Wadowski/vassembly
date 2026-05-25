@@ -38,7 +38,7 @@ export function AgentList(): JSX.Element {
 
   return (
     <section className={styles.sectionCard}>
-      <Text variant="h2" as="h1">Agents</Text>
+      <Text variant="h2" as="h2">My Agents</Text>
       <Text variant="body2">Create, configure, and manage agents before connecting them to AI integrations.</Text>
       <div className={styles.toolbarRow}>
         <Button

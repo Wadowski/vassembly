@@ -51,6 +51,9 @@ importers:
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
+      '@vassembly/domain-system-agent':
+        specifier: workspace:*
+        version: link:../../domains/system-agent
       '@vassembly/domain-user':
         specifier: workspace:*
         version: link:../../domains/user
@@ -69,6 +72,9 @@ importers:
       '@vassembly/service-auth':
         specifier: workspace:*
         version: link:../../services/auth
+      '@vassembly/service-system-agent':
+        specifier: workspace:*
+        version: link:../../services/system-agent
       '@vassembly/validation':
         specifier: workspace:*
         version: link:../../packages/validation
@@ -435,6 +441,49 @@ importers:
       '@vassembly/queries':
         specifier: workspace:*
         version: link:../../packages/queries
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
+  domains/system-agent:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/client-mongodb
+      '@vassembly/commands':
+        specifier: workspace:*
+        version: link:../../packages/commands
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
+      '@vassembly/model':
+        specifier: workspace:*
+        version: link:../../packages/model
+      '@vassembly/queries':
+        specifier: workspace:*
+        version: link:../../packages/queries
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@types/node':
         specifier: ^22.19.7
@@ -1181,6 +1230,9 @@ importers:
       '@vassembly/domain-ai-integration':
         specifier: workspace:*
         version: link:../../domains/ai-integration
+      '@vassembly/domain-system-agent':
+        specifier: workspace:*
+        version: link:../../domains/system-agent
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
@@ -1236,6 +1288,43 @@ importers:
       zod:
         specifier: ^4.3.6
         version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
+  services/system-agent:
+    dependencies:
+      '@vassembly/client-encoder':
+        specifier: workspace:*
+        version: link:../../packages/client-encoder
+      '@vassembly/domain-ai-integration':
+        specifier: workspace:*
+        version: link:../../domains/ai-integration
+      '@vassembly/domain-auth-token':
+        specifier: workspace:*
+        version: link:../../domains/auth-token
+      '@vassembly/domain-system-agent':
+        specifier: workspace:*
+        version: link:../../domains/system-agent
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
     devDependencies:
       '@types/node':
         specifier: ^22.19.7

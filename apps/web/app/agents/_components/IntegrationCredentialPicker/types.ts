@@ -11,4 +11,8 @@ export interface IntegrationCredentialPickerProps {
   isLoading?: boolean;
   errorMessage?: string;
   isDisabled?: boolean;
+  label?: string;
+  helperText?: string;
+  manageHref?: string;
+  manageLabel?: string;
 }

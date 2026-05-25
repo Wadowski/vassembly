@@ -5,3 +5,9 @@
   flex-direction: column;
   gap: $spacing-6;
 }
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}

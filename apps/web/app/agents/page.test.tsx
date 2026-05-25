@@ -34,11 +34,16 @@ describe('AgentsPage protected routing', () => {
   });
 
   it('should render authenticated catalog chrome once sessions satisfy ProtectedAuthRoute', () => {
-    vi.mocked(useUserAuth).mockReturnValue({ isAuthenticated: true, bootstrapLoading: false } as never);
+    vi.mocked(useUserAuth).mockReturnValue({
+      isAuthenticated: true,
+      bootstrapLoading: false,
+      role: 'user',
+    } as never);
 
     render(<AgentsPage />);
 
-    expect(screen.queryByRole('heading', { name: /agents/i })).not.toBeNull();
+    expect(screen.getByRole('heading', { name: /^agents$/i })).not.toBeNull();
+    expect(screen.getByRole('heading', { name: /my agents/i })).not.toBeNull();
     expect(screen.queryByRole('heading', { name: /ai integrations/i })).not.toBeNull();
   });
 

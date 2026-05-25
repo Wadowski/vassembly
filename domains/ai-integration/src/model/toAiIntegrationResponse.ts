@@ -5,7 +5,7 @@ export const toAiIntegrationResponse = (
   credential: AiIntegrationCredentialModel,
 ): AiIntegrationCredentialResponse => {
   const hasApiKey = !!credential.encryptedApiKey;
-  const apiKeyHint = credential.encryptedApiKey ? `...${credential.encryptedApiKey.slice(-4)}` : null;
+  const apiKeyHint = credential.encryptedApiKey ? `...${credential.encryptedApiKey.slice(-4)}` : undefined;
 
   return {
     id: credential.id,

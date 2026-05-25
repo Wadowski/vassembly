@@ -27,12 +27,14 @@
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
+    "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",
     "@vassembly/server": "workspace:*",
     "@vassembly/service-auth": "workspace:*",
     "@vassembly/service-agent": "workspace:*",
+    "@vassembly/service-system-agent": "workspace:*",
     "@vassembly/validation": "workspace:*",
     "zod": "^4.3.6"
   }

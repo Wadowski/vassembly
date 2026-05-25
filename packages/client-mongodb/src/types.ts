@@ -32,6 +32,10 @@ export interface MongoDbDAO<T extends Model> {
     where: any,
     options?: QueryOptions
   ) => Promise<Array<Partial<T>>>;
+  findOneRaw: (
+    where: Record<string, unknown>,
+    options?: QueryOptions
+  ) => Promise<Partial<T> | null>;
   update: (
     where: Partial<T>,
     data: Partial<T>,

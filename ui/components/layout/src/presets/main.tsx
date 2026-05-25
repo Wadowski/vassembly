@@ -30,24 +30,49 @@ const WORKSPACE_AUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [
   },
 ];
 
+const ADMIN_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [
+  {
+    kind: 'link',
+    id: 'system-agents',
+    label: 'System Agents',
+    href: '/agents#platform-agents',
+    icon: TeamMeetingChatIcon,
+  },
+];
+
 const WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [];
 
 export interface BuildMainDrawerSectionsParams {
   isAuthenticated: boolean;
+  userRole?: string;
 }
 
 export const buildMainDrawerSections = ({
   isAuthenticated,
-}: BuildMainDrawerSectionsParams): ReadonlyArray<NavSection> => [
-  {
-    id: 'workspace',
-    label: 'Workspace',
-    items: [
-      ...WORKSPACE_PUBLIC_NAV_ITEMS,
-      ...(isAuthenticated ? WORKSPACE_AUTHENTICATED_NAV_ITEMS : WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS),
-    ],
-  },
-];
+  userRole,
+}: BuildMainDrawerSectionsParams): ReadonlyArray<NavSection> => {
+  const isAdmin = userRole?.trim().toLowerCase() === 'admin';
+  const sections: NavSection[] = [
+    {
+      id: 'workspace',
+      label: 'Workspace',
+      items: [
+        ...WORKSPACE_PUBLIC_NAV_ITEMS,
+        ...(isAuthenticated ? WORKSPACE_AUTHENTICATED_NAV_ITEMS : WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS),
+      ],
+    },
+  ];
+
+  if (isAuthenticated && isAdmin) {
+    sections.push({
+      id: 'administration',
+      label: 'Administration',
+      items: ADMIN_NAV_ITEMS,
+    });
+  }
+
+  return sections;
+};
 
 export const MAIN_LAYOUT_PRESET: LayoutPreset = {
   footer: {

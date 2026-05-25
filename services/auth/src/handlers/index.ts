@@ -1,4 +1,5 @@
 export { auth } from "./auth";
+export { authorizeAdminRequest } from "./authorizeAdminRequest";
 export { authorizeRequest } from "./authorizeRequest";
 export { changePassword } from "./changePassword";
 export { deleteAccount } from "./deleteAccount";
@@ -12,6 +13,10 @@ export { logout } from "./logout";
 export { updateUserProfile } from "./updateUserProfile";
 
 export type { AuthInput, AuthOutput, AuthPublicUser } from "./auth/types";
+export type {
+  AuthorizeAdminRequestInput,
+  AuthorizeAdminRequestOutput,
+} from "./authorizeAdminRequest/types";
 export type { AuthorizeRequestInput, AuthorizeRequestOutput } from "./authorizeRequest/types";
 export type { ChangePasswordInput, ChangePasswordOutput } from "./changePassword/types";
 export type { DeleteAccountInput, DeleteAccountOutput } from "./deleteAccount/types";

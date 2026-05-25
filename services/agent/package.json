@@ -22,6 +22,7 @@
     "@vassembly/client-encoder": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
+    "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/validation": "workspace:*",
     "zod": "^4.3.6"

@@ -69,6 +69,54 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       isLoading: false,
     })),
     useHttpClient: vi.fn(() => testApiHooksStubs.mockHttpClient),
+    useSystemAgentCatalog: vi.fn(() => ({
+      data: { items: [], page: 0, size: 50, total: 0 },
+      isLoading: false,
+      error: undefined,
+      fetch: vi.fn().mockResolvedValue(undefined),
+    })),
+    useSystemAgents: vi.fn(() => ({
+      data: { items: [], page: 0, size: 50, total: 0 },
+      isLoading: false,
+      error: undefined,
+      fetch: vi.fn().mockResolvedValue(undefined),
+    })),
+    useSystemAgentPreference: vi.fn(() => ({
+      data: undefined,
+      isLoading: false,
+      error: undefined,
+      fetch: vi.fn().mockResolvedValue(undefined),
+    })),
+    useCreateSystemAgent: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      error: undefined,
+    })),
+    useUpdateSystemAgent: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      error: undefined,
+    })),
+    useArchiveSystemAgent: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      error: undefined,
+    })),
+    useRestoreSystemAgent: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      error: undefined,
+    })),
+    useInvokeSystemAgent: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      error: undefined,
+    })),
+    useUpsertSystemAgentPreference: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      error: undefined,
+    })),
   };
 });
 
