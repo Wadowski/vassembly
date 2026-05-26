@@ -12,7 +12,7 @@ export const CREATE_SYSTEM_AGENT_BODY_SCHEMA = z.object({
   category: z.enum(AGENT_CATEGORY_VALUES).optional(),
 });
 
-export const UPDATE_SYSTEM_AGENT_BODY_SCHEMA = CREATE_SYSTEM_AGENT_BODY_SCHEMA.partial();
+export const UPDATE_SYSTEM_AGENT_BODY_SCHEMA = CREATE_SYSTEM_AGENT_BODY_SCHEMA.partial().strict();
 
 export const INVOKE_SYSTEM_AGENT_BODY_SCHEMA = z.object({
   message: z.string().min(1),

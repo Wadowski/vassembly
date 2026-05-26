@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 import { ConflictError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
 import { z } from 'zod';
@@ -33,7 +35,7 @@ export const assertUniqueActiveName = async (
   };
 
   if (parsed.excludeId !== undefined) {
-    filter._id = { $ne: parsed.excludeId };
+    filter._id = { $ne: new ObjectId(parsed.excludeId) };
   }
 
   const existing = await systemAgentMongodbDao.getRaw(filter);

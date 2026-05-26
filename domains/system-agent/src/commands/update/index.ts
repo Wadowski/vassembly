@@ -23,8 +23,7 @@ const UPDATE_DB_SCHEMA = z
     category: z.enum(Object.values(AgentCategory) as [string, ...string[]]).nullable().optional(),
     status: z.enum(Object.values(AgentStatus) as [string, ...string[]]).optional(),
     updatedByAdminId: z.string().min(1),
-  })
-  .strict();
+  });
 
 const persistUpdate = updateDbById<SystemAgentModel>({
   dao: systemAgentMongodbDao,
