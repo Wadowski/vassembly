@@ -63,10 +63,7 @@ export const Popover = (props: PopoverProps): JSX.Element => {
       return <>{trigger}</>;
     }
 
-    const element = trigger as ReactElement<{
-      onClick?: (event: MouseEvent<HTMLElement>) => void;
-      onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
-    }>;
+    const element = trigger as ReactElement<any>;
 
     return cloneElement(element, {
       'aria-controls': panelId,
