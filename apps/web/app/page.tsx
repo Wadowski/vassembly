@@ -1,12 +1,12 @@
-import React from "react";
-import styles from "./page.module.css";
+import { TaskInputComposer } from './_components/TaskInputComposer/TaskInputComposer';
+import styles from './page.module.scss';
 
-const Page = () => {
+const HomePage = (): JSX.Element => {
   return (
-    <div className={styles.container}>
-      <h1>Hello World</h1>
-    </div>
+    <main className={styles.page}>
+      <TaskInputComposer />
+    </main>
   );
-}
+};
 
-export default Page;
+export default HomePage;

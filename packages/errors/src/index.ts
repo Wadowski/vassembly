@@ -8,3 +8,5 @@ export { UnauthorizedError } from './UnauthorizedError';
 export { ForbiddenError } from './ForbiddenError';
 export { InternalError } from './InternalError';
 export { TimeoutError } from './TimeoutError';
+export { TooManyRequestsError } from './TooManyRequestsError';
+export type { TooManyRequestsErrorOptions } from './TooManyRequestsError';

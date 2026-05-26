@@ -1,0 +1,36 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  width: 100%;
+  max-width: 42rem;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.inputField {
+  :global(textarea) {
+    min-height: 6.25rem;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submitButton {
+  min-width: 9rem;
+}

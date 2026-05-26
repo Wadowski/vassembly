@@ -1,4 +1,4 @@
-import { CommonError, InternalError, WrongParamError } from "@vassembly/errors";
+import { CommonError, InternalError, TooManyRequestsError, WrongParamError } from "@vassembly/errors";
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import {
   hasZodFastifySchemaValidationErrors,
@@ -7,12 +7,17 @@ import {
 
 import type { ApplyFrameworkErrorHandlerProps } from "./types";
 
-const sendCommonErrorShape = (reply: FastifyReply, error: CommonError) =>
-  reply.status(error.statusCode).send({
+const sendCommonErrorShape = (reply: FastifyReply, error: CommonError) => {
+  if (error instanceof TooManyRequestsError && error.retryAfterSeconds !== undefined) {
+    reply.header('Retry-After', String(error.retryAfterSeconds));
+  }
+
+  return reply.status(error.statusCode).send({
     type: error.type,
     message: error.message,
     error: error.error,
   });
+};
 
 const isFastifyRequestValidationError = (err: unknown): err is FastifyError =>
   typeof err === "object" &&

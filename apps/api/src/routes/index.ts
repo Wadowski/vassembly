@@ -4,12 +4,14 @@ import { config } from "@vassembly/config";
 import { mongodbIndexes as agentMongodbIndexes } from "@vassembly/domain-agent";
 import { mongodbIndexes as aiIntegrationMongodbIndexes } from "@vassembly/domain-ai-integration";
 import { mongodbIndexes as systemAgentMongodbIndexes } from "@vassembly/domain-system-agent";
+import { mongodbIndexes as taskMongodbIndexes } from "@vassembly/domain-task";
 import { mongodbIndexes as userMongodbIndexes } from "@vassembly/domain-user";
 
 import { routes as agentRoutesList } from "./agents";
 import { routes as aiIntegrationRoutesList } from "./ai-integrations";
 import { routes as authRoutesList } from "./auth";
 import { routes as systemAgentsRoutesList } from "./system-agents";
+import { routes as taskRoutesList } from "./tasks";
 import { routes as userRoutesList } from "./user";
 import { graphqlConfig } from "../graphql";
 
@@ -18,6 +20,7 @@ const userRoutes = routesWithPrefix("/user", userRoutesList);
 const agentRoutes = routesWithPrefix("/agents", agentRoutesList);
 const aiIntegrationRoutes = routesWithPrefix("/ai-integrations", aiIntegrationRoutesList);
 const systemAgentsRoutes = routesWithPrefix("/system-agents", systemAgentsRoutesList);
+const taskRoutes = routesWithPrefix("/tasks", taskRoutesList);
 
 const routes = [
   ...authRoutes,
@@ -25,6 +28,7 @@ const routes = [
   ...agentRoutes,
   ...aiIntegrationRoutes,
   ...systemAgentsRoutes,
+  ...taskRoutes,
 ];
 
 const startApp = async () => {
@@ -34,6 +38,7 @@ const startApp = async () => {
       agentMongodbIndexes,
       aiIntegrationMongodbIndexes,
       systemAgentMongodbIndexes,
+      taskMongodbIndexes,
     ],
   });
 
