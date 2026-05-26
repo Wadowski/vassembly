@@ -1,16 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, ValidationError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 import {
   AgentCategory,
   SYSTEM_AGENT_ERROR_CODES,
   throwSystemAgentNameConflictError,
 } from '@vassembly/domain-system-agent';
 
-const { mockAssertUniqueActiveName, mockCreate } = vi.hoisted(() => ({
+const { mockAssertHasRole, mockAssertUniqueActiveName, mockCreate } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockAssertUniqueActiveName: vi.fn(),
   mockCreate: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -52,6 +60,7 @@ const ADMIN_AGENT_ROW = {
 describe('createSystemAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
     mockAssertUniqueActiveName.mockResolvedValue(undefined);
   });
 
@@ -60,7 +69,6 @@ describe('createSystemAgent handler', () => {
 
     const result = await createSystemAgent({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       body: CREATE_BODY,
     });
 
@@ -71,10 +79,11 @@ describe('createSystemAgent handler', () => {
   });
 
   it('should throw ForbiddenError when caller is not admin', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       createSystemAgent({
         adminUserId: 'user-1',
-        role: AuthTokenRole.USER,
         body: CREATE_BODY,
       }),
     ).rejects.toThrow(ForbiddenError);
@@ -88,7 +97,6 @@ describe('createSystemAgent handler', () => {
     await expect(
       createSystemAgent({
         adminUserId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         body: CREATE_BODY,
       }),
     ).rejects.toMatchObject({
@@ -103,7 +111,6 @@ describe('createSystemAgent handler', () => {
     await expect(
       createSystemAgent({
         adminUserId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         body: {
           ...CREATE_BODY,
           name: 'x'.repeat(101),

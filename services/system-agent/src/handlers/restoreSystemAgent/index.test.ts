@@ -1,11 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, WrongParamError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 
-const { mockGetById, mockRestore } = vi.hoisted(() => ({
+const { mockAssertHasRole, mockGetById, mockRestore } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockGetById: vi.fn(),
   mockRestore: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -29,6 +37,7 @@ import { restoreSystemAgent } from './index';
 describe('restoreSystemAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
   });
 
   it('should return active system agent when admin restores archived agent', async () => {
@@ -61,7 +70,6 @@ describe('restoreSystemAgent handler', () => {
 
     const result = await restoreSystemAgent({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       systemAgentId: 'sys-agent-1',
     });
 
@@ -87,17 +95,17 @@ describe('restoreSystemAgent handler', () => {
     await expect(
       restoreSystemAgent({
         adminUserId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-live',
       }),
     ).rejects.toThrow(WrongParamError);
   });
 
   it('should throw ForbiddenError when caller is not admin', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       restoreSystemAgent({
         adminUserId: 'user-1',
-        role: AuthTokenRole.USER,
         systemAgentId: 'sys-agent-1',
       }),
     ).rejects.toThrow(ForbiddenError);

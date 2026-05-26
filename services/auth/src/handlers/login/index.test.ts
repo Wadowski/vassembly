@@ -9,6 +9,11 @@ const { mockVerifyCredentials } = vi.hoisted(() => {
   return { mockVerifyCredentials };
 });
 
+const { mockGetModelById } = vi.hoisted(() => {
+  const mockGetModelById = vi.fn();
+  return { mockGetModelById };
+});
+
 const { mockCreateRefreshToken } = vi.hoisted(() => {
   const mockCreateRefreshToken = vi.fn();
   return { mockCreateRefreshToken };
@@ -23,6 +28,7 @@ vi.mock("@vassembly/domain-user", () => {
   const impl = {
     queries: {
       verify: mockVerifyCredentials,
+      getModelById: mockGetModelById,
     },
   };
   return { ...impl, default: impl };
@@ -37,14 +43,17 @@ vi.mock("@vassembly/domain-refresh-token", () => {
   return { ...impl, default: impl };
 });
 
-vi.mock("@vassembly/domain-auth-token", () => {
-  const impl = {
+vi.mock("@vassembly/domain-auth-token", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@vassembly/domain-auth-token")>();
+  return {
+    ...actual,
     commands: {
       create: mockCreateAuthToken,
     },
   };
-  return { ...impl, default: impl };
 });
+
+import { AUTH_TOKEN_ROLE } from "@vassembly/constants";
 
 import { login } from "./index";
 
@@ -53,36 +62,77 @@ describe("login", () => {
     vi.clearAllMocks();
   });
 
-  it("should successfully log in user and return tokens", async () => {
-    const input = {
-      email: "user@example.com",
-      password: "password123",
-    };
+  const input = {
+    email: "user@example.com",
+    password: "password123",
+  };
 
-    const mockUser = {
-      id: "user-id-123",
-      email: input.email,
-      firstName: "John",
-      lastName: "Doe",
-    };
+  const mockUser = {
+    id: "user-id-123",
+    email: input.email,
+    firstName: "John",
+    lastName: "Doe",
+  };
 
-    const mockRefreshToken = {
-      id: "refresh-token-id-456",
-      token: "refresh-token-value",
-    };
+  const mockRefreshToken = {
+    id: "refresh-token-id-456",
+    token: "refresh-token-value",
+  };
 
-    const mockAuthToken = {
-      token: "auth-token-value",
-      data: {
+  const setupSuccessfulLoginMocks = (role?: AUTH_TOKEN_ROLE): void => {
+    mockVerifyCredentials.mockResolvedValue(mockUser);
+    mockGetModelById.mockResolvedValue({
+      data: role === undefined ? { id: mockUser.id } : { id: mockUser.id, role },
+    });
+    mockCreateRefreshToken.mockResolvedValue(mockRefreshToken);
+    mockCreateAuthToken.mockResolvedValue({ token: "auth-token-value" });
+  };
+
+  it("should create auth token with admin role from database", async () => {
+    setupSuccessfulLoginMocks(AUTH_TOKEN_ROLE.ADMIN);
+
+    await login(input);
+
+    expect(mockGetModelById).toHaveBeenCalledWith({ id: mockUser.id });
+    expect(mockCreateAuthToken).toHaveBeenCalledWith({
+      input: {
         userId: mockUser.id,
         refreshTokenId: mockRefreshToken.id,
-        role: "user",
+        role: AUTH_TOKEN_ROLE.ADMIN,
       },
-    };
+    });
+  });
 
-    mockVerifyCredentials.mockResolvedValue(mockUser);
-    mockCreateRefreshToken.mockResolvedValue(mockRefreshToken);
-    mockCreateAuthToken.mockResolvedValue(mockAuthToken);
+  it("should create auth token with user role from database", async () => {
+    setupSuccessfulLoginMocks(AUTH_TOKEN_ROLE.USER);
+
+    await login(input);
+
+    expect(mockCreateAuthToken).toHaveBeenCalledWith({
+      input: {
+        userId: mockUser.id,
+        refreshTokenId: mockRefreshToken.id,
+        role: AUTH_TOKEN_ROLE.USER,
+      },
+    });
+  });
+
+  it("should default auth token role to user when database role is undefined", async () => {
+    setupSuccessfulLoginMocks(undefined);
+
+    await login(input);
+
+    expect(mockCreateAuthToken).toHaveBeenCalledWith({
+      input: {
+        userId: mockUser.id,
+        refreshTokenId: mockRefreshToken.id,
+        role: AUTH_TOKEN_ROLE.USER,
+      },
+    });
+  });
+
+  it("should successfully log in user and return tokens", async () => {
+    setupSuccessfulLoginMocks(AUTH_TOKEN_ROLE.USER);
 
     const result = await login(input);
 
@@ -107,46 +157,23 @@ describe("login", () => {
     expect(mockCreateRefreshToken).toHaveBeenCalledWith({
       userId: mockUser.id,
     });
-
-    expect(mockCreateAuthToken).toHaveBeenCalledWith({
-      input: {
-        userId: mockUser.id,
-        refreshTokenId: mockRefreshToken.id,
-        role: "user",
-      },
-    });
   });
 
   it("should throw error when credentials are invalid", async () => {
-    const input = {
-      email: "invalid@example.com",
-      password: "wrongpassword",
-    };
-
     const error = new Error("Invalid credentials");
     mockVerifyCredentials.mockRejectedValue(error);
 
     await expect(login(input)).rejects.toThrow("Invalid credentials");
 
+    expect(mockGetModelById).not.toHaveBeenCalled();
     expect(mockCreateRefreshToken).not.toHaveBeenCalled();
     expect(mockCreateAuthToken).not.toHaveBeenCalled();
   });
 
   it("should throw error when refresh token creation fails", async () => {
-    const input = {
-      email: "user@example.com",
-      password: "password123",
-    };
-
-    const mockUser = {
-      id: "user-id-123",
-      email: input.email,
-      firstName: "John",
-      lastName: "Doe",
-    };
-
     const error = new Error("Database error");
     mockVerifyCredentials.mockResolvedValue(mockUser);
+    mockGetModelById.mockResolvedValue({ data: { id: mockUser.id, role: AUTH_TOKEN_ROLE.USER } });
     mockCreateRefreshToken.mockRejectedValue(error);
 
     await expect(login(input)).rejects.toThrow("Database error");
@@ -155,25 +182,9 @@ describe("login", () => {
   });
 
   it("should throw error when auth token creation fails", async () => {
-    const input = {
-      email: "user@example.com",
-      password: "password123",
-    };
-
-    const mockUser = {
-      id: "user-id-123",
-      email: input.email,
-      firstName: "John",
-      lastName: "Doe",
-    };
-
-    const mockRefreshToken = {
-      id: "refresh-token-id-456",
-      token: "refresh-token-value",
-    };
-
     const error = new Error("Token creation failed");
     mockVerifyCredentials.mockResolvedValue(mockUser);
+    mockGetModelById.mockResolvedValue({ data: { id: mockUser.id, role: AUTH_TOKEN_ROLE.USER } });
     mockCreateRefreshToken.mockResolvedValue(mockRefreshToken);
     mockCreateAuthToken.mockRejectedValue(error);
 

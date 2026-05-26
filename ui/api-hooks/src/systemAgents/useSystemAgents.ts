@@ -1,21 +1,31 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { useFetch } from '../http/useFetch';
-import { useHttpClient } from '../http/useHttpClient';
-
+import { useApolloLazyQuery } from '../graphql';
 import type { SystemAgentAdminItem, SystemAgentAdminListQuery, SystemAgentListResponse } from './types';
+import { LIST_SYSTEM_AGENTS_QUERY } from './graphql/listSystemAgentsQuery';
+
+interface GraphQLSystemAgentsData {
+  systemAgents: SystemAgentListResponse<SystemAgentAdminItem>;
+}
 
 export const useSystemAgents = () => {
-  const httpClient = useHttpClient();
-  const requestFn = useCallback(
-    async ({ query }: { query?: SystemAgentAdminListQuery }) =>
-      httpClient.get<SystemAgentListResponse<SystemAgentAdminItem>>({
-        path: '/system-agents',
-        query: query as Record<string, string | number | boolean> | undefined,
-        withAuth: true,
-      }),
-    [httpClient],
+  const { execute, data: graphQLData, isLoading, error } = useApolloLazyQuery<
+    GraphQLSystemAgentsData,
+    SystemAgentAdminListQuery
+  >(LIST_SYSTEM_AGENTS_QUERY, {
+    fetchPolicy: 'no-cache',
+    withAuth: true,
+  });
+
+  const data = useMemo(() => graphQLData?.systemAgents, [graphQLData]);
+
+  const fetch = useCallback(
+    async (query?: SystemAgentAdminListQuery): Promise<SystemAgentListResponse<SystemAgentAdminItem> | undefined> => {
+      const result = await execute(query);
+      return result.data?.systemAgents;
+    },
+    [execute],
   );
 
-  return useFetch({ requestFn });
+  return { data, isLoading, error, fetch };
 };

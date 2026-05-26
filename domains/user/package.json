@@ -19,6 +19,7 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/constants": "workspace:*",
     "@vassembly/client-aws-ses": "workspace:*",
     "@vassembly/client-encoder": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",

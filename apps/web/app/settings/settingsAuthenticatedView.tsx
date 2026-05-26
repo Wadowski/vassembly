@@ -12,7 +12,6 @@ import {
 import { UserSettingsPreferenceProvider } from '../../lib/preferences';
 import styles from './SettingsSections.module.scss';
 import { SettingsAccountDeletionSection } from './_components/SettingsAccountDeletionSection';
-import { SettingsAiConnectionsSection } from './_components/SettingsAiConnectionsSection';
 import { SettingsContentContainer } from './_components/SettingsContentContainer';
 import { SettingsDesktopNav } from './_components/SettingsDesktopNav';
 import { SettingsNotificationsSection } from './_components/SettingsNotificationsSection';
@@ -46,7 +45,6 @@ export const SettingsAuthenticatedView = (): JSX.Element => {
           <SettingsContentContainer>
             <SettingsProfileSection subjectUserId={authenticatedSubjectId} />
             <SettingsSecuritySection />
-            <SettingsAiConnectionsSection />
             <Suspense fallback={notificationsFallback}>
               <SettingsNotificationsSection subjectUserId={authenticatedSubjectId} />
             </Suspense>

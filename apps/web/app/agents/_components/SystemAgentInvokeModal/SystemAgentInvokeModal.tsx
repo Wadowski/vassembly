@@ -156,7 +156,7 @@ export function SystemAgentInvokeModal({
   return (
     <Modal isOpen={open} onClose={onClose} title="Run platform agent">
       <div className={styles.modalStack}>
-        {agent !== undefined ? (
+        {agent ? (
           <div className={styles.summaryStack}>
             <Text variant="h3">{agent.name}</Text>
             <div>
@@ -170,7 +170,7 @@ export function SystemAgentInvokeModal({
             <Text variant="body2">{agent.description ?? 'No description provided.'}</Text>
           </div>
         ) : null}
-        {blockingError !== undefined ? <Alert variant="warning" message={blockingError} /> : null}
+        {blockingError ? <Alert variant="warning" message={blockingError} /> : null}
         <TextField
           label="Your message"
           value={message}
@@ -206,15 +206,15 @@ export function SystemAgentInvokeModal({
           onValueChange={setConnectionOverrideId}
         />
         {isInvoking ? <Loader ariaLabel={`Running ${agent?.name ?? 'platform agent'}`} /> : null}
-        {responseText !== undefined ? (
+        {responseText ? (
           <div className={styles.responseRegion} aria-live="polite" aria-atomic="true">
             <Text variant="body1">{responseText}</Text>
-            {usageSummary !== undefined ? <Text variant="body2">{usageSummary}</Text> : null}
+            {usageSummary ? <Text variant="body2">{usageSummary}</Text> : null}
           </div>
         ) : null}
         <div className={styles.modalActions}>
           <Button variant="outlined" text="Cancel" onClick={onClose} isDisabled={isInvoking} />
-          {responseText !== undefined ? (
+          {responseText ? (
             <Button variant="text" text="Run again" onClick={() => void handleRun()} isDisabled={isInvoking} />
           ) : null}
           <Button

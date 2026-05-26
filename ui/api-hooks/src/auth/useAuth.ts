@@ -1,13 +1,14 @@
+import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
+
 import { useFetch } from '../http/useFetch';
 import { useHttpClient } from '../http/useHttpClient';
-import { enums } from '@vassembly/domain-auth-token';
 
 interface AuthResponse {
   authToken: string;
   refreshToken: string;
   data: {
     userId: string;
-    role: enums.AuthTokenRole;
+    role: AUTH_TOKEN_ROLE;
     refreshTokenId: string;
   };
   user?: {

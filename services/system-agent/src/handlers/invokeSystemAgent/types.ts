@@ -1,8 +1,5 @@
-import type { AuthTokenRole } from '@vassembly/domain-auth-token';
-
 export interface InvokeSystemAgentParams {
   userId: string;
-  role: AuthTokenRole;
   systemAgentId: string;
   message: string;
   connectionOverride?: {

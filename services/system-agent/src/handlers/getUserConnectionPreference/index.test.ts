@@ -1,10 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, NotFoundError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 
-const { mockGetPreferenceByUserId } = vi.hoisted(() => ({
+const { mockAssertHasRole, mockGetPreferenceByUserId } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockGetPreferenceByUserId: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -26,6 +34,7 @@ import { getUserConnectionPreference } from './index';
 describe('getUserConnectionPreference handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
   });
 
   it('should return preference when admin reads target user preference', async () => {
@@ -39,7 +48,6 @@ describe('getUserConnectionPreference handler', () => {
 
     const result = await getUserConnectionPreference({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       targetUserId: 'user-2',
     });
 
@@ -48,10 +56,11 @@ describe('getUserConnectionPreference handler', () => {
   });
 
   it('should throw ForbiddenError when caller is not admin', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       getUserConnectionPreference({
         adminUserId: 'user-1',
-        role: AuthTokenRole.USER,
         targetUserId: 'user-2',
       }),
     ).rejects.toThrow(ForbiddenError);
@@ -63,7 +72,6 @@ describe('getUserConnectionPreference handler', () => {
     await expect(
       getUserConnectionPreference({
         adminUserId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         targetUserId: 'user-without-pref',
       }),
     ).rejects.toThrow(NotFoundError);

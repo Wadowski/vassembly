@@ -13,10 +13,9 @@ export const systemAgentDeleteRoute = defineRoute({
       throw new WrongParamError('Missing system agent id');
     }
 
-    const { userId, role } = await authHandlers.authorizeAdminRequest({ headers });
+    const { userId } = await authHandlers.authorizeAdminRequest({ headers });
     const { systemAgent } = await systemAgentService.archiveSystemAgent({
       adminUserId: userId,
-      role,
       systemAgentId,
     });
 

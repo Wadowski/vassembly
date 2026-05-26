@@ -1,9 +1,5 @@
 import { decode } from '@vassembly/client-encoder';
 import { ValidationError } from '@vassembly/errors';
-import systemAgentDomain, {
-  throwSystemAgentConnectionInvalidError,
-  throwSystemAgentConnectionRequiredError,
-} from '@vassembly/domain-system-agent';
 
 import { AiIntegrationConnectionStatus, AiIntegrationProvider, AiIntegrationStatus } from '../../constants';
 import { getModeledProviderClient, aiIntegrationMongodbDao } from '../../clients';
@@ -12,17 +8,29 @@ import { aiIntegrationCredentialFactory } from '../../model';
 import type { ResolveAndBuildClientParams, ResolveAndBuildClientResult } from './types';
 import type { AiIntegrationCredentialModel } from '../../model';
 
+const throwConnectionInvalidError = (): never => {
+  throw new ValidationError("Your system agent connection isn't working. Update it in Settings or test the connection.", {
+    code: 'SYSTEM_AGENT_CONNECTION_INVALID',
+  });
+};
+
+const throwConnectionRequiredError = (): never => {
+  throw new ValidationError('Add an AI connection before using platform agents.', {
+    code: 'SYSTEM_AGENT_CONNECTION_REQUIRED',
+  });
+};
+
 const validateCredentialOwnership = (userId: string, credential: AiIntegrationCredentialModel): void => {
   if (credential.userId !== userId) {
-    throwSystemAgentConnectionInvalidError();
+    throwConnectionInvalidError();
   }
 
   if (credential.status !== AiIntegrationStatus.Active || credential.removedAt) {
-    throwSystemAgentConnectionInvalidError();
+    throwConnectionInvalidError();
   }
 
   if (credential.connectionStatus !== AiIntegrationConnectionStatus.Connected) {
-    throwSystemAgentConnectionInvalidError();
+    throwConnectionInvalidError();
   }
 };
 
@@ -37,7 +45,7 @@ const validateProviderCredential = (credential: AiIntegrationCredentialModel): v
   }
 
   if (credential.status !== AiIntegrationStatus.Active) {
-    throwSystemAgentConnectionInvalidError();
+    throwConnectionInvalidError();
   }
 };
 
@@ -46,28 +54,29 @@ export const resolveAndBuildClient = async (
 ): Promise<ResolveAndBuildClientResult> => {
   const { userId, connectionOverride } = params;
 
-  const credentialId = connectionOverride?.integrationCredentialId
-    ? connectionOverride.integrationCredentialId
-    : (await systemAgentDomain.queries.getPreferenceByUserId({ userId })).data?.integrationCredentialId;
-
-  if (!credentialId) {
-    throwSystemAgentConnectionRequiredError();
+  let credentialId: string | undefined;
+  if (connectionOverride?.integrationCredentialId) {
+    credentialId = connectionOverride.integrationCredentialId;
+  } else {
+    throwConnectionRequiredError();
   }
 
   const where = aiIntegrationCredentialFactory.create({ id: credentialId });
-  const credential = await aiIntegrationMongodbDao.get(where);
+  const credentialResult = await aiIntegrationMongodbDao.get(where);
 
-  if (!credential) {
-    throwSystemAgentConnectionInvalidError();
+  if (!credentialResult) {
+    throwConnectionInvalidError();
   }
+
+  const credential = credentialResult as AiIntegrationCredentialModel;
 
   validateCredentialOwnership(userId, credential);
   validateProviderCredential(credential);
 
-  const apiKey = decode(credential.encryptedApiKey);
+  const apiKey = decode(credential.encryptedApiKey!);
 
   return getModeledProviderClient({
-    provider: credential.provider,
+    provider: credential.provider!,
     apiKey,
     baseUrl: credential.baseUrl,
     organizationId: credential.organizationId,

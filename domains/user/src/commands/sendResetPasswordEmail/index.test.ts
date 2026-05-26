@@ -4,8 +4,12 @@ import * as configModule from "@vassembly/package-config";
 
 import { sendResetPasswordEmail } from ".";
 
+const { mockAwsSesClient } = vi.hoisted(() => ({
+  mockAwsSesClient: vi.fn(),
+}));
+
 vi.mock("@vassembly/client-aws-ses", () => ({
-  AwsSesClient: vi.fn(),
+  AwsSesClient: mockAwsSesClient,
 }));
 
 vi.mock("@vassembly/package-config", () => ({
@@ -26,8 +30,7 @@ describe("sendResetPasswordEmail", () => {
     vi.clearAllMocks();
     mockSendEmail = vi.fn().mockResolvedValue(undefined);
 
-    const { AwsSesClient } = require("@vassembly/client-aws-ses");
-    AwsSesClient.mockReturnValue({
+    mockAwsSesClient.mockReturnValue({
       sendEmail: mockSendEmail,
     });
   });

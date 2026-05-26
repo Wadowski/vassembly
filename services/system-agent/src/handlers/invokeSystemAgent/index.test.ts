@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, NotFoundError, TimeoutError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 import {
   AiIntegrationConnectionStatus,
   AiIntegrationStatus,
@@ -13,13 +12,25 @@ import {
 } from '@vassembly/domain-system-agent';
 
 const {
+  mockAssertHasRole,
   mockInvoke,
   mockGetActiveById,
+  mockGetPreferenceByUserId,
   mockResolveAndBuildClient,
 } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockInvoke: vi.fn(),
   mockGetActiveById: vi.fn(),
+  mockGetPreferenceByUserId: vi.fn(),
   mockResolveAndBuildClient: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -33,6 +44,7 @@ vi.mock('@vassembly/domain-system-agent', async () => {
       },
       queries: {
         getActiveById: mockGetActiveById,
+        getPreferenceByUserId: mockGetPreferenceByUserId,
       },
     },
   };
@@ -61,6 +73,7 @@ const MODELED_CLIENT = {
 describe('invokeSystemAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
     mockGetActiveById.mockResolvedValue({
       data: {
         id: 'sys-agent-1',
@@ -68,6 +81,11 @@ describe('invokeSystemAgent handler', () => {
         rule: 'You help with compliance.',
         status: 'active',
         removedAt: null,
+      },
+    });
+    mockGetPreferenceByUserId.mockResolvedValue({
+      data: {
+        integrationCredentialId: 'cred-default',
       },
     });
     mockResolveAndBuildClient.mockResolvedValue(MODELED_CLIENT);
@@ -81,7 +99,6 @@ describe('invokeSystemAgent handler', () => {
   it('should resolve credential invoke agent and return provider message', async () => {
     const result = await invokeSystemAgent({
       userId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       systemAgentId: 'sys-agent-1',
       message: 'Summarize our Q1 compliance checklist.',
     });
@@ -94,7 +111,6 @@ describe('invokeSystemAgent handler', () => {
   it('should use admin override credential when admin invokes with connectionOverride', async () => {
     const result = await invokeSystemAgent({
       userId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       systemAgentId: 'sys-agent-1',
       message: 'Hello',
       connectionOverride: { integrationCredentialId: 'cred-admin' },
@@ -102,36 +118,36 @@ describe('invokeSystemAgent handler', () => {
 
     expect(mockResolveAndBuildClient).toHaveBeenCalledWith({
       userId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       connectionOverride: { integrationCredentialId: 'cred-admin' },
     });
     expect(result.message).toBe('Here is a summary.');
   });
 
-  it('should throw ForbiddenError when caller is not admin', async () => {
-    await expect(
-      invokeSystemAgent({
-        userId: 'user-1',
-        role: AuthTokenRole.USER,
-        systemAgentId: 'sys-agent-1',
-        message: 'Hello',
-      }),
-    ).rejects.toThrow(ForbiddenError);
-  });
-
   it('should throw ForbiddenError when non-admin sends connectionOverride', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       invokeSystemAgent({
         userId: 'user-1',
-        role: AuthTokenRole.USER,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
         connectionOverride: { integrationCredentialId: 'cred-other' },
       }),
-    ).rejects.toMatchObject({
-      statusCode: 403,
-      error: { code: 'CONNECTION_OVERRIDE_FORBIDDEN' },
+    ).rejects.toThrow(ForbiddenError);
+  });
+
+  it('should succeed when non-admin user invokes without connectionOverride', async () => {
+    const result = await invokeSystemAgent({
+      userId: 'user-1',
+      systemAgentId: 'sys-agent-1',
+      message: 'Hello',
     });
+
+    expect(mockResolveAndBuildClient).toHaveBeenCalledWith({
+      userId: 'user-1',
+      connectionOverride: { integrationCredentialId: 'cred-default' },
+    });
+    expect(result.message).toBe('Here is a summary.');
   });
 
   it('should throw connection required error when user has no preference', async () => {
@@ -142,7 +158,6 @@ describe('invokeSystemAgent handler', () => {
     await expect(
       invokeSystemAgent({
         userId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),
@@ -160,7 +175,6 @@ describe('invokeSystemAgent handler', () => {
     await expect(
       invokeSystemAgent({
         userId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),
@@ -178,7 +192,6 @@ describe('invokeSystemAgent handler', () => {
     await expect(
       invokeSystemAgent({
         userId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),
@@ -194,7 +207,6 @@ describe('invokeSystemAgent handler', () => {
     await expect(
       invokeSystemAgent({
         userId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'archived-agent',
         message: 'Hello',
       }),
@@ -207,7 +219,6 @@ describe('invokeSystemAgent handler', () => {
     await expect(
       invokeSystemAgent({
         userId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),

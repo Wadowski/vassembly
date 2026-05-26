@@ -1,7 +1,7 @@
 import { getDbById } from '@vassembly/queries';
 import { AgentStatus } from '../../constants';
 import { systemAgentMongodbDao } from '../../clients';
-import { systemAgentFactory, toDetail } from '../../model';
+import { systemAgentFactory, toSystemAgentResponse } from '../../model';
 
 import type { GetActiveByIdParams, GetActiveByIdResult } from './types';
 import type { SystemAgentModel } from '../../model';
@@ -19,6 +19,6 @@ export const getActiveById = async ({ id }: GetActiveByIdParams): Promise<GetAct
   }
 
   return {
-    data: toDetail({ systemAgent: result.data }),
+    data: toSystemAgentResponse({ systemAgent: result.data }),
   };
 };

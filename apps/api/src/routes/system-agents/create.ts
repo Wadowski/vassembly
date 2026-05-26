@@ -11,10 +11,9 @@ export const systemAgentCreateRoute = defineRoute({
   statusCode: 201,
   schema: { body: CREATE_SYSTEM_AGENT_BODY_SCHEMA },
   handler: async ({ body, headers }) => {
-    const { userId, role } = await authHandlers.authorizeAdminRequest({ headers });
+    const { userId } = await authHandlers.authorizeAdminRequest({ headers });
     const { systemAgent } = await systemAgentService.createSystemAgent({
       adminUserId: userId,
-      role,
       body,
     });
 

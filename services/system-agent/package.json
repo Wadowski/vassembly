@@ -16,13 +16,16 @@
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
     "typescript": "5.9.2",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/constants": "workspace:*",
     "@vassembly/client-encoder": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
+    "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*"
   }
 }

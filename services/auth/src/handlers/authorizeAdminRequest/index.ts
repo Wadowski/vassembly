@@ -1,4 +1,5 @@
-import { ForbiddenError } from "@vassembly/errors";
+import userDomain from "@vassembly/domain-user";
+import { AUTH_TOKEN_ROLE } from "@vassembly/constants";
 
 import { authorizeRequest } from "../authorizeRequest";
 
@@ -7,11 +8,9 @@ import type { AuthorizeAdminRequestInput, AuthorizeAdminRequestOutput } from "./
 export const authorizeAdminRequest = async (
   input: AuthorizeAdminRequestInput,
 ): Promise<AuthorizeAdminRequestOutput> => {
-  const { userId, role } = await authorizeRequest(input);
+  const { userId } = await authorizeRequest(input);
 
-  if (role !== "admin") {
-    throw new ForbiddenError("Admin access required");
-  }
+  await userDomain.queries.assertHasRole({ userId, role: AUTH_TOKEN_ROLE.ADMIN });
 
-  return { userId, role: "admin" };
+  return { userId, role: AUTH_TOKEN_ROLE.ADMIN };
 };

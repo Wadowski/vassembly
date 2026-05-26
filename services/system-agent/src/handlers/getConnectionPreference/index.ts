@@ -1,7 +1,8 @@
+import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 import systemAgentDomain from '@vassembly/domain-system-agent';
-import { ForbiddenError, NotFoundError } from '@vassembly/errors';
+import userDomain from '@vassembly/domain-user';
+import { NotFoundError } from '@vassembly/errors';
 
-import { assertAdminRole } from '../../helpers/assertAdminRole';
 import { toPreferenceResponse } from '../../helpers/toPreferenceResponse';
 
 import type { GetConnectionPreferenceParams, GetConnectionPreferenceResult } from './types';
@@ -9,13 +10,16 @@ import type { GetConnectionPreferenceParams, GetConnectionPreferenceResult } fro
 export const getConnectionPreference = async (
   input: GetConnectionPreferenceParams,
 ): Promise<GetConnectionPreferenceResult> => {
-  const { userId, role, targetUserId } = input;
+  const { userId, targetUserId } = input;
+  const effectiveUserId = targetUserId ?? userId;
 
-  if (targetUserId !== undefined && targetUserId !== userId) {
-    assertAdminRole({ role });
+  if (effectiveUserId !== userId) {
+    await userDomain.queries.assertHasRole({ userId, role: AUTH_TOKEN_ROLE.ADMIN });
   }
 
-  const result = await systemAgentDomain.queries.getPreferenceByUserId({ userId });
+  const result = await systemAgentDomain.queries.getPreferenceByUserId({
+    userId: effectiveUserId,
+  });
 
   if (!result.data) {
     throw new NotFoundError('System agent connection preference not found');

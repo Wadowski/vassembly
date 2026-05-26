@@ -1,23 +1,27 @@
 'use client';
 
+import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+
 import { Button } from '@vassembly/ui-button';
 import { Dropdown } from '@vassembly/ui-dropdown';
 import { Loader } from '@vassembly/ui-loader';
+import { Table } from '@vassembly/ui-table';
 import { Text } from '@vassembly/ui-text';
 import { TextField } from '@vassembly/ui-text-field';
 import {
   SYSTEM_AGENT_LIST_ALL_STATUSES,
   SystemAgentStatus,
+  type SystemAgentAdminItem,
 } from '@vassembly/ui-api-hooks';
 
+import { SYSTEM_AGENTS_CREATE_PATH, systemAgentEditPath } from '../../systemAgentRoutes';
 import { SystemAgentInvokeModal } from '../SystemAgentInvokeModal';
-import { PlatformAgentCard } from './PlatformAgentCard';
 import { SystemAgentArchiveDialog } from './SystemAgentArchiveDialog';
-import { SystemAgentCreateModal } from './SystemAgentCreateModal';
-import { SystemAgentEditModal } from './SystemAgentEditModal';
 import { SystemAgentRestoreDialog } from './SystemAgentRestoreDialog';
-import { SYSTEM_AGENT_CATEGORY_OPTIONS } from './constants';
+import { PLATFORM_AGENT_TABLE_PAGE_SIZE, SYSTEM_AGENT_CATEGORY_OPTIONS } from './constants';
 import styles from './styles.module.scss';
+import { getPlatformAgentsTableColumns } from './tableColumns';
 import type { PlatformAgentCategoryFilter, PlatformAgentStatusFilter } from './usePlatformAgentListFilters';
 import { usePlatformAgentsSection } from './usePlatformAgentsSection';
 
@@ -34,7 +38,48 @@ const CATEGORY_FILTER_OPTIONS: Array<{ value: PlatformAgentCategoryFilter; label
 ];
 
 export function PlatformAgentsSection(): JSX.Element {
+  const router = useRouter();
   const section = usePlatformAgentsSection();
+
+  const handleCreateClick = (): void => {
+    router.push(SYSTEM_AGENTS_CREATE_PATH);
+  };
+
+  const handleEdit = (agent: SystemAgentAdminItem): void => {
+    router.push(systemAgentEditPath(agent.id));
+  };
+
+  const columns = useMemo(
+    () =>
+      getPlatformAgentsTableColumns({
+        onRun: section.openInvokeFor,
+        onEdit: handleEdit,
+        onArchive: section.openArchiveFor,
+        onRestore: section.openRestoreFor,
+        onTestInvoke: section.openInvokeFor,
+      }),
+    [
+      section.openArchiveFor,
+      section.openInvokeFor,
+      section.openRestoreFor,
+      handleEdit,
+    ],
+  );
+
+  const emptyState = useMemo(() => {
+    if (section.isFilteredEmpty) {
+      return (
+        <div className={styles.emptyState}>
+          <Text variant="body2">No matches for your search.</Text>
+          <Button variant="text" text="Clear search" onClick={section.filters.clearSearch} />
+        </div>
+      );
+    }
+    if (section.isEmpty) {
+      return <Text variant="body2">No system agents yet.</Text>;
+    }
+    return undefined;
+  }, [section.filters.clearSearch, section.isEmpty, section.isFilteredEmpty]);
 
   return (
     <section id="platform-agents" className={styles.sectionCard}>
@@ -54,7 +99,7 @@ export function PlatformAgentsSection(): JSX.Element {
           className={styles.createButton}
           variant="contained"
           text="Create System Agent"
-          onClick={section.openCreate}
+          onClick={handleCreateClick}
         />
         <div className={styles.filtersGroup}>
           <TextField
@@ -94,48 +139,15 @@ export function PlatformAgentsSection(): JSX.Element {
         </div>
       </div>
       {section.isLoading ? <Loader ariaLabel="Loading platform agents" /> : null}
-      {section.isEmpty ? (
-        <div className={styles.emptyState}>
-          <Text variant="body2">No system agents yet.</Text>
-          <Button variant="contained" text="Create System Agent" onClick={section.openCreate} />
-        </div>
+      {!section.isLoading ? (
+        <Table
+          className={styles.agentTable}
+          columns={columns}
+          data={section.agents}
+          pageSize={PLATFORM_AGENT_TABLE_PAGE_SIZE}
+          emptyState={emptyState}
+        />
       ) : null}
-      {section.isFilteredEmpty ? (
-        <div className={styles.emptyState}>
-          <Text variant="body2">No matches for your search.</Text>
-          <Button variant="text" text="Clear search" onClick={section.filters.clearSearch} />
-        </div>
-      ) : null}
-      {!section.isLoading && section.agents.length > 0 ? (
-        <div className={styles.cardGrid}>
-          {section.agents.map((agent) => (
-            <PlatformAgentCard
-              key={agent.id}
-              agent={agent}
-              onRun={section.openInvokeFor}
-              onEdit={section.openEditFor}
-              onArchive={section.openArchiveFor}
-              onRestore={section.openRestoreFor}
-              onTestInvoke={section.openInvokeFor}
-            />
-          ))}
-        </div>
-      ) : null}
-      <SystemAgentCreateModal
-        open={section.createOpen}
-        onClose={section.closeCreate}
-        onSubmit={section.handleCreate}
-        isSubmitting={section.isCreateSubmitting}
-        nameConflictError={section.nameConflictError}
-      />
-      <SystemAgentEditModal
-        open={section.editOpen}
-        agent={section.focusAgent ?? undefined}
-        onClose={section.closeEdit}
-        onSubmit={section.handleUpdate}
-        isSubmitting={section.isUpdateSubmitting}
-        nameConflictError={section.nameConflictError}
-      />
       <SystemAgentArchiveDialog
         name={section.focusAgentName}
         open={section.archiveOpen}

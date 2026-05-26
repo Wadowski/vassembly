@@ -3,7 +3,6 @@
 .sectionCard {
   padding: $spacing-6;
   border-radius: $border-radius-lg;
-  background-color: $color-surface-container-high;
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
@@ -13,7 +12,7 @@
 .overline {
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: $color-on-surface-variant;
+  color: $color-text-secondary;
 }
 
 .headerRow {
@@ -53,22 +52,61 @@
   flex-shrink: 0;
 }
 
-.cardGrid {
-  display: grid;
-  gap: $spacing-4;
-  grid-template-columns: 1fr;
-
-  @media (min-width: 48rem) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 .emptyState {
   display: flex;
   flex-direction: column;
   gap: $spacing-3;
   align-items: flex-start;
 }
+
+.agentTable {
+  table-layout: fixed;
+  width: 100%;
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 10rem;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 6.5rem;
+    white-space: nowrap;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 7rem;
+    white-space: nowrap;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    white-space: nowrap;
+    text-align: right;
+  }
+}
+
+.descriptionCell {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  color: $color-text-secondary;
+}
+
+.actionsCell {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.actionsMenu {
+  min-width: 8rem;
+}
+
 
 .modalStack {
   display: flex;
@@ -81,62 +119,6 @@
   flex-wrap: wrap;
   gap: $spacing-3;
   justify-content: flex-end;
-}
-
-.agentCard {
-  padding: $spacing-4;
-  border-radius: $border-radius-lg;
-  background-color: $color-surface-container-high;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-3;
-  min-height: 100%;
-  transition: box-shadow 300ms ease;
-
-  &:hover {
-    box-shadow: 0 0 24px rgba($color-primary-400, 0.12);
-  }
-}
-
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  gap: $spacing-2;
-  align-items: flex-start;
-}
-
-.cardTitle {
-  font-family: $font-family-display;
-}
-
-.cardDescription {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  color: $color-on-surface-variant;
-}
-
-.cardFooter {
-  margin-top: auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-2;
-  align-items: center;
-}
-
-.adminActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-2;
-}
-
-.auditFields {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-1;
-  color: $color-on-surface-variant;
 }
 
 @media #{$media-mobile-only} {

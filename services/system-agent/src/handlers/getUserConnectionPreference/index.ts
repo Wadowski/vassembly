@@ -1,7 +1,6 @@
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import { NotFoundError } from '@vassembly/errors';
 
-import { assertAdminRole } from '../../helpers/assertAdminRole';
 import { toPreferenceResponse } from '../../helpers/toPreferenceResponse';
 
 import type {
@@ -12,9 +11,7 @@ import type {
 export const getUserConnectionPreference = async (
   input: GetUserConnectionPreferenceParams,
 ): Promise<GetUserConnectionPreferenceResult> => {
-  const { role, targetUserId } = input;
-
-  assertAdminRole({ role });
+  const { targetUserId } = input;
 
   const result = await systemAgentDomain.queries.getPreferenceByUserId({
     userId: targetUserId,

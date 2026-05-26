@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react';
 
-import type { SystemAgentAdminItem, SystemAgentFormInput } from '@vassembly/ui-api-hooks';
+import type { SystemAgentFormInput } from '@vassembly/ui-api-hooks';
 import { SystemAgentCategory } from '@vassembly/ui-api-hooks';
 
 export interface SystemAgentFormValues {
@@ -46,20 +46,3 @@ export interface SystemAgentRestoreDialogProps {
   isConfirmBusy?: boolean;
 }
 
-export interface SystemAgentEditModalProps {
-  open: boolean;
-  agent?: SystemAgentAdminItem;
-  onClose: () => void;
-  onSubmit: (input: SystemAgentFormInput) => Promise<void>;
-  isSubmitting?: boolean;
-  nameConflictError?: string;
-}
-
-export interface PlatformAgentCardProps {
-  agent: SystemAgentAdminItem;
-  onRun: (agent: SystemAgentAdminItem) => void;
-  onEdit: (agent: SystemAgentAdminItem) => void;
-  onArchive: (agent: SystemAgentAdminItem) => void;
-  onRestore: (agent: SystemAgentAdminItem) => void;
-  onTestInvoke: (agent: SystemAgentAdminItem) => void;
-}

@@ -1,11 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 import { AgentStatus } from '@vassembly/domain-system-agent';
 
-const { mockGetAdminList } = vi.hoisted(() => ({
+const { mockAssertHasRole, mockGetAdminList } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockGetAdminList: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -27,6 +35,7 @@ import { listSystemAgents } from './index';
 describe('listSystemAgents handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
   });
 
   it('should return paginated admin list when caller is admin', async () => {
@@ -51,7 +60,6 @@ describe('listSystemAgents handler', () => {
 
     const result = await listSystemAgents({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
     });
 
     expect(result.total).toBe(1);
@@ -71,7 +79,6 @@ describe('listSystemAgents handler', () => {
 
     const result = await listSystemAgents({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       status: AgentStatus.Archived,
       search: 'Compliance',
       page: 1,
@@ -84,10 +91,11 @@ describe('listSystemAgents handler', () => {
   });
 
   it('should throw ForbiddenError when caller is not admin', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       listSystemAgents({
         adminUserId: 'user-1',
-        role: AuthTokenRole.USER,
       }),
     ).rejects.toThrow(ForbiddenError);
   });
@@ -102,7 +110,6 @@ describe('listSystemAgents handler', () => {
 
     const result = await listSystemAgents({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
     });
 
     expect(result.page).toBe(0);

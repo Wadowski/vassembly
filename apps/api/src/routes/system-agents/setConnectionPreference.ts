@@ -10,10 +10,9 @@ export const systemAgentSetPreferenceRoute = defineRoute({
   url: '/connection-preference',
   schema: { body: SET_CONNECTION_PREFERENCE_BODY_SCHEMA },
   handler: async ({ body, headers }) => {
-    const { userId, role } = await authHandlers.authorizeAdminRequest({ headers });
+    const { userId } = await authHandlers.authorizeRequest({ headers });
     const { preference } = await systemAgentService.setConnectionPreference({
       userId,
-      role,
       integrationCredentialId: body.integrationCredentialId,
     });
 

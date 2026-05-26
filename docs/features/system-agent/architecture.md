@@ -1,7 +1,7 @@
 # System Agents — Architecture
 
 **Status:** Engineering handoff  
-**Last updated:** 2026-05-25  
+**Last updated:** 2026-05-26  
 **Related:** [PRD](./prd.md) · [UI/UX Design](./design.md) · [Agent Management](../agent-management/prd.md)
 
 ---
@@ -799,30 +799,39 @@ apps/web
 ├── app/agents/
 │   ├── page.tsx
 │   ├── AgentsPageView.tsx
-│   │   ├── PlatformAgentsSection           ← NEW (unified admin + user view)
+│   │   ├── PlatformAgentsSection           ← Admin list (cards + filters)
 │   │   │   ├── PlatformAgentCard.tsx
-│   │   │   ├── SystemAgentCreateModal.tsx  ← Admin only
-│   │   │   ├── SystemAgentEditModal.tsx    ← Admin only
-│   │   │   ├── SystemAgentArchiveDialog.tsx ← Admin only
-│   │   │   └── SystemAgentRestoreDialog.tsx ← Admin only
+│   │   │   ├── SystemAgentArchiveDialog.tsx
+│   │   │   └── SystemAgentRestoreDialog.tsx
 │   │   ├── AgentList                       ← existing
 │   │   └── AiIntegrationsSection           ← existing
+│   ├── platform-agents/
+│   │   ├── create/page.tsx                 ← Admin create (mirrors /agents/create)
+│   │   └── [id]/edit/page.tsx              ← Admin edit (mirrors /agents/[id]/edit)
+│   ├── platformAgentRoutes.ts              ← Route constants (mirrors aiIntegrationRoutes.ts)
 │   └── _components/
-│       └── SystemAgentInvokeModal/         ← User + admin test invoke
+│       ├── PlatformAgentsSection/
+│       │   ├── SystemAgentForm/            ← Extracted from modals (Create + Edit modes)
+│       │   ├── SystemAgentFormFields.tsx   ← Reused field UI
+│       │   └── useSystemAgentForm.ts       ← Reused validation
+│       └── SystemAgentInvokeModal/         ← User + admin test invoke (stays modal)
 ├── app/settings/
 │   └── _components/
 │       └── SystemAgentConnectionPreference/ ← Connection preference
 ```
 
+**Removed after migration:** `SystemAgentCreateModal.tsx`, `SystemAgentEditModal.tsx` (replaced by dedicated pages).
+
 ### 7.2 Routing & auth
 
 | Route | Guard | Fallback |
 |-------|-------|----------|
-| `/admin/system-agents/*` | not applicable | **REMOVED**: Consolidated UI now uses `/agents` route |
-| `/agents` | Existing auth-only | Login redirect |
-| `/settings#ai-connections` | Existing auth-only | — |
+| `/agents` | Auth | Login redirect |
+| `/agents/platform-agents/create` | Auth + `roles={['admin']}` | Login redirect / forbidden |
+| `/agents/platform-agents/[id]/edit` | Auth + `roles={['admin']}` | Login redirect / forbidden |
+| `/settings#ai-connections` | Auth | — |
 
-**Routing:** All system agent management is now integrated into the `/agents` route. Admin users see additional controls within the Platform Agents section. No separate admin route required.
+**Routing:** Platform agent CRUD uses nested routes under `/agents`, matching `/agents/ai-integrations/*`. List remains on `/agents#platform-agents`; create/edit navigate away and redirect back after save.
 
 ### 7.3 API hooks
 
@@ -850,7 +859,12 @@ No new global store. Page-local state via existing patterns:
 
 ### 7.5 Navigation
 
-No layout changes required. Admin controls appear conditionally within `/agents` route based on user role.
+- **Create:** `PlatformAgentsSection` toolbar → `router.push('/agents/platform-agents/create')`
+- **Edit:** `PlatformAgentCard` → `router.push(platformAgentEditPath(id))`
+- **After save:** snackbar + redirect to `/agents#platform-agents` (mirror AI integrations `AI_INTEGRATIONS_LIST_ANCHOR`)
+- **Invoke / archive / restore:** remain on list page (modals/dialogs)
+
+No drawer nav changes required.
 
 ---
 

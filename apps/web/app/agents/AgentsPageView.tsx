@@ -24,11 +24,7 @@ export function AgentsPageView(): JSX.Element {
       </header>
       {isAdmin ? (
         <PlatformAgentsSection />
-      ) : (
-        <Text variant="body2">
-          Platform agent management is available to administrators only.
-        </Text>
-      )}
+      ) : null}
       <AgentList />
       <AiIntegrationsSection />
     </main>

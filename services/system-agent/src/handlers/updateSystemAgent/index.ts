@@ -1,16 +1,16 @@
+import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 import systemAgentDomain, { toSystemAgentResponse } from '@vassembly/domain-system-agent';
+import userDomain from '@vassembly/domain-user';
 import { NotFoundError } from '@vassembly/errors';
-
-import { assertAdminRole } from '../../helpers/assertAdminRole';
 
 import type { UpdateSystemAgentParams, UpdateSystemAgentResult } from './types';
 
 export const updateSystemAgent = async (
   input: UpdateSystemAgentParams,
 ): Promise<UpdateSystemAgentResult> => {
-  const { adminUserId, role, systemAgentId, body } = input;
+  const { adminUserId, systemAgentId, body } = input;
 
-  assertAdminRole({ role });
+  await userDomain.queries.assertHasRole({ userId: adminUserId, role: AUTH_TOKEN_ROLE.ADMIN });
 
   const existing = await systemAgentDomain.queries.getById({ id: systemAgentId });
 

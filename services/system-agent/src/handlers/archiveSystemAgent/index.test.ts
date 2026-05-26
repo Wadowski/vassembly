@@ -1,11 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, NotFoundError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 
-const { mockGetById, mockRemoveSoft } = vi.hoisted(() => ({
+const { mockAssertHasRole, mockGetById, mockRemoveSoft } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockGetById: vi.fn(),
   mockRemoveSoft: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -41,6 +49,7 @@ const ACTIVE_AGENT = {
 describe('archiveSystemAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
     mockGetById.mockResolvedValue({ data: ACTIVE_AGENT });
   });
 
@@ -56,7 +65,6 @@ describe('archiveSystemAgent handler', () => {
 
     const result = await archiveSystemAgent({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       systemAgentId: 'sys-agent-1',
     });
 
@@ -82,7 +90,6 @@ describe('archiveSystemAgent handler', () => {
 
     const result = await archiveSystemAgent({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       systemAgentId: 'sys-agent-1',
     });
 
@@ -90,10 +97,11 @@ describe('archiveSystemAgent handler', () => {
   });
 
   it('should throw ForbiddenError when caller is not admin', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       archiveSystemAgent({
         adminUserId: 'user-1',
-        role: AuthTokenRole.USER,
         systemAgentId: 'sys-agent-1',
       }),
     ).rejects.toThrow(ForbiddenError);
@@ -105,7 +113,6 @@ describe('archiveSystemAgent handler', () => {
     await expect(
       archiveSystemAgent({
         adminUserId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'missing-id',
       }),
     ).rejects.toThrow(NotFoundError);

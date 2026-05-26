@@ -1,10 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, NotFoundError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 
-const { mockGetPreferenceByUserId } = vi.hoisted(() => ({
+const { mockAssertHasRole, mockGetPreferenceByUserId } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockGetPreferenceByUserId: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -26,6 +34,7 @@ import { getConnectionPreference } from './index';
 describe('getConnectionPreference handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
   });
 
   it('should return userId and integrationCredentialId when preference exists', async () => {
@@ -38,12 +47,12 @@ describe('getConnectionPreference handler', () => {
     });
 
     const result = await getConnectionPreference({
-      userId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
+      userId: 'user-1',
     });
 
     expect(result.preference.userId).toBe('user-1');
     expect(result.preference.integrationCredentialId).toBe('cred-1');
+    expect(mockAssertHasRole).not.toHaveBeenCalled();
   });
 
   it('should throw NotFoundError when user has no saved preference', async () => {
@@ -51,28 +60,37 @@ describe('getConnectionPreference handler', () => {
 
     await expect(
       getConnectionPreference({
-        userId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
+        userId: 'user-1',
       }),
     ).rejects.toThrow(NotFoundError);
   });
 
-  it('should throw ForbiddenError when caller is not admin', async () => {
+  it('should throw ForbiddenError when non-admin reads another users preference', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       getConnectionPreference({
         userId: 'user-1',
-        role: AuthTokenRole.USER,
+        targetUserId: 'user-2',
       }),
     ).rejects.toThrow(ForbiddenError);
   });
 
-  it('should throw ForbiddenError when user attempts to read another users preference', async () => {
-    await expect(
-      getConnectionPreference({
-        userId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
-        targetUserId: 'user-2',
-      }),
-    ).rejects.toThrow(ForbiddenError);
+  it('should return preference when admin reads another users preference', async () => {
+    mockGetPreferenceByUserId.mockResolvedValue({
+      data: {
+        userId: 'user-2',
+        integrationCredentialId: 'cred-2',
+        updatedAt: new Date('2026-02-01T00:00:00.000Z'),
+      },
+    });
+
+    const result = await getConnectionPreference({
+      userId: 'admin-1',
+      targetUserId: 'user-2',
+    });
+
+    expect(result.preference.userId).toBe('user-2');
+    expect(result.preference.integrationCredentialId).toBe('cred-2');
   });
 });

@@ -14,18 +14,6 @@ export interface SystemAgentAdminResponse {
   removedAt: string | null;
 }
 
-export interface SystemAgentCatalogListItem {
-  id: string;
-  name: string;
-  description?: string;
-  category?: AgentCategory;
-  status: AgentStatus;
-}
-
-export interface SystemAgentCatalogDetail extends SystemAgentCatalogListItem {
-  rule: string;
-}
-
 export interface SystemAgentPreferenceResponse {
   userId: string;
   integrationCredentialId: string;

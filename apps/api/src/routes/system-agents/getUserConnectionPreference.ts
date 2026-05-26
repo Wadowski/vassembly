@@ -13,10 +13,9 @@ export const systemAgentGetUserPreferenceRoute = defineRoute({
       throw new WrongParamError('Missing user id');
     }
 
-    const { userId, role } = await authHandlers.authorizeAdminRequest({ headers });
+    const { userId } = await authHandlers.authorizeAdminRequest({ headers });
     const { preference } = await systemAgentService.getUserConnectionPreference({
       adminUserId: userId,
-      role,
       targetUserId,
     });
 

@@ -1,3 +1,4 @@
+export * from './assertHasRole';
 export { getById } from './getById';
 export type { GetByIdParams, GetByIdResult } from './getById';
 export { getModelById } from './getModelById';

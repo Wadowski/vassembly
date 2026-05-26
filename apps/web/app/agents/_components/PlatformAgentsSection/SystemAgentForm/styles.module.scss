@@ -1,0 +1,21 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-component-gap-md;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  justify-content: flex-end;
+}
+
+.auditFields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  color: $color-text-secondary;
+}

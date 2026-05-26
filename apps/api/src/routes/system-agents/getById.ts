@@ -4,8 +4,6 @@ import { defineRoute } from '@vassembly/server';
 import { handlers as authHandlers } from '@vassembly/service-auth';
 import systemAgentService from '@vassembly/service-system-agent';
 
-import type { AuthTokenRole } from '@vassembly/domain-auth-token';
-
 export const systemAgentGetByIdRoute = defineRoute({
   method: 'GET',
   url: '/:id',
@@ -15,10 +13,9 @@ export const systemAgentGetByIdRoute = defineRoute({
       throw new WrongParamError('Missing system agent id');
     }
 
-    const { userId, role } = await authHandlers.authorizeAdminRequest({ headers });
+    const { userId } = await authHandlers.authorizeAdminRequest({ headers });
     const { systemAgent } = await systemAgentService.getSystemAgent({
       adminUserId: userId,
-      role: role as AuthTokenRole,
       systemAgentId,
     });
 

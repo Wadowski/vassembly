@@ -9,10 +9,9 @@ import {
   SystemAgentModel,
   UserSystemAgentPreferenceModel,
   systemAgentFactory,
-  systemAgentTranslationFactory,
-  toDetail,
   toSystemAgentResponse,
   userSystemAgentPreferenceFactory,
+  gqlSystemAgentSchema,
 } from './model';
 
 import {
@@ -36,9 +35,10 @@ const systemAgentDomain = {
   commands,
   queries,
   mongodbIndexes,
+  gqlSchema: gqlSystemAgentSchema,
 };
 
-export { commands, queries, mongodbIndexes };
+export { commands, queries, mongodbIndexes, gqlSystemAgentSchema as gqlSchema };
 
 export {
   AgentCategory,
@@ -46,10 +46,8 @@ export {
   SystemAgentModel,
   UserSystemAgentPreferenceModel,
   systemAgentFactory,
-  systemAgentTranslationFactory,
   userSystemAgentPreferenceFactory,
   toSystemAgentResponse,
-  toDetail,
   SYSTEM_AGENT_DEFAULT_STATUS,
   SYSTEM_AGENT_DESCRIPTION_MAX_LENGTH,
   SYSTEM_AGENT_NAME_MAX_LENGTH,
@@ -76,8 +74,6 @@ export {
 
 export type {
   SystemAgentAdminResponse,
-  SystemAgentCatalogListItem,
-  SystemAgentCatalogDetail,
   SystemAgentPreferenceResponse,
 } from './model';
 

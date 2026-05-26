@@ -45,28 +45,9 @@ export const update = async (
   }
 
   const updateData: Partial<SystemAgentModel> & { updatedByAdminId: string } = {
+    ...validated.data as Partial<SystemAgentModel>,
     updatedByAdminId: validated.updatedByAdminId,
   };
-
-  if (validated.data.name !== undefined) {
-    updateData.name = validated.data.name;
-  }
-
-  if (validated.data.rule !== undefined) {
-    updateData.rule = validated.data.rule;
-  }
-
-  if (validated.data.description !== undefined) {
-    updateData.description = validated.data.description ?? undefined;
-  }
-
-  if (validated.data.category !== undefined) {
-    updateData.category = validated.data.category ?? undefined;
-  }
-
-  if (validated.data.status !== undefined) {
-    updateData.status = validated.data.status;
-  }
 
   return persistUpdate({
     id: validated.id,

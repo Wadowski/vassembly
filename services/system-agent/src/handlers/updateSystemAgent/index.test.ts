@@ -1,16 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, NotFoundError } from '@vassembly/errors';
-import { AuthTokenRole } from '@vassembly/domain-auth-token';
 import {
   SYSTEM_AGENT_ERROR_CODES,
   throwSystemAgentNameConflictError,
 } from '@vassembly/domain-system-agent';
 
-const { mockGetById, mockAssertUniqueActiveName, mockUpdate } = vi.hoisted(() => ({
+const { mockAssertHasRole, mockGetById, mockAssertUniqueActiveName, mockUpdate } = vi.hoisted(() => ({
+  mockAssertHasRole: vi.fn(),
   mockGetById: vi.fn(),
   mockAssertUniqueActiveName: vi.fn(),
   mockUpdate: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-user', () => ({
+  default: {
+    queries: {
+      assertHasRole: mockAssertHasRole,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -47,6 +55,7 @@ const EXISTING_AGENT = {
 describe('updateSystemAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertHasRole.mockResolvedValue(undefined);
     mockGetById.mockResolvedValue({ data: EXISTING_AGENT });
     mockAssertUniqueActiveName.mockResolvedValue(undefined);
   });
@@ -63,7 +72,6 @@ describe('updateSystemAgent handler', () => {
 
     const result = await updateSystemAgent({
       adminUserId: 'admin-1',
-      role: AuthTokenRole.ADMIN,
       systemAgentId: 'sys-agent-1',
       body: { name: 'Renamed Bot' },
     });
@@ -80,7 +88,6 @@ describe('updateSystemAgent handler', () => {
     await expect(
       updateSystemAgent({
         adminUserId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         body: { name: 'Taken Name' },
       }),
@@ -91,10 +98,11 @@ describe('updateSystemAgent handler', () => {
   });
 
   it('should throw ForbiddenError when caller is not admin', async () => {
+    mockAssertHasRole.mockRejectedValue(new ForbiddenError('Admin access required'));
+
     await expect(
       updateSystemAgent({
         adminUserId: 'user-1',
-        role: AuthTokenRole.USER,
         systemAgentId: 'sys-agent-1',
         body: { name: 'Blocked' },
       }),
@@ -107,7 +115,6 @@ describe('updateSystemAgent handler', () => {
     await expect(
       updateSystemAgent({
         adminUserId: 'admin-1',
-        role: AuthTokenRole.ADMIN,
         systemAgentId: 'missing-id',
         body: { description: 'Updated' },
       }),
