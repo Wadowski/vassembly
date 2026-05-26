@@ -4,7 +4,7 @@ export const SYSTEM_AGENT_NAME_MAX = 100;
 export const SYSTEM_AGENT_RULE_MAX = 5000;
 export const SYSTEM_AGENT_DESCRIPTION_MAX = 500;
 
-export const SYSTEM_AGENT_CATEGORY_OPTIONS: ReadonlyArray<{
+export const SYSTEM_AGENT_CATEGORY_OPTIONS: Array<{
   value: SystemAgentCategory;
   label: string;
 }> = [

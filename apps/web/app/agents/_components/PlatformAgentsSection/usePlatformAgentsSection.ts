@@ -7,12 +7,9 @@ import {
   useArchiveSystemAgent,
   useCreateSystemAgent,
   useRestoreSystemAgent,
-  useSystemAgentCatalog,
-  useSystemAgentPreference,
   useSystemAgents,
   useUpdateSystemAgent,
   type SystemAgentAdminItem,
-  type SystemAgentCatalogItem,
   type SystemAgentFormInput,
 } from '@vassembly/ui-api-hooks';
 import { useSnackbar } from '@vassembly/ui-snackbar';
@@ -25,11 +22,9 @@ import { usePlatformAgentListFilters } from './usePlatformAgentListFilters';
 
 const PLATFORM_AGENT_PAGE_SIZE = 50;
 
-export const usePlatformAgentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
+export const usePlatformAgentsSection = () => {
   const snackbar = useSnackbar();
-  const catalog = useSystemAgentCatalog();
   const adminList = useSystemAgents();
-  const preference = useSystemAgentPreference();
   const createMutation = useCreateSystemAgent();
   const updateMutation = useUpdateSystemAgent();
   const archiveMutation = useArchiveSystemAgent();
@@ -41,43 +36,28 @@ export const usePlatformAgentsSection = ({ isAdmin = false }: { isAdmin?: boolea
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [restoreOpen, setRestoreOpen] = useState(false);
   const [invokeOpen, setInvokeOpen] = useState(false);
-  const [focusAgent, setFocusAgent] = useState<SystemAgentAdminItem | SystemAgentCatalogItem | null>(
-    null,
-  );
+  const [focusAgent, setFocusAgent] = useState<SystemAgentAdminItem | null>(null);
   const [nameConflictError, setNameConflictError] = useState<string | undefined>(undefined);
 
   const refreshList = useCallback(async (): Promise<void> => {
     const search = filters.debouncedSearch.trim();
-    if (isAdmin) {
-      await adminList.fetch({
-        query: {
-          search: search === '' ? undefined : search,
-          size: PLATFORM_AGENT_PAGE_SIZE,
-          status:
-            filters.statusFilter === SYSTEM_AGENT_LIST_ALL_STATUSES
-              ? undefined
-              : filters.statusFilter,
-        },
-      });
-      return;
-    }
-    await catalog.fetch({
+    await adminList.fetch({
       query: {
         search: search === '' ? undefined : search,
         size: PLATFORM_AGENT_PAGE_SIZE,
+        status:
+          filters.statusFilter === SYSTEM_AGENT_LIST_ALL_STATUSES
+            ? undefined
+            : filters.statusFilter,
       },
     });
-  }, [adminList, catalog, filters.debouncedSearch, filters.statusFilter, isAdmin]);
+  }, [adminList, filters.debouncedSearch, filters.statusFilter]);
 
   useEffect(() => {
     void refreshList();
   }, [refreshList]);
 
-  useEffect(() => {
-    void preference.fetch({});
-  }, [preference]);
-
-  const rawItems = isAdmin ? adminList.data?.items ?? [] : catalog.data?.items ?? [];
+  const rawItems = adminList.data?.items ?? [];
   const filteredItems = useMemo(() => {
     if (filters.categoryFilter === SYSTEM_AGENT_LIST_ALL_STATUSES) {
       return rawItems;
@@ -85,11 +65,17 @@ export const usePlatformAgentsSection = ({ isAdmin = false }: { isAdmin?: boolea
     return rawItems.filter((agent) => agent.category === filters.categoryFilter);
   }, [filters.categoryFilter, rawItems]);
 
-  const isLoading = isAdmin ? adminList.isLoading : catalog.isLoading;
+  const isLoading = adminList.isLoading;
   const hasSearch = filters.debouncedSearch.trim() !== '';
-  const isFilteredEmpty = !isLoading && filteredItems.length === 0 && (hasSearch || filters.categoryFilter !== SYSTEM_AGENT_LIST_ALL_STATUSES);
-  const isEmpty = !isLoading && filteredItems.length === 0 && !hasSearch && filters.categoryFilter === SYSTEM_AGENT_LIST_ALL_STATUSES;
-  const isInvokeEnabled = preference.data?.integrationCredentialId !== undefined;
+  const isFilteredEmpty =
+    !isLoading &&
+    filteredItems.length === 0 &&
+    (hasSearch || filters.categoryFilter !== SYSTEM_AGENT_LIST_ALL_STATUSES);
+  const isEmpty =
+    !isLoading &&
+    filteredItems.length === 0 &&
+    !hasSearch &&
+    filters.categoryFilter === SYSTEM_AGENT_LIST_ALL_STATUSES;
 
   const handleCreate = async (input: SystemAgentFormInput): Promise<void> => {
     setNameConflictError(undefined);
@@ -174,7 +160,6 @@ export const usePlatformAgentsSection = ({ isAdmin = false }: { isAdmin?: boolea
     isLoading,
     isEmpty,
     isFilteredEmpty,
-    isInvokeEnabled,
     createOpen,
     editOpen,
     archiveOpen,
@@ -182,7 +167,6 @@ export const usePlatformAgentsSection = ({ isAdmin = false }: { isAdmin?: boolea
     invokeOpen,
     focusAgent,
     focusAgentName: focusAgent?.name ?? '',
-    focusAdminAgent: focusAgent as SystemAgentAdminItem | undefined,
     nameConflictError,
     isCreateSubmitting: createMutation.isLoading,
     isUpdateSubmitting: updateMutation.isLoading,
@@ -193,20 +177,20 @@ export const usePlatformAgentsSection = ({ isAdmin = false }: { isAdmin?: boolea
       setCreateOpen(true);
     },
     closeCreate: (): void => setCreateOpen(false),
-    openEditFor: (agent: SystemAgentCatalogItem): void => {
-      setFocusAgent(agent as SystemAgentAdminItem);
+    openEditFor: (agent: SystemAgentAdminItem): void => {
+      setFocusAgent(agent);
       setNameConflictError(undefined);
       setEditOpen(true);
     },
-    openArchiveFor: (agent: SystemAgentCatalogItem): void => {
+    openArchiveFor: (agent: SystemAgentAdminItem): void => {
       setFocusAgent(agent);
       setArchiveOpen(true);
     },
-    openRestoreFor: (agent: SystemAgentCatalogItem): void => {
+    openRestoreFor: (agent: SystemAgentAdminItem): void => {
       setFocusAgent(agent);
       setRestoreOpen(true);
     },
-    openInvokeFor: (agent: SystemAgentCatalogItem): void => {
+    openInvokeFor: (agent: SystemAgentAdminItem): void => {
       setFocusAgent(agent);
       setInvokeOpen(true);
     },

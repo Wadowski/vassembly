@@ -18,5 +18,5 @@ export const restoreAgent = async (input: RestoreAgentHandlerInput): Promise<Res
     userId: input.userId,
   });
 
-  return { agent: toAgentResponse(restored.data) };
+  return { agent: toAgentResponse({ agent: restored.data }) };
 };

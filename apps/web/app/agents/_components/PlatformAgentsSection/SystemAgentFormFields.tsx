@@ -1,26 +1,14 @@
 'use client';
 
-import type { ChangeEvent, FormEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { Dropdown } from '@vassembly/ui-dropdown';
 import { Text } from '@vassembly/ui-text';
 import { TextField } from '@vassembly/ui-text-field';
 
 import { SYSTEM_AGENT_CATEGORY_OPTIONS, SYSTEM_AGENT_DESCRIPTION_MAX, SYSTEM_AGENT_RULE_MAX } from './constants';
-import type { UseSystemAgentFormResult } from './useSystemAgentForm';
+import type { SystemAgentFormFieldsProps } from './types';
 import styles from './styles.module.scss';
-
-export interface SystemAgentFormFieldsProps {
-  form: UseSystemAgentFormResult;
-  nameErrorOverride?: string;
-  isDisabled?: boolean;
-  onSubmit?: (event: FormEvent) => void;
-}
-
-const CATEGORY_OPTIONS = SYSTEM_AGENT_CATEGORY_OPTIONS.map((option) => ({
-  value: option.value,
-  label: option.label,
-}));
 
 export function SystemAgentFormFields({
   form,
@@ -47,7 +35,7 @@ export function SystemAgentFormFields({
         id="system-agent-category"
         label="Category"
         placeholder="Select category"
-        options={CATEGORY_OPTIONS}
+        options={SYSTEM_AGENT_CATEGORY_OPTIONS}
         value={form.values.category}
         isDisabled={isDisabled}
         isFullWidth

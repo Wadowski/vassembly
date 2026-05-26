@@ -4,6 +4,7 @@ import aiIntegrationDomain, {
 } from '@vassembly/domain-ai-integration';
 import systemAgentDomain, { throwSystemAgentConnectionInvalidError } from '@vassembly/domain-system-agent';
 
+import { assertAdminRole } from '../../helpers/assertAdminRole';
 import { toPreferenceResponse } from '../../helpers/toPreferenceResponse';
 
 import type { SetConnectionPreferenceParams, SetConnectionPreferenceResult } from './types';
@@ -36,7 +37,9 @@ const assertValidCredential = ({
 export const setConnectionPreference = async (
   input: SetConnectionPreferenceParams,
 ): Promise<SetConnectionPreferenceResult> => {
-  const { userId, integrationCredentialId } = input;
+  const { userId, role, integrationCredentialId } = input;
+
+  assertAdminRole({ role });
 
   const credentialResult = await aiIntegrationDomain.queries.getById({
     id: integrationCredentialId,

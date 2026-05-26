@@ -1,5 +1,4 @@
 import aiIntegrationDomain, { AiIntegrationConnectionStatus } from '@vassembly/domain-ai-integration';
-import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ValidationError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
 
@@ -11,32 +10,6 @@ import { CREATE_CREDENTIAL_BODY_SCHEMA } from './types';
 import type { CreateCredentialHandlerInput, CreateCredentialHandlerOutput } from './types';
 
 const validateCreateCredentialBody = validatorFactory(CREATE_CREDENTIAL_BODY_SCHEMA);
-
-const setFirstSystemAgentPreferenceIfMissing = async ({
-  userId,
-  credentialId,
-}: {
-  userId: string;
-  credentialId: string;
-}): Promise<boolean> => {
-  try {
-    const existingPref = await systemAgentDomain.queries.getPreferenceByUserId({ userId });
-
-    if (existingPref.data) {
-      return false;
-    }
-
-    await systemAgentDomain.commands.upsertPreference({
-      userId,
-      integrationCredentialId: credentialId,
-    });
-
-    return true;
-  } catch (error) {
-    console.error('system_agent.preference.set failed', error);
-    return false;
-  }
-};
 
 export const createCredential = async (
   input: CreateCredentialHandlerInput,
@@ -81,13 +54,6 @@ export const createCredential = async (
   });
 
   const credential = await enrichCredentialResponse({ credential: updateResult.data });
-  const isFirstSystemAgentPreference = await setFirstSystemAgentPreferenceIfMissing({
-    userId: input.userId,
-    credentialId,
-  });
 
-  return {
-    credential,
-    ...(isFirstSystemAgentPreference ? { isFirstSystemAgentPreference: true } : {}),
-  };
+  return { credential };
 };

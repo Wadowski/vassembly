@@ -36,7 +36,7 @@ export const assertUniqueActiveName = async (
     filter._id = { $ne: parsed.excludeId };
   }
 
-  const existing = await systemAgentMongodbDao.findOneRaw(filter);
+  const existing = await systemAgentMongodbDao.getRaw(filter);
 
   if (existing) {
     throw new ConflictError(CONFLICT_MESSAGE);

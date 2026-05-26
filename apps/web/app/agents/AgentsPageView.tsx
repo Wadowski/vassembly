@@ -22,7 +22,13 @@ export function AgentsPageView(): JSX.Element {
           Connect AI integrations and run agents with your credentials.
         </Text>
       </header>
-      <PlatformAgentsSection isAdmin={isAdmin} />
+      {isAdmin ? (
+        <PlatformAgentsSection />
+      ) : (
+        <Text variant="body2">
+          Platform agent management is available to administrators only.
+        </Text>
+      )}
       <AgentList />
       <AiIntegrationsSection />
     </main>

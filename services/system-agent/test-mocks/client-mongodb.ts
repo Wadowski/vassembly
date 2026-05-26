@@ -17,7 +17,7 @@ export const mongoDb = {
 export const MongoDbDAO = vi.fn(() => ({
   get: vi.fn(),
   getManyRaw: vi.fn(),
-  findOneRaw: vi.fn(),
+  getRaw: vi.fn(),
   collection: mockCollection,
 }));
 

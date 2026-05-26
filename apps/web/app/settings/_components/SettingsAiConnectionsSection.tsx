@@ -2,7 +2,6 @@
 
 import { Text } from '@vassembly/ui-text';
 
-import { SystemAgentConnectionPreference } from './_components/SystemAgentConnectionPreference';
 import styles from './SettingsSections.module.scss';
 
 export function SettingsAiConnectionsSection(): JSX.Element {
@@ -12,9 +11,8 @@ export function SettingsAiConnectionsSection(): JSX.Element {
         AI Connections
       </Text>
       <Text variant="body2">
-        Manage credentials and choose which connection powers platform agents.
+        Manage credentials used by your agents and integrations.
       </Text>
-      <SystemAgentConnectionPreference />
     </section>
   );
 }

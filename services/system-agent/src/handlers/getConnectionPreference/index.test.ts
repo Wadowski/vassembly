@@ -38,8 +38,8 @@ describe('getConnectionPreference handler', () => {
     });
 
     const result = await getConnectionPreference({
-      userId: 'user-1',
-      role: AuthTokenRole.USER,
+      userId: 'admin-1',
+      role: AuthTokenRole.ADMIN,
     });
 
     expect(result.preference.userId).toBe('user-1');
@@ -51,17 +51,26 @@ describe('getConnectionPreference handler', () => {
 
     await expect(
       getConnectionPreference({
+        userId: 'admin-1',
+        role: AuthTokenRole.ADMIN,
+      }),
+    ).rejects.toThrow(NotFoundError);
+  });
+
+  it('should throw ForbiddenError when caller is not admin', async () => {
+    await expect(
+      getConnectionPreference({
         userId: 'user-1',
         role: AuthTokenRole.USER,
       }),
-    ).rejects.toThrow(NotFoundError);
+    ).rejects.toThrow(ForbiddenError);
   });
 
   it('should throw ForbiddenError when user attempts to read another users preference', async () => {
     await expect(
       getConnectionPreference({
-        userId: 'user-1',
-        role: AuthTokenRole.USER,
+        userId: 'admin-1',
+        role: AuthTokenRole.ADMIN,
         targetUserId: 'user-2',
       }),
     ).rejects.toThrow(ForbiddenError);

@@ -91,7 +91,7 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     })) as unknown as T[];
   };
 
-  const findOneRaw: MongoDbDAOType<T>["findOneRaw"] = async (where, options) => {
+  const getRaw: MongoDbDAOType<T>["getRaw"] = async (where, options) => {
     const response = await collection.findOne(where, {
       ...projectionOptions(options?.projection),
       ...transactionOptions(options?.context),
@@ -217,7 +217,7 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     get,
     getMany,
     getManyRaw,
-    findOneRaw,
+    getRaw,
     update,
     updateMany,
     upsert,

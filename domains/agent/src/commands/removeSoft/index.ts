@@ -2,7 +2,7 @@ import { removeSoftDb } from '@vassembly/commands';
 
 import { agentMongodbDao } from '../../clients';
 import { AgentModel, agentFactory } from '../../model';
-import { getById } from '../../queries';
+import { getModelById } from '../../queries';
 
 export interface RemoveSoftAgentCommandInput {
   id: string;
@@ -16,6 +16,6 @@ const persistRemoveSoft = removeSoftDb<AgentModel>({
 });
 
 export const removeSoft = async (input: RemoveSoftAgentCommandInput) => {
-  await getById({ id: input.id, userId: input.userId });
+  await getModelById({ id: input.id, userId: input.userId });
   return persistRemoveSoft({ id: input.id });
 };

@@ -2,24 +2,42 @@ import { toAiIntegrationResponse } from '@vassembly/domain-ai-integration';
 
 import { getAgentUsageCount } from './getAgentUsageCount';
 
-import type { AiIntegrationCredentialModel, AiIntegrationCredentialResponse } from '@vassembly/domain-ai-integration';
+import type {
+  AiIntegrationCredentialModel,
+  AiIntegrationCredentialResponse,
+} from '@vassembly/domain-ai-integration';
 
-interface EnrichCredentialResponseParams {
+interface EnrichCredentialModelParams {
   credential: AiIntegrationCredentialModel;
 }
 
-export const enrichCredentialResponse = async (
-  params: EnrichCredentialResponseParams,
+interface EnrichCredentialDtoParams {
+  credential: AiIntegrationCredentialResponse;
+}
+
+const addAgentUsageCount = async (
+  credential: AiIntegrationCredentialResponse,
 ): Promise<AiIntegrationCredentialResponse> => {
-  const { credential } = params;
-  const response = toAiIntegrationResponse(credential);
   const credentialId = credential.id;
   const userId = credential.userId;
 
   if (!credentialId || !userId) {
-    return response;
+    return credential;
   }
 
   const agentUsageCount = await getAgentUsageCount({ userId, credentialId });
-  return { ...response, agentUsageCount };
+  return { ...credential, agentUsageCount };
+};
+
+export const enrichCredentialDto = async (
+  params: EnrichCredentialDtoParams,
+): Promise<AiIntegrationCredentialResponse> => {
+  return addAgentUsageCount(params.credential);
+};
+
+export const enrichCredentialResponse = async (
+  params: EnrichCredentialModelParams,
+): Promise<AiIntegrationCredentialResponse> => {
+  const response = toAiIntegrationResponse({ credential: params.credential });
+  return addAgentUsageCount(response);
 };

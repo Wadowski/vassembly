@@ -6,6 +6,7 @@ export enum ErrorTypes {
   FORBIDDEN = 'FORBIDDEN',
   INTERNAL_ERROR = 'INTERNAL_ERROR',
   TIMEOUT = 'TIMEOUT',
+  CONFLICT = 'CONFLICT',
 }
 
 export const ErrorStatusCodes: Record<ErrorTypes, number> = {
@@ -16,4 +17,5 @@ export const ErrorStatusCodes: Record<ErrorTypes, number> = {
   [ErrorTypes.FORBIDDEN]: 403,
   [ErrorTypes.INTERNAL_ERROR]: 500,
   [ErrorTypes.TIMEOUT]: 408,
+  [ErrorTypes.CONFLICT]: 409,
 };

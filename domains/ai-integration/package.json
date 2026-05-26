@@ -24,6 +24,7 @@
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",
+    "@vassembly/mappers": "workspace:*",
     "@vassembly/graphql": "workspace:*",
     "@vassembly/model": "workspace:*",
     "@vassembly/queries": "workspace:*",

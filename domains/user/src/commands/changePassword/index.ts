@@ -1,23 +1,17 @@
-import { compareHash, hash } from "@vassembly/client-encoder";
-import { validatorFactory } from "@vassembly/validation";
-import { getDbById } from "@vassembly/queries";
-import { UnauthorizedError, ValidationError, WrongParamError } from "@vassembly/errors";
+import { compareHash, hash } from '@vassembly/client-encoder';
+import { validatorFactory } from '@vassembly/validation';
+import { UnauthorizedError, ValidationError, WrongParamError } from '@vassembly/errors';
 
-import { userMongodbDao } from "../../clients";
-import { UserModel, userFactory, createUserFactory } from "../../model";
-import { getById } from "../../queries/getById";
-import { PASSWORD_VALIDATION_SCHEMA } from "../create/constants";
-import { USER_ID_VALIDATION_SCHEMA } from "../userIdValidationSchema";
-import { CHANGE_PASSWORD_INPUT_SCHEMA } from "./constants";
-import type { ChangePasswordCommand } from "./types";
+import { userMongodbDao } from '../../clients';
+import { UserModel, userFactory } from '../../model';
+import { getModelById } from '../../queries/getModelById';
+import { PASSWORD_VALIDATION_SCHEMA } from '../create/constants';
+import { USER_ID_VALIDATION_SCHEMA } from '../userIdValidationSchema';
+import { CHANGE_PASSWORD_INPUT_SCHEMA } from './constants';
+import type { ChangePasswordCommand } from './types';
 
 const validateChangePasswordInput = validatorFactory(CHANGE_PASSWORD_INPUT_SCHEMA);
 const validatePasswordPolicy = validatorFactory(PASSWORD_VALIDATION_SCHEMA);
-const getUserById = getDbById<UserModel>({
-  dao: userMongodbDao,
-  factory: userFactory,
-});
-const userFactoryInstance = createUserFactory();
 
 export const changePassword = async (
   rawInput: ChangePasswordCommand,
@@ -29,7 +23,7 @@ export const changePassword = async (
   const { userId, currentPassword, newPassword } = parsed.data;
 
   if (currentPassword === newPassword) {
-    throw new WrongParamError("New password must differ from the current password");
+    throw new WrongParamError('New password must differ from the current password');
   }
 
   const policy = validatePasswordPolicy({ password: newPassword });
@@ -37,12 +31,9 @@ export const changePassword = async (
     throw new ValidationError(policy.error.message, policy.error);
   }
 
-  const existing = await getById({
-    id: userId,
-    includePasswordHash: true,
-  });
+  const existing = await getModelById({ id: userId });
   if (!existing.data?.passwordHash) {
-    throw new UnauthorizedError("Password change is not available for this account", { userId });
+    throw new UnauthorizedError('Password change is not available for this account', { userId });
   }
 
   const isCurrentValid = await compareHash({
@@ -50,7 +41,7 @@ export const changePassword = async (
     hash: existing.data.passwordHash,
   });
   if (!isCurrentValid) {
-    throw new UnauthorizedError("Current password is incorrect", { userId });
+    throw new UnauthorizedError('Current password is incorrect', { userId });
   }
 
   const queryInstance = userFactory.create({ id: userId }, { validationSchema: USER_ID_VALIDATION_SCHEMA });
@@ -63,8 +54,8 @@ export const changePassword = async (
     userFactory.create({ passwordHash }),
   );
 
-  const refreshed = await getUserById({ id: userId });
+  const refreshed = await getModelById({ id: userId });
   return refreshed;
 };
 
-export type { ChangePasswordCommand } from "./types";
+export type { ChangePasswordCommand } from './types';

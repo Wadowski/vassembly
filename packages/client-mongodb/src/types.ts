@@ -32,7 +32,7 @@ export interface MongoDbDAO<T extends Model> {
     where: any,
     options?: QueryOptions
   ) => Promise<Array<Partial<T>>>;
-  findOneRaw: (
+  getRaw: (
     where: Record<string, unknown>,
     options?: QueryOptions
   ) => Promise<Partial<T> | null>;

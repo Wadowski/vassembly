@@ -3,25 +3,17 @@
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 
-import type { SystemAgentAdminItem, SystemAgentFormInput } from '@vassembly/ui-api-hooks';
+import type { SystemAgentFormInput } from '@vassembly/ui-api-hooks';
 import { Button } from '@vassembly/ui-button';
 import { Modal } from '@vassembly/ui-modal';
 import { Text } from '@vassembly/ui-text';
+import { Tag } from '@vassembly/ui-tag';
 
 import { SystemAgentFormFields } from './SystemAgentFormFields';
 import { useSystemAgentForm } from './useSystemAgentForm';
 import { getSystemAgentStatusLabel, getSystemAgentStatusVariant } from './tags';
+import { type SystemAgentEditModalProps } from './types';
 import styles from './styles.module.scss';
-import { Tag } from '@vassembly/ui-tag';
-
-export interface SystemAgentEditModalProps {
-  open: boolean;
-  agent?: SystemAgentAdminItem;
-  onClose: () => void;
-  onSubmit: (input: SystemAgentFormInput) => Promise<void>;
-  isSubmitting?: boolean;
-  nameConflictError?: string;
-}
 
 export function SystemAgentEditModal({
   open,

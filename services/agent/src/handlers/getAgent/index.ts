@@ -1,4 +1,4 @@
-import agentDomain, { toAgentResponse } from '@vassembly/domain-agent';
+import agentDomain from '@vassembly/domain-agent';
 
 import type { GetAgentHandlerInput, GetAgentHandlerOutput } from './types';
 
@@ -8,5 +8,5 @@ export const getAgent = async (input: GetAgentHandlerInput): Promise<GetAgentHan
     userId: input.userId,
   });
 
-  return { agent: toAgentResponse(found.data) };
+  return { agent: found.data };
 };

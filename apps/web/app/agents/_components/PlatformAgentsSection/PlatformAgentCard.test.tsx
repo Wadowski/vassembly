@@ -4,18 +4,30 @@ import { describe, expect, it, vi } from 'vitest';
 import { PlatformAgentCard } from './PlatformAgentCard';
 import { SystemAgentCategory, SystemAgentStatus } from '@vassembly/ui-api-hooks';
 
+const adminAgent = {
+  id: 'agent-1',
+  name: 'Code Review Assist',
+  description: 'Reviews pull requests.',
+  category: SystemAgentCategory.Coding,
+  status: SystemAgentStatus.Active,
+  rule: 'Review code carefully.',
+  createdByAdminId: 'admin-1',
+  updatedByAdminId: 'admin-1',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  removedAt: null,
+};
+
 describe('PlatformAgentCard', () => {
-  it('should render platform badge, name, and run action for catalog agents', () => {
+  it('should render platform badge, name, and run action', () => {
     render(
       <PlatformAgentCard
-        agent={{
-          id: 'agent-1',
-          name: 'Code Review Assist',
-          description: 'Reviews pull requests.',
-          category: SystemAgentCategory.Coding,
-          status: SystemAgentStatus.Active,
-        }}
+        agent={adminAgent}
         onRun={vi.fn()}
+        onEdit={vi.fn()}
+        onArchive={vi.fn()}
+        onRestore={vi.fn()}
+        onTestInvoke={vi.fn()}
       />,
     );
 
@@ -24,18 +36,17 @@ describe('PlatformAgentCard', () => {
     expect(screen.getByRole('button', { name: /run/i })).not.toBeNull();
   });
 
-  it('should expose admin actions when isAdmin is true', () => {
+  it('should expose admin actions', () => {
     render(
       <PlatformAgentCard
         agent={{
-          id: 'agent-1',
+          ...adminAgent,
           name: 'Onboarding Guide',
-          status: SystemAgentStatus.Active,
         }}
-        isAdmin
         onRun={vi.fn()}
         onEdit={vi.fn()}
         onArchive={vi.fn()}
+        onRestore={vi.fn()}
         onTestInvoke={vi.fn()}
       />,
     );

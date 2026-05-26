@@ -46,7 +46,7 @@ const testSavedConnection = async (
     throw new ValidationError('userId and credentialId are required for saved credential test');
   }
 
-  const credentialResult = await aiIntegrationDomain.queries.getById({
+  const credentialResult = await aiIntegrationDomain.queries.getModelById({
     id: credentialId,
     userId,
   });

@@ -1,6 +1,5 @@
 'use client';
 
-import { Alert } from '@vassembly/ui-alert';
 import { Button } from '@vassembly/ui-button';
 import { Dropdown } from '@vassembly/ui-dropdown';
 import { Loader } from '@vassembly/ui-loader';
@@ -22,24 +21,20 @@ import styles from './styles.module.scss';
 import type { PlatformAgentCategoryFilter, PlatformAgentStatusFilter } from './usePlatformAgentListFilters';
 import { usePlatformAgentsSection } from './usePlatformAgentsSection';
 
-const STATUS_FILTER_OPTIONS: ReadonlyArray<{ value: PlatformAgentStatusFilter; label: string }> = [
+const STATUS_FILTER_OPTIONS: Array<{ value: PlatformAgentStatusFilter; label: string }> = [
   { value: SystemAgentStatus.Active, label: 'Active' },
   { value: SystemAgentStatus.Archived, label: 'Archived' },
   { value: SystemAgentStatus.Disabled, label: 'Disabled' },
   { value: SYSTEM_AGENT_LIST_ALL_STATUSES, label: 'All statuses' },
 ];
 
-const CATEGORY_FILTER_OPTIONS: ReadonlyArray<{ value: PlatformAgentCategoryFilter; label: string }> = [
+const CATEGORY_FILTER_OPTIONS: Array<{ value: PlatformAgentCategoryFilter; label: string }> = [
   { value: SYSTEM_AGENT_LIST_ALL_STATUSES, label: 'All categories' },
   ...SYSTEM_AGENT_CATEGORY_OPTIONS.map((option) => ({ value: option.value, label: option.label })),
 ];
 
-export interface PlatformAgentsSectionProps {
-  isAdmin?: boolean;
-}
-
-export function PlatformAgentsSection({ isAdmin = false }: PlatformAgentsSectionProps): JSX.Element {
-  const section = usePlatformAgentsSection({ isAdmin });
+export function PlatformAgentsSection(): JSX.Element {
+  const section = usePlatformAgentsSection();
 
   return (
     <section id="platform-agents" className={styles.sectionCard}>
@@ -53,22 +48,14 @@ export function PlatformAgentsSection({ isAdmin = false }: PlatformAgentsSection
         <Text variant="body2">
           Governed agents provided by your organization. They run using your AI connection.
         </Text>
-        {isAdmin ? (
-          <Alert
-            variant="info"
-            message="Platform agents are visible to all signed-in users. Only admins can create, edit, or archive them."
-          />
-        ) : null}
       </div>
       <div className={styles.toolbarRow}>
-        {isAdmin ? (
-          <Button
-            className={styles.createButton}
-            variant="contained"
-            text="Create System Agent"
-            onClick={section.openCreate}
-          />
-        ) : null}
+        <Button
+          className={styles.createButton}
+          variant="contained"
+          text="Create System Agent"
+          onClick={section.openCreate}
+        />
         <div className={styles.filtersGroup}>
           <TextField
             className={styles.filterField}
@@ -78,21 +65,19 @@ export function PlatformAgentsSection({ isAdmin = false }: PlatformAgentsSection
             value={section.filters.searchInput}
             onChange={(event) => section.filters.handleSearchChange(event.target.value)}
           />
-          {isAdmin ? (
-            <div className={styles.filterDropdown}>
-              <Dropdown
-                id="platform-agent-status-filter"
-                size="small"
-                options={STATUS_FILTER_OPTIONS}
-                isDisabled={section.isLoading}
-                isFullWidth
-                value={section.filters.statusFilter}
-                onValueChange={(value) =>
-                  section.filters.handleStatusChange(value as PlatformAgentStatusFilter)
-                }
-              />
-            </div>
-          ) : null}
+          <div className={styles.filterDropdown}>
+            <Dropdown
+              id="platform-agent-status-filter"
+              size="small"
+              options={STATUS_FILTER_OPTIONS}
+              isDisabled={section.isLoading}
+              isFullWidth
+              value={section.filters.statusFilter}
+              onValueChange={(value) =>
+                section.filters.handleStatusChange(value as PlatformAgentStatusFilter)
+              }
+            />
+          </div>
           <div className={styles.filterDropdown}>
             <Dropdown
               id="platform-agent-category-filter"
@@ -111,12 +96,8 @@ export function PlatformAgentsSection({ isAdmin = false }: PlatformAgentsSection
       {section.isLoading ? <Loader ariaLabel="Loading platform agents" /> : null}
       {section.isEmpty ? (
         <div className={styles.emptyState}>
-          <Text variant="body2">
-            {isAdmin ? 'No system agents yet.' : 'No platform agents are available right now.'}
-          </Text>
-          {isAdmin ? (
-            <Button variant="contained" text="Create System Agent" onClick={section.openCreate} />
-          ) : null}
+          <Text variant="body2">No system agents yet.</Text>
+          <Button variant="contained" text="Create System Agent" onClick={section.openCreate} />
         </div>
       ) : null}
       {section.isFilteredEmpty ? (
@@ -131,8 +112,6 @@ export function PlatformAgentsSection({ isAdmin = false }: PlatformAgentsSection
             <PlatformAgentCard
               key={agent.id}
               agent={agent}
-              isAdmin={isAdmin}
-              isInvokeEnabled={section.isInvokeEnabled}
               onRun={section.openInvokeFor}
               onEdit={section.openEditFor}
               onArchive={section.openArchiveFor}
@@ -151,7 +130,7 @@ export function PlatformAgentsSection({ isAdmin = false }: PlatformAgentsSection
       />
       <SystemAgentEditModal
         open={section.editOpen}
-        agent={section.focusAdminAgent}
+        agent={section.focusAgent ?? undefined}
         onClose={section.closeEdit}
         onSubmit={section.handleUpdate}
         isSubmitting={section.isUpdateSubmitting}
@@ -174,7 +153,6 @@ export function PlatformAgentsSection({ isAdmin = false }: PlatformAgentsSection
       <SystemAgentInvokeModal
         open={section.invokeOpen}
         agent={section.focusAgent ?? undefined}
-        isAdmin={isAdmin}
         onClose={section.closeInvoke}
       />
     </section>

@@ -1,22 +1,14 @@
-import { systemAgentMongodbDao } from '../../clients';
-import { systemAgentFactory, toSystemAgentResponse } from '../../model';
+import { toSystemAgentResponse } from '../../model';
+import { getModelById } from '../getModelById/index';
 
 import type { GetByIdParams, GetByIdResult } from './types';
 
 export const getById = async ({ id }: GetByIdParams): Promise<GetByIdResult> => {
-  try {
-    const raw = await systemAgentMongodbDao.get(systemAgentFactory.create({ id }));
+  const result = await getModelById({ id });
 
-    if (!raw || raw.id === undefined) {
-      return { data: null };
-    }
-
-    return {
-      data: toSystemAgentResponse({
-        systemAgent: systemAgentFactory.create(raw),
-      }),
-    };
-  } catch (error) {
-    return { data: null, error };
-  }
+  return {
+    data: toSystemAgentResponse({
+      systemAgent: result.data,
+    }),
+  };
 };

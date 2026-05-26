@@ -18,7 +18,6 @@ vi.mock('./usePlatformAgentsSection', () => ({
     isLoading: false,
     isEmpty: true,
     isFilteredEmpty: false,
-    isInvokeEnabled: false,
     createOpen: false,
     editOpen: false,
     archiveOpen: false,
@@ -26,7 +25,6 @@ vi.mock('./usePlatformAgentsSection', () => ({
     invokeOpen: false,
     focusAgent: null,
     focusAgentName: '',
-    focusAdminAgent: undefined,
     nameConflictError: undefined,
     isCreateSubmitting: false,
     isUpdateSubmitting: false,
@@ -50,7 +48,7 @@ vi.mock('./usePlatformAgentsSection', () => ({
 }));
 
 describe('PlatformAgentsSection', () => {
-  it('should render platform agents section copy and search for users', () => {
+  it('should render admin platform agents controls', () => {
     render(<PlatformAgentsSection />);
 
     expect(screen.getByRole('heading', { name: /platform agents/i })).not.toBeNull();
@@ -58,12 +56,6 @@ describe('PlatformAgentsSection', () => {
       screen.getByText(/governed agents provided by your organization/i),
     ).not.toBeNull();
     expect(screen.getByPlaceholderText(/search platform agents/i)).not.toBeNull();
-    expect(screen.getByText(/no platform agents are available right now/i)).not.toBeNull();
-  });
-
-  it('should render admin create controls when isAdmin is true', () => {
-    render(<PlatformAgentsSection isAdmin />);
-
     expect(screen.getByRole('button', { name: /create system agent/i })).not.toBeNull();
     expect(screen.getByText(/no system agents yet/i)).not.toBeNull();
   });

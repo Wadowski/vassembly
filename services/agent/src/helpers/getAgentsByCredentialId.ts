@@ -27,7 +27,7 @@ export const getAgentsByCredentialId = async (
     const matchingAgents = result.items.filter(
       (agent) => agent.integrationCredentialId === params.credentialId && !agent.removedAt,
     );
-    agents.push(...matchingAgents.map((agent) => toAgentResponse(agent)));
+    agents.push(...matchingAgents.map((agent) => toAgentResponse({ agent })));
     page += 1;
   } while (page * PAGE_SIZE < totalCount);
 

@@ -18,7 +18,7 @@ describe('toAiIntegrationResponse', () => {
       removedAt: null,
     };
 
-    const response = toAiIntegrationResponse(credential as AiIntegrationCredentialModel);
+    const response = toAiIntegrationResponse({ credential: credential as AiIntegrationCredentialModel });
 
     expect(response.hasApiKey).toBe(true);
     expect(response.apiKeyHint).toBe('...abcd');
@@ -35,9 +35,11 @@ describe('toAiIntegrationResponse', () => {
       baseUrl: 'http://localhost:1234',
       status: 'active',
       connectionStatus: 'untested',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-02T00:00:00.000Z'),
     };
 
-    const response = toAiIntegrationResponse(credential as AiIntegrationCredentialModel);
+    const response = toAiIntegrationResponse({ credential: credential as AiIntegrationCredentialModel });
 
     expect(response.hasApiKey).toBe(false);
     expect(response.apiKeyHint).toBeNull();
@@ -53,9 +55,11 @@ describe('toAiIntegrationResponse', () => {
       model: 'gemini-pro',
       status: 'active',
       connectionStatus: 'connected',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-02T00:00:00.000Z'),
     };
 
-    const response = toAiIntegrationResponse(credential as AiIntegrationCredentialModel);
+    const response = toAiIntegrationResponse({ credential: credential as AiIntegrationCredentialModel });
 
     expect(response.model).toBe('gemini-pro');
   });

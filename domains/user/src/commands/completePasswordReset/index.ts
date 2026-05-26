@@ -1,19 +1,15 @@
-import { encode, hash } from "@vassembly/client-encoder";
-import { validatorFactory } from "@vassembly/validation";
-import { getDbById } from "@vassembly/queries";
-import { NotFoundError, UnauthorizedError, WrongParamError } from "@vassembly/errors";
+import { encode, hash } from '@vassembly/client-encoder';
+import { validatorFactory } from '@vassembly/validation';
+import { NotFoundError, UnauthorizedError, WrongParamError } from '@vassembly/errors';
 
-import { userMongodbDao } from "../../clients";
-import { UserModel, userFactory } from "../../model";
-import { PASSWORD_VALIDATION_SCHEMA } from "../create/constants";
-import { USER_ID_VALIDATION_SCHEMA } from "../userIdValidationSchema";
-import type { CompletePasswordResetCommand } from "./types";
+import { userMongodbDao } from '../../clients';
+import { UserModel, userFactory } from '../../model';
+import { getModelById } from '../../queries/getModelById';
+import { PASSWORD_VALIDATION_SCHEMA } from '../create/constants';
+import { USER_ID_VALIDATION_SCHEMA } from '../userIdValidationSchema';
+import type { CompletePasswordResetCommand } from './types';
 
 const validatePasswordShape = validatorFactory(PASSWORD_VALIDATION_SCHEMA);
-const getUserById = getDbById<UserModel>({
-  dao: userMongodbDao,
-  factory: userFactory,
-});
 
 export const completePasswordReset = async ({
   userId,
@@ -27,7 +23,7 @@ export const completePasswordReset = async ({
   queryInstance.isValid({ shouldThrow: true });
 
   if (!plainToken) {
-    throw new WrongParamError("Reset token is required");
+    throw new WrongParamError('Reset token is required');
   }
 
   const validation = validatePasswordShape({ password: newPassword });
@@ -47,17 +43,17 @@ export const completePasswordReset = async ({
   }
 
   if (!user.passwordResetToken) {
-    throw new WrongParamError("No password reset in progress");
+    throw new WrongParamError('No password reset in progress');
   }
 
   if (!user.passwordResetExpiresAt || user.passwordResetExpiresAt <= new Date()) {
-    throw new UnauthorizedError("Password reset token has expired");
+    throw new UnauthorizedError('Password reset token has expired');
   }
 
   const encodedToken = encode(plainToken);
 
   if (encodedToken !== user.passwordResetToken) {
-    throw new UnauthorizedError("Invalid password reset token");
+    throw new UnauthorizedError('Invalid password reset token');
   }
 
   const passwordHash = await hash({ text: newPassword });
@@ -71,7 +67,7 @@ export const completePasswordReset = async ({
     }),
   );
 
-  const refreshed = await getUserById({ id: userId });
+  const refreshed = await getModelById({ id: userId });
   if (refreshed.data) {
     delete refreshed.data.passwordHash;
   }

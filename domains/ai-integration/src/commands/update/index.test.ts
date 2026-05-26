@@ -23,7 +23,7 @@ vi.mock('@vassembly/commands', () => ({
 }));
 
 vi.mock('../../queries', () => ({
-  getById: mockGetById,
+  getModelById: mockGetById,
 }));
 
 vi.mock('@vassembly/client-encoder', () => ({

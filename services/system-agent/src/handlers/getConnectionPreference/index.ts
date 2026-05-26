@@ -1,6 +1,7 @@
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ForbiddenError, NotFoundError } from '@vassembly/errors';
 
+import { assertAdminRole } from '../../helpers/assertAdminRole';
 import { toPreferenceResponse } from '../../helpers/toPreferenceResponse';
 
 import type { GetConnectionPreferenceParams, GetConnectionPreferenceResult } from './types';
@@ -8,10 +9,10 @@ import type { GetConnectionPreferenceParams, GetConnectionPreferenceResult } fro
 export const getConnectionPreference = async (
   input: GetConnectionPreferenceParams,
 ): Promise<GetConnectionPreferenceResult> => {
-  const { userId, targetUserId } = input;
+  const { userId, role, targetUserId } = input;
 
   if (targetUserId !== undefined && targetUserId !== userId) {
-    throw new ForbiddenError('Cannot read another user preference');
+    assertAdminRole({ role });
   }
 
   const result = await systemAgentDomain.queries.getPreferenceByUserId({ userId });

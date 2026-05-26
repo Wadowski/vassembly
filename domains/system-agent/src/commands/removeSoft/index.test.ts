@@ -10,9 +10,9 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockRemoveSoft, mockGetById } = vi.hoisted(() => ({
+const { mockRemoveSoft, mockGetModelById } = vi.hoisted(() => ({
   mockRemoveSoft: vi.fn(),
-  mockGetById: vi.fn(),
+  mockGetModelById: vi.fn(),
 }));
 
 vi.mock('../../clients', () => ({
@@ -24,7 +24,7 @@ vi.mock('@vassembly/commands', () => ({
 }));
 
 vi.mock('../../queries', () => ({
-  getById: mockGetById,
+  getModelById: mockGetModelById,
 }));
 
 import { removeSoft } from './index';
@@ -52,7 +52,7 @@ describe('removeSoft system agent command', () => {
 
   it('should set removedAt timestamp and archived status together', async () => {
     const removedAt = new Date('2026-04-01T11:30:00.000Z');
-    mockGetById.mockResolvedValue({ data: buildActiveAgent() });
+    mockGetModelById.mockResolvedValue({ data: buildActiveAgent() });
     mockRemoveSoft.mockResolvedValue({
       data: {
         ...buildActiveAgent(),
@@ -71,13 +71,13 @@ describe('removeSoft system agent command', () => {
   });
 
   it('should throw NotFoundError when agent not found', async () => {
-    mockGetById.mockRejectedValue(new NotFoundError('System agent not found'));
+    mockGetModelById.mockRejectedValue(new NotFoundError('System agent not found'));
 
     await expect(removeSoft({ id: 'missing-id', updatedByAdminId: 'admin-1' })).rejects.toThrow(NotFoundError);
   });
 
   it('should reject archive when agent is already archived', async () => {
-    mockGetById.mockResolvedValue({
+    mockGetModelById.mockResolvedValue({
       data: {
         ...buildActiveAgent(),
         status: 'archived',
@@ -89,7 +89,7 @@ describe('removeSoft system agent command', () => {
   });
 
   it('should reject removal when persistence fails unexpectedly', async () => {
-    mockGetById.mockResolvedValue({ data: buildActiveAgent() });
+    mockGetModelById.mockResolvedValue({ data: buildActiveAgent() });
     mockRemoveSoft.mockRejectedValue(new InternalError('Database unavailable'));
 
     await expect(removeSoft({ id: AGENT_ID, updatedByAdminId: 'admin-1' })).rejects.toThrow(InternalError);

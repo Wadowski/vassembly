@@ -3,7 +3,7 @@ import { removeSoftDb } from '@vassembly/commands';
 import { AiIntegrationStatus } from '../../constants';
 import { aiIntegrationMongodbDao } from '../../clients';
 import { AiIntegrationCredentialModel, aiIntegrationCredentialFactory } from '../../model';
-import { getById } from '../../queries';
+import { getModelById } from '../../queries';
 
 import type { RemoveSoftAiIntegrationCommandInput } from './types';
 
@@ -14,6 +14,6 @@ const persistRemoveSoft = removeSoftDb<AiIntegrationCredentialModel>({
 });
 
 export const removeSoft = async (input: RemoveSoftAiIntegrationCommandInput) => {
-  await getById({ id: input.id, userId: input.userId });
+  await getModelById({ id: input.id, userId: input.userId });
   return persistRemoveSoft({ id: input.id });
 };

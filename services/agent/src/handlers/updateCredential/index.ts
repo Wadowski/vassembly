@@ -20,7 +20,7 @@ export const updateCredential = async (
   }
   const parsed = parsedResult.data;
 
-  const existingResult = await aiIntegrationDomain.queries.getById({
+  const existingResult = await aiIntegrationDomain.queries.getModelById({
     id: input.credentialId,
     userId: input.userId,
   });

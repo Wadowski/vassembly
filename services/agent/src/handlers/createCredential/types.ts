@@ -39,5 +39,4 @@ export interface CreateCredentialHandlerInput {
 
 export interface CreateCredentialHandlerOutput {
   credential: AiIntegrationCredentialResponse;
-  isFirstSystemAgentPreference?: boolean;
 }

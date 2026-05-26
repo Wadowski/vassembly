@@ -4,15 +4,8 @@ import { Button } from '@vassembly/ui-button';
 import { Modal } from '@vassembly/ui-modal';
 import { Text } from '@vassembly/ui-text';
 
+import type { SystemAgentArchiveDialogProps } from './types';
 import styles from './styles.module.scss';
-
-export interface SystemAgentArchiveDialogProps {
-  name: string;
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => Promise<void>;
-  isConfirmBusy?: boolean;
-}
 
 export function SystemAgentArchiveDialog({
   name,

@@ -1,8 +1,7 @@
-import systemAgentDomain, { AgentStatus } from '@vassembly/domain-system-agent';
+import systemAgentDomain, { AgentStatus, toSystemAgentResponse } from '@vassembly/domain-system-agent';
 import { NotFoundError, WrongParamError } from '@vassembly/errors';
 
 import { assertAdminRole } from '../../helpers/assertAdminRole';
-import { mapAdminResponse } from '../../helpers/mapAdminResponse';
 
 import type { RestoreSystemAgentParams, RestoreSystemAgentResult } from './types';
 
@@ -32,6 +31,6 @@ export const restoreSystemAgent = async (
   });
 
   return {
-    systemAgent: mapAdminResponse(result.data),
+    systemAgent: toSystemAgentResponse({ systemAgent: result.data }),
   };
 };

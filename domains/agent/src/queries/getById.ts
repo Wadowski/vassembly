@@ -1,21 +1,18 @@
-import { NotFoundError } from '@vassembly/errors';
+import { toAgentResponse } from '../model';
 
-import { agentMongodbDao } from '../clients';
-import { agentFactory } from '../model';
-import type { AgentModel } from '../model';
+import { getModelById } from './getModelById';
 
+import type { AgentResponse } from '../model';
 import type { GetAgentByIdQueryInput } from './getById.types';
 
-const NOT_FOUND_MESSAGE = 'Agent not found';
+export interface GetAgentByIdQueryResult {
+  data: AgentResponse;
+}
 
-export const getById = async (input: GetAgentByIdQueryInput): Promise<{ data: AgentModel }> => {
-  const where = agentFactory.create({ id: input.id });
-  const raw = await agentMongodbDao.get(where);
-  if (!raw || !raw.id) {
-    throw new NotFoundError(NOT_FOUND_MESSAGE);
-  }
-  if (input.userId !== undefined && raw.userId !== input.userId) {
-    throw new NotFoundError(NOT_FOUND_MESSAGE);
-  }
-  return { data: agentFactory.create(raw) };
+export const getById = async (input: GetAgentByIdQueryInput): Promise<GetAgentByIdQueryResult> => {
+  const result = await getModelById(input);
+
+  return {
+    data: toAgentResponse({ agent: result.data }),
+  };
 };

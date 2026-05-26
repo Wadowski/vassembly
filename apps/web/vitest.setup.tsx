@@ -69,12 +69,6 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       isLoading: false,
     })),
     useHttpClient: vi.fn(() => testApiHooksStubs.mockHttpClient),
-    useSystemAgentCatalog: vi.fn(() => ({
-      data: { items: [], page: 0, size: 50, total: 0 },
-      isLoading: false,
-      error: undefined,
-      fetch: vi.fn().mockResolvedValue(undefined),
-    })),
     useSystemAgents: vi.fn(() => ({
       data: { items: [], page: 0, size: 50, total: 0 },
       isLoading: false,

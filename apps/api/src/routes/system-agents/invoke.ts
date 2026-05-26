@@ -16,7 +16,7 @@ export const systemAgentInvokeRoute = defineRoute({
       throw new WrongParamError('Missing system agent id');
     }
 
-    const { userId, role } = await authHandlers.authorizeRequest({ headers });
+    const { userId, role } = await authHandlers.authorizeAdminRequest({ headers });
 
     return systemAgentService.invokeSystemAgent({
       userId,

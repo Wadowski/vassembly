@@ -20,7 +20,7 @@ const { mockSendEmail } = vi.hoisted(() => ({
   mockSendEmail: vi.fn(),
 }));
 
-vi.mock("../resolveUserIdForPasswordReset", () => ({
+vi.mock("../../queries/resolveUserIdForPasswordReset", () => ({
   resolveUserIdForPasswordReset: mockResolveUserId,
 }));
 

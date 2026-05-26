@@ -1,27 +1,24 @@
+import { getDbById } from '@vassembly/queries';
 import { AgentStatus } from '../../constants';
 import { systemAgentMongodbDao } from '../../clients';
-import { systemAgentFactory, toCatalogDetail } from '../../model';
+import { systemAgentFactory, toDetail } from '../../model';
 
 import type { GetActiveByIdParams, GetActiveByIdResult } from './types';
+import type { SystemAgentModel } from '../../model';
+
+const defaultGetById = getDbById<SystemAgentModel>({
+  dao: systemAgentMongodbDao,
+  factory: systemAgentFactory,
+});
 
 export const getActiveById = async ({ id }: GetActiveByIdParams): Promise<GetActiveByIdResult> => {
-  try {
-    const raw = await systemAgentMongodbDao.get(systemAgentFactory.create({ id }));
+  const result = await defaultGetById({ id });
 
-    if (!raw || raw.id === undefined) {
-      return { data: null };
-    }
-
-    const systemAgent = systemAgentFactory.create(raw);
-
-    if (systemAgent.status !== AgentStatus.Active || systemAgent.removedAt != null) {
-      return { data: null };
-    }
-
-    return {
-      data: toCatalogDetail({ systemAgent }),
-    };
-  } catch (error) {
-    return { data: null, error };
+  if (result.data.status !== AgentStatus.Active || result.data.removedAt != null) {
+    return { data: null };
   }
+
+  return {
+    data: toDetail({ systemAgent: result.data }),
+  };
 };

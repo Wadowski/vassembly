@@ -14,13 +14,13 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockFindOneRaw } = vi.hoisted(() => ({
-  mockFindOneRaw: vi.fn(),
+const { mockGetRaw } = vi.hoisted(() => ({
+  mockGetRaw: vi.fn(),
 }));
 
 vi.mock('../../clients', () => ({
   systemAgentMongodbDao: {
-    findOneRaw: mockFindOneRaw,
+    getRaw: mockGetRaw,
   },
 }));
 
@@ -48,25 +48,25 @@ describe('assertUniqueActiveName system agent query', () => {
   });
 
   it('should resolve when no conflicting active agent name exists', async () => {
-    mockFindOneRaw.mockResolvedValue(undefined);
+    mockGetRaw.mockResolvedValue(undefined);
 
     await expect(assertUniqueActiveName({ name: 'Unique Agent' })).resolves.toBeUndefined();
   });
 
   it('should throw ConflictError when active agent with same name exists', async () => {
-    mockFindOneRaw.mockResolvedValue(buildAgent({ name: 'Compliance Bot' }));
+    mockGetRaw.mockResolvedValue(buildAgent({ name: 'Compliance Bot' }));
 
     await expect(assertUniqueActiveName({ name: 'Compliance Bot' })).rejects.toThrow(ConflictError);
   });
 
   it('should throw ConflictError when name differs only by case from active agent', async () => {
-    mockFindOneRaw.mockResolvedValue(buildAgent({ name: 'Compliance Bot' }));
+    mockGetRaw.mockResolvedValue(buildAgent({ name: 'Compliance Bot' }));
 
     await expect(assertUniqueActiveName({ name: 'compliance bot' })).rejects.toThrow(ConflictError);
   });
 
   it('should allow same name when excludeId matches the existing agent during update', async () => {
-    mockFindOneRaw.mockResolvedValue(undefined);
+    mockGetRaw.mockResolvedValue(undefined);
 
     await expect(
       assertUniqueActiveName({
@@ -77,7 +77,7 @@ describe('assertUniqueActiveName system agent query', () => {
   });
 
   it('should resolve when only archived or disabled agents share the name', async () => {
-    mockFindOneRaw.mockResolvedValue(undefined);
+    mockGetRaw.mockResolvedValue(undefined);
 
     await expect(assertUniqueActiveName({ name: 'Retired Bot' })).resolves.toBeUndefined();
   });

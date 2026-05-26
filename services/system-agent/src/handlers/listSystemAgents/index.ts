@@ -1,7 +1,6 @@
 import systemAgentDomain from '@vassembly/domain-system-agent';
 
 import { assertAdminRole } from '../../helpers/assertAdminRole';
-import { mapAdminResponse } from '../../helpers/mapAdminResponse';
 
 import type { ListSystemAgentsParams, ListSystemAgentsResult } from './types';
 
@@ -20,7 +19,7 @@ export const listSystemAgents = async (
   });
 
   return {
-    items: result.items.map((item) => mapAdminResponse(item)),
+    items: result.items,
     total: result.totalCount,
     page: result.page,
     size: result.size,

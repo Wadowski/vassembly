@@ -1,33 +1,27 @@
-import { getDbById as getDbByIdHelper } from "@vassembly/queries";
-import { NotFoundError } from "@vassembly/errors";
+import { NotFoundError } from '@vassembly/errors';
 
-import { userMongodbDao } from "../clients";
-import { UserModel, userFactory, createUserFactory } from "../model";
+import { toUserPublicResponse } from '../model';
 
-interface GetByIdParams {
+import { getModelById } from './getModelById';
+
+import type { UserPublicResponse } from '../model';
+
+export interface GetByIdParams {
   id: string;
-  includePasswordHash?: boolean;
 }
 
-const defaultGetById = getDbByIdHelper<UserModel>({
-  dao: userMongodbDao,
-  factory: userFactory,
-});
+export interface GetByIdResult {
+  data: UserPublicResponse;
+}
 
-export const getById = async ({
-  id,
-  includePasswordHash = false,
-}: GetByIdParams): Promise<ReturnType<typeof defaultGetById>> => {
-  const result = await defaultGetById({ id });
+export const getById = async ({ id }: GetByIdParams): Promise<GetByIdResult> => {
+  const result = await getModelById({ id });
 
-  if (result.data?.removedAt) {
+  if (result.data.removedAt) {
     throw new NotFoundError(`User with id ${id} not found`);
   }
 
-  if (result.data) {
-    const userFactoryInstance = createUserFactory({ includePasswordHash });
-    result.data = userFactoryInstance.toPublicResponse(result.data) as UserModel;
-  }
-
-  return result;
+  return {
+    data: toUserPublicResponse({ user: result.data }),
+  };
 };

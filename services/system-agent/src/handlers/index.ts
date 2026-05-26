@@ -16,12 +16,6 @@ export type { ArchiveSystemAgentParams, ArchiveSystemAgentResult } from './archi
 export { restoreSystemAgent } from './restoreSystemAgent';
 export type { RestoreSystemAgentParams, RestoreSystemAgentResult } from './restoreSystemAgent/types';
 
-export { listCatalog } from './listCatalog';
-export type { ListCatalogParams, ListCatalogResult } from './listCatalog/types';
-
-export { getCatalogItem } from './getCatalogItem';
-export type { GetCatalogItemParams, GetCatalogItemResult } from './getCatalogItem/types';
-
 export { getConnectionPreference } from './getConnectionPreference';
 export type {
   GetConnectionPreferenceParams,

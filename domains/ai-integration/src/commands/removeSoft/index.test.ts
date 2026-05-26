@@ -24,7 +24,7 @@ vi.mock('@vassembly/commands', () => ({
 }));
 
 vi.mock('../../queries', () => ({
-  getById: mockGetById,
+  getModelById: mockGetById,
 }));
 
 import { removeSoft } from './index';

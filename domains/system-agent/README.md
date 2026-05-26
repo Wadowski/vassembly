@@ -23,7 +23,7 @@ Domain package for platform-managed system agents and per-user connection prefer
 - `userSystemAgentPreferenceFactory` — preference factory
 - `AgentStatus`, `AgentCategory` — enums
 - `toSystemAgentResponse` — admin DTO mapper (includes rule + audit fields)
-- `toCatalogListItem`, `toCatalogDetail` — catalog DTO mappers (omit audit; list omits rule)
+- `toDetail` — detail DTO mapper (omits audit)
 
 ### Clients
 

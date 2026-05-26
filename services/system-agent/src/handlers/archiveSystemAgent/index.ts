@@ -1,8 +1,7 @@
-import systemAgentDomain from '@vassembly/domain-system-agent';
+import systemAgentDomain, { toSystemAgentResponse } from '@vassembly/domain-system-agent';
 import { NotFoundError } from '@vassembly/errors';
 
 import { assertAdminRole } from '../../helpers/assertAdminRole';
-import { mapAdminResponse } from '../../helpers/mapAdminResponse';
 
 import type { ArchiveSystemAgentParams, ArchiveSystemAgentResult } from './types';
 
@@ -25,6 +24,6 @@ export const archiveSystemAgent = async (
   });
 
   return {
-    systemAgent: mapAdminResponse(result.data),
+    systemAgent: toSystemAgentResponse({ systemAgent: result.data }),
   };
 };

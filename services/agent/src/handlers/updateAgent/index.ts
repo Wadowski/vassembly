@@ -33,5 +33,5 @@ export const updateAgent = async (input: UpdateAgentHandlerInput): Promise<Updat
     throw new InternalError('Agent update produced no persisted row');
   }
 
-  return { agent: toAgentResponse(updated.data) };
+  return { agent: toAgentResponse({ agent: updated.data }) };
 };

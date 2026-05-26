@@ -1,7 +1,5 @@
-import {
-  SystemAgentCategory,
-  type SystemAgentFormInput,
-} from '@vassembly/ui-api-hooks';
+import type { SystemAgentFormInput } from '@vassembly/ui-api-hooks';
+import { SystemAgentCategory } from '@vassembly/ui-api-hooks';
 import { validatorFactory } from '@vassembly/validation';
 import { useCallback, useMemo, useState } from 'react';
 import { z } from 'zod';
@@ -11,6 +9,7 @@ import {
   SYSTEM_AGENT_NAME_MAX,
   SYSTEM_AGENT_RULE_MAX,
 } from './constants';
+import type { SystemAgentFormValues, UseSystemAgentFormResult } from './types';
 
 const categoryValues = Object.values(SystemAgentCategory) as [SystemAgentCategory, ...SystemAgentCategory[]];
 
@@ -32,26 +31,6 @@ const schema = z.object({
     .min(1, 'Prompt is required.')
     .max(SYSTEM_AGENT_RULE_MAX, `Prompt must not exceed ${SYSTEM_AGENT_RULE_MAX} characters.`),
 });
-
-export interface SystemAgentFormValues {
-  name: string;
-  category: SystemAgentCategory | '';
-  description: string;
-  rule: string;
-}
-
-export interface UseSystemAgentFormResult {
-  values: SystemAgentFormValues;
-  getFieldErrorMessage: (key: keyof SystemAgentFormValues) => string | undefined;
-  descriptionCharCount: number;
-  ruleCharCount: number;
-  isValid: boolean;
-  setField: <K extends keyof SystemAgentFormValues>(key: K, value: SystemAgentFormValues[K]) => void;
-  blurField: (key: keyof SystemAgentFormValues) => void;
-  validate: () => boolean;
-  reset: (next?: Partial<SystemAgentFormValues>) => void;
-  toSubmitInput: () => SystemAgentFormInput;
-}
 
 const validateForm = validatorFactory(schema);
 

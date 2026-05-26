@@ -25,6 +25,7 @@
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",
+    "@vassembly/mappers": "workspace:*",
     "@vassembly/model": "workspace:*",
     "@vassembly/config": "workspace:*",
     "@vassembly/queries": "workspace:*",

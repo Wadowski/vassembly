@@ -4,27 +4,15 @@ import { Button } from '@vassembly/ui-button';
 import { Tag } from '@vassembly/ui-tag';
 import { Text } from '@vassembly/ui-text';
 
-import type { SystemAgentCatalogItem } from '@vassembly/ui-api-hooks';
+import type { SystemAgentAdminItem } from '@vassembly/ui-api-hooks';
 import { SystemAgentStatus } from '@vassembly/ui-api-hooks';
 
+import type { PlatformAgentCardProps } from './types';
 import styles from './styles.module.scss';
 import { getSystemAgentCategoryLabel } from './tags';
 
-export interface PlatformAgentCardProps {
-  agent: SystemAgentCatalogItem;
-  isAdmin?: boolean;
-  isInvokeEnabled?: boolean;
-  onRun: (agent: SystemAgentCatalogItem) => void;
-  onEdit?: (agent: SystemAgentCatalogItem) => void;
-  onArchive?: (agent: SystemAgentCatalogItem) => void;
-  onRestore?: (agent: SystemAgentCatalogItem) => void;
-  onTestInvoke?: (agent: SystemAgentCatalogItem) => void;
-}
-
 export function PlatformAgentCard({
   agent,
-  isAdmin = false,
-  isInvokeEnabled = true,
   onRun,
   onEdit,
   onArchive,
@@ -32,7 +20,6 @@ export function PlatformAgentCard({
   onTestInvoke,
 }: PlatformAgentCardProps): JSX.Element {
   const isArchived = agent.status === SystemAgentStatus.Archived;
-  const runDisabled = !isInvokeEnabled || isArchived;
 
   return (
     <article className={styles.agentCard}>
@@ -40,11 +27,9 @@ export function PlatformAgentCard({
         <Tag variant="primary" size="small">
           Platform Agent
         </Tag>
-        {isAdmin ? (
-          <Tag variant={isArchived ? 'warning' : 'success'} size="small">
-            {isArchived ? 'Archived' : 'Active'}
-          </Tag>
-        ) : null}
+        <Tag variant={isArchived ? 'warning' : 'success'} size="small">
+          {isArchived ? 'Archived' : 'Active'}
+        </Tag>
       </div>
       <Text variant="h3" as="h3" className={styles.cardTitle}>
         {agent.name}
@@ -59,20 +44,18 @@ export function PlatformAgentCard({
         <Button
           variant="contained"
           text="Run"
-          isDisabled={runDisabled}
+          isDisabled={isArchived}
           onClick={() => onRun(agent)}
         />
-        {isAdmin ? (
-          <div className={styles.adminActions}>
-            <Button variant="outlined" text="Edit" onClick={() => onEdit?.(agent)} />
-            {isArchived ? (
-              <Button variant="outlined" text="Restore" onClick={() => onRestore?.(agent)} />
-            ) : (
-              <Button variant="outlined" text="Archive" onClick={() => onArchive?.(agent)} />
-            )}
-            <Button variant="text" text="Test invoke" onClick={() => onTestInvoke?.(agent)} />
-          </div>
-        ) : null}
+        <div className={styles.adminActions}>
+          <Button variant="outlined" text="Edit" onClick={() => onEdit(agent)} />
+          {isArchived ? (
+            <Button variant="outlined" text="Restore" onClick={() => onRestore(agent)} />
+          ) : (
+            <Button variant="outlined" text="Archive" onClick={() => onArchive(agent)} />
+          )}
+          <Button variant="text" text="Test invoke" onClick={() => onTestInvoke(agent)} />
+        </div>
       </div>
     </article>
   );

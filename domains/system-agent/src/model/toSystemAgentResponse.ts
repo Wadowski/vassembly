@@ -1,5 +1,18 @@
+import { assertRequiredFields, toIsoString, toNullableIsoString } from '@vassembly/mappers';
+
 import type { SystemAgentAdminResponse } from './dto';
 import type { SystemAgentModel } from './model';
+
+const REQUIRED_FIELDS = [
+  'id',
+  'name',
+  'rule',
+  'status',
+  'createdByAdminId',
+  'updatedByAdminId',
+  'createdAt',
+  'updatedAt',
+] as const;
 
 export interface ToSystemAgentResponseParams {
   systemAgent: SystemAgentModel;
@@ -8,49 +21,23 @@ export interface ToSystemAgentResponseParams {
 export const toSystemAgentResponse = ({
   systemAgent,
 }: ToSystemAgentResponseParams): SystemAgentAdminResponse => {
-  if (systemAgent.id === undefined) {
-    throw new Error('System agent id is required');
-  }
-
-  if (systemAgent.name === undefined) {
-    throw new Error('System agent name is required');
-  }
-
-  if (systemAgent.rule === undefined) {
-    throw new Error('System agent rule is required');
-  }
-
-  if (systemAgent.status === undefined) {
-    throw new Error('System agent status is required');
-  }
-
-  if (systemAgent.createdByAdminId === undefined) {
-    throw new Error('System agent createdByAdminId is required');
-  }
-
-  if (systemAgent.updatedByAdminId === undefined) {
-    throw new Error('System agent updatedByAdminId is required');
-  }
-
-  if (systemAgent.createdAt === undefined) {
-    throw new Error('System agent createdAt is required');
-  }
-
-  if (systemAgent.updatedAt === undefined) {
-    throw new Error('System agent updatedAt is required');
-  }
+  assertRequiredFields({
+    entity: systemAgent,
+    fields: REQUIRED_FIELDS,
+    entityName: 'System agent',
+  });
 
   return {
-    id: systemAgent.id,
-    name: systemAgent.name,
+    id: systemAgent.id!,
+    name: systemAgent.name!,
     description: systemAgent.description,
-    rule: systemAgent.rule,
+    rule: systemAgent.rule!,
     category: systemAgent.category,
-    status: systemAgent.status,
-    createdByAdminId: systemAgent.createdByAdminId,
-    updatedByAdminId: systemAgent.updatedByAdminId,
-    createdAt: systemAgent.createdAt.toISOString(),
-    updatedAt: systemAgent.updatedAt.toISOString(),
-    removedAt: systemAgent.removedAt?.toISOString() ?? null,
+    status: systemAgent.status!,
+    createdByAdminId: systemAgent.createdByAdminId!,
+    updatedByAdminId: systemAgent.updatedByAdminId!,
+    createdAt: toIsoString({ value: systemAgent.createdAt!, fieldName: 'createdAt' }),
+    updatedAt: toIsoString({ value: systemAgent.updatedAt!, fieldName: 'updatedAt' }),
+    removedAt: toNullableIsoString(systemAgent.removedAt),
   };
 };

@@ -70,13 +70,10 @@ export interface SystemAgentFormInput {
   category?: SystemAgentCategory;
 }
 
-export interface SystemAgentCatalogQuery {
+export interface SystemAgentAdminListQuery {
   search?: string;
   page?: number;
   size?: number;
-}
-
-export interface SystemAgentAdminListQuery extends SystemAgentCatalogQuery {
   status?: SystemAgentStatus | typeof SYSTEM_AGENT_LIST_ALL_STATUSES;
 }
 
@@ -90,8 +87,6 @@ export interface SystemAgentInvokeInput {
 export type SystemAgentAdminResponse = SystemAgentAdminItem;
 export type CreateSystemAgentInput = SystemAgentFormInput;
 export type UpdateSystemAgentInput = Partial<SystemAgentFormInput>;
-export type ListCatalogInput = SystemAgentCatalogQuery;
-export type ListCatalogOutput = SystemAgentListResponse<SystemAgentCatalogItem>;
 export type ListSystemAgentsInput = SystemAgentAdminListQuery;
 export type ListSystemAgentsOutput = SystemAgentListResponse<SystemAgentAdminItem>;
 export type InvokeSystemAgentRequest = SystemAgentInvokeInput;

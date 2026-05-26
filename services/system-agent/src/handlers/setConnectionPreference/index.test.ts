@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { NotFoundError } from '@vassembly/errors';
+import { ForbiddenError, NotFoundError } from '@vassembly/errors';
+import { AuthTokenRole } from '@vassembly/domain-auth-token';
 import {
   AiIntegrationConnectionStatus,
   AiIntegrationStatus,
@@ -84,6 +85,7 @@ describe('setConnectionPreference handler', () => {
 
     const result = await setConnectionPreference({
       userId: 'user-1',
+      role: AuthTokenRole.ADMIN,
       integrationCredentialId: 'cred-1',
     });
 
@@ -102,6 +104,7 @@ describe('setConnectionPreference handler', () => {
     await expect(
       setConnectionPreference({
         userId: 'user-1',
+        role: AuthTokenRole.ADMIN,
         integrationCredentialId: 'cred-1',
       }),
     ).rejects.toMatchObject({
@@ -116,9 +119,20 @@ describe('setConnectionPreference handler', () => {
     await expect(
       setConnectionPreference({
         userId: 'user-1',
+        role: AuthTokenRole.ADMIN,
         integrationCredentialId: 'missing-cred',
       }),
     ).rejects.toThrow(NotFoundError);
+  });
+
+  it('should throw ForbiddenError when caller is not admin', async () => {
+    await expect(
+      setConnectionPreference({
+        userId: 'user-1',
+        role: AuthTokenRole.USER,
+        integrationCredentialId: 'cred-1',
+      }),
+    ).rejects.toThrow(ForbiddenError);
   });
 
   it('should create preference when user has no existing preference', async () => {
@@ -133,6 +147,7 @@ describe('setConnectionPreference handler', () => {
 
     const result = await setConnectionPreference({
       userId: 'user-1',
+      role: AuthTokenRole.ADMIN,
       integrationCredentialId: 'cred-1',
     });
 
@@ -157,6 +172,7 @@ describe('setConnectionPreference handler', () => {
 
     const result = await setConnectionPreference({
       userId: 'user-1',
+      role: AuthTokenRole.ADMIN,
       integrationCredentialId: 'cred-1',
     });
 
@@ -175,6 +191,7 @@ describe('setConnectionPreference handler', () => {
     await expect(
       setConnectionPreference({
         userId: 'user-1',
+        role: AuthTokenRole.ADMIN,
         integrationCredentialId: 'cred-1',
       }),
     ).rejects.toMatchObject({

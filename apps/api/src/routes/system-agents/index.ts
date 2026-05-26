@@ -1,7 +1,5 @@
 import type { RouteDefinition } from '@vassembly/server';
 
-import { systemAgentCatalogGetByIdRoute } from './catalogGetById';
-import { systemAgentCatalogListRoute } from './catalogList';
 import { systemAgentCreateRoute } from './create';
 import { systemAgentDeleteRoute } from './delete';
 import { systemAgentGetByIdRoute } from './getById';
@@ -14,8 +12,6 @@ import { systemAgentSetPreferenceRoute } from './setConnectionPreference';
 import { systemAgentUpdateRoute } from './update';
 
 export const routes: RouteDefinition[] = [
-  systemAgentCatalogListRoute,
-  systemAgentCatalogGetByIdRoute,
   systemAgentGetPreferenceRoute,
   systemAgentSetPreferenceRoute,
   systemAgentGetUserPreferenceRoute,

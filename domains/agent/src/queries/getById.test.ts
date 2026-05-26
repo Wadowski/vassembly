@@ -77,6 +77,6 @@ describe('getById agent query', () => {
     const result = await getById({ id: AGENT_ID, userId: 'user-1' });
 
     expect(result.data.status).toBe('archived');
-    expect(result.data.removedAt).not.toBeNull();
+    expect(result.data.removedAt).toBe('2026-02-01T00:00:00.000Z');
   });
 });

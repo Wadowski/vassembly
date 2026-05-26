@@ -33,10 +33,3 @@ export const SYSTEM_AGENT_LIST_QUERY_SCHEMA = z.object({
   page: z.coerce.number().int().min(0).default(0),
   size: z.coerce.number().int().min(1).max(100).default(20),
 });
-
-export const CATALOG_LIST_QUERY_SCHEMA = z.object({
-  search: z.string().optional(),
-  category: z.enum(AGENT_CATEGORY_VALUES).optional(),
-  page: z.coerce.number().int().min(0).default(0),
-  size: z.coerce.number().int().min(1).max(100).default(20),
-});

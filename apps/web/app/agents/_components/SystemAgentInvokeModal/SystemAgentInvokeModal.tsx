@@ -2,14 +2,13 @@
 
 import type { ChangeEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 
 import {
   PROVIDER_LABELS,
   useAiIntegrations,
   useInvokeSystemAgent,
   useSystemAgentPreference,
-  type SystemAgentCatalogItem,
+  type SystemAgentAdminItem,
 } from '@vassembly/ui-api-hooks';
 import { Alert } from '@vassembly/ui-alert';
 import { Button } from '@vassembly/ui-button';
@@ -28,15 +27,13 @@ import styles from './styles.module.scss';
 
 export interface SystemAgentInvokeModalProps {
   open: boolean;
-  agent?: SystemAgentCatalogItem;
-  isAdmin?: boolean;
+  agent?: SystemAgentAdminItem;
   onClose: () => void;
 }
 
 export function SystemAgentInvokeModal({
   open,
   agent,
-  isAdmin = false,
   onClose,
 }: SystemAgentInvokeModalProps): JSX.Element {
   const snackbar = useSnackbar();
@@ -123,7 +120,7 @@ export function SystemAgentInvokeModal({
 
     const body = {
       message: trimmedMessage,
-      ...(isAdmin && connectionOverrideId !== ''
+      ...(connectionOverrideId !== ''
         ? { connectionOverride: { integrationCredentialId: connectionOverrideId } }
         : {}),
     };
@@ -147,7 +144,7 @@ export function SystemAgentInvokeModal({
       );
     }
     snackbar.show({ variant: 'success', message: 'Response ready.', duration: 4000 });
-  }, [agent, connectionOverrideId, invokeAgent, invokeError, isAdmin, message, snackbar]);
+  }, [agent, connectionOverrideId, invokeAgent, invokeError, message, snackbar]);
 
   const handleMessageChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setMessage(event.target.value);
@@ -198,19 +195,16 @@ export function SystemAgentInvokeModal({
           ) : (
             <Text variant="body2">No connection selected.</Text>
           )}
-          <Link href="/settings#ai-connections">Change in Settings</Link>
         </div>
-        {isAdmin ? (
-          <Dropdown
-            id="system-agent-debug-connection"
-            label="Debug connection override"
-            placeholder="Select credential…"
-            options={overrideOptions}
-            value={connectionOverrideId}
-            isFullWidth
-            onValueChange={setConnectionOverrideId}
-          />
-        ) : null}
+        <Dropdown
+          id="system-agent-debug-connection"
+          label="Debug connection override"
+          placeholder="Select credential…"
+          options={overrideOptions}
+          value={connectionOverrideId}
+          isFullWidth
+          onValueChange={setConnectionOverrideId}
+        />
         {isInvoking ? <Loader ariaLabel={`Running ${agent?.name ?? 'platform agent'}`} /> : null}
         {responseText !== undefined ? (
           <div className={styles.responseRegion} aria-live="polite" aria-atomic="true">

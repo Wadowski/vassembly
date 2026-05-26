@@ -10,7 +10,7 @@ export interface AiIntegrationCredentialResponse {
   name?: string;
   provider?: AiIntegrationProviderValue;
   hasApiKey?: boolean;
-  apiKeyHint?: string;
+  apiKeyHint?: string | null;
   baseUrl?: string;
   organizationId?: string;
   status?: AiIntegrationStatusValue;
@@ -19,7 +19,7 @@ export interface AiIntegrationCredentialResponse {
   lastConnectionError?: string;
   model?: string;
   agentUsageCount?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-  removedAt?: Date | null;
+  createdAt?: string;
+  updatedAt?: string;
+  removedAt?: string | null;
 }

@@ -8,8 +8,8 @@ vi.mock("@vassembly/client-mongodb/src/connection.js", () => ({
   },
 }));
 
-const { mockGetByIdInner } = vi.hoisted(() => ({
-  mockGetByIdInner: vi.fn(),
+const { mockGetModelById } = vi.hoisted(() => ({
+  mockGetModelById: vi.fn(),
 }));
 
 const { mockCompareHash, mockHash } = vi.hoisted(() => ({
@@ -17,8 +17,7 @@ const { mockCompareHash, mockHash } = vi.hoisted(() => ({
   mockHash: vi.fn(),
 }));
 
-const { mockGetDbUser, mockDaoUpdate } = vi.hoisted(() => ({
-  mockGetDbUser: vi.fn(),
+const { mockDaoUpdate } = vi.hoisted(() => ({
   mockDaoUpdate: vi.fn(),
 }));
 
@@ -27,12 +26,8 @@ vi.mock("@vassembly/client-encoder", () => ({
   hash: mockHash,
 }));
 
-vi.mock("@vassembly/queries", () => ({
-  getDbById: vi.fn(() => mockGetDbUser),
-}));
-
-vi.mock("../../queries/getById", () => ({
-  getById: mockGetByIdInner,
+vi.mock("../../queries/getModelById", () => ({
+  getModelById: mockGetModelById,
 }));
 
 vi.mock("../../clients", () => ({
@@ -54,18 +49,20 @@ describe("changePassword", () => {
   });
 
   it("should update password when current password and new password policy validate", async () => {
-    mockGetByIdInner.mockResolvedValue({
-      data: {
-        id: VALID_USER_ID,
-        passwordHash: "stored-hash",
-      },
-    });
+    mockGetModelById
+      .mockResolvedValueOnce({
+        data: {
+          id: VALID_USER_ID,
+          passwordHash: "stored-hash",
+        },
+      })
+      .mockResolvedValueOnce({
+        data: { id: VALID_USER_ID, email: "x@example.com" },
+      });
+
     mockCompareHash.mockResolvedValue(true);
     mockHash.mockResolvedValue("new-hash");
     mockDaoUpdate.mockResolvedValue(undefined);
-    mockGetDbUser.mockResolvedValue({
-      data: { id: VALID_USER_ID, email: "x@example.com" },
-    });
 
     await changePassword({
       userId: VALID_USER_ID,
@@ -85,7 +82,7 @@ describe("changePassword", () => {
         newPassword: "short",
       }),
     ).rejects.toThrow(ValidationError);
-    expect(mockGetByIdInner).not.toHaveBeenCalled();
+    expect(mockGetModelById).not.toHaveBeenCalled();
   });
 
   it("should throw WrongParamError when new password equals current password", async () => {
@@ -96,11 +93,11 @@ describe("changePassword", () => {
         newPassword: CURRENT,
       }),
     ).rejects.toThrow(WrongParamError);
-    expect(mockGetByIdInner).not.toHaveBeenCalled();
+    expect(mockGetModelById).not.toHaveBeenCalled();
   });
 
   it("should throw UnauthorizedError when current password does not match", async () => {
-    mockGetByIdInner.mockResolvedValue({
+    mockGetModelById.mockResolvedValue({
       data: {
         id: VALID_USER_ID,
         passwordHash: "stored-hash",
@@ -120,7 +117,7 @@ describe("changePassword", () => {
   });
 
   it("should throw UnauthorizedError when user has no stored password hash", async () => {
-    mockGetByIdInner.mockResolvedValue({
+    mockGetModelById.mockResolvedValue({
       data: {
         id: VALID_USER_ID,
       },
@@ -138,7 +135,7 @@ describe("changePassword", () => {
   });
 
   it("should propagate NotFoundError when user lookup fails", async () => {
-    mockGetByIdInner.mockRejectedValue(new NotFoundError("User not found"));
+    mockGetModelById.mockRejectedValue(new NotFoundError("User not found"));
 
     await expect(
       changePassword({
