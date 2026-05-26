@@ -1,9 +1,7 @@
 import { AuthTokenRole } from '@vassembly/domain-auth-token';
+import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import systemAgentDomain, { throwSystemAgentNotFoundError } from '@vassembly/domain-system-agent';
 import { ForbiddenError } from '@vassembly/errors';
-
-import { buildModeledProviderClient } from '../../helpers/buildModeledProviderClient';
-import { resolveInvokeCredential } from '../../helpers/resolveInvokeCredential';
 
 import type { InvokeSystemAgentParams, InvokeSystemAgentResult } from './types';
 
@@ -24,13 +22,11 @@ export const invokeSystemAgent = async (
     throwSystemAgentNotFoundError();
   }
 
-  const credential = await resolveInvokeCredential({
+  const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
     userId,
     role,
     connectionOverride,
   });
-
-  const modeledProviderClient = await buildModeledProviderClient({ credential });
 
   return systemAgentDomain.commands.invoke({
     modeledProviderClient,

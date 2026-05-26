@@ -15,13 +15,11 @@ import {
 const {
   mockInvoke,
   mockGetActiveById,
-  mockResolveInvokeCredential,
-  mockBuildModeledProviderClient,
+  mockResolveAndBuildClient,
 } = vi.hoisted(() => ({
   mockInvoke: vi.fn(),
   mockGetActiveById: vi.fn(),
-  mockResolveInvokeCredential: vi.fn(),
-  mockBuildModeledProviderClient: vi.fn(),
+  mockResolveAndBuildClient: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-system-agent', async () => {
@@ -40,26 +38,21 @@ vi.mock('@vassembly/domain-system-agent', async () => {
   };
 });
 
-vi.mock('../../helpers/resolveInvokeCredential', () => ({
-  resolveInvokeCredential: mockResolveInvokeCredential,
-}));
+vi.mock('@vassembly/domain-ai-integration', async () => {
+  const domain = await import('../../../../../domains/ai-integration/src/index.js');
 
-vi.mock('../../helpers/buildModeledProviderClient', () => ({
-  buildModeledProviderClient: mockBuildModeledProviderClient,
-}));
+  return {
+    ...domain,
+    default: {
+      commands: {
+        resolveAndBuildClient: mockResolveAndBuildClient,
+      },
+      queries: domain.queries,
+    },
+  };
+});
 
 import { invokeSystemAgent } from './index';
-
-const RESOLVED_CREDENTIAL = {
-  id: 'cred-1',
-  userId: 'user-1',
-  provider: 'chatgpt',
-  encryptedApiKey: 'encrypted-key',
-  status: AiIntegrationStatus.Active,
-  connectionStatus: AiIntegrationConnectionStatus.Connected,
-  removedAt: null,
-  model: 'gpt-4',
-};
 
 const MODELED_CLIENT = {
   invoke: vi.fn(),
@@ -77,8 +70,7 @@ describe('invokeSystemAgent handler', () => {
         removedAt: null,
       },
     });
-    mockResolveInvokeCredential.mockResolvedValue(RESOLVED_CREDENTIAL);
-    mockBuildModeledProviderClient.mockResolvedValue(MODELED_CLIENT);
+    mockResolveAndBuildClient.mockResolvedValue(MODELED_CLIENT);
     mockInvoke.mockResolvedValue({
       message: 'Here is a summary.',
       usage: { promptTokens: 120, completionTokens: 80, totalTokens: 200 },
@@ -88,8 +80,8 @@ describe('invokeSystemAgent handler', () => {
 
   it('should resolve credential invoke agent and return provider message', async () => {
     const result = await invokeSystemAgent({
-      userId: 'user-1',
-      role: AuthTokenRole.USER,
+      userId: 'admin-1',
+      role: AuthTokenRole.ADMIN,
       systemAgentId: 'sys-agent-1',
       message: 'Summarize our Q1 compliance checklist.',
     });
@@ -100,13 +92,6 @@ describe('invokeSystemAgent handler', () => {
   });
 
   it('should use admin override credential when admin invokes with connectionOverride', async () => {
-    const overrideCredential = {
-      ...RESOLVED_CREDENTIAL,
-      id: 'cred-admin',
-      userId: 'admin-1',
-    };
-    mockResolveInvokeCredential.mockResolvedValue(overrideCredential);
-
     const result = await invokeSystemAgent({
       userId: 'admin-1',
       role: AuthTokenRole.ADMIN,
@@ -115,7 +100,23 @@ describe('invokeSystemAgent handler', () => {
       connectionOverride: { integrationCredentialId: 'cred-admin' },
     });
 
+    expect(mockResolveAndBuildClient).toHaveBeenCalledWith({
+      userId: 'admin-1',
+      role: AuthTokenRole.ADMIN,
+      connectionOverride: { integrationCredentialId: 'cred-admin' },
+    });
     expect(result.message).toBe('Here is a summary.');
+  });
+
+  it('should throw ForbiddenError when caller is not admin', async () => {
+    await expect(
+      invokeSystemAgent({
+        userId: 'user-1',
+        role: AuthTokenRole.USER,
+        systemAgentId: 'sys-agent-1',
+        message: 'Hello',
+      }),
+    ).rejects.toThrow(ForbiddenError);
   });
 
   it('should throw ForbiddenError when non-admin sends connectionOverride', async () => {
@@ -134,14 +135,14 @@ describe('invokeSystemAgent handler', () => {
   });
 
   it('should throw connection required error when user has no preference', async () => {
-    mockResolveInvokeCredential.mockImplementation(() => {
+    mockResolveAndBuildClient.mockImplementation(() => {
       throwSystemAgentConnectionRequiredError();
     });
 
     await expect(
       invokeSystemAgent({
-        userId: 'user-1',
-        role: AuthTokenRole.USER,
+        userId: 'admin-1',
+        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),
@@ -152,14 +153,14 @@ describe('invokeSystemAgent handler', () => {
   });
 
   it('should throw connection invalid error when credential is not owned by user', async () => {
-    mockResolveInvokeCredential.mockImplementation(() => {
+    mockResolveAndBuildClient.mockImplementation(() => {
       throwSystemAgentConnectionInvalidError();
     });
 
     await expect(
       invokeSystemAgent({
-        userId: 'user-1',
-        role: AuthTokenRole.USER,
+        userId: 'admin-1',
+        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),
@@ -170,18 +171,14 @@ describe('invokeSystemAgent handler', () => {
   });
 
   it('should throw connection invalid error when credential is archived', async () => {
-    mockResolveInvokeCredential.mockResolvedValue({
-      ...RESOLVED_CREDENTIAL,
-      status: AiIntegrationStatus.Archived,
-    });
-    mockBuildModeledProviderClient.mockImplementation(() => {
+    mockResolveAndBuildClient.mockImplementation(() => {
       throwSystemAgentConnectionInvalidError();
     });
 
     await expect(
       invokeSystemAgent({
-        userId: 'user-1',
-        role: AuthTokenRole.USER,
+        userId: 'admin-1',
+        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),
@@ -196,8 +193,8 @@ describe('invokeSystemAgent handler', () => {
 
     await expect(
       invokeSystemAgent({
-        userId: 'user-1',
-        role: AuthTokenRole.USER,
+        userId: 'admin-1',
+        role: AuthTokenRole.ADMIN,
         systemAgentId: 'archived-agent',
         message: 'Hello',
       }),
@@ -209,8 +206,8 @@ describe('invokeSystemAgent handler', () => {
 
     await expect(
       invokeSystemAgent({
-        userId: 'user-1',
-        role: AuthTokenRole.USER,
+        userId: 'admin-1',
+        role: AuthTokenRole.ADMIN,
         systemAgentId: 'sys-agent-1',
         message: 'Hello',
       }),
