@@ -1,8 +1,0 @@
-{
-  "extends": "@vassembly/typescript-config/base",
-  "compilerOptions": {
-    "noEmit": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
-}

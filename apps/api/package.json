@@ -34,7 +34,6 @@
     "@vassembly/server": "workspace:*",
     "@vassembly/service-auth": "workspace:*",
     "@vassembly/service-agent": "workspace:*",
-    "@vassembly/service-system-agent": "workspace:*",
     "@vassembly/validation": "workspace:*",
     "zod": "^4.3.6"
   }

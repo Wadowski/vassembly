@@ -1,7 +1,7 @@
 import { applyResolvers } from '@vassembly/graphql';
 import type { AgentStatus } from '@vassembly/domain-system-agent';
 import { UnauthorizedError } from '@vassembly/errors';
-import systemAgentService from '@vassembly/service-system-agent';
+import systemAgentService from '@vassembly/service-agent';
 import userDomain from '@vassembly/domain-user';
 import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 import type { Builder } from '@vassembly/graphql';

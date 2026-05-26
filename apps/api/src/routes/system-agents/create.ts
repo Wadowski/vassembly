@@ -1,7 +1,7 @@
 import { defineRoute } from '@vassembly/server';
 
 import { handlers as authHandlers } from '@vassembly/service-auth';
-import systemAgentService from '@vassembly/service-system-agent';
+import systemAgentService from '@vassembly/service-agent';
 
 import { CREATE_SYSTEM_AGENT_BODY_SCHEMA } from './schemas';
 

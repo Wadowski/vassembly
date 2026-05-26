@@ -24,8 +24,7 @@ flowchart TB
   end
 
   subgraph Services
-    SysSvc["@vassembly/service-system-agent"]
-    AgentSvc["@vassembly/service-agent<br/>(credential hooks)"]
+    AgentSvc["@vassembly/service-agent<br/>(user agents +<br/>system agents +<br/>credentials)"]
     AuthSvc["@vassembly/service-auth<br/>(RBAC extension)"]
   end
 
@@ -52,12 +51,9 @@ flowchart TB
   Hooks --> Routes
   Routes --> AuthMW
   AuthMW --> AuthSvc
-  AuthMW --> SysSvc
   AuthMW --> AgentSvc
-  SysSvc --> SysDom
-  SysSvc --> AiDom
-  AgentSvc --> AiDom
   AgentSvc --> SysDom
+  AgentSvc --> AiDom
   SysDom --> SA
   SysDom --> Pref
   AgentDom --> Agents
@@ -72,10 +68,9 @@ flowchart TB
 sequenceDiagram
   participant Admin
   participant API
-  participant SysSvc as service-system-agent
+  participant SysSvc as service-agent
   participant SysDom as domain-system-agent
   participant User
-  participant AgentSvc as service-agent
   participant AiDom as domain-ai-integration
   participant LC as LangChain client
 
@@ -89,10 +84,10 @@ sequenceDiagram
   SysSvc->>SysDom: queries.getCatalogList
   SysDom-->>User: active agents (no rule in list)
 
-  User->>AgentSvc: POST /ai-integrations (first credential)
-  AgentSvc->>AiDom: commands.create
-  AgentSvc->>SysDom: commands.setPreference (if none)
-  AgentSvc-->>User: credential + auto-preference
+  User->>SysSvc: POST /ai-integrations (first credential)
+  SysSvc->>AiDom: commands.create
+  SysSvc->>SysDom: commands.setPreference (if none)
+  SysSvc-->>User: credential + auto-preference
 
   User->>API: PUT /system-agents/connection-preference
   API->>SysSvc: setConnectionPreference
@@ -192,48 +187,25 @@ sequenceDiagram
 | `domains/system-agent/src/commands/upsertPreference/index.test.ts` | TS | Unit tests |
 | `domains/system-agent/src/queries/getCatalogList/index.test.ts` | TS | Unit tests |
 
-#### `services/system-agent` — `@vassembly/service-system-agent`
+#### `services/agent` — `@vassembly/service-agent` (consolidated)
+
+Now includes all system-agent handlers. Structure:
 
 | Path | Type | Purpose |
 |------|------|---------|
-| `services/system-agent/package.json` | JSON | Package manifest |
-| `services/system-agent/tsconfig.json` | JSON | TS config |
-| `services/system-agent/vitest.config.ts` | TS | Test config |
-| `services/system-agent/README.md` | MD | Handler documentation |
-| `services/system-agent/src/index.ts` | TS | Handler barrel export |
-| `services/system-agent/src/handlers/index.ts` | TS | Named handler exports |
-| `services/system-agent/src/handlers/createSystemAgent/index.ts` | TS | Admin create orchestration |
-| `services/system-agent/src/handlers/createSystemAgent/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/createSystemAgent/index.test.ts` | TS | Unit tests |
-| `services/system-agent/src/handlers/updateSystemAgent/index.ts` | TS | Admin update |
-| `services/system-agent/src/handlers/updateSystemAgent/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/updateSystemAgent/index.test.ts` | TS | Unit tests |
-| `services/system-agent/src/handlers/getSystemAgent/index.ts` | TS | Admin get by id |
-| `services/system-agent/src/handlers/getSystemAgent/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/listSystemAgents/index.ts` | TS | Admin list |
-| `services/system-agent/src/handlers/listSystemAgents/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/archiveSystemAgent/index.ts` | TS | Soft delete |
-| `services/system-agent/src/handlers/archiveSystemAgent/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/restoreSystemAgent/index.ts` | TS | Restore |
-| `services/system-agent/src/handlers/restoreSystemAgent/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/listCatalog/index.ts` | TS | User catalog |
-| `services/system-agent/src/handlers/listCatalog/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/getCatalogItem/index.ts` | TS | Single catalog item |
-| `services/system-agent/src/handlers/getCatalogItem/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/getConnectionPreference/index.ts` | TS | User preference get |
-| `services/system-agent/src/handlers/getConnectionPreference/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/setConnectionPreference/index.ts` | TS | User preference set |
-| `services/system-agent/src/handlers/setConnectionPreference/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/getUserConnectionPreference/index.ts` | TS | Admin support read |
-| `services/system-agent/src/handlers/getUserConnectionPreference/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/invokeSystemAgent/index.ts` | TS | Invoke orchestration |
-| `services/system-agent/src/handlers/invokeSystemAgent/types.ts` | TS | Handler I/O types |
-| `services/system-agent/src/handlers/invokeSystemAgent/index.test.ts` | TS | Unit tests |
-| `services/system-agent/src/helpers/resolveInvokeCredential/index.ts` | TS | Preference + override + validation |
-| `services/system-agent/src/helpers/resolveInvokeCredential/types.ts` | TS | Helper types |
-| `services/system-agent/src/helpers/resolveInvokeCredential/index.test.ts` | TS | Unit tests |
-| `services/system-agent/src/helpers/buildModeledProviderClient/index.ts` | TS | Credential → LangChain client |
-| `services/system-agent/src/helpers/buildModeledProviderClient/types.ts` | TS | Helper types |
+| `services/agent/src/handlers/index.ts` | TS | Named handler exports (user + credential + system-agent) |
+| `services/agent/src/handlers/createSystemAgent/` | TS | System agent handlers (10 total) |
+| `services/agent/src/handlers/updateSystemAgent/` | TS | — |
+| `services/agent/src/handlers/getSystemAgent/` | TS | — |
+| `services/agent/src/handlers/listSystemAgents/` | TS | — |
+| `services/agent/src/handlers/archiveSystemAgent/` | TS | — |
+| `services/agent/src/handlers/restoreSystemAgent/` | TS | — |
+| `services/agent/src/handlers/getConnectionPreference/` | TS | — |
+| `services/agent/src/handlers/setConnectionPreference/` | TS | — |
+| `services/agent/src/handlers/getUserConnectionPreference/` | TS | — |
+| `services/agent/src/handlers/invokeSystemAgent/` | TS | — |
+| `services/agent/src/helpers/toPreferenceResponse/` | TS | Preference response mapper |
+| `services/agent/src/helpers/mapAdminResponse/` | TS | Admin response mapper |
 
 ### 2.2 Modified packages
 
@@ -252,32 +224,22 @@ sequenceDiagram
 
 | Path | Type | Change |
 |------|------|--------|
-| `services/agent/src/handlers/createCredential/index.ts` | TS | Auto-set preference when none exists |
-| `services/agent/src/handlers/createCredential/index.test.ts` | TS | Test auto-preference |
-| `services/agent/src/handlers/deleteCredential/index.ts` | TS | Block delete if active system-agent preference |
-| `services/agent/src/handlers/deleteCredential/index.test.ts` | TS | Test preference guard |
-| `services/agent/package.json` | JSON | Add `@vassembly/domain-system-agent` dependency |
+| `services/agent/package.json` | JSON | Add `@vassembly/domain-user`, `@vassembly/domain-auth-token`, `@vassembly/constants` |
+| `services/agent/vitest.config.ts` | TS | Add MongoDB mocks + setupFiles |
+| `services/agent/vitest.setup.ts` | TS | **New** — MongoDB mock setup |
+| `services/agent/test-mocks/client-mongodb.ts` | TS | **New** — MongoDB test fixtures |
+| `services/agent/src/handlers/index.ts` | TS | Append 10 system-agent handlers + 2 helpers (toPreferenceResponse, mapAdminResponse) |
+| `services/agent/src/handlers/[createSystemAgent-invokeSystemAgent]/` | TS | Migrated from service-system-agent |
 
 #### `apps/api` — `@vassembly/api`
 
 | Path | Type | Change |
 |------|------|--------|
-| `apps/api/package.json` | JSON | Add `@vassembly/service-system-agent`, `@vassembly/domain-system-agent` |
+| `apps/api/package.json` | JSON | Remove `@vassembly/service-system-agent`; keep `@vassembly/domain-system-agent` |
 | `apps/api/src/routes/index.ts` | TS | Register `/system-agents` prefix + indexes |
 | `apps/api/src/routes/system-agents/index.ts` | TS | **New** — route aggregation (ordered) |
-| `apps/api/src/routes/system-agents/create.ts` | TS | **New** — POST `/` |
-| `apps/api/src/routes/system-agents/list.ts` | TS | **New** — GET `/` (admin) |
-| `apps/api/src/routes/system-agents/getById.ts` | TS | **New** — GET `/:id` (admin) |
-| `apps/api/src/routes/system-agents/update.ts` | TS | **New** — PATCH `/:id` |
-| `apps/api/src/routes/system-agents/delete.ts` | TS | **New** — DELETE `/:id` |
-| `apps/api/src/routes/system-agents/restore.ts` | TS | **New** — POST `/:id/restore` |
-| `apps/api/src/routes/system-agents/catalogList.ts` | TS | **New** — GET `/catalog` |
-| `apps/api/src/routes/system-agents/catalogGetById.ts` | TS | **New** — GET `/catalog/:id` |
-| `apps/api/src/routes/system-agents/getConnectionPreference.ts` | TS | **New** — GET `/connection-preference` |
-| `apps/api/src/routes/system-agents/setConnectionPreference.ts` | TS | **New** — PUT `/connection-preference` |
-| `apps/api/src/routes/system-agents/getUserConnectionPreference.ts` | TS | **New** — GET `/connection-preference/users/:userId` |
-| `apps/api/src/routes/system-agents/invoke.ts` | TS | **New** — POST `/:id/invoke` |
-| `apps/api/src/routes/system-agents/schemas.ts` | TS | **New** — shared Zod schemas |
+| `apps/api/src/routes/system-agents/*.ts` | TS | **Updated** — all routes now import from `@vassembly/service-agent` |
+| `apps/api/src/graphql/resolvers/systemAgent.ts` | TS | **Updated** — import from `@vassembly/service-agent` |
 
 #### `apps/web` — `@vassembly/web`
 
