@@ -29,7 +29,6 @@ const WORKSPACE_AUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [
     icon: TeamMeetingChatIcon,
   },
 ];
-
 const WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [];
 
 export interface BuildMainDrawerSectionsParams {

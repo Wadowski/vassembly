@@ -1,0 +1,25 @@
+import { toIsoString, toNullableIsoString } from '@vassembly/mappers';
+
+import type { UserPublicResponse } from './dto';
+import type { UserModel } from './model';
+
+export interface ToUserPublicResponseParams {
+  user: UserModel;
+}
+
+export const toUserPublicResponse = ({
+  user,
+}: ToUserPublicResponseParams): UserPublicResponse => ({
+  id: user.id,
+  createdAt: user.createdAt
+    ? toIsoString({ value: user.createdAt, fieldName: 'createdAt' })
+    : undefined,
+  updatedAt: user.updatedAt
+    ? toIsoString({ value: user.updatedAt, fieldName: 'updatedAt' })
+    : undefined,
+  removedAt: user.removedAt === undefined ? undefined : toNullableIsoString(user.removedAt),
+  email: user.email,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  verifiedAt: user.verifiedAt === undefined ? undefined : toNullableIsoString(user.verifiedAt),
+});

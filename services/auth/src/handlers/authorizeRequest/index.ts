@@ -31,5 +31,7 @@ export const authorizeRequest = async (
     throw new UnauthorizedError("Authentication required");
   }
 
-  return { userId: verified.userId };
+  const role = verified.role ?? "user";
+
+  return { userId: verified.userId, role };
 };

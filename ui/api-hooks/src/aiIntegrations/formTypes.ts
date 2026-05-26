@@ -23,6 +23,7 @@ export interface AiIntegrationRestoreVariables {
 
 export interface AiIntegrationCreateMutationData {
   credential: AiIntegrationCredentialDto;
+  isFirstSystemAgentPreference?: boolean;
 }
 
 export interface AiIntegrationUpdateMutationData {

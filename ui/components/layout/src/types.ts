@@ -19,6 +19,7 @@ export interface LayoutHeaderPreset {
 
 export interface LayoutDrawerPreset {
   user?: DrawerUser;
+  userRole?: string;
   sections: ReadonlyArray<NavSection>;
   branding?: DrawerBranding;
   isAuthenticated: boolean;

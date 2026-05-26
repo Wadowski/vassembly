@@ -32,7 +32,7 @@ describe("getByEmail", () => {
     expect(mockGetManyRaw).toHaveBeenCalledWith(
       {
         email: "keep@example.com",
-        $or: [{ removedAt: { $exists: false } }, { removedAt: null }],
+        removedAt: null,
       },
       { limit: 1 },
     );

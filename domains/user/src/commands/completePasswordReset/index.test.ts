@@ -18,8 +18,8 @@ const { mockEncode, mockHash } = vi.hoisted(() => ({
   mockHash: vi.fn(),
 }));
 
-const { mockGetDbByIdHandler } = vi.hoisted(() => ({
-  mockGetDbByIdHandler: vi.fn(),
+const { mockGetModelById } = vi.hoisted(() => ({
+  mockGetModelById: vi.fn(),
 }));
 
 vi.mock("@vassembly/client-encoder", () => ({
@@ -27,8 +27,8 @@ vi.mock("@vassembly/client-encoder", () => ({
   hash: mockHash,
 }));
 
-vi.mock("@vassembly/queries", () => ({
-  getDbById: vi.fn(() => mockGetDbByIdHandler),
+vi.mock("../../queries/getModelById", () => ({
+  getModelById: mockGetModelById,
 }));
 
 vi.mock("../../clients", () => ({
@@ -68,7 +68,7 @@ describe("completePasswordReset", () => {
       lastName: "B",
       passwordHash: "new-hash",
     } as unknown as UserModel;
-    mockGetDbByIdHandler.mockResolvedValue({ data: refreshed });
+    mockGetModelById.mockResolvedValue({ data: refreshed });
 
     const result = await completePasswordReset({
       userId: VALID_USER_ID,

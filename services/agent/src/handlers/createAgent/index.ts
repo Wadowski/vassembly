@@ -18,5 +18,5 @@ export const createAgent = async (input: CreateAgentHandlerInput) => {
     userId,
   });
 
-  return { agent: toAgentResponse(result.data) };
+  return { agent: toAgentResponse({ agent: result.data }) };
 };

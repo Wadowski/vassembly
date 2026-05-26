@@ -54,7 +54,9 @@ describe('getById ai integration query', () => {
 
     expect(result.data.id).toBe(CREDENTIAL_ID);
     expect(result.data.userId).toBe('user-1');
-    expect(result.data.encryptedApiKey).toBe('encrypted-key-abcd');
+    expect(result.data.hasApiKey).toBe(true);
+    expect(result.data.apiKeyHint).toBe('...abcd');
+    expect('encryptedApiKey' in result.data).toBe(false);
   });
 
   it('should treat missing rows as not found', async () => {

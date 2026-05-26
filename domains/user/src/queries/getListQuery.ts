@@ -1,12 +1,13 @@
-import { userMongodbDao } from "../clients";
-import { UserModel, userFactory, createUserFactory } from "../model";
-import z from "zod";
+import { userMongodbDao } from '../clients';
+import { createUserFactory, toUserPublicResponse, userFactory } from '../model';
+import z from 'zod';
 
-interface GetListByQueryParams {
+import type { UserPublicResponse } from '../model';
+
+export interface GetListByQueryParams {
   email?: string;
   limit?: number;
   offset?: number;
-  includePasswordHash?: boolean;
 }
 
 const VALIDATION_SCHEMA = z.object({
@@ -17,8 +18,7 @@ export const getListByQuery = async ({
   email,
   limit = 10,
   offset = 0,
-  includePasswordHash = false,
-}: GetListByQueryParams = {}): Promise<{ data: Array<UserModel> }> => {
+}: GetListByQueryParams = {}): Promise<{ data: Array<UserPublicResponse> }> => {
   const queryInstance = userFactory.create({ email }, {
     validationSchema: VALIDATION_SCHEMA,
   });
@@ -33,10 +33,9 @@ export const getListByQuery = async ({
 
   const daoResponse = await userMongodbDao.getManyRaw(match, { limit, offset });
 
-  const userFactoryInstance = createUserFactory({ includePasswordHash });
-  const data = daoResponse.map(
-    (row) =>
-      userFactoryInstance.toPublicResponse(row as UserModel) as UserModel,
+  const userFactoryInstance = createUserFactory();
+  const data = daoResponse.map((row) =>
+    toUserPublicResponse({ user: userFactoryInstance.create(row) }),
   );
 
   return { data };

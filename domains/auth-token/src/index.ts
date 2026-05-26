@@ -1,11 +1,4 @@
-import * as commands from "./commands";
-import * as queries from "./queries";
-import * as enums from "./model/enums";
+import * as commands from './commands';
+import * as queries from './queries';
 
-export {
-  commands,
-  queries,
-  enums,
-};
-
-// export default authToken;
+export { commands, queries };

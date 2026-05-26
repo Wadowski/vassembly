@@ -1,10 +1,7 @@
 import { decode } from '@vassembly/client-encoder';
 import aiIntegrationDomain, { AiIntegrationConnectionStatus } from '@vassembly/domain-ai-integration';
-import { ValidationError } from '@vassembly/errors';
+import { ValidationError, WrongParamError, InternalError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
-
-import { mapConnectionTestError } from '../../helpers/mapConnectionTestError';
-import { runProviderConnectionTest } from '../../helpers/runProviderConnectionTest';
 
 import { TEST_CONNECTION_BODY_SCHEMA } from './types';
 
@@ -22,18 +19,21 @@ const testEphemeralConnection = async (
   input: TestConnectionHandlerInput,
 ): Promise<TestConnectionHandlerOutput> => {
   const { body } = input;
-  const result = await runProviderConnectionTest({
-    provider: body.provider ?? '',
-    apiKey: body.apiKey,
-    baseUrl: body.baseUrl,
-    organizationId: body.organizationId,
-  });
+  try {
+    const result = await aiIntegrationDomain.commands.testProviderConnection({
+      provider: body.provider ?? '',
+      apiKey: body.apiKey,
+      baseUrl: body.baseUrl,
+      organizationId: body.organizationId,
+    });
 
-  if (!result.success) {
-    mapConnectionTestError({ error: result.error, mode: 'ephemeral' });
+    return buildSuccessOutput(result.models);
+  } catch (error) {
+    if (error instanceof WrongParamError || error instanceof InternalError) {
+      throw error;
+    }
+    throw new InternalError('Connection test failed');
   }
-
-  return buildSuccessOutput(result.models);
 };
 
 const testSavedConnection = async (
@@ -46,36 +46,46 @@ const testSavedConnection = async (
     throw new ValidationError('userId and credentialId are required for saved credential test');
   }
 
-  const credentialResult = await aiIntegrationDomain.queries.getById({
+  const credentialResult = await aiIntegrationDomain.queries.getModelById({
     id: credentialId,
     userId,
   });
   const credential = credentialResult.data;
   const apiKey = credential.encryptedApiKey ? decode(credential.encryptedApiKey) : undefined;
 
-  const result = await runProviderConnectionTest({
-    provider: credential.provider ?? '',
-    apiKey,
-    baseUrl: credential.baseUrl,
-    organizationId: credential.organizationId,
-  });
+  try {
+    const result = await aiIntegrationDomain.commands.testProviderConnection({
+      provider: credential.provider ?? '',
+      apiKey,
+      baseUrl: credential.baseUrl,
+      organizationId: credential.organizationId,
+    });
 
-  await aiIntegrationDomain.commands.update({
-    id: credentialId,
-    userId,
-    data: {
-      connectionStatus: result.success
-        ? AiIntegrationConnectionStatus.Connected
-        : AiIntegrationConnectionStatus.Failed,
-      lastTestedAt: new Date(),
-    },
-  });
+    await aiIntegrationDomain.commands.update({
+      id: credentialId,
+      userId,
+      data: {
+        connectionStatus: AiIntegrationConnectionStatus.Connected,
+        lastTestedAt: new Date(),
+      },
+    });
 
-  if (!result.success) {
-    mapConnectionTestError({ error: result.error, mode: 'saved' });
+    return buildSuccessOutput(result.models);
+  } catch (error) {
+    await aiIntegrationDomain.commands.update({
+      id: credentialId,
+      userId,
+      data: {
+        connectionStatus: AiIntegrationConnectionStatus.Failed,
+        lastTestedAt: new Date(),
+      },
+    });
+
+    if (error instanceof WrongParamError || error instanceof InternalError) {
+      throw error;
+    }
+    throw new InternalError('Connection test failed');
   }
-
-  return buildSuccessOutput(result.models);
 };
 
 export const testConnection = async (

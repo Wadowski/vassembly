@@ -55,6 +55,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
 
   const drawerConfig: Partial<LayoutDrawerPreset> = {
     isAuthenticated,
+    userRole: user?.role,
     user: drawerUser,
     onLogin: handleLogin,
     onRegister: handleRegister,

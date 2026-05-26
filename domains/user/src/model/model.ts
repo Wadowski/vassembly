@@ -1,6 +1,10 @@
-import { Model } from "@vassembly/model";
+import { Model } from '@vassembly/model';
+
+import type { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 
 export class UserModel extends Model {
+  role?: AUTH_TOKEN_ROLE;
+
   email?: string;
 
   passwordHash?: string;
@@ -14,15 +18,4 @@ export class UserModel extends Model {
   passwordResetToken?: string | null;
 
   passwordResetExpiresAt?: Date | null;
-}
-
-export interface UserPublicResponse {
-  id?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  removedAt?: Date | null;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  verifiedAt?: Date | null;
 }

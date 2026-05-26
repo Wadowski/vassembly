@@ -25,7 +25,7 @@ describe("authorizeRequest", () => {
 
     const result = await authorizeRequest({ headers: mockHeaders });
 
-    expect(result).toEqual({ userId: "user-123" });
+    expect(result).toEqual({ userId: "user-123", role: "user" });
     expect(authTokenDomain.queries.verify).toHaveBeenCalledWith({
       token: "valid-token",
     });
@@ -72,6 +72,17 @@ describe("authorizeRequest", () => {
     await expect(authorizeRequest({ headers: mockHeaders })).rejects.toThrow(
       new UnauthorizedError("Authentication required"),
     );
+  });
+
+  it("defaults role to user when role claim is missing", async () => {
+    vi.mocked(authTokenDomain.queries.verify).mockResolvedValue({
+      userId: "user-123",
+      refreshTokenId: "refresh-123",
+    } as never);
+
+    const result = await authorizeRequest({ headers: mockHeaders });
+
+    expect(result).toEqual({ userId: "user-123", role: "user" });
   });
 
   it("trims whitespace from tokens", async () => {

@@ -1,6 +1,6 @@
 import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 
-import { enrichCredentialResponse } from '../../helpers/enrichCredentialResponse';
+import { enrichCredentialDto } from '../../helpers/enrichCredentialResponse';
 import { getAgentsByCredentialId } from '../../helpers/getAgentsByCredentialId';
 
 import type {
@@ -17,7 +17,7 @@ export const getCredentialWithAgents = async (
   });
 
   const [credential, agents] = await Promise.all([
-    enrichCredentialResponse({ credential: result.data }),
+    enrichCredentialDto({ credential: result.data }),
     getAgentsByCredentialId({ userId: input.userId, credentialId: input.credentialId }),
   ]);
 

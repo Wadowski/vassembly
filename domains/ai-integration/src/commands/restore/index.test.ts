@@ -22,7 +22,7 @@ vi.mock('../../clients', () => ({
 }));
 
 vi.mock('../../queries', () => ({
-  getById: mockGetById,
+  getModelById: mockGetById,
 }));
 
 import { restore } from './index';

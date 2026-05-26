@@ -51,6 +51,9 @@ importers:
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
+      '@vassembly/domain-system-agent':
+        specifier: workspace:*
+        version: link:../../domains/system-agent
       '@vassembly/domain-user':
         specifier: workspace:*
         version: link:../../domains/user
@@ -182,9 +185,15 @@ importers:
       '@vassembly/ui-login-form':
         specifier: workspace:*
         version: link:../../ui/components/login-form
+      '@vassembly/ui-menu':
+        specifier: workspace:*
+        version: link:../../ui/system-design/menu
       '@vassembly/ui-modal':
         specifier: workspace:^
         version: link:../../ui/system-design/modal
+      '@vassembly/ui-popover':
+        specifier: workspace:*
+        version: link:../../ui/system-design/popover
       '@vassembly/ui-register-form':
         specifier: workspace:*
         version: link:../../ui/components/register-form
@@ -294,6 +303,9 @@ importers:
       '@vassembly/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
+      '@vassembly/mappers':
+        specifier: workspace:*
+        version: link:../../packages/mappers
       '@vassembly/model':
         specifier: workspace:*
         version: link:../../packages/model
@@ -331,6 +343,9 @@ importers:
       '@vassembly/client-encoder':
         specifier: workspace:*
         version: link:../../packages/client-encoder
+      '@vassembly/client-langchain':
+        specifier: workspace:*
+        version: link:../../packages/client-langchain
       '@vassembly/client-mongodb':
         specifier: workspace:*
         version: link:../../packages/client-mongodb
@@ -343,6 +358,9 @@ importers:
       '@vassembly/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
+      '@vassembly/mappers':
+        specifier: workspace:*
+        version: link:../../packages/mappers
       '@vassembly/model':
         specifier: workspace:*
         version: link:../../packages/model
@@ -383,6 +401,9 @@ importers:
       '@vassembly/client-jwt':
         specifier: workspace:*
         version: link:../../packages/client-jwt
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
@@ -452,6 +473,58 @@ importers:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@22.19.15)
 
+  domains/system-agent:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/client-mongodb
+      '@vassembly/commands':
+        specifier: workspace:*
+        version: link:../../packages/commands
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
+      '@vassembly/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
+      '@vassembly/mappers':
+        specifier: workspace:*
+        version: link:../../packages/mappers
+      '@vassembly/model':
+        specifier: workspace:*
+        version: link:../../packages/model
+      '@vassembly/queries':
+        specifier: workspace:*
+        version: link:../../packages/queries
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
+      mongodb:
+        specifier: ^7.0.0
+        version: 7.1.1
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
   domains/user:
     dependencies:
       '@vassembly/client-aws-ses':
@@ -469,12 +542,18 @@ importers:
       '@vassembly/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
       '@vassembly/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
+      '@vassembly/mappers':
+        specifier: workspace:*
+        version: link:../../packages/mappers
       '@vassembly/model':
         specifier: workspace:*
         version: link:../../packages/model
@@ -722,9 +801,6 @@ importers:
       '@langchain/openai':
         specifier: ^0.6.17
         version: 0.6.17(@langchain/core@0.3.80)
-      '@vassembly/domain-ai-integration':
-        specifier: workspace:*
-        version: link:../../domains/ai-integration
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../errors
@@ -1005,6 +1081,27 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
+  packages/mappers:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
   packages/model:
     dependencies:
       '@vassembly/constants':
@@ -1175,15 +1272,24 @@ importers:
       '@vassembly/client-encoder':
         specifier: workspace:*
         version: link:../../packages/client-encoder
-      '@vassembly/client-langchain':
+      '@vassembly/constants':
         specifier: workspace:*
-        version: link:../../packages/client-langchain
+        version: link:../../packages/constants
       '@vassembly/domain-agent':
         specifier: workspace:*
         version: link:../../domains/agent
       '@vassembly/domain-ai-integration':
         specifier: workspace:*
         version: link:../../domains/ai-integration
+      '@vassembly/domain-auth-token':
+        specifier: workspace:*
+        version: link:../../domains/auth-token
+      '@vassembly/domain-system-agent':
+        specifier: workspace:*
+        version: link:../../domains/system-agent
+      '@vassembly/domain-user':
+        specifier: workspace:*
+        version: link:../../domains/user
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
@@ -1209,6 +1315,9 @@ importers:
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+      vite-tsconfig-paths:
+        specifier: ^6.1.1
+        version: 6.1.1(typescript@5.9.2)(vite@7.3.2)
       vitest:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@22.19.15)
@@ -12259,6 +12368,10 @@ packages:
       gopd: 1.2.0
     dev: true
 
+  /globrex@0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
+    dev: true
+
   /google-auth-library@10.6.2:
     resolution: {integrity: sha512-e27Z6EThmVNNvtYASwQxose/G57rkRuaRbQyxM2bvYLLX/GqWZ5chWq2EBoUchJbCc57eC9ArzO5wMsEmWftCw==}
     engines: {node: '>=18'}
@@ -15795,6 +15908,19 @@ packages:
       tslib: 2.8.1
     dev: false
 
+  /tsconfck@3.1.6(typescript@5.9.2):
+    resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 5.9.2
+    dev: true
+
   /tsconfig-paths@4.2.0:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
@@ -16180,6 +16306,20 @@ packages:
       - sugarss
       - supports-color
       - terser
+    dev: true
+
+  /vite-tsconfig-paths@6.1.1(typescript@5.9.2)(vite@7.3.2):
+    resolution: {integrity: sha512-2cihq7zliibCCZ8P9cKJrQBkfgdvcFkOOc3Y02o3GWUDLgqjWsZudaoiuOwO/gzTzy17cS5F7ZPo4bsnS4DGkg==}
+    peerDependencies:
+      vite: '*'
+    dependencies:
+      debug: 4.4.3
+      globrex: 0.1.2
+      tsconfck: 3.1.6(typescript@5.9.2)
+      vite: 7.3.2(@types/node@22.19.15)(sass@1.98.0)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
     dev: true
 
   /vite@5.4.21(@types/node@22.19.15):

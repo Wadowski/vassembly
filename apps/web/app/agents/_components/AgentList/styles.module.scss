@@ -1,22 +1,11 @@
 @import '@vassembly/theme/src/tokens/index.scss';
 
-.sectionCard,
-.dangerPanel {
+.sectionCard {
   padding: $spacing-6;
   border-radius: $border-radius-lg;
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
-}
-
-.dangerPanel {
-  border: 1px solid $color-error-200;
-}
-
-.formStack {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-component-gap-md;
 }
 
 .toolbarRow {
@@ -32,15 +21,22 @@
   flex-wrap: wrap;
   gap: $spacing-3;
   align-items: center;
-  align-self: flex-end;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.filterField {
+  min-width: 10rem;
+  flex: 1;
+  max-width: 14rem;
 }
 
 .statusFilter {
-  width: 150px;
+  width: 10rem;
 }
 
 .createAgentButton {
-  align-self: flex-end;
+  flex-shrink: 0;
 }
 
 .agentTable {
@@ -86,4 +82,18 @@
   flex-wrap: nowrap;
   gap: $spacing-1;
   align-items: flex-end;
+}
+
+@media #{$media-mobile-only} {
+  .sectionCard { padding: $spacing-4; }
+
+  .filtersGroup { width: 100%; flex-direction: column; align-items: stretch; }
+
+  .filterField,
+  .statusFilter {
+    max-width: none;
+    width: 100%;
+  }
+
+  .toolbarRow { flex-direction: column; align-items: stretch; }
 }

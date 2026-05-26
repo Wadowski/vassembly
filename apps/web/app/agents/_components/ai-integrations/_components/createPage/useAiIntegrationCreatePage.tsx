@@ -82,7 +82,17 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
         });
         return;
       }
-      snackbar.show({ variant: 'success', message: 'Integration created', duration: 4000 });
+      if (result.isFirstSystemAgentPreference === true) {
+        snackbar.show({
+          variant: 'success',
+          message:
+            'This connection will be used for platform agents. You can change this in Settings.',
+          duration: 6000,
+          isDismissible: true,
+        });
+      } else {
+        snackbar.show({ variant: 'success', message: 'Integration created', duration: 4000 });
+      }
       setTimeout(() => {
         router.push(AI_INTEGRATIONS_LIST_ANCHOR);
       }, REDIRECT_AFTER_CREATE_MS);

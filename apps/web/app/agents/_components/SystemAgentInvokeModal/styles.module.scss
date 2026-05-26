@@ -1,0 +1,32 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.modalStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.summaryStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.connectionRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.responseRegion {
+  padding: $spacing-4;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(135deg, $color-secondary-container, $color-surface-container-high);
+}
+
+.modalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  justify-content: flex-end;
+}

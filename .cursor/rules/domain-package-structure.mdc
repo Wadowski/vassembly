@@ -17,20 +17,28 @@ domains/[domain-name]/
 ├── src/
 │   ├── index.ts                 # Main entry point - exports commands and queries
 │   ├── model/
-│   │   ├── index.ts             # Exports Model class and factories
+│   │   ├── index.ts             # Exports Model, factories, and mappers
 │   │   ├── model.ts             # Domain-specific Model class extending @vassembly/model
-│   │   └── factories.ts         # Factory functions for creating/translating model instances
+│   │   ├── dto.ts               # API response interfaces (AdminResponse, PublicResponse, etc.)
+│   │   ├── factories.ts         # Factory functions for creating/translating model instances
+│   │   ├── toXyzResponse.ts     # Mappers: Model → API DTO (e.g., toSystemAgentResponse.ts)
+│   │   └── toXyzDetail.ts       # Audience variants (optional, e.g., toSystemAgentDetail.ts)
 │   ├── commands/
 │   │   ├── index.ts             # Exports all commands
-│   │   ├── create.ts            # Create operation
+│   │   ├── create.ts            # Create operation (returns Model unless user-facing)
 │   │   ├── update.ts            # Update operation
 │   │   ├── remove.ts            # Hard delete operation
-│   │   └── removeSoft.ts        # Soft delete operation (if needed)
+│   │   ├── removeSoft.ts        # Soft delete operation (if needed)
+│   │   ├── shared/              # Domain-specific command utilities (optional)
+│   │   │   └── schemas.ts       # Shared validation schemas
 │       └── ...                  # Other commands
 │   ├── queries/
 │   │   ├── index.ts             # Exports all queries
-│   │   ├── getById.ts           # Fetch by ID
-│   │   └── getListAll.ts        # Fetch all records (paginated)
+│   │   ├── getById.ts           # Public query: returns DTO via mapper
+│   │   ├── getModelById.ts      # Internal query: returns Model (no mapping)
+│   │   ├── getListAll.ts        # Fetch all records (paginated, returns DTO)
+│   │   ├── shared/              # Domain-specific query utilities (optional)
+│   │   │   └── buildSearchFilter.ts
 │       └── ...                  # Other queries
 │   └── clients/
 │       ├── index.ts             # Exports all data access objects
@@ -44,7 +52,7 @@ domains/[domain-name]/
 
 ## Model (`src/model/`)
 
-The model represents your domain entity. It defines the data structure and behavior.
+The model represents your domain entity and data transformation logic.
 
 ### model.ts
 
@@ -68,6 +76,7 @@ export class UserModel extends Model {
 - Use `factory()` for default model creation
 - Use `translationFactory()` for field translation/mapping
 - Export both as lowercase camelCase (e.g., `userFactory`, `userTranslationFactory`)
+- **Important:** Strip sensitive fields (passwords, API keys) in the factory `create()` method, not in mappers
 
 ```typescript
 import { factory, translationFactory } from "@vassembly/model";
@@ -82,13 +91,99 @@ const TRANSLATION_MAP = [
 export const userTranslationFactory = translationFactory(UserModel, TRANSLATION_MAP);
 ```
 
-### index.ts
+### dto.ts
 
-Export the model class and all factory functions:
+Define all external API response interfaces. These are **only** used for DTO mappers and should be consumed via mappers, never returned directly from queries.
 
 ```typescript
-export { UserModel } from "./model";
-export { userFactory, userTranslationFactory } from "./factories";
+export interface SystemAgentAdminResponse {
+  id: string;
+  name: string;
+  description: string | null;
+  status: 'active' | 'inactive';
+  createdAt: string;  // ISO 8601
+  updatedAt: string;
+  removedAt: string | null;
+}
+
+export interface SystemAgentDetailResponse extends SystemAgentAdminResponse {
+  rule: string;
+}
+```
+
+### toXyzResponse.ts Mappers
+
+Pure functions that transform a `Model` into an API DTO. Use shared primitives from `@vassembly/mappers`:
+
+```typescript
+import { assertRequiredFields, toIsoString, toNullableIsoString } from '@vassembly/mappers';
+
+import type { SystemAgentAdminResponse } from './dto';
+import type { SystemAgentModel } from './model';
+
+const REQUIRED_FIELDS = ['id', 'name', 'status', 'createdAt', 'updatedAt'] as const;
+
+export interface ToSystemAgentResponseParams {
+  systemAgent: SystemAgentModel;
+}
+
+export const toSystemAgentResponse = ({
+  systemAgent,
+}: ToSystemAgentResponseParams): SystemAgentAdminResponse => {
+  assertRequiredFields({
+    entity: systemAgent,
+    fields: REQUIRED_FIELDS,
+    entityName: 'System agent',
+  });
+
+  return {
+    id: systemAgent.id!,
+    name: systemAgent.name!,
+    description: systemAgent.description || null,
+    status: systemAgent.status!,
+    createdAt: toIsoString({ value: systemAgent.createdAt!, fieldName: 'createdAt' }),
+    updatedAt: toIsoString({ value: systemAgent.updatedAt!, fieldName: 'updatedAt' }),
+    removedAt: toNullableIsoString(systemAgent.removedAt),
+  };
+};
+```
+
+**Mapper conventions:**
+- Function name: `to<Entity><Audience>Response` (e.g., `toSystemAgentAdminResponse`, `toUserPublicResponse`)
+- Parameters: Use typed object interface (not positional args)
+- Required field validation: Use `assertRequiredFields` from `@vassembly/mappers`
+- Date serialization: Use `toIsoString` / `toNullableIsoString` for all timestamps — **all external DTOs use ISO 8601 strings, never `Date` objects**
+- Side effects: None — pure functions only
+
+### toXyzDetail.ts (Optional)
+
+Separate mappers for audience-specific variants (e.g., admin detail vs. public list item):
+
+```typescript
+export interface ToSystemAgentDetailParams {
+  systemAgent: SystemAgentModel;
+}
+
+export const toSystemAgentDetail = ({
+  systemAgent,
+}: ToSystemAgentDetailParams): SystemAgentDetailResponse => {
+  const base = toSystemAgentResponse({ systemAgent });
+  return {
+    ...base,
+    rule: systemAgent.rule!,
+  };
+};
+```
+
+### index.ts
+
+Export model, factories, and mappers:
+
+```typescript
+export { SystemAgentModel } from "./model";
+export type { SystemAgentAdminResponse, SystemAgentDetailResponse } from "./dto";
+export { systemAgentFactory, systemAgentTranslationFactory } from "./factories";
+export { toSystemAgentResponse, toSystemAgentDetail } from "./toSystemAgentResponse";
 ```
 
 ## Commands (`src/commands/`)
@@ -97,7 +192,7 @@ Commands are mutations/writes that modify domain data. Use helper functions from
 
 ### Standard Commands
 
-all are optional:
+All are optional:
 - **create**: Creates a new entity. Use `createDb()` helper with validation schema
 - **update**: Updates an existing entity. Use `updateDb()` helper with validation schema
 - **remove**: Hard delete. Use `removeDb()` helper (permanent deletion)
@@ -106,7 +201,14 @@ all are optional:
 ### Custom Commands
 
 - Custom command should implement **custom domain logic** that does not exist in any standard commands
-- It may **reuse** standard or other custom commands or queries
+- It may **reuse** standard or other custom commands or internal queries (use `getModelById`, not `getById`)
+
+### Command Return Values
+
+- **Default:** Commands return a `Model` instance (not a DTO)
+- **Exception:** Commands with user-facing responses (e.g., after account creation) may optionally apply a mapper before returning
+
+**Why:** Commands are domain operations; the service layer decides what to return to the client. If a command needs to be displayed, the service handler applies the appropriate mapper.
 
 ### Command Structure
 
@@ -116,6 +218,7 @@ Each command file should:
 3. Import the model and factory from `../model`
 4. Define a validation schema using Zod
 5. Call the helper with configuration
+6. **If command uses another query:** use internal `getModelById` to avoid DTO mapping
 
 ```typescript
 import { createDb } from "@vassembly/commands";
@@ -153,14 +256,28 @@ Queries are reads that fetch domain data. Use helper functions from `@vassembly/
 
 ### Standard Queries
 
-all standard queries are optional:
-- **getById**: Fetch a single entity by ID. Use `getDbById()` helper
-- **getListAll**: Fetch all entities with optional pagination. Use `getDbListAll()` helper
+All standard queries are optional:
+- **getById**: Public query — fetch a single entity by ID and return as **DTO via mapper**
+- **getModelById**: Internal query — fetch a single entity by ID and return as **Model** (used by commands and internal operations)
+- **getListAll**: Public query — fetch all entities with pagination and return as **DTOs via mapper**
 
-### Custom Commands
+### Query Return Value Convention
+
+**Critical:** The return value depends on query audience:
+
+| Query | Returns | Used By | Applied Mapper |
+|-------|---------|---------|-----------------|
+| `getById` (public) | DTO | Handlers, external consumers | Applies `toXyzResponse` mapper |
+| `getModelById` (internal) | Model | Commands, other queries, internal operations | No mapping |
+| `getListAll` (public) | DTO[] | Handlers, external consumers | Applies `toXyzResponse` mapper to each item |
+
+**Why this split?** Commands need models for validation and comparisons without DTO constraints. Public queries return DTOs with consistent date serialization (ISO 8601 strings).
+
+### Custom Queries
 
 - Custom query should implement **custom domain logic** that does not exist in any standard query
-- It may **reuse** standard or other custom queries
+- It may **reuse** standard queries — choose `getModelById` vs `getById` based on your need
+- **If custom query is public:** apply the appropriate mapper before returning
 
 ### Query Structure
 
@@ -170,12 +287,43 @@ Each query file should:
 3. Import the model and factory from `../model`
 4. Call the helper with configuration
 
+**Public query with mapper:**
+
+```typescript
+import { getDbById } from "@vassembly/queries";
+import { userMongodbDao } from "../clients";
+import { UserModel, userFactory } from "../model";
+import { toUserPublicResponse } from "../model/toUserPublicResponse";
+
+const getModelById = getDbById<UserModel>({
+  dao: userMongodbDao,
+  factory: userFactory,
+});
+
+export interface GetByIdParams {
+  id: string;
+}
+
+export interface GetByIdResult {
+  data: UserPublicResponse;
+}
+
+export const getById = async ({ id }: GetByIdParams): Promise<GetByIdResult> => {
+  const result = await getModelById({ id });
+  return {
+    data: toUserPublicResponse({ user: result.data }),
+  };
+};
+```
+
+**Internal query (no mapping):**
+
 ```typescript
 import { getDbById } from "@vassembly/queries";
 import { userMongodbDao } from "../clients";
 import { UserModel, userFactory } from "../model";
 
-export const getById = getDbById<UserModel>({
+export const getModelById = getDbById<UserModel>({
   dao: userMongodbDao,
   factory: userFactory,
 });
@@ -183,12 +331,25 @@ export const getById = getDbById<UserModel>({
 
 ### index.ts
 
-Export all queries using named exports:
+Export all queries. Be explicit about which are public (DTO) vs. internal (Model):
 
 ```typescript
+// Public queries — return DTOs
 export { getById } from "./getById";
 export { getListAll } from "./getListAll";
+
+// Internal queries — return Models (used by commands)
+export { getModelById } from "./getModelById";
 ```
+
+### Shared Query Utilities
+
+Place domain-specific query helpers in `queries/shared/`:
+- Pagination logic
+- Reusable filter builders
+- Search utilities
+
+These should **not apply mappers** — that's done in the public query wrappers.
 
 ## Clients (`src/clients/`)
 
@@ -209,6 +370,60 @@ export const userMongodbDao = MongoDbDAO<UserModel>({
   collectionName: "users",
 });
 ```
+
+### External Client Packages
+
+**All `@vassembly/client-*` packages must be imported only inside `src/clients/`** (or consumed indirectly via commands/queries that use those client modules). This ensures:
+
+- **Single responsibility**: Only the domain that owns a concept instantiates its external clients
+- **Reusability**: Services inject clients or call domain operations instead of creating clients directly
+- **Testability**: Domain logic can be tested with mock client implementations
+
+#### Pattern: Re-export Client Factories
+
+Create a thin wrapper that re-exports the client factory. This centralizes client instantiation in the domain:
+
+```typescript
+// domains/example/src/clients/externalClient.ts
+import { createExternalClient } from "@vassembly/client-external";
+
+import type { ExternalClient, CreateExternalClientParams } from "@vassembly/client-external";
+
+export const getExternalClient = (params: CreateExternalClientParams): ExternalClient =>
+  createExternalClient(params);
+
+export type { ExternalClient, CreateExternalClientParams };
+```
+
+Then export from `index.ts`:
+
+```typescript
+// domains/example/src/clients/index.ts
+export { exampleMongodbDao } from "./mongodb";
+export { getExternalClient } from "./externalClient";
+export type { ExternalClient, CreateExternalClientParams } from "./externalClient";
+```
+
+#### Boundary: Injecting Clients into Commands
+
+When a command needs an external client, accept it as an injected dependency:
+
+```typescript
+// domains/example/src/commands/invokeExternal/index.ts
+import type { ExternalClient } from "../../clients";
+
+export interface InvokeExternalParams {
+  client: ExternalClient;  // Injected by the service layer
+  data: string;
+}
+
+export const invokeExternal = async (params: InvokeExternalParams) => {
+  const { client, data } = params;
+  return client.invoke(data);
+};
+```
+
+This design keeps the domain focused on **what** to do with the client, not **how** to create it.
 
 ### index.ts
 
@@ -244,25 +459,83 @@ const foundUser = await userDomain.queries.getById({ id: "123" });
 
 ## Key Principles
 
+### Mapping Architecture: Two-Tier Model
+
+| Layer | Location | Responsibility | Does NOT |
+|-------|----------|-----------------|----------|
+| **Tier 1: Primitives** | `@vassembly/mappers` | Date serialization, field validation, generic pick/omit | Domain-specific shapes |
+| **Tier 2: Domain Mappers** | `domains/<name>/src/model/to*Response.ts` | Entity-specific DTO projection, audience variants | Cross-domain enrichment |
+
+**Service layer:** Orchestration + cross-domain enrichment only. **Never duplicate domain mappers** in service handlers. Use domain DTOs directly.
+
+### Query vs. Command Boundary
+
+**Commands** always return Models:
+- Commands represent write operations
+- Handlers decide what to return to the client via mappers
+- Commands use internal `getModelById` to avoid DTO mapping overhead
+
+**Queries have dual modes:**
+- Public `getById` / `getListAll` — return DTOs (mapped)
+- Internal `getModelById` — return Models (used by commands/internal logic)
+
+### Date Serialization Convention
+
+**All external DTOs use ISO 8601 strings**, never `Date` objects:
+- Serialization happens in `to*Response` mappers using `@vassembly/mappers` primitives
+- Internal models retain `Date` objects for type safety and operations
+- Border: Serialization at the query boundary before returning to external callers
+
+### Mapper Composition
+
+Avoid mapper frameworks. Use plain functions + shared primitives:
+
+```typescript
+// Base domain mapper
+const base = toAiIntegrationResponse(credential);
+
+// Service enrichment (cross-domain) — stays in service
+return { ...base, agentUsageCount };
+
+// Audience variant — separate function in domain
+export const toAiIntegrationListItem = (credential: Model): ListItemResponse =>
+  pickFields({ source: toAiIntegrationResponse(credential), keys: LIST_ITEM_KEYS });
+```
+
 ### Single Responsibility
 
 - Each domain manages one entity/concept
 - Commands and queries are focused operations
 - Model encapsulates the entity's data and behavior
+- Mappers are pure functions with no side effects
+
+### Domain Isolation
+
+**Domains cannot import other domains.** This is a critical architectural constraint:
+
+- Each domain is self-contained and manages only its own entity/concept
+- **No cross-domain imports** from `domains/<other-name>/` are permitted within a domain
+- **No shared business logic** across domains; extract to `packages/*` instead if needed
+- **Why:** Prevents circular dependencies, enforces clear boundaries, and ensures domains remain independently testable and reusable
+- **Exception:** Domains may depend on shared infrastructure packages (`@vassembly/commands`, `@vassembly/queries`, `@vassembly/model`, `@vassembly/mappers`)
+- **Composition happens in services:** Services layer (`services/*`) orchestrates multiple domains and handles cross-domain concerns
 
 ### Composability
 
-- Domains depend on shared packages (`@vassembly/commands`, `@vassembly/queries`, `@vassembly/model`)
+- Domains depend on shared packages only (`@vassembly/commands`, `@vassembly/queries`, `@vassembly/model`, `@vassembly/mappers`)
 - Services compose multiple domain queries and commands
+- **Important:** Commands use internal `getModelById` queries, not public `getById` queries
 
 ### Type Safety
 
 - All models, commands, and queries are fully typed
 - Use TypeScript generics (`<UserModel>`) for type inference
 - Validation schemas define the contract for command inputs
+- Export DTO types from `model/dto.ts` for type safety
 
 ### Testing
 
 - Colocate tests with implementation (`.test.ts` suffix)
 - Test commands and queries as black boxes
 - Validate inputs produce expected outputs, not implementation details
+- Test mappers separately to ensure DTO shape is correct

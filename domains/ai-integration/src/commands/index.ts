@@ -6,3 +6,8 @@ export { removeSoft } from './removeSoft';
 export type { RemoveSoftAiIntegrationCommandInput } from './removeSoft/types';
 export { restore } from './restore';
 export type { RestoreAiIntegrationCommandInput } from './restore/types';
+export { testProviderConnection } from './testProviderConnection';
+export type { TestProviderConnectionParams } from './testProviderConnection';
+export { assertProviderConnection } from './assertProviderConnection';
+export { resolveAndBuildClient } from './resolveAndBuildClient';
+export type { ResolveAndBuildClientParams, ResolveAndBuildClientResult } from './resolveAndBuildClient/types';

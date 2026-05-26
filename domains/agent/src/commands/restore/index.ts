@@ -2,7 +2,7 @@ import { WrongParamError } from '@vassembly/errors';
 
 import { agentMongodbDao } from '../../clients';
 import { agentFactory, AgentStatus } from '../../model';
-import { getById } from '../../queries';
+import { getModelById } from '../../queries';
 
 export interface RestoreAgentCommandInput {
   id: string;
@@ -12,7 +12,7 @@ export interface RestoreAgentCommandInput {
 const NOT_DELETED_MESSAGE = 'Restore requires archived agent';
 
 export const restore = async (input: RestoreAgentCommandInput) => {
-  const existing = await getById({ id: input.id, userId: input.userId });
+  const existing = await getModelById({ id: input.id, userId: input.userId });
   if (!existing.data.removedAt) {
     throw new WrongParamError(NOT_DELETED_MESSAGE);
   }
@@ -25,5 +25,5 @@ export const restore = async (input: RestoreAgentCommandInput) => {
   });
 
   await agentMongodbDao.update(where, updatedInstance);
-  return getById({ id: input.id, userId: input.userId });
+  return getModelById({ id: input.id, userId: input.userId });
 };

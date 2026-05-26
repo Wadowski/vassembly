@@ -9,7 +9,7 @@ export interface AgentResponse {
   userId?: string;
   status?: AgentStatus;
   integrationCredentialId?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  removedAt?: Date | null;
+  createdAt?: string;
+  updatedAt?: string;
+  removedAt?: string | null;
 }

@@ -1,6 +1,6 @@
 import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 
-import { enrichCredentialResponse } from '../../helpers/enrichCredentialResponse';
+import { enrichCredentialDto } from '../../helpers/enrichCredentialResponse';
 
 import type { GetCredentialHandlerInput, GetCredentialHandlerOutput } from './types';
 
@@ -12,5 +12,5 @@ export const getCredential = async (
     userId: input.userId,
   });
 
-  return { credential: await enrichCredentialResponse({ credential: result.data }) };
+  return { credential: await enrichCredentialDto({ credential: result.data }) };
 };

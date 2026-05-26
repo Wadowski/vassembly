@@ -3,11 +3,13 @@ import { createServer, routesWithPrefix } from "@vassembly/server";
 import { config } from "@vassembly/config";
 import { mongodbIndexes as agentMongodbIndexes } from "@vassembly/domain-agent";
 import { mongodbIndexes as aiIntegrationMongodbIndexes } from "@vassembly/domain-ai-integration";
+import { mongodbIndexes as systemAgentMongodbIndexes } from "@vassembly/domain-system-agent";
 import { mongodbIndexes as userMongodbIndexes } from "@vassembly/domain-user";
 
 import { routes as agentRoutesList } from "./agents";
 import { routes as aiIntegrationRoutesList } from "./ai-integrations";
 import { routes as authRoutesList } from "./auth";
+import { routes as systemAgentsRoutesList } from "./system-agents";
 import { routes as userRoutesList } from "./user";
 import { graphqlConfig } from "../graphql";
 
@@ -15,12 +17,24 @@ const authRoutes = routesWithPrefix("/auth", authRoutesList);
 const userRoutes = routesWithPrefix("/user", userRoutesList);
 const agentRoutes = routesWithPrefix("/agents", agentRoutesList);
 const aiIntegrationRoutes = routesWithPrefix("/ai-integrations", aiIntegrationRoutesList);
+const systemAgentsRoutes = routesWithPrefix("/system-agents", systemAgentsRoutesList);
 
-const routes = [...authRoutes, ...userRoutes, ...agentRoutes, ...aiIntegrationRoutes];
+const routes = [
+  ...authRoutes,
+  ...userRoutes,
+  ...agentRoutes,
+  ...aiIntegrationRoutes,
+  ...systemAgentsRoutes,
+];
 
 const startApp = async () => {
   await initMongoDb({
-    indexFunctions: [userMongodbIndexes, agentMongodbIndexes, aiIntegrationMongodbIndexes],
+    indexFunctions: [
+      userMongodbIndexes,
+      agentMongodbIndexes,
+      aiIntegrationMongodbIndexes,
+      systemAgentMongodbIndexes,
+    ],
   });
 
   const fastify = await createServer({

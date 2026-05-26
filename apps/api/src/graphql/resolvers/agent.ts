@@ -54,7 +54,7 @@ export const registerAgentResolvers = (builder: Builder): void => {
           });
 
           return {
-            items: result.items.map((item) => toAgentResponse(item as AgentModel)),
+            items: result.items.map((item) => toAgentResponse({ agent: item as AgentModel })),
             totalCount: result.totalCount,
             page: result.page,
             size: result.size,

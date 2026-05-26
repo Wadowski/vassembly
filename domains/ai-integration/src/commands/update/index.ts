@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { AiIntegrationConnectionStatus, AiIntegrationProvider, AiIntegrationStatus } from '../../constants';
 import { aiIntegrationMongodbDao } from '../../clients';
 import { AiIntegrationCredentialModel, aiIntegrationCredentialFactory } from '../../model';
-import { getById } from '../../queries';
+import { getModelById } from '../../queries';
 
 import type { UpdateAiIntegrationCommandInput } from './types';
 
@@ -50,7 +50,7 @@ const shouldResetConnectionStatus = ({
 };
 
 export const update = async (input: UpdateAiIntegrationCommandInput) => {
-  const existingResult = await getById({ id: input.id, userId: input.userId });
+  const existingResult = await getModelById({ id: input.id, userId: input.userId });
   const existing = existingResult.data;
   const { apiKey, ...restData } = input.data;
   const updateData: Record<string, unknown> = { ...restData };
