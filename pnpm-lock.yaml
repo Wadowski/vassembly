@@ -548,6 +548,9 @@ importers:
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
+      '@vassembly/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
       '@vassembly/mappers':
         specifier: workspace:*
         version: link:../../packages/mappers
@@ -557,6 +560,9 @@ importers:
       '@vassembly/queries':
         specifier: workspace:*
         version: link:../../packages/queries
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -1462,6 +1468,9 @@ importers:
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
+      '@vassembly/domain-task':
+        specifier: workspace:*
+        version: link:../../domains/task
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors

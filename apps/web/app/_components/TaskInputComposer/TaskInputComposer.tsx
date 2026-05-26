@@ -11,8 +11,9 @@ import { TextField } from '@vassembly/ui-text-field';
 import { TASK_DESCRIPTION_MAX_LENGTH, TASK_INPUT_PLACEHOLDER } from './constants';
 import styles from './TaskInputComposer.module.scss';
 import { useTaskInput } from './useTaskInput';
+import type { TaskInputComposerProps } from './types';
 
-export const TaskInputComposer = (): JSX.Element => {
+export const TaskInputComposer = ({ onCreateSuccess }: TaskInputComposerProps): JSX.Element => {
   const snackbar = useSnackbar();
   const { input, setInput, isLoading, error, handleSubmit, handleBlur } = useTaskInput();
 
@@ -36,6 +37,7 @@ export const TaskInputComposer = (): JSX.Element => {
           message: 'Task created successfully',
           duration: 4000,
         });
+        onCreateSuccess?.();
         return;
       }
       if (result.status === 'error') {
@@ -46,7 +48,7 @@ export const TaskInputComposer = (): JSX.Element => {
         });
       }
     },
-    [handleSubmit, snackbar],
+    [handleSubmit, onCreateSuccess, snackbar],
   );
 
   return (

@@ -9,6 +9,7 @@ export enum TaskStatus {
   Created = 'created',
   InProgress = 'in-progress',
   Done = 'done',
+  Failed = 'failed',
 }
 
 export class TaskModel extends Model {
@@ -21,4 +22,6 @@ export class TaskModel extends Model {
   status?: TaskStatus;
 
   agentAssignedId?: string | null;
+
+  title?: string | null;
 }

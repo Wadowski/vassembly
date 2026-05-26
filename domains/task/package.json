@@ -22,9 +22,11 @@
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",
+    "@vassembly/graphql": "workspace:*",
     "@vassembly/mappers": "workspace:*",
     "@vassembly/model": "workspace:*",
     "@vassembly/queries": "workspace:*",
+    "@vassembly/validation": "workspace:*",
     "zod": "^4.3.6"
   }
 }

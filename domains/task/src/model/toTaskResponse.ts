@@ -23,6 +23,7 @@ export const toTaskResponse = ({ task }: ToTaskResponseParams): TaskResponse => 
     type: task.type!,
     status: task.status!,
     agentAssignedId: task.agentAssignedId ?? null,
+    title: task.title ?? null,
     createdAt: toIsoString({ value: task.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: task.updatedAt!, fieldName: 'updatedAt' }),
   };

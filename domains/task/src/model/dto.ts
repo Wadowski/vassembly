@@ -1,10 +1,13 @@
+import { TaskStatus, TaskType } from './model';
+
 export interface TaskResponse {
   id: string;
   userId: string;
   description: string;
-  type: 'user' | 'agent';
-  status: 'created' | 'in-progress' | 'done';
+  type: TaskType;
+  status: TaskStatus;
   agentAssignedId: string | null;
+  title: string | null;
   createdAt: string;
   updatedAt: string;
 }

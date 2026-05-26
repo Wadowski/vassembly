@@ -1,3 +1,12 @@
 export { useCreateTask } from './useCreateTask';
+export { useUserTasks } from './useUserTasks';
 export type { CreateTaskOutcome, UseCreateTaskResult } from './useCreateTask';
-export type { CreateTaskBody, CreateTaskVariables, TaskResponse } from './types';
+export type {
+  CreateTaskBody,
+  CreateTaskVariables,
+  TaskDto,
+  TaskResponse,
+  UserTasksListQuery,
+  UserTasksListResponse,
+} from './types';
+export { TaskStatus } from './types';

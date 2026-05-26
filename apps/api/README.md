@@ -43,3 +43,61 @@ Creates a user-owned task from the authenticated caller's identity.
 | `429` | Rate limit exceeded — 5 tasks per minute per user |
 
 Route implementation: [`src/routes/tasks/create.ts`](./src/routes/tasks/create.ts).
+
+## Task queries (GraphQL)
+
+Task data retrieval uses GraphQL per project conventions. Query field registered in [`src/graphql/resolvers/task.ts`](./src/graphql/resolvers/task.ts).
+
+### `userTasks`
+
+Returns a paginated list of tasks for the authenticated caller.
+
+**Authentication:** Required. Resolver reads `context.authenticatedUserId`; throws `UnauthorizedError` when missing.
+
+**Query variables:**
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `page` | `Int` | `0` | Zero-based page index |
+| `size` | `Int` | `10` | Page size; domain caps at 50 |
+| `search` | `String` | — | Optional case-insensitive filter on `description` or `title` |
+
+**Response shape (`TasksList`):**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `items` | `[Task]` | Task DTOs with ISO 8601 timestamps |
+| `totalCount` | `Int` | Total matching tasks across all pages |
+| `page` | `Int` | Current page index |
+| `size` | `Int` | Effective page size |
+
+**Example query:**
+
+```graphql
+query ListUserTasks($page: Int, $size: Int, $search: String) {
+  userTasks(page: $page, size: $size, search: $search) {
+    items {
+      id
+      userId
+      description
+      type
+      status
+      agentAssignedId
+      title
+      createdAt
+      updatedAt
+    }
+    totalCount
+    page
+    size
+  }
+}
+```
+
+**Errors:**
+
+| Error | When |
+|-------|------|
+| `UnauthorizedError` | Missing or invalid authentication token |
+| `WrongParamError` | Invalid pagination arguments (e.g. negative `page`, `size` < 1) |
+| `ValidationError` | Service-level validation failure (empty `userId`) |

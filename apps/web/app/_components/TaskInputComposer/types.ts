@@ -3,6 +3,10 @@ export type TaskSubmitResult =
   | { status: 'unauthorized' }
   | { status: 'error'; message: string };
 
+export interface TaskInputComposerProps {
+  onCreateSuccess?: () => void;
+}
+
 export interface UseTaskInputResult {
   input: string;
   setInput: (value: string) => void;

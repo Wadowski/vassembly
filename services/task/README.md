@@ -29,6 +29,49 @@ const result = await taskService.createTask({
 
 Implementation: [`src/handlers/createTask/index.ts`](./src/handlers/createTask/index.ts).
 
+### `listUserTasks({ userId, page, size, search? }): Promise<ListUserTasksHandlerOutput>`
+
+Returns a paginated list of tasks for the authenticated user. Delegates filtering, pagination, and persistence to `@vassembly/domain-task`.
+
+```typescript
+import taskService from '@vassembly/service-task';
+
+const result = await taskService.listUserTasks({
+  userId: 'user-123',
+  page: 0,
+  size: 10,
+  search: 'invoice',
+});
+// Returns: { items: TaskModel[], totalCount, page, size }
+```
+
+**Input** ([`src/handlers/listUserTasks/types.ts`](./src/handlers/listUserTasks/types.ts)):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `userId` | `string` | yes | Authenticated user ID (provided by API gateway) |
+| `page` | `number` | yes | Zero-based page index |
+| `size` | `number` | yes | Page size; domain caps at 50 |
+| `search` | `string` | no | Case-insensitive filter on task `description` or `title` |
+
+**Output** (`ListUserTasksHandlerOutput`):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `items` | `TaskModel[]` | Tasks for the requested page |
+| `totalCount` | `number` | Total matching tasks |
+| `page` | `number` | Current page index |
+| `size` | `number` | Effective page size |
+
+**Errors:**
+
+| Error | When |
+|-------|------|
+| `ValidationError` | Missing or empty `userId` |
+| `WrongParamError` | Invalid pagination input from domain validation |
+
+Implementation: [`src/handlers/listUserTasks/index.ts`](./src/handlers/listUserTasks/index.ts).
+
 ## Usage
 
 Default export exposes all handlers:
@@ -54,7 +97,7 @@ This service does not perform auth itself. The API gateway resolves the caller v
 pnpm test
 ```
 
-Handler tests mock the domain layer and validate orchestration behavior. See [`src/handlers/createTask/index.test.ts`](./src/handlers/createTask/index.test.ts).
+Handler tests mock the domain layer and validate orchestration behavior. See [`src/handlers/createTask/index.test.ts`](./src/handlers/createTask/index.test.ts) and [`src/handlers/listUserTasks/index.test.ts`](./src/handlers/listUserTasks/index.test.ts).
 
 ## Dependencies
 
