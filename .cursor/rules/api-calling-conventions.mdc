@@ -1,0 +1,168 @@
+---
+description: API calling conventions - GraphQL for queries, REST for commands
+alwaysApply: true
+---
+
+# API Calling Conventions
+
+All backend calls must follow a strict convention based on operation type:
+
+- **Data Retrieval (Queries)** → Use **GraphQL**
+- **Commands (Create, Update, Delete, State Changes)** → Use **REST API**
+
+This applies consistently across the entire codebase: frontend clients, backend API Gateway exposures, and service handlers.
+
+## Frontend Clients
+
+### GraphQL for Data Retrieval
+
+Use GraphQL for all data fetching operations:
+
+```typescript
+// ✅ GOOD - Use GraphQL for queries
+import { useQuery } from '@apollo/client';
+import { GET_SYSTEM_AGENTS_QUERY } from './graphql/getSystemAgentsQuery';
+
+export const useSystemAgents = () => {
+  return useQuery(GET_SYSTEM_AGENTS_QUERY);
+};
+```
+
+### REST for Commands
+
+Use REST endpoints for all state-changing operations:
+
+```typescript
+// ✅ GOOD - Use REST for mutations/commands
+export const useCreateSystemAgent = () => {
+  const createAgent = async (input: CreateSystemAgentInput) => {
+    const response = await fetch('/api/system-agents', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+    return response.json();
+  };
+  return { createAgent };
+};
+
+// ✅ GOOD - Use REST for updates
+export const useUpdateSystemAgent = () => {
+  const updateAgent = async (id: string, input: UpdateSystemAgentInput) => {
+    const response = await fetch(`/api/system-agents/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+    return response.json();
+  };
+  return { updateAgent };
+};
+
+// ✅ GOOD - Use REST for deletes
+export const useDeleteSystemAgent = () => {
+  const deleteAgent = async (id: string) => {
+    const response = await fetch(`/api/system-agents/${id}`, {
+      method: 'DELETE',
+    });
+    return response.json();
+  };
+  return { deleteAgent };
+};
+```
+
+### Incorrect Patterns
+
+```typescript
+// ❌ BAD - Don't use GraphQL mutations for commands
+mutation CreateSystemAgent($input: CreateSystemAgentInput!) {
+  createSystemAgent(input: $input) {
+    id
+    name
+  }
+}
+
+// ❌ BAD - Don't use REST for simple data retrieval
+fetch('/api/system-agents').then(r => r.json());
+```
+
+## Backend API Gateway
+
+### GraphQL Resolvers Only for Queries
+
+Define GraphQL resolvers only for query operations:
+
+```typescript
+// ✅ GOOD - GraphQL resolver for data retrieval
+export const systemAgentResolvers = {
+  Query: {
+    systemAgent: async (_: unknown, args: { id: string }, context: GraphQLContext) => {
+      const agent = await handlers.getSystemAgent({ id: args.id }, context);
+      return agent;
+    },
+    systemAgents: async (_: unknown, _args: unknown, context: GraphQLContext) => {
+      const agents = await handlers.listSystemAgents({}, context);
+      return agents;
+    },
+  },
+};
+```
+
+### REST Endpoints for Commands
+
+Define REST routes only for command operations:
+
+```typescript
+// ✅ GOOD - REST route for create
+export const createSystemAgent = async (request: FastifyRequest, reply: FastifyReply) => {
+  const input = createSystemAgentSchema.parse(request.body);
+  const result = await handlers.createSystemAgent(input, { userId: request.user.id });
+  reply.status(201).send(result);
+};
+
+// ✅ GOOD - REST route for update
+export const updateSystemAgent = async (request: FastifyRequest, reply: FastifyReply) => {
+  const id = request.params.id as string;
+  const input = updateSystemAgentSchema.parse(request.body);
+  const result = await handlers.updateSystemAgent({ id, ...input }, { userId: request.user.id });
+  reply.status(200).send(result);
+};
+
+// ✅ GOOD - REST route for delete
+export const deleteSystemAgent = async (request: FastifyRequest, reply: FastifyReply) => {
+  const id = request.params.id as string;
+  const result = await handlers.archiveSystemAgent({ id }, { userId: request.user.id });
+  reply.status(200).send(result);
+};
+```
+
+## Service Handlers
+
+Service handlers should remain transport-agnostic. They handle the business logic and are called by both REST routes and GraphQL resolvers:
+
+```typescript
+// ✅ GOOD - Handler for a query operation
+export const handlers = {
+  getSystemAgent: async (
+    { id }: GetSystemAgentInput,
+    context: ServiceContext
+  ): Promise<SystemAgent> => {
+    // Business logic here
+  },
+
+  // ✅ GOOD - Handler for a command operation
+  createSystemAgent: async (
+    { name, config }: CreateSystemAgentInput,
+    context: ServiceContext
+  ): Promise<SystemAgent> => {
+    // Business logic here
+  },
+};
+```
+
+## Summary
+
+- **GraphQL**: All GET/read operations and data retrieval
+- **REST**: All POST/PATCH/PUT/DELETE operations and state changes
+- **Service Handlers**: Transport-agnostic business logic shared by both
+- **No Exceptions**: Apply this rule universally across the codebase

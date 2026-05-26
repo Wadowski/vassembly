@@ -53,6 +53,15 @@ Do NOT depend on:
 
 ## Key Principles
 
+### API Type by Operation
+
+Follow the strict convention from `api-calling-conventions.mdc`:
+
+- **GraphQL for Queries**: All data retrieval operations
+- **REST for Commands**: All create, update, delete, and state-changing operations
+
+This ensures consistent patterns across frontend and backend.
+
 ### No Business Logic in Routes/GraphQL
 
 - All logic stays in services and domains
