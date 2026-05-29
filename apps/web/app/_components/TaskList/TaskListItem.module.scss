@@ -8,6 +8,19 @@
   border: 1px solid $color-outline;
   border-radius: $border-radius-lg;
   background-color: $color-surface-container;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: $color-surface-container-high;
+    border-color: $color-primary;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
 }
 
 .summary {

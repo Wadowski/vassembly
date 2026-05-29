@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@vassembly/ui-button';
 import { Text } from '@vassembly/ui-text';
+import { ArrowLeftIcon } from '@vassembly/ui-icons';
 
 import { TASK_DETAILS_PAGE_TITLE } from '../constants';
 import pageStyles from '../TaskDetailPage.module.scss';
@@ -26,9 +27,11 @@ export const TaskDetailHeader = ({ task }: TaskDetailHeaderProps): JSX.Element =
           className={pageStyles.backLink}
           variant="text"
           color="primary"
-          text="← Back to tasks"
+          icon={ArrowLeftIcon}
+          text="Back to tasks"
           onClick={handleBackClick}
           data-testid="task-detail-back"
+          aria-label="Back to tasks"
         />
         <TaskStatusBadge status={task.status} />
       </div>

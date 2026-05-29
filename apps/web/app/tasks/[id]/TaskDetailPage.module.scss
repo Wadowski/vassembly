@@ -14,15 +14,13 @@
 .contentColumn {
   display: flex;
   flex-direction: column;
-  gap: $spacing-6;
+  gap: $spacing-8;
   width: 100%;
   max-width: 42rem;
 }
 
 .sectionCard {
-  padding: $spacing-6;
   border-radius: $border-radius-lg;
-  background-color: $color-surface-container-high;
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
