@@ -11,6 +11,10 @@ interface UserTasksResolverArgs {
   search?: string | null;
 }
 
+interface TaskResolverArgs {
+  id: string;
+}
+
 interface ApiGraphQLContext {
   authenticatedUserId?: string;
 }
@@ -50,6 +54,23 @@ export const registerTaskResolvers = (builder: Builder): void => {
             page: result.page,
             size: result.size,
           };
+        },
+      }),
+      task: t.field({
+        type: 'Task',
+        args: { id: t.arg.id({ required: true }) },
+        resolve: async (
+          _root: unknown,
+          args: TaskResolverArgs,
+          context: ApiGraphQLContext,
+        ) => {
+          const userId = context.authenticatedUserId;
+
+          if (userId === undefined) {
+            throw new UnauthorizedError('Authentication required');
+          }
+
+          return taskService.getTask({ userId, taskId: args.id });
         },
       }),
     }),

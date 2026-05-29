@@ -2,16 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { TaskStatus, TaskType, toTaskResponse } from '@vassembly/domain-task';
 import type { TaskModel } from '@vassembly/domain-task';
-import { UnauthorizedError, ValidationError } from '@vassembly/errors';
+import { NotFoundError, UnauthorizedError, ValidationError } from '@vassembly/errors';
 import type { Builder } from '@vassembly/graphql';
 
-const { mockListUserTasks } = vi.hoisted(() => ({
+const { mockListUserTasks, mockGetTask } = vi.hoisted(() => ({
   mockListUserTasks: vi.fn(),
+  mockGetTask: vi.fn(),
 }));
 
 vi.mock('@vassembly/service-task', () => ({
   default: {
     listUserTasks: mockListUserTasks,
+    getTask: mockGetTask,
   },
 }));
 
@@ -28,22 +30,39 @@ type UserTasksResolver = (
   size: number;
 }>;
 
-const captureUserTasksResolver = (): UserTasksResolver => {
-  let resolve: UserTasksResolver | undefined;
+type TaskResolver = (
+  root: unknown,
+  args: { id: string },
+  context: { authenticatedUserId?: string },
+) => Promise<ReturnType<typeof toTaskResponse>>;
+
+interface CapturedTaskResolvers {
+  resolveUserTasks?: UserTasksResolver;
+  resolveTask?: TaskResolver;
+}
+
+const captureTaskResolvers = (): CapturedTaskResolvers => {
+  const captured: CapturedTaskResolvers = {};
 
   const arg = {
     int: (config: unknown) => config,
     string: (config: unknown) => config,
+    id: (config: unknown) => config,
   };
 
   const builder = {
     queryFields: (fieldsFactory: (t: {
-      field: (config: { resolve: UserTasksResolver }) => void;
+      field: (config: { resolve: UserTasksResolver | TaskResolver; args?: Record<string, unknown> }) => void;
       arg: typeof arg;
     }) => void) => {
       fieldsFactory({
         field: (config) => {
-          resolve = config.resolve;
+          if (config.args !== undefined && 'id' in config.args) {
+            captured.resolveTask = config.resolve as TaskResolver;
+            return;
+          }
+
+          captured.resolveUserTasks = config.resolve as UserTasksResolver;
         },
         arg,
       });
@@ -52,11 +71,27 @@ const captureUserTasksResolver = (): UserTasksResolver => {
 
   registerTaskResolvers(builder);
 
-  if (resolve === undefined) {
+  return captured;
+};
+
+const captureUserTasksResolver = (): UserTasksResolver => {
+  const { resolveUserTasks } = captureTaskResolvers();
+
+  if (resolveUserTasks === undefined) {
     throw new Error('userTasks resolver was not registered');
   }
 
-  return resolve;
+  return resolveUserTasks;
+};
+
+const captureTaskResolver = (): TaskResolver => {
+  const { resolveTask } = captureTaskResolvers();
+
+  if (resolveTask === undefined) {
+    throw new Error('task resolver was not registered');
+  }
+
+  return resolveTask;
 };
 
 const buildTaskModel = (partial: Partial<TaskModel> = {}): TaskModel =>
@@ -188,5 +223,62 @@ describe('registerTaskResolvers userTasks', () => {
         resolveUserTasks({}, { page: -1, size: 10 }, { authenticatedUserId: 'user-auth' }),
       ).rejects.toThrow(ValidationError);
     });
+  });
+});
+
+describe('registerTaskResolvers task', () => {
+  let resolveTask: TaskResolver;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resolveTask = captureTaskResolver();
+  });
+
+  it('should throw UnauthorizedError when authenticatedUserId is missing', async () => {
+    await expect(resolveTask({}, { id: 'task-1' }, {})).rejects.toThrow(UnauthorizedError);
+  });
+
+  it('should call taskService.getTask with userId and taskId when authenticated', async () => {
+    const taskResponse = toTaskResponse({ task: buildTaskModel({ id: 'task-42' }) });
+    mockGetTask.mockResolvedValue(taskResponse);
+
+    await resolveTask({}, { id: 'task-42' }, { authenticatedUserId: 'user-auth' });
+
+    expect(mockGetTask).toHaveBeenCalledWith({
+      userId: 'user-auth',
+      taskId: 'task-42',
+    });
+  });
+
+  it('should return task when service resolves successfully', async () => {
+    const taskResponse = toTaskResponse({
+      task: buildTaskModel({
+        id: 'task-1',
+        description: 'Review quarterly report',
+        status: TaskStatus.InProgress,
+        title: 'Quarterly review',
+      }),
+    });
+    mockGetTask.mockResolvedValue(taskResponse);
+
+    const result = await resolveTask({}, { id: 'task-1' }, { authenticatedUserId: 'user-auth' });
+
+    expect(result).toEqual(taskResponse);
+  });
+
+  it('should propagate NotFoundError from service', async () => {
+    mockGetTask.mockRejectedValue(new NotFoundError('Task not found'));
+
+    await expect(
+      resolveTask({}, { id: 'missing-task' }, { authenticatedUserId: 'user-auth' }),
+    ).rejects.toThrow(NotFoundError);
+  });
+
+  it('should propagate ValidationError from service', async () => {
+    mockGetTask.mockRejectedValue(new ValidationError('taskId is required'));
+
+    await expect(
+      resolveTask({}, { id: '' }, { authenticatedUserId: 'user-auth' }),
+    ).rejects.toThrow(ValidationError);
   });
 });

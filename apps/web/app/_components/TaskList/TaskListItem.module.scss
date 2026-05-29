@@ -1,21 +1,5 @@
 @import '@vassembly/theme/src/tokens/index.scss';
 
-.statusSecondary {
-  color: $color-text-secondary;
-}
-
-.statusInfo {
-  color: $color-primary;
-}
-
-.statusSuccess {
-  color: $color-success;
-}
-
-.statusError {
-  color: $color-error;
-}
-
 .item {
   display: flex;
   flex-direction: column;
@@ -39,20 +23,4 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.statusBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-1;
-  width: fit-content;
-}
-
-.statusIcon {
-  width: 16px;
-  height: 16px;
-}
-
-.statusLabel {
-  font-size: $font-size-label-sm;
 }

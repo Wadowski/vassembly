@@ -1,0 +1,70 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.eventList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.eventRow {
+  display: grid;
+  grid-template-columns: 8px 1fr;
+  column-gap: $spacing-3;
+  position: relative;
+  padding-bottom: $spacing-4;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 3px;
+    bottom: 0;
+    width: 2px;
+    background-color: $color-outline-variant;
+    opacity: 0.15;
+  }
+}
+
+.eventNode {
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background-color: $color-primary;
+}
+
+.eventContent {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: $spacing-2;
+  min-width: 0;
+}
+
+.eventAuthor {
+  font-weight: $font-weight-semibold;
+}
+
+.eventTitle {
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+}
+
+.eventTimestamp {
+  color: $color-text-secondary;
+  font-weight: $font-weight-light;
+
+}
+
+.skeletonRows {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}

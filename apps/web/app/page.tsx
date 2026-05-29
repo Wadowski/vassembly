@@ -1,5 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+
 import { useUserAuth } from '@vassembly/ui-user-auth';
 
 import { TaskInputComposer } from './_components/TaskInputComposer/TaskInputComposer';
@@ -8,6 +11,7 @@ import { useHomeTaskList } from './lib/useHomeTaskList';
 import styles from './page.module.scss';
 
 const AuthenticatedTaskList = (): JSX.Element => {
+  const router = useRouter();
   const {
     tasks,
     isLoading,
@@ -18,6 +22,13 @@ const AuthenticatedTaskList = (): JSX.Element => {
     handleLoadMore,
     refreshFromStart,
   } = useHomeTaskList();
+
+  const handleTaskClick = useCallback(
+    (taskId: string): void => {
+      router.push(`/tasks/${taskId}`);
+    },
+    [router],
+  );
 
   return (
     <>
@@ -30,6 +41,7 @@ const AuthenticatedTaskList = (): JSX.Element => {
         searchValue={searchInput}
         onSearchChange={handleSearchChange}
         onLoadMore={handleLoadMore}
+        onTaskClick={handleTaskClick}
       />
     </>
   );

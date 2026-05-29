@@ -14,6 +14,7 @@
   "dependencies": {
     "@vassembly/config": "workspace:*",
     "@vassembly/constants": "workspace:*",
+    "@vassembly/errors": "workspace:*",
     "@vassembly/theme": "workspace:*",
     "@vassembly/ui-alert": "workspace:^",
     "@vassembly/ui-anchor-list": "workspace:^",

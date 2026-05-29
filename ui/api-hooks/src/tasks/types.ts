@@ -81,3 +81,11 @@ export interface ListUserTasksVariables {
   size?: number;
   search?: string;
 }
+
+export interface GraphQLGetTaskData {
+  task?: GraphQLTaskRow | null;
+}
+
+export interface GetTaskVariables {
+  id: string;
+}

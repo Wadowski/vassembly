@@ -1,0 +1,118 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.pageStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  padding: $spacing-4;
+
+  @media #{$media-tablet} {
+    padding: $spacing-6;
+  }
+}
+
+.contentColumn {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  width: 100%;
+  max-width: 42rem;
+}
+
+.sectionCard {
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface-container-high;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.utilityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.backLink {
+  align-self: flex-start;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.pageTitle {
+  margin-top: $spacing-2;
+
+  @media #{$media-mobile-only} {
+    font-size: $font-size-heading-md;
+  }
+}
+
+.sectionLabel {
+  color: $color-primary;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-tracked;
+}
+
+.descriptionSkeletonLines {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.sectionStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.descriptionText {
+  white-space: pre-wrap;
+  line-height: $line-height-relaxed;
+}
+
+.descriptionEmpty {
+  color: $color-text-secondary;
+}
+
+.metadataList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.metadataRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+
+  @media #{$media-tablet} {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: $spacing-4;
+    align-items: center;
+  }
+}
+
+.metadataLabel {
+  color: $color-text-secondary;
+}
+
+.errorStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  max-width: 42rem;
+}
+
+.errorDetail {
+  color: $color-text-secondary;
+}
+
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+}

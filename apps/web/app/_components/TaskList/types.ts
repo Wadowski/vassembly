@@ -12,6 +12,7 @@ export interface TaskListProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
   onLoadMore: () => void;
+  onTaskClick?: (taskId: string) => void;
 }
 
 export interface TaskListItemProps {

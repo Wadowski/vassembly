@@ -24,6 +24,7 @@ export const TaskList = ({
   searchValue,
   onSearchChange,
   onLoadMore,
+  onTaskClick,
 }: TaskListProps): JSX.Element | null => {
   const handleSearchChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>): void => {
@@ -50,7 +51,7 @@ export const TaskList = ({
     <section className={styles.list}>
       <div className={styles.items}>
         {tasks.map((task) => (
-          <TaskListItem key={task.id} task={task} />
+          <TaskListItem key={task.id} task={task} onClick={onTaskClick} />
         ))}
       </div>
       <div className={styles.searchRow}>

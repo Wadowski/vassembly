@@ -8,15 +8,10 @@ import { resolveClassName } from '@vassembly/ui-utils';
 
 import { TASK_EMPTY_DESCRIPTION_LABEL } from './constants';
 import { getStatusColor, getStatusIcon, getStatusLabel } from './taskStatusDisplay';
+import { STATUS_COLOR_CLASS_MAP } from './taskStatusStyles';
+import statusStyles from './taskStatusStyles.module.scss';
 import itemStyles from './TaskListItem.module.scss';
 import type { TaskListItemProps } from './types';
-
-const STATUS_COLOR_CLASS_MAP = {
-  secondary: itemStyles.statusSecondary,
-  info: itemStyles.statusInfo,
-  success: itemStyles.statusSuccess,
-  error: itemStyles.statusError,
-} as const;
 
 export const TaskListItem = ({ task, onClick }: TaskListItemProps): JSX.Element => {
   const StatusIcon = getStatusIcon(task.status);
@@ -73,9 +68,9 @@ export const TaskListItem = ({ task, onClick }: TaskListItemProps): JSX.Element 
       <Text variant="body1" className={descriptionClassName} data-testid="task-description">
         {description}
       </Text>
-      <span className={resolveClassName(itemStyles.statusBadge, statusClassName)}>
-        <StatusIcon className={itemStyles.statusIcon} aria-hidden />
-        <Text variant="body2" className={itemStyles.statusLabel}>
+      <span className={resolveClassName(statusStyles.statusBadge, statusClassName)}>
+        <StatusIcon className={statusStyles.statusIcon} aria-hidden />
+        <Text variant="body2" className={statusStyles.statusLabel}>
           {statusLabel}
         </Text>
       </span>

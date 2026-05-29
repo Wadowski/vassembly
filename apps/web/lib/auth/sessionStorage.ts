@@ -59,7 +59,6 @@ export const clearTokens = (): void => {
 
 export const getAuthTokenForHeader = async (): Promise<string | undefined> => {
   const tokens = getTokens();
-  console.log("tokens", tokens);
   return tokens.authToken;
 };
 

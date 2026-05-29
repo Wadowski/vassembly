@@ -158,6 +158,9 @@ importers:
       '@vassembly/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
       '@vassembly/theme':
         specifier: workspace:*
         version: link:../../ui/system-design/theme
