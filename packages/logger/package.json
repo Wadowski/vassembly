@@ -9,6 +9,7 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/cli-color": "^2.0.6",
     "@types/node": "^22.19.7",
     "@vassembly/eslint-config": "workspace:*",
     "@vassembly/typescript-config": "workspace:*",

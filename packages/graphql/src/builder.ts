@@ -3,12 +3,18 @@ import SchemaBuilder from '@pothos/core';
 import type { Builder } from './types';
 
 export const createBuilder = (): Builder => {
-  const builder = new SchemaBuilder<Record<string, unknown>>({});
+  type SchemaTypes = {
+    Scalars: {
+      DateTime: { Input: Date; Output: Date };
+    };
+  };
+
+  const builder = new SchemaBuilder<SchemaTypes>({});
   builder.queryType({});
 
   builder.addScalarType('DateTime', DateTimeResolver, {
-    serialize: (value: unknown) => value,
+    serialize: (value: unknown) => value as Date,
   });
   
-  return builder;
+  return builder as unknown as Builder;
 };

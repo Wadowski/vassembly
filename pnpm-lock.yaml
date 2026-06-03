@@ -1209,6 +1209,9 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
     devDependencies:
+      '@types/cli-color':
+        specifier: ^2.0.6
+        version: 2.0.6
       '@types/node':
         specifier: ^22.19.7
         version: 22.19.15
@@ -9420,6 +9423,10 @@ packages:
     dependencies:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
+    dev: true
+
+  /@types/cli-color@2.0.6:
+    resolution: {integrity: sha512-uLK0/0dOYdkX8hNsezpYh1gc8eerbhf9bOKZ3e24sP67703mw9S14/yW6mSTatiaKO9v+mU/a1EVy4rOXXeZTA==}
     dev: true
 
   /@types/connect@3.4.38:

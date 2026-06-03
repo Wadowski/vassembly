@@ -35,7 +35,7 @@ export const initRedis = async (): Promise<void> => {
     return;
   }
 
-  const url = config.redis.url;
+  const url = config.redis?.url;
   if (!url) {
     throw new InternalError('Redis URL is not configured');
   }
