@@ -8,6 +8,10 @@ import { enrichCredentialResponse } from '../../helpers/enrichCredentialResponse
 import { CREATE_CREDENTIAL_BODY_SCHEMA } from './types';
 
 import type { CreateCredentialHandlerInput, CreateCredentialHandlerOutput } from './types';
+import type { AiIntegrationProvider } from '@vassembly/domain-ai-integration';
+
+export type AiIntegrationProviderValue =
+  (typeof AiIntegrationProvider)[keyof typeof AiIntegrationProvider];
 
 const validateCreateCredentialBody = validatorFactory(CREATE_CREDENTIAL_BODY_SCHEMA);
 
@@ -32,7 +36,7 @@ export const createCredential = async (
   const createResult = await aiIntegrationDomain.commands.create({
     userId: input.userId,
     name: parsed.name,
-    provider: parsed.provider,
+    provider: parsed.provider as AiIntegrationProviderValue,
     apiKey: parsed.apiKey,
     baseUrl: parsed.baseUrl ?? undefined,
     organizationId: parsed.organizationId ?? undefined,

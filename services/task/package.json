@@ -19,6 +19,8 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/constants": "workspace:*",
+    "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
     "@vassembly/errors": "workspace:*"
   }

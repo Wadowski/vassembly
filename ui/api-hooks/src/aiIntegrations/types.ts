@@ -73,10 +73,10 @@ export interface ListAiIntegrationsVariables {
 export interface AiIntegrationFormInput {
   name: string;
   provider: AiIntegrationProvider;
-  apiKey: string;
+  apiKey?: string;
   baseUrl?: string | null;
   organizationId?: string | null;
-  model: string;
+  model?: string;
 }
 
 export interface AiIntegrationUpdateInput {

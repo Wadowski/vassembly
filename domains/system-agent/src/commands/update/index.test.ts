@@ -11,9 +11,10 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockUpdateDb, mockAssertUniqueActiveName } = vi.hoisted(() => ({
+const { mockUpdateDb, mockAssertUniqueActiveName, mockGetModelById } = vi.hoisted(() => ({
   mockUpdateDb: vi.fn(),
   mockAssertUniqueActiveName: vi.fn(),
+  mockGetModelById: vi.fn(),
 }));
 
 vi.mock('../../clients', () => ({
@@ -26,6 +27,11 @@ vi.mock('@vassembly/commands', () => ({
 
 vi.mock('../../queries', () => ({
   assertUniqueActiveName: mockAssertUniqueActiveName,
+  getModelById: mockGetModelById,
+}));
+
+vi.mock('../../cache/keys', () => ({
+  invalidateActiveByNameCache: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { update } from './index';
@@ -36,6 +42,9 @@ describe('update system agent command', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockAssertUniqueActiveName.mockResolvedValue(undefined);
+    mockGetModelById.mockResolvedValue({
+      data: { id: AGENT_ID, name: 'Onboarding Helper' },
+    });
   });
 
   it('should apply partial field changes and refresh updatedByAdminId audit field', async () => {

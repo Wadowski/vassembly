@@ -1,6 +1,8 @@
+import { initCache } from "@vassembly/cache";
 import { init as initMongoDb } from "@vassembly/client-mongodb";
+import { initRedis } from "@vassembly/client-redis";
 import { createServer, routesWithPrefix } from "@vassembly/server";
-import { config } from "@vassembly/config";
+import { CacheBackend, config } from "@vassembly/config";
 import { mongodbIndexes as agentMongodbIndexes } from "@vassembly/domain-agent";
 import { mongodbIndexes as aiIntegrationMongodbIndexes } from "@vassembly/domain-ai-integration";
 import { mongodbIndexes as systemAgentMongodbIndexes } from "@vassembly/domain-system-agent";
@@ -32,6 +34,11 @@ const routes = [
 ];
 
 const startApp = async () => {
+  if (config.cache.backend === CacheBackend.Redis) {
+    await initRedis();
+  }
+  await initCache();
+
   await initMongoDb({
     indexFunctions: [
       userMongodbIndexes,

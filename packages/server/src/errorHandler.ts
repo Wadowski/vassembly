@@ -28,12 +28,13 @@ const isFastifyRequestValidationError = (err: unknown): err is FastifyError =>
 export const applyFrameworkErrorHandler = ({ fastify }: ApplyFrameworkErrorHandlerProps): void => {
   fastify.setErrorHandler((err: unknown, _request: FastifyRequest, reply: FastifyReply) => {
     if (hasZodFastifySchemaValidationErrors(err)) {
-      const error = new WrongParamError("Request doesn't match the schema", { issues: err.validation });
+      const error = new WrongParamError("Request doesn't match the schema", { issues: err.validation || [] });
       return sendCommonErrorShape(reply, error);
     }
     if (isFastifyRequestValidationError(err)) {
+      const fastifyErr = err as any;
       const error = new WrongParamError("Request doesn't match the schema", {
-        validation: err.validation,
+        validation: fastifyErr.validation || [],
       });
       return sendCommonErrorShape(reply, error);
     }

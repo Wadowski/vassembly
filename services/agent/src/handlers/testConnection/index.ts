@@ -32,7 +32,7 @@ const testEphemeralConnection = async (
     if (error instanceof WrongParamError || error instanceof InternalError) {
       throw error;
     }
-    throw new InternalError('Connection test failed');
+    throw new InternalError('Connection test failed', error);
   }
 };
 

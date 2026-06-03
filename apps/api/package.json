@@ -23,7 +23,9 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/cache": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
+    "@vassembly/client-redis": "workspace:*",
     "@vassembly/config": "workspace:*",
     "@vassembly/constants": "workspace:^",
     "@vassembly/domain-auth-token": "workspace:*",

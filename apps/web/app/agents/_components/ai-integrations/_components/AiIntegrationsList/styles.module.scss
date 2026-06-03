@@ -66,8 +66,12 @@
   align-items: flex-end;
 }
 
-.createdCell {
-  white-space: nowrap;
+.statusConnectionCell {
+  display: flex;
+  gap: $spacing-2;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
 .backLink {

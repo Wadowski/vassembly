@@ -1,3 +1,4 @@
+export { getSystemAgentCache, SYSTEM_AGENT_CACHE_NAMESPACE } from './cache';
 export {
   systemAgentMongodbDao,
   userSystemAgentPreferenceMongodbDao,

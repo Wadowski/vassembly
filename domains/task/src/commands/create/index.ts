@@ -35,6 +35,6 @@ export const create = async (
     description,
     type: TaskType.User,
     status: TaskStatus.Created,
-    agentAssignedId: null,
+    agentAssignedId: input.agentAssignedId ?? null,
   });
 };

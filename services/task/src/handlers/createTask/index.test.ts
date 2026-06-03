@@ -2,8 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ValidationError, WrongParamError } from '@vassembly/errors';
 
-const { mockCreate } = vi.hoisted(() => ({
+const { mockCreate, mockGetActiveByName } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
+  mockGetActiveByName: vi.fn(),
+}));
+
+vi.mock('@vassembly/domain-system-agent', () => ({
+  default: {
+    queries: {
+      getActiveByName: mockGetActiveByName,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-task', () => ({
@@ -30,9 +39,14 @@ const BODY = {
   description: 'Review quarterly report',
 };
 
+const ASSISTANT_AGENT_ID = 'assistant-agent-id';
+
 describe('createTask handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetActiveByName.mockResolvedValue({
+      data: { id: ASSISTANT_AGENT_ID },
+    });
   });
 
   it('should return TaskResponse with serialized id and ISO timestamps when create succeeds', async () => {
@@ -46,7 +60,7 @@ describe('createTask handler', () => {
         description: BODY.description,
         type: 'user',
         status: 'created',
-        agentAssignedId: null,
+        agentAssignedId: ASSISTANT_AGENT_ID,
         createdAt,
         updatedAt,
       },
@@ -60,7 +74,7 @@ describe('createTask handler', () => {
       description: BODY.description,
       type: 'user',
       status: 'created',
-      agentAssignedId: null,
+      agentAssignedId: ASSISTANT_AGENT_ID,
       createdAt: '2026-05-26T12:00:00.000Z',
       updatedAt: '2026-05-26T12:00:00.000Z',
     });
@@ -86,7 +100,7 @@ describe('createTask handler', () => {
         description: BODY.description,
         type: 'user',
         status: 'created',
-        agentAssignedId: null,
+        agentAssignedId: ASSISTANT_AGENT_ID,
         createdAt: new Date('2026-05-26T12:00:00.000Z'),
         updatedAt: new Date('2026-05-26T12:00:00.000Z'),
       },
@@ -100,5 +114,6 @@ describe('createTask handler', () => {
     });
 
     expect(result.task.userId).toBe('user-real');
+    expect(result.task.agentAssignedId).toBe(ASSISTANT_AGENT_ID);
   });
 });
