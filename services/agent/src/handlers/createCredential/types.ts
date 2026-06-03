@@ -3,14 +3,12 @@ import { z } from 'zod';
 
 import type { AiIntegrationCredentialResponse } from '@vassembly/domain-ai-integration';
 
-const PROVIDER_VALUES = Object.values(AiIntegrationProvider) as [string, ...string[]];
-
 export const CREATE_CREDENTIAL_BODY_SCHEMA = z
   .object({
     name: z.string().min(1).max(100),
-    provider: z.enum(PROVIDER_VALUES),
+    provider: z.string(),
     apiKey: z.string().max(500).optional(),
-    baseUrl: z.string().url().optional().nullable(),
+    baseUrl: z.string().max(500).optional().nullable(),
     organizationId: z.string().optional().nullable(),
     model: z.string().min(1).max(200),
   })
@@ -34,5 +32,7 @@ export interface CreateCredentialHandlerInput {
 }
 
 export interface CreateCredentialHandlerOutput {
-  credential: AiIntegrationCredentialResponse;
+  credential: AiIntegrationCredentialResponse & {
+    isFirstSystemAgentPreference?: boolean;
+  };
 }

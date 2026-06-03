@@ -1,4 +1,5 @@
 import aiIntegrationDomain, { AiIntegrationConnectionStatus } from '@vassembly/domain-ai-integration';
+import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ValidationError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
 
@@ -59,5 +60,21 @@ export const createCredential = async (
 
   const credential = await enrichCredentialResponse({ credential: updateResult.data });
 
-  return { credential };
+  const existingPreference = await systemAgentDomain.queries.getPreferenceByUserId({
+    userId: input.userId,
+  });
+
+  if (!existingPreference.data) {
+    await systemAgentDomain.commands.upsertPreference({
+      userId: input.userId,
+      integrationCredentialId: credentialId,
+    });
+  }
+
+  return {
+    credential: {
+      ...credential,
+      isFirstSystemAgentPreference: !existingPreference.data,
+    },
+  };
 };
