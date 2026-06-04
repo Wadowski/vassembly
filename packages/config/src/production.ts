@@ -1,4 +1,11 @@
-import { Config } from './types';
+import { CacheBackend, type Config } from './types';
+
+const parseCacheBackend = (value: string | undefined): CacheBackend => {
+  if (value === CacheBackend.Redis) {
+    return CacheBackend.Redis;
+  }
+  return CacheBackend.Memory;
+};
 
 const config: Config = {
   apps: {
@@ -14,6 +21,13 @@ const config: Config = {
     secret: process.env.ENCODER_SECRET || '',
     saltRounds: 10,
     algorithm: 'aes-256-cbc',
+  },
+  cache: {
+    backend: parseCacheBackend(process.env.CACHE_BACKEND),
+    defaultTtlMs: Number(process.env.CACHE_DEFAULT_TTL_MS) || 300_000,
+  },
+  redis: {
+    url: process.env.REDIS_URL || '',
   },
   mongoDb: {
     url: process.env.MONGODB_URL || '',

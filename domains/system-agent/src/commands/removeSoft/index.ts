@@ -4,6 +4,7 @@ import { NotFoundError, WrongParamError } from '@vassembly/errors';
 import { AgentStatus } from '../../constants';
 import { systemAgentMongodbDao } from '../../clients';
 import { SystemAgentModel, systemAgentFactory } from '../../model';
+import { invalidateActiveByNameCache } from '../../cache/keys';
 import { getModelById } from '../../queries';
 
 import type { RemoveSoftParams, RemoveSoftResult } from './types';
@@ -34,5 +35,11 @@ export const removeSoft = async (input: RemoveSoftParams): Promise<RemoveSoftRes
     }),
   });
 
-  return persistRemoveSoft({ id: input.id });
+  const result = await persistRemoveSoft({ id: input.id });
+
+  if (existing.data.name) {
+    await invalidateActiveByNameCache({ name: existing.data.name });
+  }
+
+  return result;
 };

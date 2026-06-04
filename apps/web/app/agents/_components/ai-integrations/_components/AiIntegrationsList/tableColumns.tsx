@@ -9,16 +9,6 @@ import { ConnectionStatusBadge } from './ConnectionStatusBadge';
 import { ProviderIcon } from './ProviderIcon';
 import { AiIntegrationStatusBadge } from './aiIntegrationStatusBadge';
 
-const formatCreatedDate = (value: string): string => {
-  if (value === '') {
-    return '—';
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return '—';
-  }
-  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-};
 
 export interface GetAiIntegrationListTableColumnsArgs {
   onEdit: (credentialId: string) => void;
@@ -50,28 +40,19 @@ export const getAiIntegrationListTableColumns = ({
     render: ({ row }) => <ProviderIcon provider={row.provider} />,
   },
   {
-    key: 'status',
+    key: 'statusAndConnection',
     header: 'Status',
-    render: ({ row }) => <AiIntegrationStatusBadge status={row.status} />,
-  },
-  {
-    key: 'connectionStatus',
-    header: 'Connection',
-    render: ({ row }) => <ConnectionStatusBadge status={row.connectionStatus} />,
+    render: ({ row }) => (
+      <div className={styles.statusConnectionCell}>
+        <AiIntegrationStatusBadge status={row.status} />
+        <ConnectionStatusBadge status={row.connectionStatus} />
+      </div>
+    ),
   },
   {
     key: 'agentUsageCount',
     header: 'Agents using',
     render: ({ row }) => <AgentUsageBadge count={row.agentUsageCount ?? 0} />,
-  },
-  {
-    key: 'createdAt',
-    header: 'Created',
-    render: ({ row }) => (
-      <Text variant="body2" as="span" className={styles.createdCell}>
-        {formatCreatedDate(row.createdAt)}
-      </Text>
-    ),
   },
   {
     key: 'actions',

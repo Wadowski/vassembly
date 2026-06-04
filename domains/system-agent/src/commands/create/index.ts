@@ -6,6 +6,7 @@ import { validatorFactory } from '@vassembly/validation';
 import { AgentCategory, AgentStatus, SYSTEM_AGENT_DEFAULT_STATUS } from '../../constants';
 import { systemAgentMongodbDao } from '../../clients';
 import { SystemAgentModel, systemAgentFactory } from '../../model';
+import { invalidateActiveByNameCache } from '../../cache/keys';
 import { assertUniqueActiveName } from '../../queries';
 
 import { assertValidInput } from '../shared/assertValidInput';
@@ -40,7 +41,7 @@ export const create = async (
 
   await assertUniqueActiveName({ name: validated.name });
 
-  return persistCreate({
+  const result = await persistCreate({
     name: validated.name,
     rule: validated.rule,
     description: validated.description,
@@ -50,4 +51,8 @@ export const create = async (
     updatedByAdminId,
     removedAt: null,
   });
+
+  await invalidateActiveByNameCache({ name: validated.name });
+
+  return result;
 };

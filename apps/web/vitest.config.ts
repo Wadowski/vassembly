@@ -8,6 +8,9 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.tsx'],
     globals: true,
     include: ['./**/*.{test,spec}.{tsx,ts}'],
+    typecheck: {
+      include: ['**/*.test.ts', '**/*.test.tsx'],
+    },
   },
 });
 

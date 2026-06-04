@@ -3,11 +3,27 @@ export enum Environment {
   Production = 'production',
 }
 
+export enum CacheBackend {
+  Memory = 'memory',
+  Redis = 'redis',
+}
+
+export interface CacheConfig {
+  backend: CacheBackend;
+  defaultTtlMs: number;
+}
+
+export interface RedisConfig {
+  url: string;
+}
+
 export interface Config {
   apps: {
     web: WebConfig;
     docs: WebConfig;
   };
+  cache: CacheConfig;
+  redis?: RedisConfig;
   mongoDb: MongoDbConfig;
   aws: AwsConfig;
   deepSeekAi: DeepSeekAiConfig;

@@ -53,7 +53,7 @@ export function AiIntegrationForm({
     touched[field] ? errors[field] : undefined;
 
   const apiKeyHelper =
-    isEditing && values.apiKey.trim() === ''
+    isEditing && !values.apiKey?.trim()
       ? 'Leave blank to keep the existing key.'
       : undefined;
 
@@ -87,14 +87,14 @@ export function AiIntegrationForm({
         {showError('provider') !== undefined ? <Text variant="body2">{showError('provider')}</Text> : null}
 
         <TextField
-          label="API key"
+          label={values.provider === 'lm_studio' ? 'API key (optional)' : 'API key'}
           type="password"
-          value={values.apiKey}
+          value={values.apiKey ?? ''}
           errorMessage={showError('apiKey')}
           helperText={showError('apiKey') ?? apiKeyHelper}
           isFullWidth
           maxLength={FORM_LIMITS.apiKeyMaxLength}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('apiKey', event.target.value)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('apiKey', event.target.value || undefined)}
           onBlur={() => onBlur('apiKey')}
         />
 

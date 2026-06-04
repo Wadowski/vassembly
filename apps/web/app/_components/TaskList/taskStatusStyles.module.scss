@@ -1,0 +1,37 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.statusSecondary {
+  color: $color-text-secondary;
+}
+
+.statusInfo {
+  color: $color-primary;
+}
+
+.statusSuccess {
+  color: $color-success;
+}
+
+.statusError {
+  color: $color-error;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+  width: fit-content;
+  padding: $spacing-2 $spacing-3;
+  border-radius: $border-radius-md;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.statusIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.statusLabel {
+  font-size: $font-size-body-md;
+  font-weight: 500;
+}

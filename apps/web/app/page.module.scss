@@ -1,0 +1,10 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: $spacing-8;
+  min-height: 100%;
+}

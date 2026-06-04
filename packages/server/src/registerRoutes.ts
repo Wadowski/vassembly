@@ -22,6 +22,10 @@ const getMethodRegister = ({ fastify }: { fastify: FastifyInstance }): Record<HT
   DELETE: (path, opts, handler) => fastify.delete(path, opts, handler),
 });
 
+const isZodSchema = (value: unknown): boolean => {
+  return value !== null && typeof value === 'object' && '_def' in (value as Record<string, unknown>);
+};
+
 const toFastifySchema = (schema: NonNullable<RouteDefinition["schema"]>): FastifySchema => {
   const result: FastifySchema = {};
 
@@ -32,7 +36,11 @@ const toFastifySchema = (schema: NonNullable<RouteDefinition["schema"]>): Fastif
     result.querystring = schema.querystring;
   }
   if (schema.response !== undefined) {
-    result.response = { 200: schema.response };
+    if (isZodSchema(schema.response)) {
+      result.response = { 200: schema.response };
+    } else {
+      result.response = schema.response as Record<string | number, unknown>;
+    }
   }
 
   return result;

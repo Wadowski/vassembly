@@ -3,6 +3,7 @@ import {
   ForbiddenError,
   InternalError,
   NotFoundError,
+  TooManyRequestsError,
   UnauthorizedError,
   WrongParamError,
 } from '@vassembly/errors';
@@ -20,6 +21,9 @@ describe('mapHttpStatusToError', () => {
     expect(mapHttpStatusToError({ status: 401, message: 'no' })).toBeInstanceOf(UnauthorizedError);
     expect(mapHttpStatusToError({ status: 403, message: 'denied' })).toBeInstanceOf(ForbiddenError);
     expect(mapHttpStatusToError({ status: 404, message: 'gone' })).toBeInstanceOf(NotFoundError);
+    expect(mapHttpStatusToError({ status: 429, message: 'slow down' })).toBeInstanceOf(
+      TooManyRequestsError,
+    );
   });
 
   it('should map 5xx statuses to InternalError', () => {

@@ -35,13 +35,13 @@ const validateCredentialOwnership = (userId: string, credential: AiIntegrationCr
 };
 
 const validateProviderCredential = (credential: AiIntegrationCredentialModel): void => {
-  if (!credential.encryptedApiKey) {
-    throw new ValidationError('Credential encrypted API key is required');
-  }
-
   const validProviders = Object.values(AiIntegrationProvider);
   if (!credential.provider || !validProviders.includes(credential.provider)) {
     throw new ValidationError('Credential provider is invalid');
+  }
+
+  if (credential.provider !== AiIntegrationProvider.LmStudio && !credential.encryptedApiKey) {
+    throw new ValidationError('Credential encrypted API key is required');
   }
 
   if (credential.status !== AiIntegrationStatus.Active) {
@@ -73,7 +73,7 @@ export const resolveAndBuildClient = async (
   validateCredentialOwnership(userId, credential);
   validateProviderCredential(credential);
 
-  const apiKey = decode(credential.encryptedApiKey!);
+  const apiKey = credential.encryptedApiKey && credential.encryptedApiKey.trim() ? decode(credential.encryptedApiKey) : undefined;
 
   return getModeledProviderClient({
     provider: credential.provider!,

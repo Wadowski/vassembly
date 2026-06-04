@@ -117,7 +117,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
     }
     setTestResult(undefined);
 
-    const hasNewApiKey = form.values.apiKey.trim() !== '';
+    const hasNewApiKey = form.values.apiKey?.trim() !== '';
     const result = await testConnection({
       body: hasNewApiKey
         ? {
@@ -160,7 +160,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
         baseUrl: patchBody.baseUrl,
         organizationId: patchBody.organizationId,
         model: patchBody.model,
-        ...(patchBody.apiKey.trim() !== '' ? { apiKey: patchBody.apiKey } : {}),
+        ...(patchBody.apiKey?.trim() !== '' ? { apiKey: patchBody.apiKey } : {}),
       };
 
       const result = await update({ id: credentialId, body: updateBody });

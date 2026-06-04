@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { handlers as authHandlers } from '@vassembly/service-auth';
 import agentService from '@vassembly/service-agent';
+import { withErrorResponses } from '../errorSchema';
 
 const PROVIDER_VALUES = Object.values(AiIntegrationProvider) as [string, ...string[]];
 
@@ -48,10 +49,20 @@ export const aiIntegrationTestConnectionBodySchema = z
     }
   });
 
+export const testConnectionResponseSchema = z.object({
+  success: z.boolean(),
+  connectionStatus: z.string(),
+  models: z.array(z.string()).optional(),
+  error: z.string().optional(),
+});
+
 export const aiIntegrationTestConnectionRoute = defineRoute({
   method: 'POST',
   url: '/test-connection',
-  schema: { body: aiIntegrationTestConnectionBodySchema },
+  schema: {
+    body: aiIntegrationTestConnectionBodySchema,
+    response: withErrorResponses(testConnectionResponseSchema),
+  },
   handler: async ({ body, headers }) => {
     const { userId } = await authHandlers.authorizeRequest({ headers });
     return agentService.testConnection({ userId, body });

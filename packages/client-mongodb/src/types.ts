@@ -1,10 +1,11 @@
 import { Collection } from "mongodb";
 import type { Model } from "@vassembly/model";
 
-interface Context {
+export interface Context {
   init: () => Promise<void>;
   commit: () => Promise<void>;
   rollback: () => Promise<void>;
+  session?: any;
 }
 
 export type ContextGenerator = () => Context;

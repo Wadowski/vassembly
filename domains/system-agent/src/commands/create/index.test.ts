@@ -28,6 +28,10 @@ vi.mock('../../queries', () => ({
   assertUniqueActiveName: mockAssertUniqueActiveName,
 }));
 
+vi.mock('../../cache/keys', () => ({
+  invalidateActiveByNameCache: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { create } from './index';
 
 const BASE_INPUT = {

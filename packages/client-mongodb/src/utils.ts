@@ -1,13 +1,13 @@
-const isObject = (ob: any) =>
+const isObject = (ob: any): ob is Record<string, any> =>
   typeof ob === "object" && ob !== null && !(ob instanceof Date);
 
 export const flattenObject = (
-  ob: any,
+  ob: Record<string, any>,
   additionalObjectCheck: (data: any) => boolean = () => true
-) => {
-  const toReturn = {};
+): Record<string, any> => {
+  const toReturn: Record<string, any> = {};
 
-  const isObjectToFlatten = (data: any) =>
+  const isObjectToFlatten = (data: any): boolean =>
     isObject(data) && additionalObjectCheck(data);
 
   for (const i in ob) {
@@ -16,9 +16,9 @@ export const flattenObject = (
 
     if (isObjectToFlatten(ob[i])) {
       if (Array.isArray(ob[i])) {
-        const obList = [];
+        const obList: Array<any> = [];
 
-        ob[i].forEach((c) => {
+        ob[i].forEach((c: any) => {
           if (isObjectToFlatten(c))
             obList.push(flattenObject(c, additionalObjectCheck));
           else obList.push(c);

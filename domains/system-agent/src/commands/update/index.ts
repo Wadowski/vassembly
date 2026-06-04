@@ -6,7 +6,8 @@ import { validatorFactory } from '@vassembly/validation';
 import { AgentCategory, AgentStatus } from '../../constants';
 import { systemAgentMongodbDao } from '../../clients';
 import { SystemAgentModel, systemAgentFactory } from '../../model';
-import { assertUniqueActiveName } from '../../queries';
+import { invalidateActiveByNameCache } from '../../cache/keys';
+import { assertUniqueActiveName, getModelById } from '../../queries';
 
 import { assertValidInput } from '../shared/assertValidInput';
 import { UPDATE_SYSTEM_AGENT_SCHEMA } from '../shared/schemas';
@@ -35,6 +36,8 @@ export const update = async (
   input: UpdateSystemAgentParams,
 ): Promise<UpdateSystemAgentResult> => {
   const validated = assertValidInput(validateUpdateInput(input));
+  const existing = await getModelById({ id: validated.id });
+  const previousName = existing.data?.name;
 
   if (validated.data.name !== undefined) {
     await assertUniqueActiveName({
@@ -48,8 +51,17 @@ export const update = async (
     updatedByAdminId: validated.updatedByAdminId,
   };
 
-  return persistUpdate({
+  const result = await persistUpdate({
     id: validated.id,
     data: updateData,
   });
+
+  if (previousName) {
+    await invalidateActiveByNameCache({ name: previousName });
+  }
+  if (validated.data.name !== undefined) {
+    await invalidateActiveByNameCache({ name: validated.data.name });
+  }
+
+  return result;
 };

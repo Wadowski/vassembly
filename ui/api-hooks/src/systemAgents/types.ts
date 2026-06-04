@@ -1,3 +1,5 @@
+import type { SystemAgentAdminResponse, SystemAgentPreferenceResponse } from '@vassembly/domain-system-agent';
+
 export enum SystemAgentCategory {
   Coding = 'coding',
   Utility = 'utility',
@@ -10,6 +12,8 @@ export enum SystemAgentStatus {
   Archived = 'archived',
   Disabled = 'disabled',
 }
+
+export type { SystemAgentAdminResponse, SystemAgentPreferenceResponse };
 
 export const SYSTEM_AGENT_LIST_ALL_STATUSES = 'all' as const;
 
@@ -40,11 +44,7 @@ export interface SystemAgentListResponse<TItem> {
   total: number;
 }
 
-export interface SystemAgentPreference {
-  userId: string;
-  integrationCredentialId: string;
-  updatedAt: string;
-}
+export type SystemAgentPreference = SystemAgentPreferenceResponse;
 
 export interface SystemAgentInvokeUsage {
   promptTokens: number;
@@ -84,7 +84,6 @@ export interface SystemAgentInvokeInput {
   };
 }
 
-export type SystemAgentAdminResponse = SystemAgentAdminItem;
 export type CreateSystemAgentInput = SystemAgentFormInput;
 export type UpdateSystemAgentInput = Partial<SystemAgentFormInput>;
 export type ListSystemAgentsInput = SystemAgentAdminListQuery;

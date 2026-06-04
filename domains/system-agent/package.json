@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.19.7",
+    "@vassembly/config": "workspace:*",
     "@vassembly/eslint-config": "workspace:*",
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
@@ -19,6 +20,7 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/cache": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",

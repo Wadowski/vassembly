@@ -15,7 +15,7 @@ export interface RouteDefinition {
     headers: Record<string, string>;
     params?: Record<string, string>;
   }) => Promise<unknown>;
-  schema?: { body?: ZodTypeAny; querystring?: ZodTypeAny; response?: ZodTypeAny };
+  schema?: { body?: ZodTypeAny; querystring?: ZodTypeAny; response?: ZodTypeAny | Record<number | string, ZodTypeAny> };
   prefix?: string;
   statusCode?: number;
 }
@@ -51,7 +51,7 @@ export interface ApplyFrameworkErrorHandlerProps {
 export type RouteSchemaShape = {
   body?: ZodTypeAny;
   querystring?: ZodTypeAny;
-  response?: ZodTypeAny;
+  response?: ZodTypeAny | Record<number | string, ZodTypeAny>;
 };
 
 export type InferBody<S extends RouteSchemaShape> = S["body"] extends ZodTypeAny
@@ -62,4 +62,6 @@ export type InferQuery<S extends RouteSchemaShape> = S["querystring"] extends Zo
   : unknown;
 export type InferResponse<S extends RouteSchemaShape> = S["response"] extends ZodTypeAny
   ? z.infer<S["response"]>
-  : unknown;
+  : S["response"] extends Record<number | string, ZodTypeAny>
+    ? z.infer<S["response"][keyof S["response"]]>
+    : unknown;

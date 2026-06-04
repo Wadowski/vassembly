@@ -17,3 +17,6 @@ export type {
 
 export { assertUniqueActiveName } from './assertUniqueActiveName/index';
 export type { AssertUniqueActiveNameParams } from './assertUniqueActiveName/types';
+
+export { getActiveByName } from './getActiveByName/index';
+export type { GetActiveByNameParams, GetActiveByNameResult } from './getActiveByName/types';

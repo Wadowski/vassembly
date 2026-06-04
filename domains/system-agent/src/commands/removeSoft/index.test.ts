@@ -27,6 +27,10 @@ vi.mock('../../queries', () => ({
   getModelById: mockGetModelById,
 }));
 
+vi.mock('../../cache/keys', () => ({
+  invalidateActiveByNameCache: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { removeSoft } from './index';
 
 const AGENT_ID = '507f1f77bcf86cd799439011';

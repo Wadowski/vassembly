@@ -1,12 +1,60 @@
-import React from "react";
-import styles from "./page.module.css";
+'use client';
 
-const Page = () => {
-  return (
-    <div className={styles.container}>
-      <h1>Hello World</h1>
-    </div>
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+
+import { useUserAuth } from '@vassembly/ui-user-auth';
+
+import { TaskInputComposer } from './_components/TaskInputComposer/TaskInputComposer';
+import { TaskList } from './_components/TaskList/TaskList';
+import { useHomeTaskList } from './lib/useHomeTaskList';
+import styles from './page.module.scss';
+
+const AuthenticatedTaskList = (): JSX.Element => {
+  const router = useRouter();
+  const {
+    tasks,
+    isLoading,
+    isLoadingMore,
+    hasMore,
+    searchInput,
+    handleSearchChange,
+    handleLoadMore,
+    refreshFromStart,
+  } = useHomeTaskList();
+
+  const handleTaskClick = useCallback(
+    (taskId: string): void => {
+      router.push(`/tasks/${taskId}`);
+    },
+    [router],
   );
-}
 
-export default Page;
+  return (
+    <>
+      <TaskInputComposer onCreateSuccess={refreshFromStart} />
+      <TaskList
+        tasks={tasks}
+        isLoading={isLoading}
+        isLoadingMore={isLoadingMore}
+        hasMore={hasMore}
+        searchValue={searchInput}
+        onSearchChange={handleSearchChange}
+        onLoadMore={handleLoadMore}
+        onTaskClick={handleTaskClick}
+      />
+    </>
+  );
+};
+
+const HomePageContent = (): JSX.Element => {
+  const { isAuthenticated } = useUserAuth();
+
+  return (
+    <main className={styles.page}>
+      {isAuthenticated ? <AuthenticatedTaskList /> : <TaskInputComposer />}
+    </main>
+  );
+};
+
+export default HomePageContent;

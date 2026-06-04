@@ -3,6 +3,7 @@ import { NotFoundError, WrongParamError } from '@vassembly/errors';
 import { AgentStatus } from '../../constants';
 import { systemAgentMongodbDao } from '../../clients';
 import { systemAgentFactory } from '../../model';
+import { invalidateActiveByNameCache } from '../../cache/keys';
 import { getModelById } from '../../queries';
 
 import type { RestoreParams, RestoreResult } from './types';
@@ -37,7 +38,13 @@ export const restore = async (input: RestoreParams): Promise<RestoreResult> => {
     throw new NotFoundError(NOT_FOUND_MESSAGE);
   }
 
+  const restored = systemAgentFactory.create(raw);
+
+  if (restored.name) {
+    await invalidateActiveByNameCache({ name: restored.name });
+  }
+
   return {
-    data: systemAgentFactory.create(raw),
+    data: restored,
   };
 };

@@ -3,15 +3,18 @@ import { mongoDb } from "./connection";
 import {
   MongoDbDAOGenerator,
   MongoDbDAO as MongoDbDAOType,
+  type ContextGenerator,
 } from "./types";
 import { flattenObject } from "./utils";
 
 export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
   collectionName,
+}: {
+  collectionName: string;
 }) => {
   const collection = mongoDb.db.collection(collectionName);
 
-  const transformToDeepUpdate = (data) => {
+  const transformToDeepUpdate = (data: Record<string, any>): Record<string, any> => {
     const transformedObj = flattenObject(
       data?.toMongoDb ? data.toMongoDb({ isUpdate: true }) : data,
       (field) => {
@@ -29,33 +32,40 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
       );
   };
 
-  const transactionOptions = (context) => {
-    if (context) {
+  const transactionOptions = (contextGen: ContextGenerator | undefined) => {
+    if (contextGen) {
+      const context = contextGen();
       return { session: context.session, returnOriginal: false };
     }
 
-    return null;
+    return undefined;
   };
 
-  const projectionOptions = (projection) => {
+  const projectionOptions = (projection: Record<string, any> | undefined) => {
     if (projection) {
       return { projection };
     }
 
-    return null;
+    return undefined;
   };
 
   const create: MongoDbDAOType<T>["create"] = async (data, options) => {
+    const mongoData = data.toMongoDb?.({ isCreate: true });
+    if (!mongoData) throw new Error("Failed to convert data to MongoDB format");
+    
     const { insertedId } = await collection.insertOne(
-      data.toMongoDb({ isCreate: true }),
+      mongoData,
       transactionOptions(options?.context)
     );
     return insertedId.toString();
   };
 
   const createMany: MongoDbDAOType<T>["createMany"] = async (data, options) => {
+    const mongoData = data.map((d) => d.toMongoDb?.({ isCreate: true })).filter(Boolean) as Array<any>;
+    if (!mongoData.length) throw new Error("Failed to convert data to MongoDB format");
+    
     const { insertedIds } = await collection.insertMany(
-      data.map((d) => d.toMongoDb({ isCreate: true })),
+      mongoData,
       transactionOptions(options?.context)
     );
     return Object.values(insertedIds).map((insertedId) =>
@@ -64,19 +74,23 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
   };
 
   const get: MongoDbDAOType<T>["get"] = async (where, options = {}) => {
-    const response = await collection.findOne(where.toMongoDb(), {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) return {} as Partial<T>;
+    
+    const response = await collection.findOne(whereQuery, {
       ...projectionOptions(options?.projection),
       ...transactionOptions(options?.context),
     });
     return response
-      ? ({ ...response, id: response._id.toString() } as unknown as T)
-      : null;
+      ? ({ ...response, id: response._id.toString() } as unknown as Partial<T>)
+      : ({} as Partial<T>);
   };
 
   const getMany: MongoDbDAOType<T>["getMany"] = async (where, options) => {
+    const whereQuery = where.toMongoDb?.();
     const pipeline: Array<Record<string, any>> = [
       {
-        $match: where.toMongoDb(),
+        $match: whereQuery ?? {},
       },
     ];
     if (options?.limit !== undefined) pipeline.push({ $limit: options?.limit });
@@ -125,9 +139,11 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
 
   const update: MongoDbDAOType<T>["update"] = async (where, data, options) => {
     const set = transformToDeepUpdate(data);
-    const query = where.toMongoDb();
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
     await collection.updateOne(
-      query,
+      whereQuery,
       { $set: set },
       transactionOptions(options?.context)
     );
@@ -138,16 +154,22 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     data,
     options
   ) => {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
     await collection.updateMany(
-      where.toMongoDb(),
+      whereQuery,
       { $set: transformToDeepUpdate(data) },
       transactionOptions(options?.context)
     );
   };
 
   const upsert: MongoDbDAOType<T>["upsert"] = async (where, data, options) => {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
     const { upsertedId } = await collection.updateOne(
-      where.toMongoDb(),
+      whereQuery,
       { $set: transformToDeepUpdate(data) },
       { ...(transactionOptions(options?.context) ?? {}), upsert: true }
     );
@@ -156,8 +178,8 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
       return upsertedId.toString();
     }
 
-    const existingDocument = await collection.findOne(where.toMongoDb());
-    return existingDocument?._id?.toString();
+    const existingDocument = await collection.findOne(whereQuery);
+    return existingDocument?._id?.toString() ?? "";
   };
 
   const upsertMany: MongoDbDAOType<T>["upsertMany"] = async (
@@ -165,17 +187,26 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     data,
     options
   ) => {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
     await collection.updateMany(
-      where.toMongoDb(),
+      whereQuery,
       { $set: transformToDeepUpdate(data) },
       { ...(transactionOptions(options?.context) ?? {}), upsert: true }
     );
   };
 
   const remove: MongoDbDAOType<T>["remove"] = async (where, options) => {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
+    const removeData = where.toMongoDb?.({ isRemove: true });
+    if (!removeData) throw new Error("Failed to generate remove data");
+    
     await collection.updateOne(
-      where.toMongoDb(),
-      { $set: transformToDeepUpdate(where.toMongoDb({ isRemove: true })) },
+      whereQuery,
+      { $set: transformToDeepUpdate(removeData) },
       transactionOptions(options?.context)
     );
   };
@@ -184,9 +215,15 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     where,
     options
   ) => {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
+    const removeData = where.toMongoDb?.({ isRemove: true });
+    if (!removeData) throw new Error("Failed to generate remove data");
+    
     await collection.updateMany(
-      where.toMongoDb(),
-      { $set: transformToDeepUpdate(where.toMongoDb({ isRemove: true })) },
+      whereQuery,
+      { $set: transformToDeepUpdate(removeData) },
       transactionOptions(options?.context)
     );
   };
@@ -195,8 +232,11 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     where,
     options
   ) => {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
     await collection.deleteOne(
-      where.toMongoDb(),
+      whereQuery,
       transactionOptions(options?.context)
     );
   };
@@ -205,8 +245,11 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     where,
     options
   ) => {
+    const whereQuery = where.toMongoDb?.();
+    if (!whereQuery) throw new Error("Invalid where clause");
+    
     await collection.deleteMany(
-      where.toMongoDb(),
+      whereQuery,
       transactionOptions(options?.context)
     );
   };
