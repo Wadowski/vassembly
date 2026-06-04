@@ -1,4 +1,4 @@
-import { assertRequiredFields, toIsoString } from '@vassembly/mappers';
+import { assertRequiredFields, toIsoString, toNullableIsoString } from '@vassembly/mappers';
 
 import type { TaskResponse } from './dto';
 import type { TaskModel } from './model';
@@ -24,6 +24,12 @@ export const toTaskResponse = ({ task }: ToTaskResponseParams): TaskResponse => 
     status: task.status!,
     agentAssignedId: task.agentAssignedId ?? null,
     title: task.title ?? null,
+    llmResponse: task.llmResponse ?? null,
+    errorMessage: task.errorMessage ?? null,
+    errorCode: task.errorCode ?? null,
+    startedAt: toNullableIsoString(task.startedAt),
+    completedAt: toNullableIsoString(task.completedAt),
+    failedAt: toNullableIsoString(task.failedAt),
     createdAt: toIsoString({ value: task.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: task.updatedAt!, fieldName: 'updatedAt' }),
   };

@@ -23,6 +23,12 @@ export const toTaskDto = (row: GraphQLTaskRow): TaskDto => ({
   status: toTaskStatus(row.status),
   agentAssignedId: row.agentAssignedId ?? null,
   title: row.title ?? null,
+  llmResponse: row.llmResponse ?? null,
+  errorMessage: row.errorMessage ?? null,
+  errorCode: row.errorCode ?? null,
+  startedAt: row.startedAt ?? null,
+  completedAt: row.completedAt ?? null,
+  failedAt: row.failedAt ?? null,
   createdAt: row.createdAt ?? '',
   updatedAt: row.updatedAt ?? '',
 });

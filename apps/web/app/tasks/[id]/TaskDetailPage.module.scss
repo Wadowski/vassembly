@@ -24,6 +24,10 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
+  padding: $spacing-4;
+  background-color: transparent;
+  border: 1px solid $color-outline-variant;
+  box-shadow: $shadow-sm;
 }
 
 .utilityHeader {

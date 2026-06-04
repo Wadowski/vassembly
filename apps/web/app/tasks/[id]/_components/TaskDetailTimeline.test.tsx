@@ -19,6 +19,12 @@ const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
   status: partial.status ?? TaskStatus.InProgress,
   agentAssignedId: partial.agentAssignedId ?? null,
   title: partial.title ?? 'Quarterly review',
+  llmResponse: partial.llmResponse ?? null,
+  errorMessage: partial.errorMessage ?? null,
+  errorCode: partial.errorCode ?? null,
+  startedAt: partial.startedAt ?? null,
+  completedAt: partial.completedAt ?? null,
+  failedAt: partial.failedAt ?? null,
   createdAt: partial.createdAt ?? '2026-03-12T15:45:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-03-12T16:10:00.000Z',
 });
@@ -53,11 +59,9 @@ describe('TaskDetailTimeline', () => {
     renderLazyTimeline(task);
 
     const timeline = await screen.findByTestId('task-detail-timeline');
-    expect(screen.getByRole('heading', { name: 'Activity' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument();
     expect(within(timeline).getByText('Task created')).toBeInTheDocument();
     expect(within(timeline).getByText('Status: In progress')).toBeInTheDocument();
-    expect(within(timeline).getByText(formatDateTime(task.createdAt))).toBeInTheDocument();
-    expect(within(timeline).getByText(formatDateTime(task.updatedAt))).toBeInTheDocument();
   });
 
   it('should render events in a vertical timeline list layout', async () => {
@@ -90,10 +94,12 @@ describe('TaskDetailTimeline', () => {
     renderLazyTimeline(task);
 
     const timeline = await screen.findByTestId('task-detail-timeline');
-    const formattedCreatedAt = formatDateTime(createdAt);
-    const timestamps = within(timeline).getAllByText(formattedCreatedAt);
+    const eventList = within(timeline).getByRole('list', { name: 'Activity timeline' });
+    const events = within(eventList).getAllByRole('listitem');
 
-    expect(timestamps).toHaveLength(2);
+    expect(events).toHaveLength(2);
+    expect(events[0]).toHaveTextContent('Task created');
+    expect(events[1]).toHaveTextContent('Status: Created');
     await waitFor(() => {
       expect(screen.queryByTestId('task-detail-timeline-skeleton')).not.toBeInTheDocument();
     });

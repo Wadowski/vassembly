@@ -20,8 +20,10 @@
   },
   "dependencies": {
     "@vassembly/constants": "workspace:*",
+    "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
-    "@vassembly/errors": "workspace:*"
+    "@vassembly/errors": "workspace:*",
+    "@vassembly/logger": "workspace:*"
   }
 }

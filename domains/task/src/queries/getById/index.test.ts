@@ -13,14 +13,15 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockGet, mockFactoryCreate } = vi.hoisted(() => ({
-  mockGet: vi.fn(),
+const { mockGetMany, mockFactoryCreate, mockFactoryCreateMany } = vi.hoisted(() => ({
+  mockGetMany: vi.fn(),
   mockFactoryCreate: vi.fn(),
+  mockFactoryCreateMany: vi.fn(),
 }));
 
 vi.mock('../../clients', () => ({
   taskMongodbDao: {
-    get: mockGet,
+    getMany: mockGetMany,
   },
 }));
 
@@ -30,6 +31,7 @@ vi.mock('../../model', async (importOriginal) => {
     ...actual,
     taskFactory: {
       create: mockFactoryCreate,
+      createMany: mockFactoryCreateMany,
     },
   };
 });
@@ -54,6 +56,7 @@ describe('getById task query', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockFactoryCreate.mockImplementation((data: Partial<TaskModel>) => data as TaskModel);
+    mockFactoryCreateMany.mockImplementation((docs: TaskModel[]) => docs);
   });
 
   it('should throw ValidationError when userId is missing', async () => {
@@ -69,13 +72,13 @@ describe('getById task query', () => {
   });
 
   it('should enforce ownership scope via getModelById when userId does not match owner', async () => {
-    mockGet.mockResolvedValue(buildTaskDoc({ userId: 'user-2' }));
+    mockGetMany.mockResolvedValue([]);
 
     await expect(getById({ id: TASK_ID, userId: 'user-1' })).rejects.toThrow(NotFoundError);
   });
 
   it('should map task model to TaskResponse via toTaskResponse', async () => {
-    mockGet.mockResolvedValue(buildTaskDoc());
+    mockGetMany.mockResolvedValue([buildTaskDoc()]);
 
     const result = await getById({ id: TASK_ID, userId: 'user-1' });
 
@@ -91,7 +94,7 @@ describe('getById task query', () => {
   });
 
   it('should propagate NotFoundError from getModelById when task is missing', async () => {
-    mockGet.mockResolvedValue(undefined);
+    mockGetMany.mockResolvedValue([]);
 
     await expect(getById({ id: TASK_ID, userId: 'user-1' })).rejects.toThrow(NotFoundError);
   });

@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TaskStatus, type UserTasksListResponse } from './types';
+import { TaskStatus, TaskType, type UserTasksListResponse } from './types';
 import { useUserTasks } from './useUserTasks';
 
 const hoisted = vi.hoisted(() => ({
@@ -105,10 +105,16 @@ describe('useUserTasks', () => {
             id: 'task-1',
             userId: 'user-1',
             description: 'Review quarterly report',
-            type: 'user',
+            type: TaskType.User,
             status: TaskStatus.Created,
             agentAssignedId: null,
             title: null,
+            llmResponse: null,
+            errorMessage: null,
+            errorCode: null,
+            startedAt: null,
+            completedAt: null,
+            failedAt: null,
             createdAt: '2026-05-26T12:00:00.000Z',
             updatedAt: '2026-05-26T12:00:00.000Z',
           },

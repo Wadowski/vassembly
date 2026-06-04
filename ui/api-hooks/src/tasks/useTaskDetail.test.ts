@@ -101,6 +101,12 @@ describe('useTaskDetail', () => {
         status: TaskStatus.Created,
         agentAssignedId: null,
         title: 'Quarterly review',
+        llmResponse: null,
+        errorMessage: null,
+        errorCode: null,
+        startedAt: null,
+        completedAt: null,
+        failedAt: null,
         createdAt: '2026-05-26T12:00:00.000Z',
         updatedAt: '2026-05-26T12:00:00.000Z',
       };

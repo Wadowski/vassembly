@@ -24,4 +24,16 @@ export class TaskModel extends Model {
   agentAssignedId?: string | null;
 
   title?: string | null;
+
+  llmResponse?: string | null;
+
+  errorMessage?: string | null;
+
+  errorCode?: string | null;
+
+  startedAt?: Date | null;
+
+  completedAt?: Date | null;
+
+  failedAt?: Date | null;
 }

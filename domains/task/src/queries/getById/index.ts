@@ -1,3 +1,4 @@
+import { NotFoundError } from '@vassembly/errors';
 import { getListDbByQuery } from '@vassembly/queries';
 
 import { taskMongodbDao } from '../../clients';
@@ -21,7 +22,7 @@ export const getById: GetByIdHandler = async (input: GetByIdInput) => {
   const result = await getModelByQuery({ id: input.id, userId: input.userId, limit: 1, offset: 0 });
 
   if (!result.data || result.data.length === 0) {
-    throw new Error('Task not found');
+    throw new NotFoundError('Task not found');
   }
 
   const task = result.data[0]!;

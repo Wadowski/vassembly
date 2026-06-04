@@ -47,7 +47,7 @@ describe('create task command', () => {
           userId: BASE_INPUT.userId,
           description: BASE_INPUT.description,
           type: 'user',
-          status: 'created',
+          status: 'in-progress',
           agentAssignedId: null,
           createdAt: CREATED_AT,
           updatedAt: UPDATED_AT,
@@ -58,7 +58,13 @@ describe('create task command', () => {
 
       expect(result.data.userId).toBe('user-1');
       expect(result.data.type).toBe('user');
-      expect(result.data.status).toBe('created');
+      expect(result.data.status).toBe('in-progress');
+      expect(mockPersist).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'in-progress',
+          startedAt: expect.any(Date),
+        }),
+      );
       expect(result.data.agentAssignedId).toBeNull();
       expect(result.data.description).toBe(BASE_INPUT.description);
       expect(result.data.createdAt).toEqual(CREATED_AT);
@@ -123,7 +129,7 @@ describe('create task command', () => {
           userId: BASE_INPUT.userId,
           description: sanitizedDescription,
           type: 'user',
-          status: 'created',
+          status: 'in-progress',
           agentAssignedId: null,
           createdAt: CREATED_AT,
           updatedAt: UPDATED_AT,
@@ -147,7 +153,7 @@ describe('create task command', () => {
           userId: BASE_INPUT.userId,
           description: trimmedDescription,
           type: 'user',
-          status: 'created',
+          status: 'in-progress',
           agentAssignedId: null,
           createdAt: CREATED_AT,
           updatedAt: UPDATED_AT,
@@ -171,7 +177,7 @@ describe('create task command', () => {
           userId: BASE_INPUT.userId,
           description: multiLineDescription,
           type: 'user',
-          status: 'created',
+          status: 'in-progress',
           agentAssignedId: null,
           createdAt: CREATED_AT,
           updatedAt: UPDATED_AT,
@@ -195,7 +201,7 @@ describe('create task command', () => {
           userId: BASE_INPUT.userId,
           description: descriptionWithEntities,
           type: 'user',
-          status: 'created',
+          status: 'in-progress',
           agentAssignedId: null,
           createdAt: CREATED_AT,
           updatedAt: UPDATED_AT,
@@ -219,7 +225,7 @@ describe('create task command', () => {
           userId: BASE_INPUT.userId,
           description: BASE_INPUT.description,
           type: 'user',
-          status: 'created',
+          status: 'in-progress',
           agentAssignedId: null,
           createdAt: CREATED_AT,
           updatedAt: UPDATED_AT,
@@ -238,7 +244,7 @@ describe('create task command', () => {
           userId: BASE_INPUT.userId,
           description: BASE_INPUT.description,
           type: 'user',
-          status: 'created',
+          status: 'in-progress',
           agentAssignedId: null,
           createdAt: CREATED_AT,
           updatedAt: UPDATED_AT,
@@ -252,7 +258,7 @@ describe('create task command', () => {
         userId: BASE_INPUT.userId,
         description: BASE_INPUT.description,
         type: 'user',
-        status: 'created',
+        status: 'in-progress',
         agentAssignedId: null,
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),

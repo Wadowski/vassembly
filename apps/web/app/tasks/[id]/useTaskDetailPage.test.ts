@@ -37,6 +37,12 @@ const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
   status: partial.status ?? TaskStatus.InProgress,
   agentAssignedId: partial.agentAssignedId ?? null,
   title: partial.title ?? 'Quarterly review',
+  llmResponse: partial.llmResponse ?? null,
+  errorMessage: partial.errorMessage ?? null,
+  errorCode: partial.errorCode ?? null,
+  startedAt: partial.startedAt ?? '2026-03-12T15:46:00.000Z',
+  completedAt: partial.completedAt ?? null,
+  failedAt: partial.failedAt ?? null,
   createdAt: partial.createdAt ?? '2026-03-12T15:45:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-03-12T16:10:00.000Z',
 });
@@ -166,6 +172,9 @@ describe('useTaskDetailPage', () => {
     }
 
     await act(async () => {
+      if (result.current.view.phase !== 'error') {
+        throw new Error('Expected error phase');
+      }
       result.current.view.onRetry();
     });
 
@@ -204,5 +213,59 @@ describe('useTaskDetailPage', () => {
     }
 
     expect(result.current.view.message).toBe(TASK_LOAD_ERROR_FALLBACK);
+  });
+
+  it('should poll task every 3 seconds while status is in-progress', async () => {
+    vi.useFakeTimers();
+
+    try {
+      const inProgressTask = buildTask({ status: TaskStatus.InProgress });
+      const doneTask = buildTask({ status: TaskStatus.Done, llmResponse: 'Done output' });
+      mockFetch.mockResolvedValueOnce(inProgressTask).mockResolvedValue(doneTask);
+
+      const { result } = renderHook(() => useTaskDetailPage());
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      expect(result.current.view.phase).toBe('ready');
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(3000);
+      });
+
+      expect(mockFetch.mock.calls.length).toBeGreaterThanOrEqual(2);
+
+      if (result.current.view.phase === 'ready') {
+        expect(result.current.view.task.status).toBe(TaskStatus.Done);
+      }
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should stop polling when task reaches terminal status', async () => {
+    vi.useFakeTimers();
+
+    try {
+      mockFetch.mockResolvedValue(buildTask({ status: TaskStatus.Done, llmResponse: 'result' }));
+
+      renderHook(() => useTaskDetailPage());
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(9000);
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

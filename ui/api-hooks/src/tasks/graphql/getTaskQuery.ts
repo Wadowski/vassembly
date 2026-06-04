@@ -8,6 +8,12 @@ export const GET_TASK_QUERY = `
       status
       agentAssignedId
       title
+      llmResponse
+      errorMessage
+      errorCode
+      startedAt
+      completedAt
+      failedAt
       createdAt
       updatedAt
     }

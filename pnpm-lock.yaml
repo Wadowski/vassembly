@@ -1520,6 +1520,9 @@ importers:
       '@vassembly/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@vassembly/domain-ai-integration':
+        specifier: workspace:*
+        version: link:../../domains/ai-integration
       '@vassembly/domain-system-agent':
         specifier: workspace:*
         version: link:../../domains/system-agent
@@ -1529,6 +1532,9 @@ importers:
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
+      '@vassembly/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
     devDependencies:
       '@types/node':
         specifier: ^22.19.7

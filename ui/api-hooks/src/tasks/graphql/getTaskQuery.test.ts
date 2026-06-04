@@ -10,6 +10,12 @@ const TASK_FIELDS = [
   'status',
   'agentAssignedId',
   'title',
+  'llmResponse',
+  'errorMessage',
+  'errorCode',
+  'startedAt',
+  'completedAt',
+  'failedAt',
   'createdAt',
   'updatedAt',
 ] as const;

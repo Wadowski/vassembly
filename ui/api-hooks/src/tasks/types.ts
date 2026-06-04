@@ -18,6 +18,12 @@ export interface TaskResponse {
   status: TaskStatus;
   agentAssignedId: string | null;
   title: string | null;
+  llmResponse: string | null;
+  errorMessage: string | null;
+  errorCode: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  failedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -38,6 +44,12 @@ export interface TaskDto {
   status: TaskStatus;
   agentAssignedId: string | null;
   title: string | null;
+  llmResponse: string | null;
+  errorMessage: string | null;
+  errorCode: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  failedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -63,6 +75,12 @@ export interface GraphQLTaskRow {
   status?: string | null;
   agentAssignedId?: string | null;
   title?: string | null;
+  llmResponse?: string | null;
+  errorMessage?: string | null;
+  errorCode?: string | null;
+  startedAt?: string | null;
+  completedAt?: string | null;
+  failedAt?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 }

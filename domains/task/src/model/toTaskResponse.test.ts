@@ -4,19 +4,18 @@ import { TaskStatus, TaskType, type TaskModel } from './model';
 import { toTaskResponse } from './toTaskResponse';
 import type { TaskResponse } from './dto';
 
-const buildTask = (
-  partial: Partial<TaskModel & { title?: string | null }>,
-): TaskModel =>
+const buildTask = (partial: Partial<TaskModel> = {}): TaskModel =>
   ({
-    id: partial.id ?? 'task-1',
-    userId: partial.userId ?? 'user-1',
-    description: partial.description ?? 'Review quarterly report',
-    type: partial.type ?? TaskType.User,
-    status: partial.status ?? TaskStatus.Created,
-    agentAssignedId: partial.agentAssignedId ?? null,
-    title: partial.title,
-    createdAt: partial.createdAt ?? new Date('2026-05-26T12:00:00.000Z'),
-    updatedAt: partial.updatedAt ?? new Date('2026-05-26T12:00:00.000Z'),
+    id: 'task-1',
+    userId: 'user-1',
+    description: 'Review quarterly report',
+    type: TaskType.User,
+    status: TaskStatus.Created,
+    agentAssignedId: null,
+    title: null,
+    createdAt: new Date('2026-05-26T12:00:00.000Z'),
+    updatedAt: new Date('2026-05-26T12:00:00.000Z'),
+    ...partial,
   }) as TaskModel;
 
 describe('toTaskResponse', () => {
@@ -42,5 +41,22 @@ describe('toTaskResponse', () => {
     });
 
     expect(response.status).toBe('failed');
+  });
+
+  it('should map execution fields and nullable timestamps on TaskResponse', () => {
+    const response = toTaskResponse({
+      task: buildTask({
+        status: TaskStatus.Done,
+        llmResponse: 'AI output',
+        startedAt: new Date('2026-06-04T10:00:00.000Z'),
+        completedAt: new Date('2026-06-04T10:01:00.000Z'),
+      }),
+    });
+
+    expect(response.llmResponse).toBe('AI output');
+    expect(response.startedAt).toBe('2026-06-04T10:00:00.000Z');
+    expect(response.completedAt).toBe('2026-06-04T10:01:00.000Z');
+    expect(response.errorMessage).toBeNull();
+    expect(response.failedAt).toBeNull();
   });
 });

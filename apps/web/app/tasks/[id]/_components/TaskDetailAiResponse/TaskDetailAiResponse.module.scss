@@ -1,0 +1,15 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+@import '../../TaskDetailPage.module.scss';
+
+.responseBox {
+  @extend .sectionCard;
+}
+
+.responseHeading {
+  @extend .sectionLabel;
+}
+
+.responseBody {
+  white-space: pre-wrap;
+  line-height: $line-height-relaxed;
+}

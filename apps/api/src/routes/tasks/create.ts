@@ -17,6 +17,12 @@ export const taskResponseSchema = z.object({
   status: z.string(),
   agentAssignedId: z.string().nullable(),
   title: z.string().nullable(),
+  llmResponse: z.string().nullable(),
+  errorMessage: z.string().nullable(),
+  errorCode: z.string().nullable(),
+  startedAt: z.string().datetime().nullable(),
+  completedAt: z.string().datetime().nullable(),
+  failedAt: z.string().datetime().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

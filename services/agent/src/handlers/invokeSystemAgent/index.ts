@@ -3,6 +3,8 @@ import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import systemAgentDomain, { throwSystemAgentNotFoundError } from '@vassembly/domain-system-agent';
 import userDomain from '@vassembly/domain-user';
 
+import { resolveSystemCallCredentialId } from '../shared/resolveSystemCallCredentialId';
+
 import type { InvokeSystemAgentParams, InvokeSystemAgentResult } from './types';
 
 export const invokeSystemAgent = async (
@@ -22,9 +24,11 @@ export const invokeSystemAgent = async (
 
   let connectionOverrideParam = connectionOverride;
   if (!connectionOverride) {
-    const preference = (await systemAgentDomain.queries.getPreferenceByUserId({ userId })).data;
-    if (preference?.integrationCredentialId) {
-      connectionOverrideParam = { integrationCredentialId: preference.integrationCredentialId };
+    try {
+      const credentialId = await resolveSystemCallCredentialId({ userId });
+      connectionOverrideParam = { integrationCredentialId: credentialId };
+    } catch {
+      connectionOverrideParam = undefined;
     }
   }
 

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import type { TaskDto } from '@vassembly/ui-api-hooks';
-import { useTaskDetail } from '@vassembly/ui-api-hooks';
+import { TaskStatus, usePolling, useTaskDetail } from '@vassembly/ui-api-hooks';
 import { useSnackbar } from '@vassembly/ui-snackbar';
 
 import { getRequestErrorMessage } from '../../agents/getRequestErrorMessage';
@@ -79,6 +79,16 @@ export const useTaskDetailPage = (): UseTaskDetailPageResult => {
       cancelled = true;
     };
   }, [fetch, loadVersion, snackbar, taskIdParam]);
+
+  const pollCallback = useCallback(async (): Promise<void> => {
+    const loadedTask = await fetch(taskIdParam);
+    setTask(loadedTask);
+  }, [fetch, taskIdParam]);
+
+  usePolling(
+    { enabled: task?.status === TaskStatus.InProgress && taskIdParam !== '', intervalMs: 3000 },
+    pollCallback,
+  );
 
   useEffect(() => {
     if (task === undefined) {

@@ -19,15 +19,19 @@
 .statusBadge {
   display: inline-flex;
   align-items: center;
-  gap: $spacing-1;
+  gap: $spacing-2;
   width: fit-content;
+  padding: $spacing-2 $spacing-3;
+  border-radius: $border-radius-md;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .statusIcon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 .statusLabel {
-  font-size: $font-size-label-sm;
+  font-size: $font-size-body-md;
+  font-weight: 500;
 }

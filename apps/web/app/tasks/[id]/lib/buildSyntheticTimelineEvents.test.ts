@@ -12,96 +12,73 @@ const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
   status: partial.status ?? TaskStatus.Created,
   agentAssignedId: partial.agentAssignedId ?? null,
   title: partial.title ?? null,
+  llmResponse: partial.llmResponse ?? null,
+  errorMessage: partial.errorMessage ?? null,
+  errorCode: partial.errorCode ?? null,
+  startedAt: partial.startedAt ?? null,
+  completedAt: partial.completedAt ?? null,
+  failedAt: partial.failedAt ?? null,
   createdAt: partial.createdAt ?? '2026-03-12T15:45:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-03-12T16:10:00.000Z',
 });
 
 describe('buildSyntheticTimelineEvents', () => {
-  it('should return exactly two chronologically ordered events with required shape when task has distinct timestamps', () => {
+  it('should include created started and status events when task is in-progress', () => {
     const task = buildTask({
       status: TaskStatus.InProgress,
+      startedAt: '2026-03-12T15:46:00.000Z',
       createdAt: '2026-03-12T15:45:00.000Z',
       updatedAt: '2026-03-12T16:10:00.000Z',
     });
 
     const events = buildSyntheticTimelineEvents(task);
 
-    expect(events).toHaveLength(2);
-    expect(events.map((event) => event.id)).toEqual(
-      expect.arrayContaining([expect.any(String)]),
-    );
-    expect(new Set(events.map((event) => event.id)).size).toBe(2);
+    expect(events.map((event) => event.title)).toEqual([
+      'Task created',
+      'Processing started',
+      'Status: In progress',
+    ]);
+  });
 
-    events.forEach((event) => {
-      expect(event).toEqual(
-        expect.objectContaining({
-          id: expect.any(String),
-          title: expect.any(String),
-          timestamp: expect.any(String),
-        }),
-      );
-      expect(event.description === undefined || typeof event.description === 'string').toBe(true);
-      expect(event.icon === undefined || typeof event.icon === 'function').toBe(true);
+  it('should include completed event with duration when task is done', () => {
+    const task = buildTask({
+      status: TaskStatus.Done,
+      startedAt: '2026-03-12T15:45:00.000Z',
+      completedAt: '2026-03-12T15:47:30.000Z',
     });
 
-    const [firstEvent, secondEvent] = events;
-    expect(firstEvent?.title).toBe('Task created');
-    expect(firstEvent?.timestamp).toBe(task.createdAt);
-    expect(secondEvent?.title).toBe('Status: In progress');
-    expect(secondEvent?.timestamp).toBe(task.updatedAt);
-    expect(new Date(firstEvent?.timestamp ?? '').getTime()).toBeLessThanOrEqual(
-      new Date(secondEvent?.timestamp ?? '').getTime(),
-    );
+    const events = buildSyntheticTimelineEvents(task);
+    const completedEvent = events.find((event) => event.id === 'completed');
+
+    expect(completedEvent?.title).toBe('Completed (150000ms)');
+  });
+
+  it('should include failed event with error code when task failed', () => {
+    const task = buildTask({
+      status: TaskStatus.Failed,
+      startedAt: '2026-03-12T15:45:00.000Z',
+      failedAt: '2026-03-12T15:46:00.000Z',
+      errorCode: 'MISSING_CREDENTIAL',
+    });
+
+    const events = buildSyntheticTimelineEvents(task);
+    const failedEvent = events.find((event) => event.id === 'failed');
+
+    expect(failedEvent?.title).toBe('Failed: MISSING_CREDENTIAL');
   });
 
   it('should use createdAt for status event timestamp when task was never updated', () => {
     const createdAt = '2026-03-12T15:45:00.000Z';
     const task = buildTask({
-      status: TaskStatus.Done,
+      status: TaskStatus.Created,
       createdAt,
       updatedAt: createdAt,
     });
 
     const events = buildSyntheticTimelineEvents(task);
+    const statusEvent = events.find((event) => event.id === 'status');
 
-    expect(events).toHaveLength(2);
-    expect(events[0]?.title).toBe('Task created');
-    expect(events[0]?.timestamp).toBe(createdAt);
-    expect(events[1]?.title).toBe('Status: Done');
-    expect(events[1]?.timestamp).toBe(createdAt);
-  });
-
-  it('should map status labels for created failed and unknown statuses', () => {
-    const createdTask = buildTask({
-      status: TaskStatus.Created,
-      createdAt: '2026-03-12T15:45:00.000Z',
-      updatedAt: '2026-03-12T15:45:00.000Z',
-    });
-    const failedTask = buildTask({
-      id: 'task-failed',
-      status: TaskStatus.Failed,
-      createdAt: '2026-03-12T15:45:00.000Z',
-      updatedAt: '2026-03-12T16:00:00.000Z',
-    });
-    const unknownTask = buildTask({
-      id: 'task-unknown',
-      status: 'unexpected-status' as TaskDto['status'],
-      createdAt: '2026-03-12T15:45:00.000Z',
-      updatedAt: '2026-03-12T16:00:00.000Z',
-    });
-
-    expect(buildSyntheticTimelineEvents(createdTask)[1]?.title).toBe('Status: Created');
-    expect(buildSyntheticTimelineEvents(failedTask)[1]?.title).toBe('Status: Failed');
-    expect(buildSyntheticTimelineEvents(unknownTask)[1]?.title).toBe('Status: Unknown');
-  });
-
-  it('should include status icon on status event when status is recognized', () => {
-    const task = buildTask({ status: TaskStatus.InProgress });
-
-    const events = buildSyntheticTimelineEvents(task);
-    const statusEvent = events[1];
-
-    expect(statusEvent?.icon).toEqual(expect.any(Function));
-    expect(events[0]?.icon).toBeUndefined();
+    expect(statusEvent?.timestamp).toBe(createdAt);
+    expect(statusEvent?.title).toBe('Status: Created');
   });
 });

@@ -1,7 +1,9 @@
 'use client';
 
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
+import { TaskDetailAiResponse } from './_components/TaskDetailAiResponse/TaskDetailAiResponse';
 import { TaskDetailDescription } from './_components/TaskDetailDescription';
+import { TaskDetailExecutionError } from './_components/TaskDetailExecutionError/TaskDetailExecutionError';
 import { TaskDetailError } from './_components/TaskDetailError';
 import { TaskDetailHeader } from './_components/TaskDetailHeader';
 import { TaskDetailTimeline } from './_components/TaskDetailTimeline';
@@ -24,6 +26,8 @@ export default function TaskDetailPage(): JSX.Element {
         <TaskDetailHeader task={view.task} />
         <article className={styles.contentColumn}>
           <TaskDetailDescription description={view.task.description} />
+          <TaskDetailAiResponse task={view.task} />
+          <TaskDetailExecutionError task={view.task} />
           <TaskDetailTimeline task={view.task} />
         </article>
       </main>

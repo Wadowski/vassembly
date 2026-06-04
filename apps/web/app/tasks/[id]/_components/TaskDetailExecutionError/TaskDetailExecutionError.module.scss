@@ -1,0 +1,21 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+@import '../../TaskDetailPage.module.scss';
+
+.errorBox {
+  @extend .sectionCard;
+  border: 1px solid $color-error;
+}
+
+.errorHeading {
+  @extend .sectionLabel;
+  color: $color-error;
+}
+
+.errorMessage {
+  color: $color-error;
+}
+
+.settingsLink {
+  color: $color-error;
+  text-decoration: underline;
+}

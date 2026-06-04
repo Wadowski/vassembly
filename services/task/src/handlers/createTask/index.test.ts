@@ -2,9 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ValidationError, WrongParamError } from '@vassembly/errors';
 
-const { mockCreate, mockGetActiveByName } = vi.hoisted(() => ({
+const { mockCreate, mockGetActiveByName, mockExecuteTask } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
   mockGetActiveByName: vi.fn(),
+  mockExecuteTask: vi.fn(),
+}));
+
+vi.mock('../executeTask', () => ({
+  executeTask: mockExecuteTask,
+}));
+
+vi.mock('@vassembly/logger', () => ({
+  logger: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-system-agent', () => ({
@@ -26,8 +35,15 @@ vi.mock('@vassembly/domain-task', () => ({
     userId: task.userId as string,
     description: task.description as string,
     type: task.type as 'user',
-    status: task.status as 'created',
+    status: task.status as 'in-progress',
     agentAssignedId: (task.agentAssignedId ?? null) as string | null,
+    title: null,
+    llmResponse: null,
+    errorMessage: null,
+    errorCode: null,
+    startedAt: task.startedAt ? (task.startedAt as Date).toISOString() : null,
+    completedAt: null,
+    failedAt: null,
     createdAt: (task.createdAt as Date).toISOString(),
     updatedAt: (task.updatedAt as Date).toISOString(),
   }),
@@ -47,6 +63,7 @@ describe('createTask handler', () => {
     mockGetActiveByName.mockResolvedValue({
       data: { id: ASSISTANT_AGENT_ID },
     });
+    mockExecuteTask.mockResolvedValue(undefined);
   });
 
   it('should return TaskResponse with serialized id and ISO timestamps when create succeeds', async () => {
@@ -59,7 +76,7 @@ describe('createTask handler', () => {
         userId: 'user-auth',
         description: BODY.description,
         type: 'user',
-        status: 'created',
+        status: 'in-progress',
         agentAssignedId: ASSISTANT_AGENT_ID,
         createdAt,
         updatedAt,
@@ -73,8 +90,15 @@ describe('createTask handler', () => {
       userId: 'user-auth',
       description: BODY.description,
       type: 'user',
-      status: 'created',
+      status: 'in-progress',
       agentAssignedId: ASSISTANT_AGENT_ID,
+      title: null,
+      llmResponse: null,
+      errorMessage: null,
+      errorCode: null,
+      startedAt: null,
+      completedAt: null,
+      failedAt: null,
       createdAt: '2026-05-26T12:00:00.000Z',
       updatedAt: '2026-05-26T12:00:00.000Z',
     });
@@ -99,7 +123,7 @@ describe('createTask handler', () => {
         userId: 'user-real',
         description: BODY.description,
         type: 'user',
-        status: 'created',
+        status: 'in-progress',
         agentAssignedId: ASSISTANT_AGENT_ID,
         createdAt: new Date('2026-05-26T12:00:00.000Z'),
         updatedAt: new Date('2026-05-26T12:00:00.000Z'),
@@ -115,5 +139,29 @@ describe('createTask handler', () => {
 
     expect(result.task.userId).toBe('user-real');
     expect(result.task.agentAssignedId).toBe(ASSISTANT_AGENT_ID);
+  });
+
+  it('should trigger executeTask without awaiting after create succeeds', async () => {
+    mockCreate.mockResolvedValue({
+      data: {
+        id: 'task-async',
+        userId: 'user-auth',
+        description: BODY.description,
+        type: 'user',
+        status: 'in-progress',
+        agentAssignedId: ASSISTANT_AGENT_ID,
+        startedAt: new Date('2026-05-26T12:00:00.000Z'),
+        createdAt: new Date('2026-05-26T12:00:00.000Z'),
+        updatedAt: new Date('2026-05-26T12:00:00.000Z'),
+      },
+    });
+
+    await createTask({ userId: 'user-auth', body: BODY });
+
+    expect(mockExecuteTask).toHaveBeenCalledTimes(1);
+    expect(mockExecuteTask).toHaveBeenCalledWith({
+      taskId: 'task-async',
+      userId: 'user-auth',
+    });
   });
 });

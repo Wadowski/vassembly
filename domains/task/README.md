@@ -55,8 +55,22 @@ await commands.create({ userId: 'user-123', description: 'My task' });
 **Defaults on create:**
 
 - `type`: `'user'`
-- `status`: `'created'`
+- `status`: `'in-progress'`
+- `startedAt`: current timestamp at create
 - `agentAssignedId`: `null`
+
+### `commands.complete(input)` / `commands.fail(input)`
+
+Update task execution outcome after async LLM processing.
+
+| Command | Sets |
+|---------|------|
+| `complete` | `status: done`, `llmResponse` (max 5000 chars), `completedAt` |
+| `fail` | `status: failed`, `errorMessage`, `errorCode`, `failedAt` |
+
+### `queries.getModelById({ id })`
+
+Internal query returning raw `TaskModel` (used by `service-task` execution).
 
 ## Queries
 
@@ -121,7 +135,7 @@ See [`src/clients/mongodb.ts`](./src/clients/mongodb.ts).
 ### GraphQL schema
 
 - `gqlSchema(builder)` — registers `Task` and `TasksList` GraphQL object types ([`src/model/graphql.ts`](./src/model/graphql.ts))
-- **`Task` fields:** `id`, `userId`, `description`, `type`, `status`, `agentAssignedId`, `title`, `createdAt`, `updatedAt`
+- **`Task` fields:** `id`, `userId`, `description`, `type`, `status`, `agentAssignedId`, `title`, `llmResponse`, `errorMessage`, `errorCode`, `startedAt`, `completedAt`, `failedAt`, `createdAt`, `updatedAt`
 - **`TasksList` fields:** `items`, `totalCount`, `page`, `size`
 
 ## Errors
