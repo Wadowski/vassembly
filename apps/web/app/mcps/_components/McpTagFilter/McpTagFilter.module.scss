@@ -1,0 +1,24 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  min-width: 12rem;
+  max-width: 16rem;
+}
+
+.multiSelect {
+  width: 100%;
+}
+
+.helperText {
+  color: $color-text-secondary;
+}
+
+@media #{$media-mobile-only} {
+  .filter {
+    max-width: none;
+    width: 100%;
+  }
+}

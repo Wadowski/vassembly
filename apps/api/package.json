@@ -30,6 +30,7 @@
     "@vassembly/constants": "workspace:^",
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
+    "@vassembly/domain-mcp": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
@@ -39,6 +40,7 @@
     "@vassembly/server": "workspace:*",
     "@vassembly/service-auth": "workspace:*",
     "@vassembly/service-agent": "workspace:*",
+    "@vassembly/service-mcp": "workspace:*",
     "@vassembly/service-task": "workspace:*",
     "@vassembly/validation": "workspace:*",
     "zod": "^4.3.6"

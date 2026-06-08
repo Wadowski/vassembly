@@ -57,6 +57,9 @@ importers:
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
+      '@vassembly/domain-mcp':
+        specifier: workspace:*
+        version: link:../../domains/mcp
       '@vassembly/domain-system-agent':
         specifier: workspace:*
         version: link:../../domains/system-agent
@@ -81,6 +84,9 @@ importers:
       '@vassembly/service-auth':
         specifier: workspace:*
         version: link:../../services/auth
+      '@vassembly/service-mcp':
+        specifier: workspace:*
+        version: link:../../services/mcp
       '@vassembly/service-task':
         specifier: workspace:*
         version: link:../../services/task
@@ -212,6 +218,12 @@ importers:
       '@vassembly/ui-modal':
         specifier: workspace:^
         version: link:../../ui/system-design/modal
+      '@vassembly/ui-multi-select':
+        specifier: workspace:^
+        version: link:../../ui/system-design/multi-select
+      '@vassembly/ui-pagination':
+        specifier: workspace:^
+        version: link:../../ui/system-design/pagination
       '@vassembly/ui-popover':
         specifier: workspace:*
         version: link:../../ui/system-design/popover
@@ -435,6 +447,49 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.10
         version: 9.0.10
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
+  domains/mcp:
+    dependencies:
+      '@vassembly/client-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/client-mongodb
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
+      '@vassembly/graphql':
+        specifier: workspace:*
+        version: link:../../packages/graphql
+      '@vassembly/mappers':
+        specifier: workspace:*
+        version: link:../../packages/mappers
+      '@vassembly/model':
+        specifier: workspace:*
+        version: link:../../packages/model
+      '@vassembly/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
       '@types/node':
         specifier: ^22.19.7
         version: 22.19.15
@@ -1495,6 +1550,34 @@ importers:
       zod:
         specifier: ^4.3.6
         version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.7
+        version: 22.19.15
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@vassembly/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@22.19.15)
+
+  services/mcp:
+    dependencies:
+      '@vassembly/domain-mcp':
+        specifier: workspace:*
+        version: link:../../domains/mcp
+      '@vassembly/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
     devDependencies:
       '@types/node':
         specifier: ^22.19.7

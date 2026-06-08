@@ -3,6 +3,8 @@ export * from './user';
 export * from './agents';
 export * from './aiIntegrations';
 export * from './systemAgents';
+export { useMcps, LIST_MCPS_QUERY, useAvailableTags, AVAILABLE_TAGS_QUERY } from './mcps';
+export type { McpListItem, UseMcpsResult, UseMcpsArgs, UseAvailableTagsResult } from './mcps';
 export * from './tasks';
 export { GraphQLProvider } from './graphql';
 export { HttpClientProvider, useHttpClient } from './http';

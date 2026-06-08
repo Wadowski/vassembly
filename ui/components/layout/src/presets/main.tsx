@@ -1,6 +1,7 @@
 import type { NavLinkItem, NavSection } from '@vassembly/ui-drawer-navigation';
 import {
   HouseIcon,
+  SearchIcon,
   SocialFacebookColorIcon,
   SocialInstagramColorIcon,
   SocialTwitterColorIcon,
@@ -27,6 +28,13 @@ const WORKSPACE_AUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [
     label: 'Agents',
     href: '/agents',
     icon: TeamMeetingChatIcon,
+  },
+  {
+    kind: 'link',
+    id: 'mcps',
+    label: 'MCPs',
+    href: '/mcps',
+    icon: SearchIcon,
   },
 ];
 const WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [];

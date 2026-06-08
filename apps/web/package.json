@@ -27,6 +27,8 @@
     "@vassembly/ui-icons": "workspace:^",
     "@vassembly/ui-layout": "workspace:*",
     "@vassembly/ui-loader": "workspace:^",
+    "@vassembly/ui-multi-select": "workspace:^",
+    "@vassembly/ui-pagination": "workspace:^",
     "@vassembly/ui-login-form": "workspace:*",
     "@vassembly/ui-menu": "workspace:*",
     "@vassembly/ui-modal": "workspace:^",

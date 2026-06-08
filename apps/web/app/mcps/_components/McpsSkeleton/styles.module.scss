@@ -1,0 +1,28 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.toolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: $spacing-4;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-lg;
+}

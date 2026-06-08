@@ -8,6 +8,7 @@ import { mongodbIndexes as aiIntegrationMongodbIndexes } from "@vassembly/domain
 import { mongodbIndexes as systemAgentMongodbIndexes } from "@vassembly/domain-system-agent";
 import { mongodbIndexes as taskMongodbIndexes } from "@vassembly/domain-task";
 import { mongodbIndexes as userMongodbIndexes } from "@vassembly/domain-user";
+import mcpDomain from "@vassembly/domain-mcp";
 
 import { routes as agentRoutesList } from "./agents";
 import { routes as aiIntegrationRoutesList } from "./ai-integrations";
@@ -46,8 +47,12 @@ const startApp = async () => {
       aiIntegrationMongodbIndexes,
       systemAgentMongodbIndexes,
       taskMongodbIndexes,
+      mcpDomain.mongodbIndexes,
     ],
   });
+
+  await mcpDomain.seedMcps();
+  console.log("MCPs seeded successfully");
 
   const fastify = await createServer({
     routes,
