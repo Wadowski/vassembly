@@ -1,18 +1,14 @@
 import { initCache } from "@vassembly/cache";
-import { init as initMongoDb } from "@vassembly/client-mongodb";
 import { initRedis } from "@vassembly/client-redis";
 import { createServer, routesWithPrefix } from "@vassembly/server";
 import { CacheBackend, config } from "@vassembly/config";
-import { mongodbIndexes as agentMongodbIndexes } from "@vassembly/domain-agent";
-import { mongodbIndexes as aiIntegrationMongodbIndexes } from "@vassembly/domain-ai-integration";
-import { mongodbIndexes as systemAgentMongodbIndexes } from "@vassembly/domain-system-agent";
-import { mongodbIndexes as taskMongodbIndexes } from "@vassembly/domain-task";
-import { mongodbIndexes as userMongodbIndexes } from "@vassembly/domain-user";
 import mcpDomain from "@vassembly/domain-mcp";
 
+import { registerApiMongoIndexes } from "../bootstrap/mongoIndexes";
 import { routes as agentRoutesList } from "./agents";
 import { routes as aiIntegrationRoutesList } from "./ai-integrations";
 import { routes as authRoutesList } from "./auth";
+import { mcpConfigurationRoutes } from "./mcps";
 import { routes as systemAgentsRoutesList } from "./system-agents";
 import { routes as taskRoutesList } from "./tasks";
 import { routes as userRoutesList } from "./user";
@@ -24,6 +20,7 @@ const agentRoutes = routesWithPrefix("/agents", agentRoutesList);
 const aiIntegrationRoutes = routesWithPrefix("/ai-integrations", aiIntegrationRoutesList);
 const systemAgentsRoutes = routesWithPrefix("/system-agents", systemAgentsRoutesList);
 const taskRoutes = routesWithPrefix("/tasks", taskRoutesList);
+const mcpRoutes = routesWithPrefix("/mcps", mcpConfigurationRoutes);
 
 const routes = [
   ...authRoutes,
@@ -32,6 +29,7 @@ const routes = [
   ...aiIntegrationRoutes,
   ...systemAgentsRoutes,
   ...taskRoutes,
+  ...mcpRoutes,
 ];
 
 const startApp = async () => {
@@ -40,16 +38,7 @@ const startApp = async () => {
   }
   await initCache();
 
-  await initMongoDb({
-    indexFunctions: [
-      userMongodbIndexes,
-      agentMongodbIndexes,
-      aiIntegrationMongodbIndexes,
-      systemAgentMongodbIndexes,
-      taskMongodbIndexes,
-      mcpDomain.mongodbIndexes,
-    ],
-  });
+  await registerApiMongoIndexes();
 
   await mcpDomain.seedMcps();
   console.log("MCPs seeded successfully");

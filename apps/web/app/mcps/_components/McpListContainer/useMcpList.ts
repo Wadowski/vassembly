@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useMcps } from '@vassembly/ui-api-hooks';
+import { useMcpCatalog } from '@vassembly/ui-api-hooks';
 
 import { useDebouncedValue } from '../../../../lib/hooks/useDebouncedValue';
 
@@ -10,7 +10,7 @@ import { MCP_LIST_PAGE_SIZE, SEARCH_DEBOUNCE_MS } from './constants';
 import type { McpListContainerViewModel } from './types';
 
 export const useMcpList = (): McpListContainerViewModel => {
-  const { data, loading, error, execute } = useMcps();
+  const { data, loading, error, execute } = useMcpCatalog();
   const [page, setPage] = useState(0);
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);

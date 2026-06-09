@@ -15,6 +15,82 @@
     "tags": ["search", "web", "ai-summary", "news", "images"],
     "iconPath": "/mcps/brave-search.svg",
     "documentationUrl": "https://glama.ai/mcp/servers/brave/brave-search-mcp-server",
-    "repositoryUrl": "https://github.com/brave/brave-search-mcp-server"
+    "repositoryUrl": "https://github.com/brave/brave-search-mcp-server",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Brave Search API key",
+          "required": true,
+          "placeholder": "Enter your Brave Search API key"
+        },
+        {
+          "key": "transport",
+          "label": "Transport Mode",
+          "type": "select",
+          "description": "Transport mode for MCP server",
+          "defaultValue": "stdio",
+          "options": [
+            { "value": "stdio", "label": "STDIO (Default)" },
+            { "value": "http", "label": "HTTP" }
+          ]
+        },
+        {
+          "key": "port",
+          "label": "Port",
+          "type": "text",
+          "description": "HTTP server port (default: 8000)",
+          "placeholder": "8000",
+          "pattern": "^[0-9]{1,5}$"
+        },
+        {
+          "key": "host",
+          "label": "Host",
+          "type": "text",
+          "description": "HTTP server host (default: 0.0.0.0)",
+          "placeholder": "0.0.0.0"
+        },
+        {
+          "key": "logLevel",
+          "label": "Log Level",
+          "type": "select",
+          "description": "Desired logging level",
+          "defaultValue": "info",
+          "options": [
+            { "value": "debug", "label": "Debug" },
+            { "value": "info", "label": "Info" },
+            { "value": "notice", "label": "Notice" },
+            { "value": "warning", "label": "Warning" },
+            { "value": "error", "label": "Error" },
+            { "value": "critical", "label": "Critical" },
+            { "value": "alert", "label": "Alert" },
+            { "value": "emergency", "label": "Emergency" }
+          ]
+        },
+        {
+          "key": "enabledTools",
+          "label": "Enabled Tools",
+          "type": "text",
+          "description": "Space-separated whitelist of tools to enable (e.g., \"brave_web_search brave_news_search\")",
+          "placeholder": "Leave empty to enable all tools"
+        },
+        {
+          "key": "disabledTools",
+          "label": "Disabled Tools",
+          "type": "text",
+          "description": "Space-separated blacklist of tools to disable (e.g., \"brave_image_search\")",
+          "placeholder": "Leave empty to disable no tools"
+        },
+        {
+          "key": "stateless",
+          "label": "Stateless Mode",
+          "type": "checkbox",
+          "description": "HTTP stateless mode (recommended for Amazon Bedrock)",
+          "defaultValue": true
+        }
+      ]
+    }
   }
 ]

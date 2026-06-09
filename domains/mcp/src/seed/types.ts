@@ -1,3 +1,5 @@
+import type { McpConfigSchema } from '../model/configSchema';
+
 export interface McpSeedEntry {
   slug: string;
   name: string;
@@ -6,6 +8,7 @@ export interface McpSeedEntry {
   iconPath: string;
   documentationUrl?: string;
   repositoryUrl?: string;
+  configSchema?: McpConfigSchema;
 }
 
 export interface LoadMcpsResult {

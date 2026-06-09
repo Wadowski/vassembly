@@ -1,0 +1,34 @@
+{
+  "name": "@vassembly/domain-user-mcp-config",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./src/clients/mongodb": "./src/clients/mongodb.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@vassembly/client-encoder": "workspace:*",
+    "@vassembly/client-mongodb": "workspace:*",
+    "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/errors": "workspace:*",
+    "@vassembly/model": "workspace:*",
+    "@vassembly/validation": "workspace:*",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.7",
+    "@vassembly/eslint-config": "workspace:*",
+    "@vassembly/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,39 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $spacing-4;
+}
+
+.emptyMessage {
+  color: $color-text-secondary;
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $spacing-4;
+}
+
+.skeletonCard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-lg;
+}
+
+@media #{$media-mobile-only} {
+  .grid,
+  .skeletonGrid {
+    grid-template-columns: 1fr;
+  }
+}

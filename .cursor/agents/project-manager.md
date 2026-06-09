@@ -73,8 +73,8 @@ Output: Architecture plan
 
 **Get user approval** of the architecture plan before proceeding
 
-### Stages 7-10: Implementation Execution
-Stages 7-10 must be created for each item in architecture plan, there might more then 1
+### Stages 7-12: Implementation Execution
+Stages 7-12 must be created for each item in architecture plan, there might more then 1
 Each stage must be delegated to a subagent.
 As a parent agent, I request you to spawn subagents for those stages.
 
@@ -94,13 +94,52 @@ As a parent agent, I request you to spawn a subagent for this stage.
 Input: Architecture plan and tests in the code
 result: Implemented code which pass tests
 
-**Stage 9: Code Review**
+**Stage 9: Verification & Quality Gate**
+Delegate to the tester subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
+
+Input: Implementation code from Stage 8
+Verify:
+- Run all tests for modified packages and their dependents
+- Run all lints for modified packages and their dependents
+- Run build scripts for modified packages and their dependents
+Result: Verification report confirming all checks pass or identifying failures
+
+
+**Stage 10: Code Review**
 Delegate to the code-reviewer subagent.
 As a parent agent, I request you to spawn a subagent for this stage.
 
-**Stage 10: Documentation** (if required by architect)
+Input: Implementation code from Stage 8, verification results from Stage 9
+Review:
+- Code quality, security, and maintainability
+- Compliance with project conventions and patterns
+- Architecture alignment with Stage 6 design
+- Test coverage and edge case handling
+Result: Code review report with all identified issues, suggestions, and quality assessment
+
+**Stage 11: Fix Issues**
+Delegate to the coder subagent.
+As a parent agent, I request you to spawn a subagent for this stage.
+
+Input: Issues identified from Stage 9 (Verification) and Stage 10 (Code Review)
+Task:
+- Fix all failing tests from Stage 9
+- Fix all linting errors from Stage 9
+- Fix all build failures from Stage 9
+- Address all code quality issues from Stage 10 code review
+Result: Updated code with all issues resolved
+
+**Stage 12: Documentation** (if required by architect)
 Delegate to the documentation-writer subagent.
 As a parent agent, I request you to spawn a subagent for this stage.
+
+Input: Final implementation code from Stage 11, architecture and design from previous stages
+Update:
+- Package READMEs with current API and exposed functions
+- Component/function documentation
+- Usage examples and integration patterns
+Result: Updated documentation reflecting the final implementation
 
 **Get user approval** after all recommended stages are complete
 
@@ -117,7 +156,7 @@ For each delegated stage:
 3. Wait for completion, summarize for the user, get approval before the next stage.
 4. For Stages 7–10, run Task calls in the order the architecture plan requires.
 
-Subagent types: `business-analyst`, `product-manager`, `ui-designer`, `librarian`, `architect`, `tdd-unit-test-writer`, `coder`, `code-reviewer`, `documentation-writer`.
+Subagent types: `business-analyst`, `product-manager`, `ui-designer`, `librarian`, `architect`, `tdd-unit-test-writer`, `coder`, `tester`, `code-reviewer`, `documentation-writer`.
 
 ### Mode B — No Task tool (handoff orchestration)
 

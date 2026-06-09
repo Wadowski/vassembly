@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/domain-user-mcp-config": "workspace:*",
     "@vassembly/errors": "workspace:*"
   }
 }

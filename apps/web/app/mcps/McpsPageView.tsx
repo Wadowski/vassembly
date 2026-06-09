@@ -3,6 +3,7 @@
 import { Text } from '@vassembly/ui-text';
 
 import { McpListContainer } from './_components/McpListContainer/McpListContainer';
+import { YourMcpsSection } from './_components/YourMcpsSection/YourMcpsSection';
 import styles from './McpsPageView.module.scss';
 
 export const McpsPageView = (): JSX.Element => {
@@ -13,6 +14,7 @@ export const McpsPageView = (): JSX.Element => {
           MCPs
         </Text>
       </header>
+      <YourMcpsSection />
       <McpListContainer />
     </main>
   );

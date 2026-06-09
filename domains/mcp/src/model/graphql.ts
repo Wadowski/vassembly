@@ -14,6 +14,12 @@ export const gqlMcpSchema = (builder: Builder): void => {
       slug: t.exposeString('slug'),
       documentationUrl: t.exposeString('documentationUrl', { nullable: true }),
       repositoryUrl: t.exposeString('repositoryUrl', { nullable: true }),
+      configurationStatus: t.exposeString('configurationStatus', { nullable: true }),
+      configSchema: t.field({
+        type: 'ConfigSchema' as any,
+        nullable: true,
+        resolve: (parent: { configSchema?: unknown }) => parent.configSchema,
+      }),
       createdAt: t.exposeString('createdAt'),
       updatedAt: t.exposeString('updatedAt'),
     }),
@@ -34,6 +40,90 @@ export const gqlMcpSchema = (builder: Builder): void => {
   builder.objectType('AvailableTags' as any, {
     fields: (t: any) => ({
       tags: t.exposeStringList('tags'),
+    }),
+  });
+
+  builder.objectType('UserMcpConfigFieldValue' as any, {
+    fields: (t: any) => ({
+      key: t.exposeString('key'),
+      value: t.field({
+        type: 'String',
+        nullable: true,
+        resolve: (parent: { value?: string | boolean }) => {
+          if (parent.value === undefined) {
+            return null;
+          }
+
+          if (typeof parent.value === 'boolean') {
+            return String(parent.value);
+          }
+
+          return parent.value;
+        },
+      }),
+      hasSecret: t.exposeBoolean('hasSecret', { nullable: true }),
+    }),
+  });
+
+  builder.objectType('UserMcpConfig' as any, {
+    fields: (t: any) => ({
+      id: t.exposeString('id'),
+      userId: t.exposeString('userId'),
+      mcpId: t.exposeString('mcpId'),
+      status: t.exposeString('status'),
+      lastTestedAt: t.exposeString('lastTestedAt', { nullable: true }),
+      createdAt: t.exposeString('createdAt'),
+      updatedAt: t.exposeString('updatedAt'),
+      fieldValues: t.field({
+        type: ['UserMcpConfigFieldValue'],
+        resolve: (parent: { fieldValues: unknown[] }) => parent.fieldValues,
+      }),
+    }),
+  });
+
+  builder.objectType('UserMcpConfigList' as any, {
+    fields: (t: any) => ({
+      items: t.field({
+        type: ['UserMcpConfig'],
+        resolve: (parent: { items: unknown[] }) => parent.items,
+      }),
+    }),
+  });
+
+  builder.objectType('ConfigSchemaFieldOption' as any, {
+    fields: (t: any) => ({
+      value: t.exposeString('value'),
+      label: t.exposeString('label'),
+    }),
+  });
+
+  builder.objectType('ConfigSchemaField' as any, {
+    fields: (t: any) => ({
+      key: t.exposeString('key'),
+      label: t.exposeString('label'),
+      type: t.exposeString('type'),
+      description: t.exposeString('description', { nullable: true }),
+      required: t.exposeBoolean('required', { nullable: true }),
+      defaultValue: t.exposeString('defaultValue', { nullable: true }),
+      placeholder: t.exposeString('placeholder', { nullable: true }),
+      format: t.exposeString('format', { nullable: true }),
+      pattern: t.exposeString('pattern', { nullable: true }),
+      minLength: t.exposeInt('minLength', { nullable: true }),
+      maxLength: t.exposeInt('maxLength', { nullable: true }),
+      options: t.field({
+        type: ['ConfigSchemaFieldOption'],
+        nullable: true,
+        resolve: (parent: { options?: unknown[] }) => parent.options,
+      }),
+    }),
+  });
+
+  builder.objectType('ConfigSchema' as any, {
+    fields: (t: any) => ({
+      fields: t.field({
+        type: ['ConfigSchemaField'],
+        resolve: (parent: { fields: unknown[] }) => parent.fields,
+      }),
     }),
   });
 };

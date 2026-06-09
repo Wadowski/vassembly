@@ -11,6 +11,15 @@ interface McpsListResolverArgs {
   tags?: string[] | null;
 }
 
+interface McpConfigurationResolverArgs {
+  mcpId: string;
+}
+
+interface UserConfiguredMcpsResolverArgs {
+  limit?: number | null;
+  offset?: number | null;
+}
+
 interface ApiGraphQLContext {
   authenticatedUserId?: string;
 }
@@ -48,6 +57,26 @@ export const registerMcpResolvers = (builder: Builder): void => {
           );
         },
       }),
+      mcp: t.field({
+        type: 'Mcp',
+        nullable: true,
+        args: {
+          id: t.arg.string({ required: true }),
+        },
+        resolve: async (
+          _root: unknown,
+          args: { id: string },
+          context: ApiGraphQLContext,
+        ) => {
+          const userId = context.authenticatedUserId;
+          if (userId === undefined) {
+            throw new UnauthorizedError('Authentication required to view MCP');
+          }
+
+          const result = await mcpService.getMcp({ id: args.id }, { authenticatedUserId: userId });
+          return result.data;
+        },
+      }),
       availableTags: t.field({
         type: 'AvailableTags',
         resolve: async (_root: unknown, _args: unknown, context: ApiGraphQLContext) => {
@@ -57,6 +86,49 @@ export const registerMcpResolvers = (builder: Builder): void => {
           }
 
           return mcpService.getAvailableTags({}, { authenticatedUserId: userId });
+        },
+      }),
+      mcpConfiguration: t.field({
+        type: 'UserMcpConfig',
+        nullable: true,
+        args: {
+          mcpId: t.arg.string({ required: true }),
+        },
+        resolve: async (
+          _root: unknown,
+          args: McpConfigurationResolverArgs,
+          context: ApiGraphQLContext,
+        ) => {
+          const userId = context.authenticatedUserId;
+          if (userId === undefined) {
+            throw new UnauthorizedError('Unauthorized');
+          }
+
+          return mcpService.getUserMcpConfiguration({ mcpId: args.mcpId }, { userId });
+        },
+      }),
+      userConfiguredMcps: t.field({
+        type: 'UserMcpConfigList',
+        args: {
+          limit: t.arg.int({ required: false }),
+          offset: t.arg.int({ required: false }),
+        },
+        resolve: async (
+          _root: unknown,
+          args: UserConfiguredMcpsResolverArgs,
+          context: ApiGraphQLContext,
+        ) => {
+          const userId = context.authenticatedUserId;
+          if (userId === undefined) {
+            throw new UnauthorizedError('Unauthorized');
+          }
+
+          const configs = await mcpService.listUserMcpConfigurations(
+            { limit: args.limit ?? undefined },
+            { userId },
+          );
+
+          return { items: configs };
         },
       }),
     }),

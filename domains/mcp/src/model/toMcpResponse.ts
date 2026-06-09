@@ -34,6 +34,8 @@ export const toMcpResponse = ({ mcp }: ToMcpResponseParams): McpListItemResponse
     iconPath: mcp.iconPath!,
     documentationUrl: mcp.documentationUrl ?? null,
     repositoryUrl: mcp.repositoryUrl ?? null,
+    configurationStatus: mcp.configurationStatus ?? null,
+    configSchema: mcp.configSchema ?? null,
     createdAt: toIsoString({ value: mcp.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: mcp.updatedAt!, fieldName: 'updatedAt' }),
   };

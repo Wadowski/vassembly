@@ -1,5 +1,15 @@
 @import '@vassembly/theme/src/tokens/index.scss';
 
+.discoverSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.discoverHeading {
+  color: $color-text-primary;
+}
+
 .container {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,21 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.statePage {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-6;
+}
+
+.backLink {
+  color: $color-primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.emptySchemaMessage {
+  color: $color-text-secondary;
+}

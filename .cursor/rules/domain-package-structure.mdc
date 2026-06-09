@@ -360,7 +360,7 @@ Data access layer. Encapsulates database/storage/external services interactions 
 - Import `MongoDbDAO` from `@vassembly/client-mongodb`
 - Create a DAO instance for your model's collection
 - Export with a descriptive name (e.g., `userMongodbDao`)
-- Use lowercase collection names
+- Use camelCase collection names with prural form
 
 ```typescript
 import { MongoDbDAO } from "@vassembly/client-mongodb";

@@ -1,3 +1,5 @@
+import type { McpConfigSchema } from './configSchema';
+
 export interface McpListItemResponse {
   id: string;
   slug: string;
@@ -7,6 +9,8 @@ export interface McpListItemResponse {
   iconPath: string;
   documentationUrl: string | null;
   repositoryUrl: string | null;
+  configurationStatus?: string | null;
+  configSchema?: McpConfigSchema | null;
   createdAt: string;
   updatedAt: string;
 }

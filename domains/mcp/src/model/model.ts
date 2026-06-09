@@ -1,5 +1,7 @@
 import { Model } from '@vassembly/model';
 
+import type { McpConfigSchema } from './configSchema';
+
 export class McpModel extends Model {
   slug!: string;
   name!: string;
@@ -8,4 +10,6 @@ export class McpModel extends Model {
   iconPath!: string;
   documentationUrl?: string | null;
   repositoryUrl?: string | null;
+  configurationStatus?: string | null;
+  configSchema?: McpConfigSchema | null;
 }

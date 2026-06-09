@@ -35,6 +35,7 @@
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
+    "@vassembly/domain-user-mcp-config": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",
     "@vassembly/server": "workspace:*",

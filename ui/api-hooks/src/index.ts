@@ -3,8 +3,42 @@ export * from './user';
 export * from './agents';
 export * from './aiIntegrations';
 export * from './systemAgents';
-export { useMcps, LIST_MCPS_QUERY, useAvailableTags, AVAILABLE_TAGS_QUERY } from './mcps';
-export type { McpListItem, UseMcpsResult, UseMcpsArgs, UseAvailableTagsResult } from './mcps';
+export {
+  LIST_MCPS_QUERY,
+  GET_MCPS_QUERY,
+  GET_MCP_QUERY,
+  GET_MCP_CONFIGURATION_QUERY,
+  GET_USER_CONFIGURED_MCPS_QUERY,
+  AVAILABLE_TAGS_QUERY,
+  useMcps,
+  useMcpCatalog,
+  useMcp,
+  useMcpConfiguration,
+  useUserConfiguredMcps,
+  useSaveMcpConfiguration,
+  useUpdateMcpConfiguration,
+  useDeleteMcpConfiguration,
+  useTestMcpConnection,
+  useAvailableTags,
+} from './mcps';
+export type {
+  McpListItem,
+  UseMcpsArgs,
+  UseMcpCatalogResult,
+  UseMcpsResult,
+  UseMcpResult,
+  UseMcpConfigurationResult,
+  UseUserConfiguredMcpsResult,
+  SaveConfigInput,
+  UpdateConfigInput,
+  DeleteConfigInput,
+  TestConnectionInput,
+  TestConnectionResult as McpTestConnectionResult,
+  McpConfiguration,
+  McpDetail,
+  UserConfiguredMcpItem,
+  UseAvailableTagsResult,
+} from './mcps';
 export * from './tasks';
 export { GraphQLProvider } from './graphql';
 export { HttpClientProvider, useHttpClient } from './http';
