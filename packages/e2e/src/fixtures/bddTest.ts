@@ -1,5 +1,4 @@
-import { test as base } from 'playwright-bdd';
-import { createBdd } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 import type { APIRequestContext } from '@playwright/test';
 
 import { getE2eEnvironment } from '../config/environment';

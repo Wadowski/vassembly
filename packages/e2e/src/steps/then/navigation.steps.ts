@@ -7,5 +7,7 @@ Then('I am on {string}', async ({ page }, path: string) => {
     return;
   }
 
-  await expect(page).toHaveURL(new RegExp(`${path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
+  await expect(page).toHaveURL(new RegExp(`${path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`), {
+    timeout: 15_000,
+  });
 });

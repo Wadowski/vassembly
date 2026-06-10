@@ -1,18 +1,14 @@
 import { createBdd } from 'playwright-bdd';
 
-import * as bddFixtures from '../../../../../packages/e2e/src/fixtures/bddTest';
-import * as seedUserModule from '../../../../../packages/e2e/src/seed/seedUser';
+import { bddTest, seedUser } from '@vassembly/e2e';
 
 import { seedMcp, seedMcpCatalog } from '../utils/seedMcp';
 import type { McpCatalogEntry } from '../utils/types';
 
-const { bddTest } = bddFixtures;
-const { seedUser } = seedUserModule;
-
 const { Given } = createBdd(bddTest);
 
 const E2E_USER_EMAIL = 'e2e@vassembly.test';
-const E2E_USER_PASSWORD = 'Password123';
+const E2E_USER_PASSWORD = 'SecurePass123!';
 
 Given('I am logged in', async ({ page, seed, world }) => {
   const user = await seedUser({
@@ -43,7 +39,7 @@ Given(
     const rows = table.rows();
     const entries: McpCatalogEntry[] = [];
 
-    for (let rowIndex = 1; rowIndex < rows.length; rowIndex += 1) {
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
       const row = rows[rowIndex];
       const name = row[0];
       const provider = row[1];

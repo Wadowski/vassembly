@@ -1,7 +1,10 @@
 import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 
+import { randomUUID } from 'node:crypto';
+
 import { E2E_ADMIN_EMAIL, E2E_ADMIN_PASSWORD } from '../constants';
 import type { SeedContext } from '../fixtures/types';
+import { requireWorkspaceModule } from '../utils/requireWorkspaceModule';
 import { applySeedContext } from './applySeedContext';
 import { seedUser } from './seedUser';
 import type { SeedUserResult } from './types';
@@ -18,17 +21,24 @@ export const seedAdminUser = async ({ context }: SeedAdminUserParams): Promise<S
   });
 
   applySeedContext({ context });
-  const { mongoDb } = await import('@vassembly/client-mongodb');
+  const { mongoDb } = requireWorkspaceModule<
+    typeof import('@vassembly/client-mongodb')
+  >({
+    moduleName: '@vassembly/client-mongodb',
+  });
 
   await mongoDb.db.collection('users').updateOne(
     { email: E2E_ADMIN_EMAIL },
     { $set: { role: AUTH_TOKEN_ROLE.ADMIN } },
   );
 
-  const authTokenDomain = await import('@vassembly/domain-auth-token');
-  const { randomUUID } = await import('node:crypto');
+  const authTokenDomain = requireWorkspaceModule<
+    typeof import('@vassembly/domain-auth-token')
+  >({
+    moduleName: '@vassembly/domain-auth-token',
+  });
 
-  const authToken = await authTokenDomain.default.commands.create({
+  const authToken = await authTokenDomain.commands.create({
     input: {
       role: AUTH_TOKEN_ROLE.ADMIN,
       userId: user.id,

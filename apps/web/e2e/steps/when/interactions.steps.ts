@@ -1,8 +1,6 @@
 import { createBdd } from 'playwright-bdd';
 
-import * as bddFixtures from '../../../../../packages/e2e/src/fixtures/bddTest';
-
-const { bddTest } = bddFixtures;
+import { bddTest } from '@vassembly/e2e';
 
 const { When } = createBdd(bddTest);
 

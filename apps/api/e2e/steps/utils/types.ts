@@ -1,6 +1,6 @@
 import type { APIResponse } from '@playwright/test';
 
-import type { BddWorld } from '../../../../../packages/e2e/src/fixtures/types';
+import type { BddWorld } from '@vassembly/e2e';
 
 export interface ApiBddWorld extends BddWorld {
   lastResponseBody?: unknown;

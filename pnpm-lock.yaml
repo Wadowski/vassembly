@@ -1260,6 +1260,9 @@ importers:
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
+      '@vassembly/domain-mcp':
+        specifier: workspace:*
+        version: link:../../domains/mcp
       '@vassembly/domain-user':
         specifier: workspace:*
         version: link:../../domains/user
@@ -16474,6 +16477,14 @@ packages:
       picomatch: 4.0.4
     dev: true
 
+  /tinyglobby@0.2.16:
+    resolution: {integrity: sha512-pn99VhoACYR8nFHhxqix+uvsbXineAasWm5ojXoN8xEwK5Kd3/TrhNn1wByuD52UxWRLy8pu+kRMniEi6Eq9Zg==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
+    dev: true
+
   /tinypool@0.8.4:
     resolution: {integrity: sha512-i11VH5gS6IFeLY3gMBQ00/MmLncVP7JLXOw1vlgkytLmJK7QnEr7NXf0LBdxfmNPAeyetukOk0bOYrJrFGjYJQ==}
     engines: {node: '>=14.0.0'}
@@ -17139,7 +17150,7 @@ packages:
       postcss: 8.5.8
       rollup: 4.60.0
       sass: 1.98.0
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.16
       tsx: 4.21.0
     optionalDependencies:
       fsevents: 2.3.3

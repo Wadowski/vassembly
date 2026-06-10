@@ -2,10 +2,11 @@ import { MongoClient } from 'mongodb';
 
 import { InternalError } from '@vassembly/errors';
 
+import { requireWorkspaceModule } from '../utils/requireWorkspaceModule';
 import { applySeedContext } from './applySeedContext';
 import type { SeedDatabaseParams, TeardownDatabaseParams } from './types';
 
-export const seedDatabase = async ({ context }: SeedDatabaseParams): Promise<void> => {
+export const dropDatabase = async ({ context }: SeedDatabaseParams): Promise<void> => {
   applySeedContext({ context });
 
   const client = new MongoClient(context.mongoUrl);
@@ -16,16 +17,20 @@ export const seedDatabase = async ({ context }: SeedDatabaseParams): Promise<voi
   } finally {
     await client.close();
   }
-
-  const { init } = await import('@vassembly/client-mongodb');
-  const userDomain = await import('@vassembly/domain-user');
-  await init({ indexFunctions: [userDomain.default.mongodbIndexes] });
 };
+
+export const seedDatabase = dropDatabase;
+
+export const cleanupDatabase = dropDatabase;
 
 export const teardownDatabase = async ({ context }: TeardownDatabaseParams): Promise<void> => {
   applySeedContext({ context });
 
-  const { mongoDb } = await import('@vassembly/client-mongodb');
+  const { mongoDb } = requireWorkspaceModule<
+    typeof import('@vassembly/client-mongodb')
+  >({
+    moduleName: '@vassembly/client-mongodb',
+  });
 
   try {
     await mongoDb.client.close();

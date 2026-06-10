@@ -1,11 +1,10 @@
 import { createBdd } from 'playwright-bdd';
 
-import * as bddFixtures from '../../../../../packages/e2e/src/fixtures/bddTest';
+import { bddTest } from '@vassembly/e2e';
 
 import { buildAuthHeaders, sendJsonRequest, storeApiResponse } from '../utils/requestUtils';
 import type { ApiBddWorld } from '../utils/types';
 
-const { bddTest } = bddFixtures;
 const { When } = createBdd(bddTest);
 
 When(

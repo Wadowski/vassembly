@@ -1,4 +1,5 @@
-import type { SeedContext } from '../../../../../packages/e2e/src/fixtures/types';
+import type { SeedContext } from '@vassembly/e2e';
+import { requireWorkspaceModule } from '@vassembly/e2e';
 
 import type { EnsureMcpIndexesParams, McpCatalogEntry, SeedMcpParams } from './types';
 
@@ -18,8 +19,14 @@ const toSlug = (name: string): string =>
 export const ensureMcpIndexes = async ({ context }: EnsureMcpIndexesParams): Promise<void> => {
   applySeedContext({ context });
 
-  const { init } = await import('@vassembly/client-mongodb');
-  const mcpDomain = await import('@vassembly/domain-mcp');
+  const { init } = requireWorkspaceModule<
+    typeof import('@vassembly/client-mongodb')
+  >({
+    moduleName: '@vassembly/client-mongodb',
+  });
+  const mcpDomain = requireWorkspaceModule<typeof import('@vassembly/domain-mcp')>({
+    moduleName: '@vassembly/domain-mcp',
+  });
 
   await init({ indexFunctions: [mcpDomain.mongodbIndexes] });
 };
@@ -32,7 +39,11 @@ export const seedMcp = async ({
 }: SeedMcpParams): Promise<void> => {
   await ensureMcpIndexes({ context });
 
-  const { mcpMongodbDao, mcpFactory } = await import('@vassembly/domain-mcp');
+  const { mcpMongodbDao, mcpFactory } = requireWorkspaceModule<
+    typeof import('@vassembly/domain-mcp')
+  >({
+    moduleName: '@vassembly/domain-mcp',
+  });
 
   const existing = await mcpMongodbDao.collection.findOne({ name });
   if (existing !== null) {

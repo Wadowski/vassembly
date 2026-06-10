@@ -1,14 +1,20 @@
-require('tsx/cjs');
+const path = require('node:path');
+const { createRequire } = require('node:module');
 
-const { createE2ePlaywrightConfig } = require('../../packages/e2e/src/config/createE2ePlaywrightConfig.ts');
+const nodeRequire = createRequire(path.resolve('package.json'));
+const e2ePackageRoot = path.dirname(nodeRequire.resolve('@vassembly/e2e/package.json'));
+const { createE2ePlaywrightConfig } = require(path.join(
+  e2ePackageRoot,
+  'createE2ePlaywrightConfig.cjs',
+));
 
 module.exports = createE2ePlaywrightConfig({
   appName: 'api',
   featuresDir: 'e2e/features',
   stepsDirs: [
-    '../../packages/e2e/src/steps/given',
-    '../../packages/e2e/src/steps/when',
-    '../../packages/e2e/src/steps/then',
+    path.join(e2ePackageRoot, 'src/steps/given'),
+    path.join(e2ePackageRoot, 'src/steps/when'),
+    path.join(e2ePackageRoot, 'src/steps/then'),
     'e2e/steps/given',
     'e2e/steps/when',
     'e2e/steps/then',

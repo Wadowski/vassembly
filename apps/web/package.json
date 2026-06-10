@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "eslint --max-warnings 0",
     "test": "vitest run",
-    "bddgen": "bddgen",
-    "test:e2e": "bddgen && playwright test",
-    "test:e2e:ui": "bddgen && playwright test --ui",
-    "test:e2e:headed": "bddgen && playwright test --headed",
+    "bddgen": "node -r tsx/cjs node_modules/playwright-bdd/dist/cli/index.js",
+    "test:e2e": "bddgen && node -r tsx/cjs node_modules/@playwright/test/cli.js test",
+    "test:e2e:ui": "bddgen && node -r tsx/cjs node_modules/@playwright/test/cli.js test --ui",
+    "test:e2e:headed": "bddgen && node -r tsx/cjs node_modules/@playwright/test/cli.js test --headed",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {

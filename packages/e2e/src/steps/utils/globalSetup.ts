@@ -1,4 +1,5 @@
 import { getE2eEnvironment } from '../../config/environment';
+import { seedDatabase } from '../../seed/seedDatabase';
 import { isMongoReachable, startMongoDocker } from './mongoDocker';
 
 const MONGO_STARTUP_RETRIES = 30;
@@ -28,6 +29,13 @@ const globalSetup = async (): Promise<void> => {
     await startMongoDocker();
     await waitForMongo(environment.mongoUrl);
   }
+
+  await seedDatabase({
+    context: {
+      mongoUrl: environment.mongoUrl,
+      mongoDatabase: environment.mongoDatabase,
+    },
+  });
 };
 
 export default globalSetup;

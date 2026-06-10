@@ -1,3 +1,5 @@
+import { requireWorkspaceModule } from '@vassembly/e2e';
+
 import type { EnsureMcpIndexesParams, SeedMcpParams } from './types';
 
 const DEFAULT_MCP_ICON_PATH = '/mcps/gmail.svg';
@@ -16,8 +18,14 @@ const toSlug = (name: string): string =>
 export const ensureMcpIndexes = async ({ context }: EnsureMcpIndexesParams): Promise<void> => {
   applySeedContext({ context });
 
-  const { init } = await import('@vassembly/client-mongodb');
-  const mcpDomain = await import('@vassembly/domain-mcp');
+  const { init } = requireWorkspaceModule<
+    typeof import('@vassembly/client-mongodb')
+  >({
+    moduleName: '@vassembly/client-mongodb',
+  });
+  const mcpDomain = requireWorkspaceModule<typeof import('@vassembly/domain-mcp')>({
+    moduleName: '@vassembly/domain-mcp',
+  });
 
   await init({ indexFunctions: [mcpDomain.mongodbIndexes] });
 };
@@ -30,7 +38,11 @@ export const seedMcp = async ({
 }: SeedMcpParams): Promise<string> => {
   await ensureMcpIndexes({ context });
 
-  const { mcpMongodbDao, mcpFactory } = await import('@vassembly/domain-mcp');
+  const { mcpMongodbDao, mcpFactory } = requireWorkspaceModule<
+    typeof import('@vassembly/domain-mcp')
+  >({
+    moduleName: '@vassembly/domain-mcp',
+  });
 
   const existing = await mcpMongodbDao.collection.findOne({ name });
   if (existing !== null && existing.id !== undefined) {

@@ -1,12 +1,11 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 
-import * as bddFixtures from '../../../../../packages/e2e/src/fixtures/bddTest';
+import { bddTest } from '@vassembly/e2e';
 
 import { getNestedValue, resolveItemsArray } from '../utils/nestedValue';
 import type { ApiBddWorld } from '../utils/types';
 
-const { bddTest } = bddFixtures;
 const { Then } = createBdd(bddTest);
 
 Then('the response contains {string} with value {string}', async ({ world }, field: string, value: string) => {

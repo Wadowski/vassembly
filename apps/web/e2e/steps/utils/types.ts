@@ -1,4 +1,4 @@
-import type { SeedContext } from '../../../../../packages/e2e/src/fixtures/types';
+import type { SeedContext } from '@vassembly/e2e';
 
 export interface McpCatalogEntry {
   name: string;

@@ -1,13 +1,10 @@
 import { createBdd } from 'playwright-bdd';
 
-import * as bddFixtures from '../../../../../packages/e2e/src/fixtures/bddTest';
-import * as seedUserModule from '../../../../../packages/e2e/src/seed/seedUser';
+import { bddTest, seedUser } from '@vassembly/e2e';
 
 import { seedMcp } from '../utils/seedMcp';
 import type { ApiBddWorld } from '../utils/types';
 
-const { bddTest } = bddFixtures;
-const { seedUser } = seedUserModule;
 const { Given } = createBdd(bddTest);
 
 const E2E_USER_EMAIL = 'e2e-api@vassembly.test';

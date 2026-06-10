@@ -7,6 +7,7 @@ import {
   E2E_DEFAULT_FIRST_NAME,
   E2E_DEFAULT_LAST_NAME,
 } from '../constants';
+import { requireWorkspaceModule } from '../utils/requireWorkspaceModule';
 import { applySeedContext } from './applySeedContext';
 import type { SeedUserParams, SeedUserResult } from './types';
 
@@ -17,22 +18,33 @@ export const seedUser = async ({
 }: SeedUserParams): Promise<SeedUserResult> => {
   applySeedContext({ context });
 
-  const userDomain = await import('@vassembly/domain-user');
-  const authTokenDomain = await import('@vassembly/domain-auth-token');
-
-  const result = await userDomain.default.commands.create({
-    email,
-    password,
-    firstName: E2E_DEFAULT_FIRST_NAME,
-    lastName: E2E_DEFAULT_LAST_NAME,
+  const userDomain = requireWorkspaceModule<typeof import('@vassembly/domain-user')>({
+    moduleName: '@vassembly/domain-user',
+  });
+  const authTokenDomain = requireWorkspaceModule<
+    typeof import('@vassembly/domain-auth-token')
+  >({
+    moduleName: '@vassembly/domain-auth-token',
   });
 
-  const userId = result.data.id;
+  const existingUser = await userDomain.default.queries.getByEmail({ email });
+
+  let userId = existingUser?.id;
+  if (!userId) {
+    const result = await userDomain.default.commands.create({
+      email,
+      password,
+      firstName: E2E_DEFAULT_FIRST_NAME,
+      lastName: E2E_DEFAULT_LAST_NAME,
+    });
+    userId = result.data.id;
+  }
+
   if (!userId) {
     throw new InternalError('Seeded user is missing an id');
   }
 
-  const authToken = await authTokenDomain.default.commands.create({
+  const authToken = await authTokenDomain.commands.create({
     input: {
       role: AUTH_TOKEN_ROLE.USER,
       userId,
