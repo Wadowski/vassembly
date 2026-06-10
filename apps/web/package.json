@@ -1,7 +1,6 @@
 {
   "name": "@vassembly/web",
   "version": "0.1.0",
-  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
@@ -9,6 +8,10 @@
     "start": "next start",
     "lint": "eslint --max-warnings 0",
     "test": "vitest run",
+    "bddgen": "bddgen",
+    "test:e2e": "bddgen && playwright test",
+    "test:e2e:ui": "bddgen && playwright test --ui",
+    "test:e2e:headed": "bddgen && playwright test --headed",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -51,6 +54,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/e2e": "workspace:*",
     "@next/env": "16.1.0",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.3.2",
@@ -63,7 +69,9 @@
     "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^9.39.1",
     "jsdom": "20",
+    "playwright-bdd": "^8.0.0",
     "sass": "^1.86.0",
+    "tsx": "^4.21.0",
     "typescript": "5.9.2",
     "vitest": "^4.1.5"
   }

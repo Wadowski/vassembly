@@ -7,6 +7,9 @@
     "lint": "turbo run lint",
     "storybook": "cd ui/storybook && pnpm storybook",
     "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "test:e2e:web": "turbo run test:e2e --filter=@vassembly/web",
+    "test:e2e:api": "turbo run test:e2e --filter=@vassembly/api",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },

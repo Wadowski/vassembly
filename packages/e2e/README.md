@@ -1,0 +1,77 @@
+# @vassembly/e2e
+
+Shared Playwright BDD framework for end-to-end tests across Vassembly apps.
+
+## Overview
+
+This package provides:
+
+- Playwright + `playwright-bdd` configuration factory
+- Reusable Gherkin step definitions (auth, navigation, forms, API)
+- MongoDB seed helpers for test data
+- Global setup for MongoDB via docker-compose
+
+## Usage
+
+### Web app example (`apps/web/e2e`)
+
+```typescript
+import { createE2ePlaywrightConfig } from '@vassembly/e2e';
+
+export default createE2ePlaywrightConfig({
+  appName: 'web',
+  featuresDir: 'e2e/features',
+  stepsDirs: ['../../packages/e2e/src/steps', 'e2e/steps'],
+  baseURL: 'http://localhost:3000',
+  webServers: [{ package: '@vassembly/web', url: 'http://localhost:3000' }],
+});
+```
+
+### API app example (`apps/api/e2e`)
+
+```typescript
+import { createE2ePlaywrightConfig } from '@vassembly/e2e';
+
+export default createE2ePlaywrightConfig({
+  appName: 'api',
+  featuresDir: 'e2e/features',
+  stepsDirs: ['../../packages/e2e/src/steps', 'e2e/steps'],
+  baseURL: 'http://localhost:5000',
+  webServers: [{ package: '@vassembly/api', url: 'http://localhost:5000/health' }],
+});
+```
+
+Run tests from the app directory:
+
+```bash
+npx bddgen && npx playwright test
+```
+
+## Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MONGODB_URL` | `mongodb://user:pass@localhost:27017/?directConnection=true` | MongoDB connection string |
+| `MONGODB_DATABASE` | `vassembly_e2e` | Test database name |
+| `JWT_SECRET` | `dev-jwt-secret` | JWT signing secret |
+| `E2E_WEB_BASE_URL` | `http://localhost:3000` | Web app base URL |
+| `E2E_API_BASE_URL` | `http://localhost:5000` | API base URL |
+| `E2E_STOP_MONGO` | unset | Set to stop MongoDB docker-compose on teardown |
+
+## MongoDB setup
+
+Start MongoDB before running E2E tests:
+
+```bash
+pnpm --filter @vassembly/client-mongodb dev
+```
+
+Global setup starts docker-compose automatically if MongoDB is not reachable.
+
+## Public API
+
+- `createE2ePlaywrightConfig` — Playwright config factory
+- `getE2eEnvironment` — resolve URLs and credentials from env
+- `bddTest` — extended Playwright test fixture
+- `seedDatabase`, `seedUser`, `teardownDatabase` — data seeding helpers
+- Types: `BddWorld`, `AuthContext`, `SeedContext`

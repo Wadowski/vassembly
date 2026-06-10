@@ -2,7 +2,13 @@
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
   "envMode": "loose",
-  "globalDependencies": [".env"],
+  "globalDependencies": [
+    ".env",
+    ".env.e2e.example",
+    "**/vitest.config.ts",
+    "**/playwright.config.ts"
+  ],
+  "globalEnv": ["CI"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -14,6 +20,18 @@
     },
     "test": {
       "dependsOn": ["^test"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": [
+        "MONGODB_URL",
+        "MONGODB_DATABASE",
+        "JWT_SECRET",
+        "E2E_WEB_BASE_URL",
+        "E2E_API_BASE_URL",
+        "NODE_ENV"
+      ]
     },
     "check-types": {
       "dependsOn": ["^check-types"]

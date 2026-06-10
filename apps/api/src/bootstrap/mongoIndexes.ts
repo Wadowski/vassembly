@@ -1,7 +1,7 @@
 import { init as initMongoDb } from '@vassembly/client-mongodb';
 import { mongodbIndexes as agentMongodbIndexes } from '@vassembly/domain-agent';
 import { mongodbIndexes as aiIntegrationMongodbIndexes } from '@vassembly/domain-ai-integration';
-import mcpDomain from '@vassembly/domain-mcp';
+import { mongodbIndexes as mcpMongodbIndexes } from '@vassembly/domain-mcp';
 import { mongodbIndexes as systemAgentMongodbIndexes } from '@vassembly/domain-system-agent';
 import { mongodbIndexes as taskMongodbIndexes } from '@vassembly/domain-task';
 import { setupUserMcpConfigIndexes } from '@vassembly/domain-user-mcp-config';
@@ -43,7 +43,7 @@ export const getApiMongoIndexFunctions = (): Array<() => Promise<void>> => [
   aiIntegrationMongodbIndexes,
   systemAgentMongodbIndexes,
   taskMongodbIndexes,
-  mcpDomain.mongodbIndexes,
+  mcpMongodbIndexes,
   setupUserMcpConfigIndexes,
 ];
 

@@ -8,6 +8,9 @@
 
 # testing
 /coverage
+.features-gen/
+.playwright/
+playwright-report/
 
 # next.js
 /.next/
