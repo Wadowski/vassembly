@@ -11,4 +11,4 @@ export interface RequireWorkspaceModuleParams {
 export const requireWorkspaceModule = <T>({
   moduleName,
 }: RequireWorkspaceModuleParams): T =>
-  workspaceRequire(moduleName) as T;
+  workspaceRequire(workspaceRequire.resolve(moduleName)) as T;

@@ -1,2 +1,7 @@
-export { ensureMcpIndexes, seedMcp, seedMcpCatalog } from './seedMcp';
-export type { EnsureMcpIndexesParams, McpCatalogEntry, SeedMcpParams } from './types';
+export { ensureMcpIndexes, getMcpIdBySlug, seedMcp, seedMcpCatalog } from './seedMcp';
+export type {
+  EnsureMcpIndexesParams,
+  GetMcpIdBySlugParams,
+  SeedMcpCatalogParams,
+  SeedMcpParams,
+} from './types';

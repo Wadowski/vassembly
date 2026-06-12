@@ -1,6 +1,8 @@
 import mcpDomain from '@vassembly/domain-mcp';
 import { UnauthorizedError } from '@vassembly/errors';
 
+import { enrichMcpListWithUserStatus } from '../enrichMcpListWithUserStatus';
+
 import type { ListMcpsInput, ListMcpsResult, ServiceContext } from './types';
 
 export const listMcps = async (
@@ -11,5 +13,14 @@ export const listMcps = async (
     throw new UnauthorizedError('Authentication required');
   }
 
-  return mcpDomain.queries.getList(args);
+  const catalogResult = await mcpDomain.queries.getList(args);
+  const enrichedItems = await enrichMcpListWithUserStatus(
+    { mcps: catalogResult.items },
+    { userId: context.authenticatedUserId },
+  );
+
+  return {
+    ...catalogResult,
+    items: enrichedItems,
+  };
 };

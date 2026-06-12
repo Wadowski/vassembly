@@ -1,6 +1,6 @@
 ---
 name: documentation-writer
-model: default
+model: inherit
 description: Documentation specialist for maintaining package READMEs. Proactively updates package READMEs after code changes to reflect the current API, exposed functions/components, models, and dependencies with clear, concise descriptions.
 ---
 

@@ -2,32 +2,36 @@ const path = require('node:path');
 const { createRequire } = require('node:module');
 
 const nodeRequire = createRequire(path.resolve('package.json'));
-const e2ePackageRoot = path.dirname(nodeRequire.resolve('@vassembly/e2e/package.json'));
+const e2ePackageRoot = path.dirname(nodeRequire.resolve('../../packages/e2e/package.json'));
 const { createE2ePlaywrightConfig } = require(path.join(
   e2ePackageRoot,
   'createE2ePlaywrightConfig.cjs',
 ));
 
-module.exports = createE2ePlaywrightConfig({
-  appName: 'web',
-  featuresDir: 'e2e/features',
-  stepsDirs: [
-    path.join(e2ePackageRoot, 'src/steps/given'),
-    path.join(e2ePackageRoot, 'src/steps/when'),
-    path.join(e2ePackageRoot, 'src/steps/then'),
-    'e2e/steps/given',
-    'e2e/steps/when',
-    'e2e/steps/then',
-  ],
-  baseURL: process.env.E2E_WEB_BASE_URL ?? 'http://localhost:3000',
-  webServers: [
-    {
-      package: '@vassembly/api',
-      url: 'http://localhost:5000/docs',
-    },
-    {
-      package: '@vassembly/web',
-      url: 'http://localhost:3000',
-    },
-  ],
-});
+module.exports = {
+  ...createE2ePlaywrightConfig({
+    appName: 'web',
+    featuresDir: 'e2e/features',
+    stepsDirs: [
+      path.join(e2ePackageRoot, 'src/steps/given'),
+      path.join(e2ePackageRoot, 'src/steps/when'),
+      path.join(e2ePackageRoot, 'src/steps/then'),
+      'e2e/steps/given',
+      'e2e/steps/when',
+      'e2e/steps/then',
+    ],
+    baseURL: process.env.E2E_WEB_BASE_URL ?? 'http://localhost:3000',
+    webServers: [
+      {
+        package: '@vassembly/api',
+        url: 'http://localhost:5000/docs',
+      },
+      {
+        package: '@vassembly/web',
+        url: 'http://localhost:3000',
+      },
+    ],
+  }),
+  timeout: 60_000,
+  workers: 2,
+};

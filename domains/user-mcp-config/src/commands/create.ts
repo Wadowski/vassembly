@@ -1,4 +1,5 @@
 import { ConflictError } from '@vassembly/errors';
+import { ObjectId } from 'mongodb';
 
 import { userMcpConfigDao } from '../clients/mongodb';
 import { USER_MCP_CONFIG_STATUS } from '../constants';
@@ -31,6 +32,7 @@ export const createUserMcpConfig = async (input: CreateCommandInput): Promise<Us
     input: { mcpId, fieldValues },
     userId,
   });
+  model.id = new ObjectId().toString();
   model.status = USER_MCP_CONFIG_STATUS.Configured;
   model.lastTestedAt = new Date();
   model.fieldValues = encryptPasswordFields({ fieldValues, schema });

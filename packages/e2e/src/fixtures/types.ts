@@ -12,6 +12,10 @@ export interface BddWorld {
   baseURL: string;
   lastResponse?: APIResponse;
   auth?: AuthContext | null;
+  resetToken?: string;
+  agentId?: string;
+  taskId?: string;
+  storedFields?: Record<string, string>;
 }
 
 export interface SeedContext {

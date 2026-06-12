@@ -1,9 +1,13 @@
-import type { SeedContext } from '@vassembly/e2e';
+import type { BddWorld, SeedContext } from '@vassembly/e2e';
 
-export interface McpCatalogEntry {
-  name: string;
-  provider: string;
-  description: string;
+export interface WebBddWorld extends BddWorld {
+  agentId?: string;
+  integrationCredentialId?: string;
+  taskId?: string;
+  otherUserId?: string;
+  otherUserTaskId?: string;
+  showDeletedFilter?: boolean;
+  pollingRequestCount?: number;
 }
 
 export interface SeedMcpParams {
@@ -11,6 +15,15 @@ export interface SeedMcpParams {
   name: string;
   provider: string;
   description: string;
+}
+
+export interface SeedMcpCatalogParams {
+  context: SeedContext;
+}
+
+export interface GetMcpIdBySlugParams {
+  context: SeedContext;
+  slug: string;
 }
 
 export interface EnsureMcpIndexesParams {

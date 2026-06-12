@@ -11,6 +11,7 @@
 .features-gen/
 .playwright/
 playwright-report/
+test-results/
 
 # next.js
 /.next/

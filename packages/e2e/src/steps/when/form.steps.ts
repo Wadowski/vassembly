@@ -1,16 +1,31 @@
 import { When } from '../../fixtures/bddTest';
 
+const FORM_LABEL_ALIASES: Record<string, string> = {
+  Instructions: 'Rule',
+};
+
+const resolveFormLabel = (label: string): string => FORM_LABEL_ALIASES[label] ?? label;
+
+When('I check {string}', async ({ page }, label: string) => {
+  if (!page) {
+    return;
+  }
+
+  await page.getByRole('checkbox', { name: label }).check();
+});
+
 When('I fill in {string} with {string}', async ({ page }, label: string, value: string) => {
   if (!page) {
     return;
   }
 
-  const labelField = page.getByLabel(label, { exact: true });
+  const resolvedLabel = resolveFormLabel(label);
+  const labelField = page.getByLabel(resolvedLabel, { exact: true });
   try {
     await labelField.fill(value, { timeout: 2_000 });
     return;
   } catch {
-    await page.getByRole('textbox', { name: label, exact: true }).fill(value);
+    await page.getByRole('textbox', { name: resolvedLabel, exact: true }).fill(value);
   }
 });
 
@@ -19,7 +34,8 @@ When('I click {string}', async ({ page }, text: string) => {
     return;
   }
 
-  await page.getByRole('button', { name: text }).click();
+  const button = page.getByRole('button', { name: new RegExp(text, 'i') });
+  await button.first().click();
 });
 
 When('I fill in the form:', async ({ page }, table) => {

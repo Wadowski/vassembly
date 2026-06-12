@@ -6,7 +6,39 @@
     "tags": ["productivity", "email", "google-workspace", "calendar", "documents"],
     "iconPath": "/mcps/gmail.svg",
     "documentationUrl": "https://glama.ai/mcp/servers/taylorwilsdon/google_workspace_mcp",
-    "repositoryUrl": "https://github.com/taylorwilsdon/google_workspace_mcp"
+    "repositoryUrl": "https://github.com/taylorwilsdon/google_workspace_mcp",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "clientId",
+          "label": "Client ID",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "clientSecret",
+          "label": "Client Secret",
+          "type": "password",
+          "required": true
+        },
+        {
+          "key": "scopes",
+          "label": "Access Level",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "readonly", "label": "Read only" },
+            { "value": "full", "label": "Full access" }
+          ]
+        },
+        {
+          "key": "acceptTerms",
+          "label": "I accept the provider terms",
+          "type": "checkbox",
+          "required": true
+        }
+      ]
+    }
   },
   {
     "slug": "brave-search-mcp",

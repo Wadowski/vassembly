@@ -910,4 +910,30 @@ flowchart LR
 
 ---
 
-*Next step: Project manager delegates Todo Plan items to specialized subagents starting with parallel domain scaffold (todo 1) and catalog extension (todo 2).*
+## Gherkin Coverage Status (2026-06-11)
+
+Cross-feature rollup: [`gherkin-implementation-plan/architecture.md`](../gherkin-implementation-plan/architecture.md).
+
+| PRD scenario | Implementation | E2E | Remaining work |
+|--------------|----------------|-----|----------------|
+| Configured/pending badges + sort | UI done; GraphQL enrichment **not wired** in `listMcps` | Stale | Wire `enrichMcpListWithUserStatus` in `services/mcp/src/handlers/listMcps/index.ts` |
+| First-time configure | Done | Missing | Add Gmail `configSchema` to seed; web `mcp-configuration.feature` |
+| Update existing config | Done | Missing | E2E with saved config seed step |
+| Remove configuration | Done | Missing | E2E confirmation dialog step |
+| Filter + configured sort | Done | Missing | E2E search assertion |
+| Documentation link new tab | Done | Missing | Playwright `page.context().waitForEvent('page')` |
+| Empty schema message | Done | Missing | Seed MCP with empty `configSchema` |
+| Validation edges (required, URL, save gate, edit clears test) | Done | Missing | Web E2E form steps |
+| Session/network/server/provider errors | Done | Missing | API mock or test adapter for failure paths |
+| Cross-user isolation | Done | Missing | API E2E two-user seed |
+
+**E2E files to rewrite/create:**
+
+- `apps/api/e2e/features/mcps/configuration-graphql.feature` — use `McpsList.items`, `configSchema`, `configurationStatus`
+- `apps/web/e2e/features/mcps/mcp-listing.feature` — card navigation to `/mcps/[id]`, not drawer
+- `apps/web/e2e/features/mcps/mcp-configuration.feature` — full PRD primary + edge scenarios
+- `apps/api/e2e/features/mcps/configuration-rest.feature` — POST/PATCH/DELETE/test endpoints
+
+---
+
+*Next step: Complete P0 wiring (list enrichment + Gmail seed), then MCP E2E alignment per master plan.*

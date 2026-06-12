@@ -66,7 +66,7 @@ describe('updateUserMcpConfiguration', () => {
           { mcpId: mockMcpId, fieldValues: { clientId: 'hacked' } },
           differentUserContext,
         ),
-      ).rejects.toThrow(/Unauthorized/i);
+      ).rejects.toThrow(/Configuration not found/i);
     });
   });
 });

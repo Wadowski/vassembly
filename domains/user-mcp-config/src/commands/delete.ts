@@ -1,5 +1,3 @@
-import { UnauthorizedError } from '@vassembly/errors';
-
 import { userMcpConfigDao } from '../clients/mongodb';
 
 export interface DeleteCommandInput {
@@ -14,14 +12,10 @@ export interface DeleteCommandResult {
 export const deleteUserMcpConfig = async (input: DeleteCommandInput): Promise<DeleteCommandResult> => {
   const { userId, mcpId } = input;
 
-  const config = await userMcpConfigDao.getByMcpId({ mcpId });
+  const config = await userMcpConfigDao.getByUserAndMcpId({ userId, mcpId });
 
   if (!config) {
     return { success: true };
-  }
-
-  if (config.userId !== userId) {
-    throw new UnauthorizedError('Unauthorized');
   }
 
   await userMcpConfigDao.remove({ userId, mcpId });

@@ -10,6 +10,38 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
     iconPath: '/mcps/gmail.svg',
     documentationUrl: 'https://glama.ai/mcp/servers/taylorwilsdon/google_workspace_mcp',
     repositoryUrl: 'https://github.com/taylorwilsdon/google_workspace_mcp',
+    configSchema: {
+      fields: [
+        {
+          key: 'clientId',
+          label: 'Client ID',
+          type: 'text',
+          required: true,
+        },
+        {
+          key: 'clientSecret',
+          label: 'Client Secret',
+          type: 'password',
+          required: true,
+        },
+        {
+          key: 'scopes',
+          label: 'Access Level',
+          type: 'select',
+          required: true,
+          options: [
+            { value: 'readonly', label: 'Read only' },
+            { value: 'full', label: 'Full access' },
+          ],
+        },
+        {
+          key: 'acceptTerms',
+          label: 'I accept the provider terms',
+          type: 'checkbox',
+          required: true,
+        },
+      ],
+    },
   },
   {
     slug: 'brave-search-mcp',
@@ -35,6 +67,7 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
           label: 'Transport Mode',
           type: 'select',
           description: 'Transport mode for MCP server',
+          required: false,
           defaultValue: 'stdio',
           options: [
             { value: 'stdio', label: 'STDIO (Default)' },
@@ -46,6 +79,7 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
           label: 'Port',
           type: 'text',
           description: 'HTTP server port (default: 8000)',
+          required: false,
           placeholder: '8000',
           pattern: '^[0-9]{1,5}$',
         },
@@ -54,6 +88,7 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
           label: 'Host',
           type: 'text',
           description: 'HTTP server host (default: 0.0.0.0)',
+          required: false,
           placeholder: '0.0.0.0',
         },
         {
@@ -61,6 +96,7 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
           label: 'Log Level',
           type: 'select',
           description: 'Desired logging level',
+          required: false,
           defaultValue: 'info',
           options: [
             { value: 'debug', label: 'Debug' },
@@ -79,6 +115,7 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
           type: 'text',
           description:
             'Space-separated whitelist of tools to enable (e.g., "brave_web_search brave_news_search")',
+          required: false,
           placeholder: 'Leave empty to enable all tools',
         },
         {
@@ -87,6 +124,7 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
           type: 'text',
           description:
             'Space-separated blacklist of tools to disable (e.g., "brave_image_search")',
+          required: false,
           placeholder: 'Leave empty to disable no tools',
         },
         {
@@ -94,6 +132,7 @@ export const VALID_SEED_ENTRIES: McpSeedEntry[] = [
           label: 'Stateless Mode',
           type: 'checkbox',
           description: 'HTTP stateless mode (recommended for Amazon Bedrock)',
+          required: false,
           defaultValue: true,
         },
       ],

@@ -1,22 +1,37 @@
 @mcps @smoke
 Feature: MCP Listing Page
 
-  Scenario: Display list of configured MCPs
+  Background:
     Given I am logged in
-    And an MCP catalog exists with the following entries:
-      | name              | provider   | description                    |
-      | Claude 3 Opus     | Anthropic  | Most capable model             |
-      | GPT-4 Turbo       | OpenAI     | Advanced reasoning capabilities |
-    When I navigate to "/mcps"
-    Then I see "Claude 3 Opus"
-    And I see "GPT-4 Turbo"
-    And I see "Anthropic"
-    And I see "OpenAI"
+    And the MCP catalog is seeded
 
-  Scenario: Open MCP details drawer
-    Given I am logged in
-    And an MCP exists with name "Claude 3 Opus"
+  Scenario: Display MCP catalog cards
     When I navigate to "/mcps"
-    And I click on the MCP "Claude 3 Opus"
-    Then I see the MCP details drawer
-    And I see "Claude 3 Opus" in the drawer
+    Then I see "Gmail MCP"
+    And I see "Brave Search MCP"
+    And I see "No MCPs configured yet. Browse below to get started."
+
+  Scenario: Open MCP detail page from catalog card
+    When I navigate to "/mcps"
+    And I click on the MCP "Brave Search MCP"
+    Then I see the MCP detail page
+    And I see "Brave Search MCP" on the MCP detail page
+    And I see "Comprehensive search capabilities" on the MCP detail page
+
+  Scenario: Search MCP catalog
+    When I navigate to "/mcps"
+    And I search MCPs for "Brave"
+    Then I see "Brave Search MCP"
+    And I do not see the MCP "Gmail MCP"
+
+  Scenario: Filter MCP catalog by tag
+    When I navigate to "/mcps"
+    And I filter MCPs by tag "search"
+    Then I see "Brave Search MCP"
+    And I do not see the MCP "Gmail MCP"
+
+  Scenario: Show configured MCP in YOUR MCPs section
+    Given I have configured the MCP with slug "brave-search-mcp"
+    When I navigate to "/mcps"
+    Then I see "Brave Search MCP"
+    And I do not see "No MCPs configured yet. Browse below to get started."

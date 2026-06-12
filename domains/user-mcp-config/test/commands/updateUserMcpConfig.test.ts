@@ -101,7 +101,7 @@ describe('updateUserMcpConfig', () => {
           fieldValues: { clientId: 'hacked' },
           schema: mockGmailSchema,
         }),
-      ).rejects.toThrow(/Unauthorized/i);
+      ).rejects.toThrow(/Configuration not found/i);
     });
   });
 });

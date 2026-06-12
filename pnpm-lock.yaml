@@ -100,15 +100,9 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@playwright/test':
-        specifier: ^1.52.0
-        version: 1.60.0
       '@types/node':
         specifier: ^22.19.7
         version: 22.19.15
-      '@vassembly/e2e':
-        specifier: workspace:*
-        version: link:../../packages/e2e
       '@vassembly/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -124,9 +118,6 @@ importers:
       fastify-type-provider-zod:
         specifier: ^4.0.2
         version: 4.0.2(fastify@5.8.4)(zod@4.3.6)
-      playwright-bdd:
-        specifier: ^8.0.0
-        version: 8.5.1(@playwright/test@1.60.0)
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -315,6 +306,9 @@ importers:
       '@vassembly/domain-mcp':
         specifier: workspace:*
         version: link:../../domains/mcp
+      '@vassembly/domain-user-mcp-config':
+        specifier: workspace:*
+        version: link:../../domains/user-mcp-config
       '@vassembly/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
@@ -1245,6 +1239,9 @@ importers:
 
   packages/e2e:
     dependencies:
+      '@vassembly/cache':
+        specifier: workspace:*
+        version: link:../cache
       '@vassembly/client-jwt':
         specifier: workspace:*
         version: link:../client-jwt
@@ -1257,15 +1254,30 @@ importers:
       '@vassembly/constants':
         specifier: workspace:*
         version: link:../constants
+      '@vassembly/domain-agent':
+        specifier: workspace:*
+        version: link:../../domains/agent
+      '@vassembly/domain-ai-integration':
+        specifier: workspace:*
+        version: link:../../domains/ai-integration
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token
       '@vassembly/domain-mcp':
         specifier: workspace:*
         version: link:../../domains/mcp
+      '@vassembly/domain-system-agent':
+        specifier: workspace:*
+        version: link:../../domains/system-agent
+      '@vassembly/domain-task':
+        specifier: workspace:*
+        version: link:../../domains/task
       '@vassembly/domain-user':
         specifier: workspace:*
         version: link:../../domains/user
+      '@vassembly/domain-user-mcp-config':
+        specifier: workspace:*
+        version: link:../../domains/user-mcp-config
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../errors

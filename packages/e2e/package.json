@@ -13,10 +13,17 @@
   "dependencies": {
     "@vassembly/client-jwt": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
+    "@vassembly/cache": "workspace:*",
     "@vassembly/config": "workspace:*",
     "@vassembly/constants": "workspace:*",
+    "@vassembly/domain-agent": "workspace:*",
+    "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-auth-token": "workspace:*",
+    "@vassembly/domain-system-agent": "workspace:*",
+    "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/domain-task": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
+    "@vassembly/domain-user-mcp-config": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "mongodb": "^7.0.0"
   },

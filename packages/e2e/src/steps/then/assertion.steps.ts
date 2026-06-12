@@ -7,7 +7,8 @@ Then('I see {string}', async ({ page }, text: string) => {
     return;
   }
 
-  await expect(page.getByText(text)).toBeVisible();
+  const locator = page.getByText(text, { exact: false });
+  await expect(locator.first()).toBeVisible();
 });
 
 Then('I do not see {string}', async ({ page }, text: string) => {

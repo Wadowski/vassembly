@@ -10,21 +10,15 @@
     "check-types": "tsc --noEmit",
     "start": "tsx src/routes/index.ts",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "bddgen": "node -r tsx/cjs node_modules/playwright-bdd/dist/cli/index.js",
-    "test:e2e": "bddgen && node -r tsx/cjs node_modules/@playwright/test/cli.js test",
-    "test:e2e:debug": "bddgen && node -r tsx/cjs node_modules/@playwright/test/cli.js test --debug"
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0",
     "@types/node": "^22.19.7",
-    "@vassembly/e2e": "workspace:*",
     "@vassembly/eslint-config": "workspace:*",
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
     "fastify": "^5.3.2",
     "fastify-type-provider-zod": "^4.0.2",
-    "playwright-bdd": "^8.0.0",
     "tsx": "^4.21.0",
     "typescript": "5.9.2",
     "vitest": "^2.0.0"

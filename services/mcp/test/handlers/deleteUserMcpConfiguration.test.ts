@@ -32,7 +32,7 @@ describe('deleteUserMcpConfiguration', () => {
   });
 
   describe('auth', () => {
-    it('should reject delete from a different user', async () => {
+    it('should not delete another user configuration when a different user attempts delete', async () => {
       await createUserMcpConfiguration(
         { mcpId: mockMcpId, fieldValues: { clientId: 'abc', clientSecret: 'secret' } },
         mockContext,
@@ -40,9 +40,12 @@ describe('deleteUserMcpConfiguration', () => {
 
       const differentUserContext: ServiceContext = { userId: 'user-999' };
 
-      await expect(
-        deleteUserMcpConfiguration({ mcpId: mockMcpId }, differentUserContext),
-      ).rejects.toThrow(/Unauthorized/i);
+      const result = await deleteUserMcpConfiguration({ mcpId: mockMcpId }, differentUserContext);
+
+      expect(result.success).toBe(true);
+
+      const ownerConfig = await getUserMcpConfiguration({ mcpId: mockMcpId }, mockContext);
+      expect(ownerConfig).not.toBeNull();
     });
   });
 });

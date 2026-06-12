@@ -6,8 +6,9 @@ import type { McpListItemResponse } from '@vassembly/domain-mcp';
 
 import type { ListMcpsResult, ServiceContext } from './types';
 
-const { mockGetList } = vi.hoisted(() => ({
+const { mockGetList, mockEnrichMcpListWithUserStatus } = vi.hoisted(() => ({
   mockGetList: vi.fn(),
+  mockEnrichMcpListWithUserStatus: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-mcp', () => ({
@@ -17,6 +18,10 @@ vi.mock('@vassembly/domain-mcp', () => ({
       getList: mockGetList,
     },
   },
+}));
+
+vi.mock('../enrichMcpListWithUserStatus', () => ({
+  enrichMcpListWithUserStatus: mockEnrichMcpListWithUserStatus,
 }));
 
 import { listMcps } from './index';
@@ -50,6 +55,12 @@ const buildDomainResult = (overrides: Partial<ListMcpsResult> = {}): ListMcpsRes
 describe('listMcps handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockEnrichMcpListWithUserStatus.mockImplementation(async ({ mcps }) =>
+      mcps.map((mcp: McpListItemResponse) => ({
+        ...mcp,
+        configurationStatus: 'pending',
+      })),
+    );
   });
 
   describe('happy path', () => {
@@ -96,6 +107,39 @@ describe('listMcps handler', () => {
     });
   });
 
+  describe('configuration status enrichment', () => {
+    it('should populate configurationStatus on each MCP when catalog fetch succeeds', async () => {
+      const configuredMcp = buildMcpItem({ id: 'mcp-gmail', slug: 'google-workspace-mcp' });
+      const pendingMcp = buildMcpItem({ id: 'mcp-brave', slug: 'brave-search-mcp' });
+
+      mockGetList.mockResolvedValue(
+        buildDomainResult({
+          items: [configuredMcp, pendingMcp],
+          total: 2,
+        }),
+      );
+      mockEnrichMcpListWithUserStatus.mockResolvedValue([
+        { ...configuredMcp, configurationStatus: 'configured' },
+        { ...pendingMcp, configurationStatus: 'pending' },
+      ]);
+
+      const result = await listMcps({ page: 0, size: 20 }, buildContext());
+
+      expect(result.items).toEqual([
+        expect.objectContaining({ id: 'mcp-gmail', configurationStatus: 'configured' }),
+        expect.objectContaining({ id: 'mcp-brave', configurationStatus: 'pending' }),
+      ]);
+      expect(result.total).toBe(2);
+    });
+
+    it('should re-throw when configuration status enrichment fails', async () => {
+      mockGetList.mockResolvedValue(buildDomainResult());
+      mockEnrichMcpListWithUserStatus.mockRejectedValue(new InternalError('Status lookup failed'));
+
+      await expect(listMcps({ page: 0, size: 20 }, buildContext())).rejects.toThrow(InternalError);
+    });
+  });
+
   describe('filter delegation', () => {
     it('should return search-filtered results when search arg is provided', async () => {
       const githubMcp = buildMcpItem({ name: 'GitHub MCP' });
@@ -110,7 +154,7 @@ describe('listMcps handler', () => {
 
       const result = await listMcps({ search: 'github' }, buildContext());
 
-      expect(result.items).toEqual([githubMcp]);
+      expect(result.items).toEqual([{ ...githubMcp, configurationStatus: 'pending' }]);
       expect(result.total).toBe(1);
     });
 
@@ -127,7 +171,7 @@ describe('listMcps handler', () => {
 
       const result = await listMcps({ tags: ['email'] }, buildContext());
 
-      expect(result.items).toEqual([emailMcp]);
+      expect(result.items).toEqual([{ ...emailMcp, configurationStatus: 'pending' }]);
       expect(result.total).toBe(1);
     });
 
@@ -183,7 +227,7 @@ describe('listMcps handler', () => {
       });
     });
 
-    it('should return domain response unchanged when query succeeds', async () => {
+    it('should preserve pagination metadata when enriching catalog items', async () => {
       const domainResult = buildDomainResult({
         items: [buildMcpItem({ id: 'mcp-99', slug: 'notion' })],
         total: 7,
@@ -192,10 +236,16 @@ describe('listMcps handler', () => {
       });
 
       mockGetList.mockResolvedValue(domainResult);
+      mockEnrichMcpListWithUserStatus.mockResolvedValue([
+        { ...domainResult.items[0]!, configurationStatus: 'pending' },
+      ]);
 
       const result = await listMcps({ page: 1, size: 5 }, buildContext());
 
-      expect(result).toEqual(domainResult);
+      expect(result).toEqual({
+        ...domainResult,
+        items: [{ ...domainResult.items[0]!, configurationStatus: 'pending' }],
+      });
     });
   });
 });

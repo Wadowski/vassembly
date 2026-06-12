@@ -50,7 +50,7 @@ describe('deleteUserMcpConfig', () => {
   });
 
   describe('ownership', () => {
-    it('should reject delete from different user', async () => {
+    it('should not delete another user configuration when different user attempts delete', async () => {
       await createUserMcpConfig({
         userId: 'user-123',
         mcpId: mockMcpId,
@@ -58,12 +58,18 @@ describe('deleteUserMcpConfig', () => {
         schema: mockGmailSchema,
       });
 
-      await expect(
-        deleteUserMcpConfig({
-          userId: 'different-user',
-          mcpId: mockMcpId,
-        }),
-      ).rejects.toThrow(/Unauthorized/i);
+      const deleted = await deleteUserMcpConfig({
+        userId: 'different-user',
+        mcpId: mockMcpId,
+      });
+
+      expect(deleted.success).toBe(true);
+
+      const ownerConfig = await getUserMcpConfig({
+        userId: 'user-123',
+        mcpId: mockMcpId,
+      });
+      expect(ownerConfig).not.toBeNull();
     });
   });
 });

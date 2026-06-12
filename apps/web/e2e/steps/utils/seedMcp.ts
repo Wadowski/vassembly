@@ -1,7 +1,11 @@
-import type { SeedContext } from '@vassembly/e2e';
 import { requireWorkspaceModule } from '@vassembly/e2e';
 
-import type { EnsureMcpIndexesParams, McpCatalogEntry, SeedMcpParams } from './types';
+import type {
+  EnsureMcpIndexesParams,
+  GetMcpIdBySlugParams,
+  SeedMcpCatalogParams,
+  SeedMcpParams,
+} from './types';
 
 const DEFAULT_MCP_ICON_PATH = '/mcps/gmail.svg';
 
@@ -29,6 +33,33 @@ export const ensureMcpIndexes = async ({ context }: EnsureMcpIndexesParams): Pro
   });
 
   await init({ indexFunctions: [mcpDomain.mongodbIndexes] });
+};
+
+export const seedMcpCatalog = async ({ context }: SeedMcpCatalogParams): Promise<void> => {
+  await ensureMcpIndexes({ context });
+
+  const mcpDomain = requireWorkspaceModule<typeof import('@vassembly/domain-mcp')>({
+    moduleName: '@vassembly/domain-mcp',
+  });
+
+  await mcpDomain.seedMcps();
+};
+
+export const getMcpIdBySlug = async ({ context, slug }: GetMcpIdBySlugParams): Promise<string> => {
+  await ensureMcpIndexes({ context });
+
+  const mcpDomain = requireWorkspaceModule<typeof import('@vassembly/domain-mcp')>({
+    moduleName: '@vassembly/domain-mcp',
+  });
+
+  const catalogResult = await mcpDomain.queries.getList({ page: 0, size: 100 });
+  const mcp = catalogResult.items.find((item) => item.slug === slug);
+
+  if (mcp === undefined) {
+    throw new Error(`MCP with slug "${slug}" was not found. Seed the catalog first.`);
+  }
+
+  return mcp.id;
 };
 
 export const seedMcp = async ({
@@ -61,21 +92,4 @@ export const seedMcp = async ({
   });
 
   await mcpMongodbDao.create(instance);
-};
-
-export const seedMcpCatalog = async ({
-  context,
-  entries,
-}: {
-  context: SeedContext;
-  entries: McpCatalogEntry[];
-}): Promise<void> => {
-  for (const entry of entries) {
-    await seedMcp({
-      context,
-      name: entry.name,
-      provider: entry.provider,
-      description: entry.description,
-    });
-  }
 };

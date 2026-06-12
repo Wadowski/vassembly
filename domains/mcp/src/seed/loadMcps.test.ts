@@ -12,8 +12,8 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockCountDocuments, mockCreateMany, mockReadMcpSeedFile } = vi.hoisted(() => ({
-  mockCountDocuments: vi.fn(),
+const { mockFindToArray, mockCreateMany, mockReadMcpSeedFile } = vi.hoisted(() => ({
+  mockFindToArray: vi.fn(),
   mockCreateMany: vi.fn(),
   mockReadMcpSeedFile: vi.fn(),
 }));
@@ -21,7 +21,11 @@ const { mockCountDocuments, mockCreateMany, mockReadMcpSeedFile } = vi.hoisted((
 vi.mock('../../clients', () => ({
   mcpMongodbDao: {
     collection: {
-      countDocuments: mockCountDocuments,
+      find: vi.fn(() => ({
+        project: vi.fn(() => ({
+          toArray: mockFindToArray,
+        })),
+      })),
     },
     createMany: mockCreateMany,
   },
@@ -35,7 +39,7 @@ describe('loadMcps seed loader', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockReadMcpSeedFile.mockResolvedValue(VALID_SEED_JSON);
-    mockCountDocuments.mockResolvedValue(0);
+    mockFindToArray.mockResolvedValue([]);
     mockCreateMany.mockResolvedValue({ insertedCount: VALID_SEED_ENTRIES.length });
   });
 
@@ -109,7 +113,9 @@ describe('loadMcps seed loader', () => {
     });
 
     it('should not insert duplicates on second load when collection is still empty check path', async () => {
-      mockCountDocuments.mockResolvedValueOnce(0).mockResolvedValueOnce(VALID_SEED_ENTRIES.length);
+      mockFindToArray
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce(VALID_SEED_ENTRIES.map((entry) => ({ slug: entry.slug })));
 
       await loadMcps();
       const secondResult = await loadMcps();
@@ -119,7 +125,7 @@ describe('loadMcps seed loader', () => {
     });
 
     it('should report zero inserted MCPs when seed runs again on populated collection', async () => {
-      mockCountDocuments.mockResolvedValue(VALID_SEED_ENTRIES.length);
+      mockFindToArray.mockResolvedValue(VALID_SEED_ENTRIES.map((entry) => ({ slug: entry.slug })));
 
       const result = await loadMcps();
 
@@ -128,7 +134,7 @@ describe('loadMcps seed loader', () => {
     });
 
     it('should skip seeding when collection already contains MCPs', async () => {
-      mockCountDocuments.mockResolvedValue(1);
+      mockFindToArray.mockResolvedValue(VALID_SEED_ENTRIES.map((entry) => ({ slug: entry.slug })));
 
       const result = await loadMcps();
 

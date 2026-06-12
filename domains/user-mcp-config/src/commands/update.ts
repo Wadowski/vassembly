@@ -1,4 +1,4 @@
-import { NotFoundError, UnauthorizedError } from '@vassembly/errors';
+import { NotFoundError } from '@vassembly/errors';
 
 import { userMcpConfigDao } from '../clients/mongodb';
 import type { McpConfigSchema } from '../model/configSchema';
@@ -37,14 +37,10 @@ const mergeFieldValues = ({
 export const updateUserMcpConfig = async (input: UpdateCommandInput): Promise<UserMcpConfigModel> => {
   const { userId, mcpId, fieldValues, schema } = input;
 
-  const existing = await userMcpConfigDao.getByMcpId({ mcpId });
+  const existing = await userMcpConfigDao.getByUserAndMcpId({ userId, mcpId });
 
   if (!existing) {
     throw new NotFoundError('Configuration not found');
-  }
-
-  if (existing.userId !== userId) {
-    throw new UnauthorizedError('Unauthorized');
   }
 
   const merged = mergeFieldValues({
