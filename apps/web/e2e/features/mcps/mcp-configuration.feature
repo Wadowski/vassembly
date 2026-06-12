@@ -1,4 +1,4 @@
-@mcps @configuration @smoke
+@mcps @configuration @smoke @mode:serial
 Feature: MCP Configuration
 
   Background:

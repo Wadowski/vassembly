@@ -120,6 +120,6 @@ Add `console.log` in steps or use Playwright's `page.pause()` to stop mid-test.
 
 ## CI/CD
 
-E2E tests run on every PR via GitHub Actions (`.github/workflows/e2e.yml`). Tests must pass before merge.
+E2E tests run on every PR via GitHub Actions (`.github/workflows/ci.yml`, `e2e-web` job). Tests must pass before merge.
 
 Artifacts (screenshots, videos, traces) are uploaded on failure.

@@ -82,7 +82,10 @@ When('I confirm the remove modal', async ({ page }) => {
   await dialog.getByRole('button', { name: /^Confirm$/i }).click();
   const response = await deleteResponse;
   const responseBody = await response.text();
-  expect(response.ok(), `DELETE ${response.status()}: ${responseBody}`).toBe(true);
+  expect(
+    response.ok(),
+    `DELETE ${response.status()} ${response.url()}: ${responseBody}`,
+  ).toBe(true);
 });
 
 When('I select {string} in the {string} field', async ({ page }, optionLabel: string, fieldName: string) => {

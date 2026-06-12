@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, Types & Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm check-types
+      - run: pnpm test
+
+  e2e-web:
+    name: Web E2E
+    runs-on: ubuntu-latest
+    env:
+      MONGODB_URL: mongodb://user:pass@localhost:27017/?directConnection=true
+      MONGODB_DATABASE: vassembly_e2e_web
+      JWT_SECRET: dev-jwt-secret
+      E2E_WEB_BASE_URL: http://localhost:3000
+      E2E_API_BASE_URL: http://localhost:5000
+      NODE_ENV: development
+      CI: true
+    services:
+      mongodb:
+        image: mongo:7.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: user
+          MONGO_INITDB_ROOT_PASSWORD: pass
+        options: >-
+          --health-cmd "mongosh --authenticationDatabase admin -u user -p pass --eval db.adminCommand('ping')"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm --filter @vassembly/web exec playwright install --with-deps chromium
+      - name: Start API and Web servers
+        run: |
+          pnpm --filter @vassembly/api dev > api.log 2>&1 &
+          echo $! > api.pid
+          pnpm --filter @vassembly/web dev > web.log 2>&1 &
+          echo $! > web.pid
+
+          for attempt in $(seq 1 60); do
+            if curl -sf http://localhost:5000/docs > /dev/null; then
+              echo "API is ready"
+              break
+            fi
+            if [ "$attempt" -eq 60 ]; then
+              echo "API failed to start"
+              cat api.log
+              exit 1
+            fi
+            sleep 2
+          done
+
+          for attempt in $(seq 1 60); do
+            if curl -sf http://localhost:3000 > /dev/null; then
+              echo "Web is ready"
+              break
+            fi
+            if [ "$attempt" -eq 60 ]; then
+              echo "Web failed to start"
+              cat web.log
+              exit 1
+            fi
+            sleep 2
+          done
+      - name: Run E2E Web Tests
+        run: pnpm test:e2e:web
+        env:
+          E2E_REUSE_SERVERS: 'true'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-web
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+            api.log
+            web.log

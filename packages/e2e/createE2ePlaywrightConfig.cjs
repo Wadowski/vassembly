@@ -54,7 +54,7 @@ const createE2ePlaywrightConfig = (options) => {
   const webServers = options.webServers?.map((server) => ({
     command: `pnpm --filter ${server.package} dev`,
     url: server.url,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI || process.env.E2E_REUSE_SERVERS === 'true',
     timeout: 120_000,
     env: {
       MONGODB_URL: environment.mongoUrl,

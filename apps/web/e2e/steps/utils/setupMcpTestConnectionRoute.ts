@@ -119,11 +119,6 @@ const handleConfigurationMutation = async (route: Route): Promise<boolean> => {
     return true;
   }
 
-  if (method === 'DELETE') {
-    await route.continue();
-    return true;
-  }
-
   return false;
 };
 

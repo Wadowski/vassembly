@@ -23,7 +23,7 @@ export const createE2ePlaywrightConfig = (options: E2eConfigOptions): Playwright
   const webServers = options.webServers?.map((server) => ({
     command: `pnpm --filter ${server.package} dev`,
     url: server.url,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI || process.env.E2E_REUSE_SERVERS === 'true',
     timeout: 120_000,
   }));
 
