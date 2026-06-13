@@ -45,10 +45,11 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: user
           MONGO_INITDB_ROOT_PASSWORD: pass
         options: >-
-          --health-cmd "mongosh --authenticationDatabase admin -u user -p pass --eval db.adminCommand('ping')"
+          --health-cmd "mongosh --quiet mongodb://user:pass@127.0.0.1:27017/admin --eval 'db.runCommand({ ping: 1 }).ok'"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 30s
+          --health-retries 10
+          --health-start-period 40s
         ports:
           - 27017:27017
     steps:

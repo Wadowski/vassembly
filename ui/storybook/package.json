@@ -4,7 +4,7 @@
   "scripts": {
     "build": "npm run build-storybook",
     "dev": "npm run storybook",
-    "lint": "npm run lint",
+    "lint": "eslint . --max-warnings 0",
     "storybook": "storybook dev -p 6006",
     "test": "npm run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -12,12 +12,14 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
+    "@vassembly/eslint-config": "workspace:*",
     "@storybook/addon-a11y": "^10.3.1",
     "@storybook/addon-docs": "^10.3.1",
     "@storybook/addon-webpack5-compiler-swc": "^4.0.2",
     "@storybook/react-webpack5": "^10.3.1",
     "@types/node": "^25.1.0",
     "css-loader": "^7.1.4",
+    "eslint": "^9.39.1",
     "prettier": "^3.7.4",
     "sass": "^1.69.0",
     "sass-loader": "^16.0.7",
@@ -25,15 +27,6 @@
     "style-loader": "^4.0.0",
     "turbo": "^2.8.1",
     "typescript": "5.9.2"
-  },
-  "packageManager": "pnpm@9.0.0",
-  "engines": {
-    "node": ">=18"
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended"
-    ]
   },
   "dependencies": {
     "next": "16.1.0"

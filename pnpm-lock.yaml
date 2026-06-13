@@ -2414,9 +2414,15 @@ importers:
       '@types/node':
         specifier: ^25.1.0
         version: 25.5.0
+      '@vassembly/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
       css-loader:
         specifier: ^7.1.4
         version: 7.1.4(webpack@5.105.4(@swc/core@1.15.21(@swc/helpers@0.5.15))(esbuild@0.27.4))
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.4
       prettier:
         specifier: ^3.7.4
         version: 3.8.1
