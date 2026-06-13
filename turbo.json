@@ -8,7 +8,22 @@
     "**/vitest.config.ts",
     "**/playwright.config.ts"
   ],
-  "globalEnv": ["CI"],
+  "globalEnv": [
+    "CI",
+    "AUTH_PASSWORD_RESET_WEB_URL",
+    "CACHE_BACKEND",
+    "CACHE_DEFAULT_TTL_MS",
+    "REDIS_URL",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_REGION",
+    "DEEP_SEEK_AI_API_KEY",
+    "DEEP_SEEK_AI_BASE_URL",
+    "ENCODER_SECRET",
+    "MONGODB_URL",
+    "MONGODB_DATABASE",
+    "JWT_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

@@ -5,7 +5,7 @@ export const gqlMcpSchema = (builder: Builder): void => {
   defineModelSchema({
     builder,
     name: 'Mcp',
-    fields: (t: any) => ({
+    fields: (t) => ({
       id: t.exposeString('id'),
       name: t.exposeString('name'),
       description: t.exposeString('description'),
@@ -17,7 +17,7 @@ export const gqlMcpSchema = (builder: Builder): void => {
       configurationStatus: t.exposeString('configurationStatus', { nullable: true }),
       agentUsageCount: t.exposeInt('agentUsageCount', { nullable: true }),
       configSchema: t.field({
-        type: 'ConfigSchema' as any,
+        type: 'ConfigSchema',
         nullable: true,
         resolve: (parent: { configSchema?: unknown }) => parent.configSchema,
       }),
@@ -26,8 +26,8 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('McpsList' as any, {
-    fields: (t: any) => ({
+  builder.objectType('McpsList', {
+    fields: (t) => ({
       items: t.field({
         type: ['Mcp'],
         resolve: (parent: { items: unknown[] }) => parent.items,
@@ -38,14 +38,14 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('AvailableTags' as any, {
-    fields: (t: any) => ({
+  builder.objectType('AvailableTags', {
+    fields: (t) => ({
       tags: t.exposeStringList('tags'),
     }),
   });
 
-  builder.objectType('UserMcpConfigFieldValue' as any, {
-    fields: (t: any) => ({
+  builder.objectType('UserMcpConfigFieldValue', {
+    fields: (t) => ({
       key: t.exposeString('key'),
       value: t.field({
         type: 'String',
@@ -66,8 +66,8 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('UserMcpConfig' as any, {
-    fields: (t: any) => ({
+  builder.objectType('UserMcpConfig', {
+    fields: (t) => ({
       id: t.exposeString('id'),
       userId: t.exposeString('userId'),
       mcpId: t.exposeString('mcpId'),
@@ -82,8 +82,8 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('UserMcpConfigList' as any, {
-    fields: (t: any) => ({
+  builder.objectType('UserMcpConfigList', {
+    fields: (t) => ({
       items: t.field({
         type: ['UserMcpConfig'],
         resolve: (parent: { items: unknown[] }) => parent.items,
@@ -91,8 +91,8 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('McpWithAgents' as any, {
-    fields: (t: any) => ({
+  builder.objectType('McpWithAgents', {
+    fields: (t) => ({
       mcp: t.field({
         type: 'Mcp',
         resolve: (parent: { mcp: unknown }) => parent.mcp,
@@ -109,15 +109,15 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('ConfigSchemaFieldOption' as any, {
-    fields: (t: any) => ({
+  builder.objectType('ConfigSchemaFieldOption', {
+    fields: (t) => ({
       value: t.exposeString('value'),
       label: t.exposeString('label'),
     }),
   });
 
-  builder.objectType('ConfigSchemaField' as any, {
-    fields: (t: any) => ({
+  builder.objectType('ConfigSchemaField', {
+    fields: (t) => ({
       key: t.exposeString('key'),
       label: t.exposeString('label'),
       type: t.exposeString('type'),
@@ -137,8 +137,8 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('ConfigSchema' as any, {
-    fields: (t: any) => ({
+  builder.objectType('ConfigSchema', {
+    fields: (t) => ({
       fields: t.field({
         type: ['ConfigSchemaField'],
         resolve: (parent: { fields: unknown[] }) => parent.fields,

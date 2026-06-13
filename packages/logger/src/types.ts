@@ -1,10 +1,9 @@
 interface LoggerMeta {
   sessionId: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export type Logger = (
   message: string,
-  props: { meta: LoggerMeta; data?: Record<string, any> }
+  props: { meta: LoggerMeta; data?: Record<string, unknown> }
 ) => void;
-  

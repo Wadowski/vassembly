@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyRequest } from 'fastify';
 import { CUSTOM_HEADERS } from '@vassembly/constants';
 import * as authTokenDomain from '@vassembly/domain-auth-token';
 
@@ -16,7 +16,6 @@ const extractAuthToken = (request: FastifyRequest): string | undefined => {
 
 export const createApiGraphQLContext = async (
   request: FastifyRequest,
-  _reply: FastifyReply,
 ): Promise<{ authenticatedUserId: string | undefined }> => {
   const token = extractAuthToken(request);
   if (!token) {

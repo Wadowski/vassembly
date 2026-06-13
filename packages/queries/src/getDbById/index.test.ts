@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Model } from "@vassembly/model";
+import type { ValidatorResult } from "@vassembly/validation";
 import { NotFoundError, WrongParamError } from "@vassembly/errors";
 import { getDbById } from './index';
 import type { CommonDbQueryGeneratorParams } from "../types";
@@ -11,7 +12,14 @@ interface TestModel extends Model {
   email: string;
 }
 
-const createMockInstance = (data: Partial<TestModel>, isValidResult?: any): any => {
+type MockTestInstance = Partial<TestModel> & {
+  isValid: ReturnType<typeof vi.fn>;
+};
+
+const createMockInstance = (
+  data: Partial<TestModel>,
+  isValidResult?: ValidatorResult<TestModel>
+): MockTestInstance => {
   const instance = {
     ...data,
     isValid: vi.fn(() => isValidResult || { success: true, data }),
@@ -103,12 +111,12 @@ describe('getDbById', () => {
       const id = '00000000000000000000000g';
       const validationError = new WrongParamError('Validation failed');
 
-      const queryInstance = {
+      const queryInstance: MockTestInstance = {
         id: undefined,
         isValid: vi.fn(() => {
           throw validationError;
         }),
-      } as any;
+      };
       mockFactory.create.mockReturnValueOnce(queryInstance);
 
       const handler = getDbById(params);

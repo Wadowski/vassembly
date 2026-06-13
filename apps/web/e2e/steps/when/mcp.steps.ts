@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 
-import { bddTest, getE2eEnvironment } from '@vassembly/e2e';
+import { bddTest } from '@vassembly/e2e';
 
 import { resolveMcpFormFieldLabel } from '../utils/resolveMcpFormFieldLabel';
 
@@ -176,7 +176,7 @@ When('the server fails on configuration save', async ({ page }) => {
   });
 });
 
-Then('I see the configuration form for {string}', async ({ page }, mcpName: string) => {
+Then('I see the configuration form for {string}', async ({ page }) => {
   if (!page) {
     return;
   }
@@ -221,7 +221,7 @@ Then('I am redirected to the login page', async ({ page }) => {
   await expect(page.getByLabel(/Email/i)).toBeVisible({ timeout: 5000 });
 });
 
-Then('the form shows error for {string} field', async ({ page }, fieldName: string) => {
+Then('the form shows error for {string} field', async ({ page }) => {
   if (!page) {
     return;
   }

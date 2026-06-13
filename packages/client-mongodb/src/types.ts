@@ -1,11 +1,11 @@
-import { Collection } from "mongodb";
+import type { ClientSession, Collection } from "mongodb";
 import type { Model } from "@vassembly/model";
 
 export interface Context {
   init: () => Promise<void>;
   commit: () => Promise<void>;
   rollback: () => Promise<void>;
-  session?: any;
+  session?: ClientSession;
 }
 
 export type ContextGenerator = () => Context;
@@ -14,7 +14,7 @@ export interface QueryOptions {
   limit?: number;
   offset?: number;
   sort?: Record<string, number>;
-  projection?: Record<string, any>;
+  projection?: Record<string, unknown>;
   context?: ContextGenerator;
 }
 
@@ -30,7 +30,7 @@ export interface MongoDbDAO<T extends Model> {
     options?: QueryOptions
   ) => Promise<Array<Partial<T>>>;
   getManyRaw: (
-    where: any,
+    where: Record<string, unknown>,
     options?: QueryOptions
   ) => Promise<Array<Partial<T>>>;
   getRaw: (
@@ -62,7 +62,7 @@ export interface MongoDbDAO<T extends Model> {
   removeHard: (where: Partial<T>, options?: QueryOptions) => Promise<void>;
   removeHardMany: (where: Partial<T>, options?: QueryOptions) => Promise<void>;
   collection: Collection;
-  transformToDeepUpdate: (data: Record<string, any>) => Record<string, any>;
+  transformToDeepUpdate: (data: Record<string, unknown>) => Record<string, unknown>;
 }
 
 export type MongoDbDAOGenerator = <T extends Model>(params: {

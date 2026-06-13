@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
+import type { ApolloProviderProps } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
 import { createApolloInstance } from './createApolloInstance';
 import type { GraphQLClientConfig } from './types';
 
-const ApolloProviderComponent = ApolloProvider as React.ComponentType<any>;
+const ApolloProviderComponent = ApolloProvider as React.ComponentType<ApolloProviderProps>;
 
 interface GraphQLProviderProps {
   config: GraphQLClientConfig;

@@ -37,7 +37,7 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
     }
     setTestResult(undefined);
     form.handleChange('model', '');
-  }, [form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
+  }, [form, form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
 
   const handleTest = useCallback(async (): Promise<void> => {
     if (!form.validate()) {

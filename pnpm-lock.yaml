@@ -318,6 +318,9 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.4
+      globals:
+        specifier: ^16.5.0
+        version: 16.5.0
       jsdom:
         specifier: '20'
         version: 20.0.3
@@ -1303,6 +1306,9 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.4
+      globals:
+        specifier: ^16.5.0
+        version: 16.5.0
       playwright-bdd:
         specifier: ^8.5.1
         version: 8.5.1(@playwright/test@1.60.0)

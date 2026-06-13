@@ -5,7 +5,7 @@ import { parseGraphQLDocument, mapGraphQLError } from './utils';
 
 export const useApolloMutation = <TData, TVariables extends OperationVariables = OperationVariables>(
   mutation: string | DocumentNode,
-  options?: UseApolloMutationOptions<TVariables>,
+  options?: UseApolloMutationOptions<TData, TVariables>,
 ): UseApolloMutationState<TData, TVariables> => {
   const document = parseGraphQLDocument(mutation);
 
@@ -32,7 +32,7 @@ export const useApolloMutation = <TData, TVariables extends OperationVariables =
     try {
       const result = await apolloMutate({ variables });
       return result.data ?? undefined;
-    } catch (err) {
+    } catch {
       return undefined;
     }
   };

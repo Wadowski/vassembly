@@ -5,7 +5,7 @@ export const gqlAgentSchema = (builder: Builder): void => {
   defineModelSchema({
     builder,
     name: 'Agent',
-    fields: (t: any) => ({
+    fields: (t) => ({
       name: t.exposeString('name', { nullable: true }),
       category: t.exposeString('category', { nullable: true }),
       description: t.exposeString('description', { nullable: true }),
@@ -17,8 +17,8 @@ export const gqlAgentSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('AgentsList' as any, {
-    fields: (t: any) => ({
+  builder.objectType('AgentsList', {
+    fields: (t) => ({
       items: t.field({
         type: ['Agent'],
         resolve: (parent: { items: unknown[] }) => parent.items,

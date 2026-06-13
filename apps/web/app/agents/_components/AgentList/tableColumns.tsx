@@ -70,7 +70,7 @@ export const getAgentListTableColumns = ({
           <Button size="small" variant="text" text="Run" onClick={() => onRunAgent(row)} />
         ) : null}
         <Button size="small" variant="text" text="Edit" onClick={() => onEditAgent(row.id)} />
-        {Boolean(row.removedAt) ? (
+        {row.removedAt ? (
           <Button size="small" variant="text" text="Restore" onClick={() => onRestoreAgent(row)} />
         ) : (
           <Button size="small" color="danger" variant="text" text="Delete" onClick={() => onDeleteAgent(row)} />

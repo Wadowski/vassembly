@@ -1,4 +1,3 @@
-import type { Model } from "@vassembly/model";
 import type { CommonDbCommandHandler } from "../types";
 
 export interface RemoveDbParams {
@@ -9,7 +8,7 @@ export type RemoveDbResponse = {
   success: boolean;
 };
 
-export type RemoveDbHandler<T extends Model> = CommonDbCommandHandler<
+export type RemoveDbHandler = CommonDbCommandHandler<
   RemoveDbParams,
   RemoveDbResponse
 >;

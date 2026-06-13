@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 import { taskMongodbDao } from '../../clients';
 import { taskFactory } from '../../model';
-import type { TaskModel } from '../../model';
 import { buildTaskSearchFilter } from '../shared/buildTaskSearchFilter';
 import { resolvePageSize } from '../shared/pagination';
 

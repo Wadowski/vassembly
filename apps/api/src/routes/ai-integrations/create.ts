@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { handlers as authHandlers } from '@vassembly/service-auth';
 import agentService from '@vassembly/service-agent';
+import type { CreateCredentialHandlerInput } from '@vassembly/service-agent';
 import { withErrorResponses } from '../errorSchema';
 
 export const aiIntegrationCredentialResponseSchema = z.object({
@@ -35,7 +36,10 @@ export const aiIntegrationCreateRoute = defineRoute({
   },
   handler: async ({ body, headers }) => {
     const { userId } = await authHandlers.authorizeRequest({ headers });
-    const { credential } = await agentService.createCredential({ userId, body: body as any });
+    const { credential } = await agentService.createCredential({
+      userId,
+      body: body as CreateCredentialHandlerInput['body'],
+    });
     return credential;
   },
 });

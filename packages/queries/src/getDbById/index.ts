@@ -1,5 +1,5 @@
 import type { Model } from "@vassembly/model";
-import { NotFoundError, WrongParamError } from "@vassembly/errors";
+import { NotFoundError } from "@vassembly/errors";
 import type { CommonDbQueryGeneratorParams } from "../types";
 import { GetDbByIdHandler } from "./types";
 import { z } from "zod";

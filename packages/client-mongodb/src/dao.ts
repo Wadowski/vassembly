@@ -14,11 +14,16 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
 }) => {
   const collection = mongoDb.db.collection(collectionName);
 
-  const transformToDeepUpdate = (data: Record<string, any>): Record<string, any> => {
+  const transformToDeepUpdate = (data: Record<string, unknown>): Record<string, unknown> => {
+    const mongoData = typeof data.toMongoDb === "function"
+      ? (data.toMongoDb as (options: { isUpdate: boolean }) => Record<string, unknown>)({ isUpdate: true })
+      : data;
     const transformedObj = flattenObject(
-      data?.toMongoDb ? data.toMongoDb({ isUpdate: true }) : data,
+      mongoData,
       (field) => {
-        return field?._bsontype ? field?._bsontype !== "ObjectID" : true;
+        return (field as { _bsontype?: string })?._bsontype
+          ? (field as { _bsontype?: string })._bsontype !== "ObjectID"
+          : true;
       }
     );
     return Object.entries(transformedObj)
@@ -41,7 +46,7 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     return undefined;
   };
 
-  const projectionOptions = (projection: Record<string, any> | undefined) => {
+  const projectionOptions = (projection: Record<string, unknown> | undefined) => {
     if (projection) {
       return { projection };
     }
@@ -61,7 +66,7 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
   };
 
   const createMany: MongoDbDAOType<T>["createMany"] = async (data, options) => {
-    const mongoData = data.map((d) => d.toMongoDb?.({ isCreate: true })).filter(Boolean) as Array<any>;
+    const mongoData = data.map((d) => d.toMongoDb?.({ isCreate: true })).filter(Boolean) as Array<Record<string, unknown>>;
     if (!mongoData.length) throw new Error("Failed to convert data to MongoDB format");
     
     const { insertedIds } = await collection.insertMany(
@@ -88,7 +93,7 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
 
   const getMany: MongoDbDAOType<T>["getMany"] = async (where, options) => {
     const whereQuery = where.toMongoDb?.();
-    const pipeline: Array<Record<string, any>> = [
+    const pipeline: Array<Record<string, unknown>> = [
       {
         $match: whereQuery ?? {},
       },
@@ -119,7 +124,7 @@ export const MongoDbDAO: MongoDbDAOGenerator = <T extends Model>({
     where,
     options
   ) => {
-    const pipeline: Array<Record<string, any>> = [
+    const pipeline: Array<Record<string, unknown>> = [
       {
         $match: where,
       },

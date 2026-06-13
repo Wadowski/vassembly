@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Model } from "@vassembly/model";
+import { z } from 'zod';
 import { getListDbByQuery } from './index';
 import type { CommonDbQueryGeneratorParams } from "../types";
 import { MongoDbDAO } from '@vassembly/client-mongodb';
@@ -58,8 +59,8 @@ describe('getListDbByQuery', () => {
     });
 
     it('should return empty array when no instances are found', async () => {
-      const daoResponse: any[] = [];
-      const createdInstances: any[] = [];
+      const daoResponse: Partial<TestModel>[] = [];
+      const createdInstances: Partial<TestModel>[] = [];
       const limit = 10;
       const offset = 0;
 
@@ -109,8 +110,8 @@ describe('getListDbByQuery', () => {
     it('should pass limit and offset to dao.getMany', async () => {
       const limit = 20;
       const offset = 40;
-      const daoResponse: any[] = [];
-      const createdInstances: any[] = [];
+      const daoResponse: Partial<TestModel>[] = [];
+      const createdInstances: Partial<TestModel>[] = [];
 
       mockFactory.create.mockReturnValueOnce({} as Partial<TestModel>);
       mockFactory.createMany.mockReturnValueOnce(createdInstances);
@@ -147,7 +148,7 @@ describe('getListDbByQuery', () => {
       const mockQueryInstance = {
         isValid: vi.fn(),
       };
-      const daoResponse: any[] = [];
+      const daoResponse: Partial<TestModel>[] = [];
 
       mockFactory.create.mockReturnValueOnce(mockQueryInstance);
       mockFactory.createMany.mockReturnValueOnce([]);
@@ -160,7 +161,7 @@ describe('getListDbByQuery', () => {
     });
 
     it('should propagate validation errors when isValid throws', async () => {
-      const validationSchema = { validate: vi.fn() } as any;
+      const validationSchema = { validate: vi.fn() } as unknown as z.ZodSchema;
       const validationError = new Error('Invalid query parameters');
       const mockQueryInstance = {
         isValid: vi.fn().mockImplementation(() => {
@@ -182,7 +183,7 @@ describe('getListDbByQuery', () => {
     });
 
     it('should complete successfully when validation passes', async () => {
-      const validationSchema = { validate: vi.fn() } as any;
+      const validationSchema = { validate: vi.fn() } as unknown as z.ZodSchema;
       const daoResponse = [
         { id: 'id-1', name: 'John Doe', email: 'john@example.com' },
       ];

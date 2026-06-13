@@ -7,7 +7,6 @@ import { useMcpWithAgents, useUnassignMcpFromAgent } from '@vassembly/ui-api-hoo
 import { useSnackbar } from '@vassembly/ui-snackbar';
 import { useRouter } from 'next/navigation';
 
-import { buildAgentEditHref } from './constants';
 import type { McpAgentsSectionProps, McpAgentsUnassignTarget } from './types';
 
 export interface UseMcpAgentsSectionResult {

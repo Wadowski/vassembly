@@ -47,5 +47,5 @@ export interface McpDiscardChangesModalProps {
   open: boolean;
   onStay: () => void;
   onDiscard: () => void;
-  returnFocusRef: RefObject<HTMLButtonElement>;
+  returnFocusRef: RefObject<HTMLButtonElement | null>;
 }

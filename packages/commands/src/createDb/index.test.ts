@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Model } from "@vassembly/model";
-import { WrongParamError } from "@vassembly/errors";
+import { z } from "zod";
 import { createDb } from "./index";
 import type { CommonDbCommandGeneratorParams } from "../types";
 import { MongoDbDAO } from "@vassembly/client-mongodb";
@@ -11,7 +11,11 @@ interface TestModel extends Model {
   email: string;
 }
 
-const createMockInstance = (data: Partial<TestModel>): any => {
+type MockTestInstance = Partial<TestModel> & {
+  isValid: ReturnType<typeof vi.fn>;
+};
+
+const createMockInstance = (data: Partial<TestModel>): MockTestInstance => {
   const instance = {
     ...data,
     isValid: vi.fn(() => ({ success: true, data })),
@@ -107,11 +111,6 @@ describe("createDb", () => {
         name: "John Doe",
         email: "john@example.com",
       };
-      const createdInstance = {
-        id: "test-id-789",
-        name: "John Doe",
-        email: "john@example.com",
-      };
       const daoError = new Error("Database connection failed");
 
       const commandInstance = createMockInstance(inputData as TestModel);
@@ -180,7 +179,7 @@ describe("createDb", () => {
         name: "John Doe",
         email: "john@example.com",
       };
-      const validationSchema = { validate: vi.fn() } as any;
+      const validationSchema = { validate: vi.fn() } as unknown as z.ZodSchema;
       const validationError = new Error("Invalid input data");
 
       const commandInstance = {
@@ -213,7 +212,7 @@ describe("createDb", () => {
         name: "John Doe",
         email: "john@example.com",
       };
-      const validationSchema = { validate: vi.fn() } as any;
+      const validationSchema = { validate: vi.fn() } as unknown as z.ZodSchema;
 
       const commandInstance = {
         ...inputData,

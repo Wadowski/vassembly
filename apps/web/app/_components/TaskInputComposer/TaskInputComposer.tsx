@@ -55,7 +55,7 @@ export const TaskInputComposer = ({ onCreateSuccess }: TaskInputComposerProps): 
     <section className={styles.container}>
       <header className={styles.heading}>
         <Text variant="h1" as="h1">
-          What's next?
+          What&apos;s next?
         </Text>
         <Text variant="h3" as="h2">
           Every task starts with a thought

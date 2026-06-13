@@ -12,7 +12,11 @@ interface TestModel extends Model {
   removedAt?: Date;
 }
 
-const createMockInstance = (data: Partial<TestModel>): any => {
+type MockTestInstance = Partial<TestModel> & {
+  isValid: ReturnType<typeof vi.fn>;
+};
+
+const createMockInstance = (data: Partial<TestModel>): MockTestInstance => {
   const instance = {
     ...data,
     isValid: vi.fn(() => ({ success: true, data })),

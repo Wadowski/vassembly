@@ -58,7 +58,7 @@ describe("sendResetPasswordEmail", () => {
     const originalNodeEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "production";
 
-    (configModule.config as any).aws.ses.fromEmail = "";
+    configModule.config.aws.ses.fromEmail = "";
 
     try {
       await expect(
@@ -76,7 +76,7 @@ describe("sendResetPasswordEmail", () => {
     const originalNodeEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "development";
 
-    (configModule.config as any).aws.ses.fromEmail = "";
+    configModule.config.aws.ses.fromEmail = "";
 
     try {
       await sendResetPasswordEmail({

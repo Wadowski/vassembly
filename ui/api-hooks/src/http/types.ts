@@ -46,7 +46,7 @@ export interface UseQueryState<TResponse, TBody = never, TQuery = Record<string,
 }
 
 export interface UseMutationOptions<TParams, TResponse> {
-  onSuccess?: (data: TResponse) => void;
+  onSuccess?: (data: TResponse, params: TParams) => void;
   onError?: (error: CommonError) => void;
 }
 

@@ -44,13 +44,13 @@ export const usePlatformAgentsSection = () => {
     void refreshList();
   }, [refreshList]);
 
-  const rawItems = data?.items ?? [];
   const filteredItems = useMemo(() => {
+    const items = data?.items ?? [];
     if (filters.categoryFilter === SYSTEM_AGENT_LIST_ALL_STATUSES) {
-      return rawItems;
+      return items;
     }
-    return rawItems.filter((agent) => agent.category === filters.categoryFilter);
-  }, [filters.categoryFilter, rawItems]);
+    return items.filter((agent) => agent.category === filters.categoryFilter);
+  }, [data?.items, filters.categoryFilter]);
   const hasSearch = filters.debouncedSearch.trim() !== '';
   const isFilteredEmpty =
     !isLoading &&

@@ -7,8 +7,8 @@ import type { Builder } from './types';
 
 const prepareBuilderForObjectSchemaTests = (builder: Builder): void => {
   builder.scalarType('DateTime', {
-    serialize: (value: unknown) => value,
-    parseValue: (value: unknown) => value,
+    serialize: (value: unknown) => value as Date,
+    parseValue: (value: unknown) => value as Date,
   });
   builder.queryType({});
 };
@@ -20,22 +20,23 @@ describe('defineModelSchema', () => {
     defineModelSchema({
       builder,
       name: 'Widget',
-      fields: (t: { exposeString: (name: string, opts: { nullable?: boolean }) => string }) => ({
+      fields: (t) => ({
         title: t.exposeString('title', { nullable: true }),
       }),
     });
     applyResolvers({
       builder,
-      queries: (t: { field: (config: { type: string; resolve: () => object }) => unknown }) => ({
+      queries: (t) => ({
         widget: t.field({
-          type: 'Widget',
-          resolve: () => ({
-            id: 'w1',
-            title: 'Hello',
-            createdAt: new Date('2020-01-01'),
-            updatedAt: new Date('2020-01-02'),
-            removedAt: null,
-          }),
+          type: 'Widget' as never,
+          resolve: () =>
+            ({
+              id: 'w1',
+              title: 'Hello',
+              createdAt: new Date('2020-01-01'),
+              updatedAt: new Date('2020-01-02'),
+              removedAt: null,
+            }) as never,
         }),
       }),
     });
@@ -60,16 +61,16 @@ describe('defineModelSchema', () => {
       builder,
       name: 'Gadget',
       includeCommonFields: false,
-      fields: (t: { exposeString: (name: string, opts: { nullable?: boolean }) => string }) => ({
+      fields: (t) => ({
         code: t.exposeString('code', { nullable: true }),
       }),
     });
     applyResolvers({
       builder,
-      queries: (t: { field: (config: { type: string; resolve: () => object }) => unknown }) => ({
+      queries: (t) => ({
         gadget: t.field({
-          type: 'Gadget',
-          resolve: () => ({ code: 'G-1' }),
+          type: 'Gadget' as never,
+          resolve: () => ({ code: 'G-1' }) as never,
         }),
       }),
     });

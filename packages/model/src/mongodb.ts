@@ -2,7 +2,15 @@ import "reflect-metadata";
 
 export const mongoDbDocumentParamOmitDecorator = "mongoDbParamOmit";
 
-export const MongoDbOmit = (target: any, keyOrContext?: string | any): void => {
+interface MongoDbFieldDecoratorContext {
+  name: string;
+  constructor?: { prototype?: object };
+}
+
+export const MongoDbOmit = (
+  target: object,
+  keyOrContext?: string | MongoDbFieldDecoratorContext
+): void => {
   let actualTarget = target;
   let actualKey: string;
 

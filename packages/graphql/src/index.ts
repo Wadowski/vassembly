@@ -8,4 +8,7 @@ export type {
   ApplyResolversProps,
   BuildGraphQLConfigProps,
   GraphQLConfigResult,
+  GraphQLFieldBuilder,
+  GraphQLQueryFieldBuilder,
+  GraphQLMutationFieldBuilder,
 } from './types';

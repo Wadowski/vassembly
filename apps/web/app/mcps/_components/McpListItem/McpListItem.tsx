@@ -47,6 +47,7 @@ export const McpListItem = ({
       onClick={handleNavigate}
     >
         <div className={styles.header}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- MCP icons are served from arbitrary external URLs */}
           <img
             className={styles.icon}
             src={mcp.iconPath}

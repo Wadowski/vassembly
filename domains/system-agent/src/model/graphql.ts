@@ -5,7 +5,7 @@ export const gqlSystemAgentSchema = (builder: Builder): void => {
   defineModelSchema({
     builder,
     name: 'SystemAgent',
-    fields: (t: any) => ({
+    fields: (t) => ({
       id: t.exposeString('id'),
       name: t.exposeString('name'),
       description: t.exposeString('description', { nullable: true }),
@@ -20,8 +20,8 @@ export const gqlSystemAgentSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('SystemAgentsList' as any, {
-    fields: (t: any) => ({
+  builder.objectType('SystemAgentsList', {
+    fields: (t) => ({
       items: t.field({
         type: ['SystemAgent'],
         resolve: (parent: { items: unknown[] }) => parent.items,
@@ -35,7 +35,7 @@ export const gqlSystemAgentSchema = (builder: Builder): void => {
   defineModelSchema({
     builder,
     name: 'SystemAgentPreference',
-    fields: (t: any) => ({
+    fields: (t) => ({
       userId: t.exposeString('userId'),
       integrationCredentialId: t.exposeString('integrationCredentialId'),
       updatedAt: t.exposeString('updatedAt'),

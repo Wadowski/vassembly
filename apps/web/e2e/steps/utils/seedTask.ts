@@ -121,11 +121,10 @@ export const seedAiCredentialForUser = async ({
   return credentialId;
 };
 
-export const upsertSystemAgentPreference = async ({
-  context,
-  userId,
-  integrationCredentialId,
-}: TaskSeedContextParams & { userId: string; integrationCredentialId: string }): Promise<void> => {
+export const upsertSystemAgentPreference = async (
+  params: TaskSeedContextParams & { userId: string; integrationCredentialId: string },
+): Promise<void> => {
+  const { userId, integrationCredentialId } = params;
   const systemAgentDomain = requireWorkspaceModule<typeof import('@vassembly/domain-system-agent')>({
     moduleName: '@vassembly/domain-system-agent',
   });

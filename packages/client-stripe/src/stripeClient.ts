@@ -60,7 +60,7 @@ export const StripeClient = ({
         metadata,
       });
       return customer;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create customer with email ${email}`
       );
@@ -81,7 +81,7 @@ export const StripeClient = ({
         images,
       });
       return product;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create product with name ${name}`
       );
@@ -101,7 +101,7 @@ export const StripeClient = ({
         metadata,
       });
       return product;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to update product with id ${productId}`
       );
@@ -134,7 +134,7 @@ export const StripeClient = ({
 
       const price = await stripe.prices.create(priceParams);
       return price;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create price for product ${productId}`
       );
@@ -150,7 +150,7 @@ export const StripeClient = ({
         metadata,
       });
       return price;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to update price with id ${priceId}`
       );
@@ -201,7 +201,7 @@ export const StripeClient = ({
 
       const session = await stripe.checkout.sessions.create(sessionParams);
       return session;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create checkout session`
       );
@@ -214,7 +214,7 @@ export const StripeClient = ({
     try {
       const session = await stripe.checkout.sessions.retrieve(sessionId);
       return session;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to retrieve checkout session with id ${sessionId}`
       );
@@ -242,7 +242,7 @@ export const StripeClient = ({
 
       const account = await stripe.accounts.create(accountParams);
       return account;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create account with email ${email}`
       );
@@ -277,7 +277,7 @@ export const StripeClient = ({
         return_url: finalReturnUrl,
       });
       return accountLink;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create account link for account ${accountId}`
       );
@@ -304,7 +304,7 @@ export const StripeClient = ({
         params as Stripe.AccountCreateLoginLinkParams
       );
       return loginLink;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create login link for account ${accountId}`
       );
@@ -324,7 +324,7 @@ export const StripeClient = ({
     try {
       const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
       return event;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to construct webhook event`
       );
@@ -347,7 +347,7 @@ export const StripeClient = ({
         metadata,
       });
       return transfer;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to transfer funds to account ${accountId}`
       );

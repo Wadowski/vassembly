@@ -70,7 +70,7 @@ const fieldsEqual = (
 export const useMcpConfigForm = ({ mcp, savedConfiguration }: UseMcpConfigFormParams) => {
   const router = useRouter();
   const snackbar = useSnackbar();
-  const fields = mcp.configSchema?.fields ?? [];
+  const fields = useMemo(() => mcp.configSchema?.fields ?? [], [mcp.configSchema?.fields]);
   const initialState = buildInitialFieldValues({ fields, savedConfiguration });
 
   const [fieldValues, setFieldValues] = useState(initialState.values);

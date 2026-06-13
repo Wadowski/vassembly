@@ -6,10 +6,9 @@ export const applyResolvers = ({
   mutations,
 }: ApplyResolversProps): void => {
   if (queries) {
-    builder.queryFields(queries as any);
+    builder.queryFields(queries);
   }
   if (mutations) {
-    builder.mutationFields(mutations as any);
+    builder.mutationFields(mutations);
   }
 };
-

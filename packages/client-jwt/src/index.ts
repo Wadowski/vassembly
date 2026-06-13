@@ -31,7 +31,7 @@ export const verify = async ({ token, options }: VerifyTokenArgs): Promise<JwtTo
   try {
     const result = await verifyToken(token, secret, options) as JwtTokenData;
     return result;
-  } catch (error) {
+  } catch {
     throw new UnauthorizedError('Invalid token');
   }
 };

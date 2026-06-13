@@ -40,7 +40,7 @@ export const AwsS3Client = ({ bucketName }: ClientAwsS3Params) => {
       });
       const response = await s3Client.send(command);
       return response.Body?.transformToString();  
-    } catch (err) {
+    } catch {
       throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on get object`);
     }
   };
@@ -55,7 +55,7 @@ export const AwsS3Client = ({ bucketName }: ClientAwsS3Params) => {
       });
       const signedUrl = await getSignedUrlAwsSdk(s3Client, command, { expiresIn: EXPIRES_IN });
       return signedUrl;
-    } catch (err) {
+    } catch {
       throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on get signed url`);
     }
   };
@@ -71,7 +71,7 @@ export const AwsS3Client = ({ bucketName }: ClientAwsS3Params) => {
       });
       await s3Client.send(command);
       return key;
-    } catch (err) {
+    } catch {
       throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on upload file`);
     }
   };
@@ -91,7 +91,7 @@ export const AwsS3Client = ({ bucketName }: ClientAwsS3Params) => {
 
       await upload.done();
       return key;
-    } catch (err) {
+    } catch {
       throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on upload file stream`);
     }
   };
@@ -104,7 +104,7 @@ export const AwsS3Client = ({ bucketName }: ClientAwsS3Params) => {
         ...options,
       });
       await s3Client.send(command);
-    } catch (err) {
+    } catch {
       throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on remove file`);
     }
   };

@@ -1,4 +1,4 @@
-import { getE2eEnvironment, requireWorkspaceModule } from '@vassembly/e2e';
+import { getE2eEnvironment } from '@vassembly/e2e';
 
 import { getMcpIdBySlug } from './seedMcp';
 import type { InitDomainContextParams } from './initDomainContext';

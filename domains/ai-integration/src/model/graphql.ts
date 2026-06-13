@@ -5,7 +5,7 @@ export const gqlAiIntegrationSchema = (builder: Builder): void => {
   defineModelSchema({
     builder,
     name: 'AiIntegrationCredential',
-    fields: (t: any) => ({
+    fields: (t) => ({
       userId: t.exposeString('userId', { nullable: true }),
       name: t.exposeString('name', { nullable: true }),
       provider: t.exposeString('provider', { nullable: true }),
@@ -22,8 +22,8 @@ export const gqlAiIntegrationSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('AiIntegrationCredentialsList' as any, {
-    fields: (t: any) => ({
+  builder.objectType('AiIntegrationCredentialsList', {
+    fields: (t) => ({
       items: t.field({
         type: ['AiIntegrationCredential'],
         resolve: (parent: { items: unknown[] }) => parent.items,

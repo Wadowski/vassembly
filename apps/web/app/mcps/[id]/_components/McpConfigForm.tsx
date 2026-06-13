@@ -117,7 +117,7 @@ export const McpConfigForm = ({ mcp, savedConfiguration }: McpConfigFormProps): 
 
       <McpDiscardChangesModal
         open={form.showDiscardModal}
-        returnFocusRef={form.cancelButtonRef as any}
+        returnFocusRef={form.cancelButtonRef}
         onStay={form.closeDiscardModal}
         onDiscard={form.handleDiscard}
       />

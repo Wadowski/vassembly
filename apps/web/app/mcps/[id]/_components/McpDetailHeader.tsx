@@ -18,6 +18,7 @@ export const McpDetailHeader = ({ mcp, configuration }: McpDetailHeaderProps): J
   return (
     <header className={styles.header}>
       <div className={styles.titleRow}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- MCP icons are served from arbitrary external URLs */}
         <img className={styles.icon} src={mcp.iconPath} alt={mcp.name} width={48} height={48} />
         <div className={styles.titleContent}>
           <Text variant="h1" as="h1">{mcp.name}</Text>

@@ -33,7 +33,7 @@ vi.mock("../sendResetPasswordEmail", () => ({
 }));
 
 import { resetPassword } from "./index";
-import { CommonError, InternalError, UnauthorizedError, WrongParamError } from "@vassembly/errors";
+import { InternalError, UnauthorizedError, WrongParamError } from "@vassembly/errors";
 import type { UserModel } from "../../model";
 
 const VALID_TOKEN = "a".repeat(64);

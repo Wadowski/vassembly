@@ -1,6 +1,6 @@
 import { createBdd } from 'playwright-bdd';
 
-import { bddTest, seedUser } from '@vassembly/e2e';
+import { bddTest } from '@vassembly/e2e';
 
 import {
   ensureAssistantSystemAgent,
@@ -12,8 +12,6 @@ import { refreshHomeTaskListIfNeeded } from '../utils/refreshHomeTaskList';
 import type { WebBddWorld } from '../utils/types';
 
 const { Given } = createBdd(bddTest);
-
-const E2E_USER_PASSWORD = 'SecurePass123!';
 
 Given('a system agent preference is configured', async ({ seed, world }) => {
   const webWorld = world as WebBddWorld;
