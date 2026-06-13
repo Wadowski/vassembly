@@ -21,6 +21,7 @@ export interface AgentDto {
   userId: string;
   status: AgentStatus;
   integrationCredentialId: string | null;
+  assignedMcpIds: string[];
   createdAt: string;
   updatedAt: string;
   removedAt: string | null;
@@ -39,6 +40,7 @@ export interface AgentFormValues {
   description: string;
   rule: string;
   integrationCredentialId: string | null;
+  assignedMcpIds: string[];
 }
 
 export interface UseAgentFormResult {
@@ -70,6 +72,7 @@ export interface GraphQLAgentRow {
   userId?: string | null;
   status?: string | null;
   integrationCredentialId?: string | null;
+  assignedMcpIds?: string[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;
   removedAt?: string | null;
@@ -89,4 +92,36 @@ export interface ListAgentsVariables {
   size?: number;
   search?: string;
   status?: string;
+}
+
+export interface InvokePersonalAgentRequest {
+  message: string;
+}
+
+export interface InvokePersonalAgentMetadata {
+  mcpIdsUsed: string[];
+  skippedMcpIds: string[];
+}
+
+export interface InvokePersonalAgentResponse {
+  message: string;
+  metadata?: InvokePersonalAgentMetadata;
+}
+
+export interface InvokePersonalAgentInput {
+  id: string;
+  body: InvokePersonalAgentRequest;
+}
+
+export interface InvokePersonalAgentResult {
+  result: InvokePersonalAgentResponse;
+}
+
+export interface InvokePersonalAgentVariables {
+  id: string;
+  body: InvokePersonalAgentRequest;
+}
+
+export interface InvokePersonalAgentMutationData {
+  result: InvokePersonalAgentResponse;
 }

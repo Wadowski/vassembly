@@ -18,6 +18,7 @@ export type {
 } from './queries/getListForUser.types';
 export { AGENT_LIST_ALL_STATUSES } from './queries/getListForUser.types';
 export { AgentCategory, AgentStatus, toAgentResponse } from './model';
+export type { AgentInvokeMcpServerConfig } from './commands/invoke/types';
 export type { AgentModel, AgentResponse } from './model';
 
 export default agentDomain;

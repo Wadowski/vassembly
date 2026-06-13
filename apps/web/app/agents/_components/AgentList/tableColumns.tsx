@@ -14,12 +14,14 @@ import {
 
 export interface GetAgentListTableColumnsArgs {
   onEditAgent: (agentId: string) => void;
+  onRunAgent: (agent: AgentDto) => void;
   onRestoreAgent: (agent: AgentDto) => void;
   onDeleteAgent: (agent: AgentDto) => void;
 }
 
 export const getAgentListTableColumns = ({
   onEditAgent,
+  onRunAgent,
   onRestoreAgent,
   onDeleteAgent,
 }: GetAgentListTableColumnsArgs): ColumnDef<AgentDto>[] => [
@@ -64,6 +66,9 @@ export const getAgentListTableColumns = ({
     header: 'Actions',
     render: ({ row }) => (
       <div className={styles.actionsCell}>
+        {!row.removedAt ? (
+          <Button size="small" variant="text" text="Run" onClick={() => onRunAgent(row)} />
+        ) : null}
         <Button size="small" variant="text" text="Edit" onClick={() => onEditAgent(row.id)} />
         {Boolean(row.removedAt) ? (
           <Button size="small" variant="text" text="Restore" onClick={() => onRestoreAgent(row)} />

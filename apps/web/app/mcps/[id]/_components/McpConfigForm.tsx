@@ -109,6 +109,7 @@ export const McpConfigForm = ({ mcp, savedConfiguration }: McpConfigFormProps): 
       <McpRemoveConfigModal
         open={form.showDeleteModal}
         mcpName={mcp.name}
+        agentUsageCount={mcp.agentUsageCount ?? 0}
         isLoading={form.isDeleting}
         onCancel={form.closeDeleteModal}
         onConfirm={() => void form.handleDelete()}

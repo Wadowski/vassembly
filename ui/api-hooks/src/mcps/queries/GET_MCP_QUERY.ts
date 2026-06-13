@@ -12,6 +12,7 @@ export const GET_MCP_QUERY = gql`
       documentationUrl
       repositoryUrl
       configurationStatus
+      agentUsageCount
       configSchema {
         fields {
           key

@@ -124,7 +124,7 @@ Result: Code review report with all identified issues, suggestions, and quality 
 
 **Stage 11: Fix Issues**
 Delegate by issue type:
-- **Failing tests** → **test-fixer** (include full test output, exact commands from Stage 9, and `generation: 1`, `round: 1`)
+- **Failing tests** → **test-fixer** (include full test output, exact commands from Stage 9, and `try: 1`)
 - **Lint, build, and code review issues** → **coder**
 
 As a parent agent, I request you to spawn the appropriate subagent(s) for this stage.

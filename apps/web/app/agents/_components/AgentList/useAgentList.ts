@@ -28,6 +28,7 @@ export const useAgentList = () => {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [restoreOpen, setRestoreOpen] = useState(false);
+  const [invokeOpen, setInvokeOpen] = useState(false);
   const [focusAgent, setFocusAgent] = useState<AgentDto | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [restoreBusy, setRestoreBusy] = useState(false);
@@ -139,6 +140,15 @@ export const useAgentList = () => {
       setFocusAgent(agent);
       setRestoreOpen(true);
     },
+    openInvokeFor: (agent: AgentDto): void => {
+      setFocusAgent(agent);
+      setInvokeOpen(true);
+    },
+    closeInvokeDialog: (): void => {
+      setInvokeOpen(false);
+    },
+    invokeOpen,
+    focusAgent,
     confirmDelete,
     confirmRestore,
   };

@@ -11,6 +11,7 @@ export interface McpListItemResponse {
   repositoryUrl: string | null;
   configurationStatus?: string | null;
   configSchema?: McpConfigSchema | null;
+  agentUsageCount?: number;
   createdAt: string;
   updatedAt: string;
 }

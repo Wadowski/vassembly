@@ -3,7 +3,7 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { useEffect, useMemo } from 'react';
 
-import { useAiIntegrations } from '@vassembly/ui-api-hooks';
+import { useAiIntegrations, useMcps, useUserConfiguredMcps } from '@vassembly/ui-api-hooks';
 import { Alert } from '@vassembly/ui-alert';
 import { Button } from '@vassembly/ui-button';
 import { Dropdown } from '@vassembly/ui-dropdown';
@@ -15,6 +15,8 @@ import { useAgentForm } from './useAgentForm';
 import styles from './styles.module.scss';
 import { AgentFormMode, type AgentFormProps } from './types';
 import { IntegrationCredentialPicker } from '../IntegrationCredentialPicker';
+import { McpAssignmentPicker } from '../McpAssignmentPicker';
+import type { McpAssignmentOption } from '../McpAssignmentPicker';
 
 const CATEGORY_OPTIONS = AGENT_CATEGORY_OPTIONS.map((option) => ({
   value: option.value,
@@ -47,9 +49,12 @@ export function AgentForm({
     description: initialAgent?.description ?? '',
     rule: initialAgent?.rule ?? '',
     integrationCredentialId: initialAgent?.integrationCredentialId ?? null,
+    assignedMcpIds: initialAgent?.assignedMcpIds ?? [],
   });
 
   const { data: integrationsData, fetch: fetchIntegrations, isLoading: isIntegrationsLoading } = useAiIntegrations();
+  const { data: configuredMcpsData, loading: isConfiguredMcpsLoading } = useUserConfiguredMcps();
+  const { data: allMcpsData } = useMcps();
 
   useEffect(() => {
     void fetchIntegrations({ status: 'active', size: 100 });
@@ -74,6 +79,30 @@ export function AgentForm({
     return [...activeConnected, selectedFromAll];
   }, [integrationsData?.items, values.integrationCredentialId]);
 
+  const configuredMcpOptions = useMemo((): McpAssignmentOption[] => {
+    const catalogLookup = new Map(allMcpsData?.mcps.map((mcp) => [mcp.id, mcp]));
+
+    const configured = (configuredMcpsData?.mcps ?? [])
+      .map((config) => catalogLookup.get(config.mcpId))
+      .filter((mcp): mcp is NonNullable<typeof mcp> => mcp !== undefined)
+      .map((mcp) => ({
+        id: mcp.id,
+        name: mcp.name,
+        slug: mcp.slug,
+      }));
+
+    const configuredIds = new Set(configured.map((mcp) => mcp.id));
+    const staleSelections = values.assignedMcpIds
+      .filter((mcpId) => !configuredIds.has(mcpId))
+      .map((mcpId) => ({
+        id: mcpId,
+        name: mcpId,
+        slug: 'unconfigured',
+      }));
+
+    return [...configured, ...staleSelections];
+  }, [allMcpsData?.mcps, configuredMcpsData?.mcps, values.assignedMcpIds]);
+
   useEffect(() => {
     if (initialAgent === undefined) {
       return;
@@ -84,6 +113,7 @@ export function AgentForm({
       description: initialAgent.description,
       rule: initialAgent.rule,
       integrationCredentialId: initialAgent.integrationCredentialId,
+      assignedMcpIds: initialAgent.assignedMcpIds,
     });
   }, [initialAgent, reset]);
 
@@ -144,6 +174,14 @@ export function AgentForm({
     blurField('integrationCredentialId');
   };
 
+  const handleAssignedMcpsChange = (nextValue: string[]): void => {
+    setField('assignedMcpIds', nextValue);
+  };
+
+  const handleAssignedMcpsBlur = (): void => {
+    blurField('assignedMcpIds');
+  };
+
   const isSubmitBlocked = archived || isSubmitting || !isValid;
   const categoryMsg = getFieldErrorMessage('category');
   const integrationMsg = getFieldErrorMessage('integrationCredentialId');
@@ -194,6 +232,16 @@ export function AgentForm({
           isLoading={isIntegrationsLoading}
           isDisabled={archived}
           errorMessage={integrationMsg}
+        />
+      </div>
+      <div onBlur={handleAssignedMcpsBlur}>
+        <McpAssignmentPicker
+          value={values.assignedMcpIds}
+          onChange={handleAssignedMcpsChange}
+          configuredMcps={configuredMcpOptions}
+          isLoading={isConfiguredMcpsLoading}
+          isDisabled={archived}
+          errorMessage={getFieldErrorMessage('assignedMcpIds')}
         />
       </div>
       <TextField

@@ -17,6 +17,7 @@ export const agentPatchBodySchema = z
     rule: z.string().min(1).max(2000).optional(),
     status: z.enum(Object.values(AgentStatus) as [AgentStatus, ...AgentStatus[]]).optional(),
     integrationCredentialId: z.string().optional(),
+    assignedMcpIds: z.array(z.string().min(1)).max(5).optional(),
   })
   .strict();
 
@@ -29,6 +30,7 @@ export const agentResponseSchema = z.object({
   userId: z.string().optional(),
   status: z.string().optional(),
   integrationCredentialId: z.string().optional(),
+  assignedMcpIds: z.array(z.string()),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   removedAt: z.string().nullable().optional(),

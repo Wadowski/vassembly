@@ -25,6 +25,7 @@ export const toAgentResponse = ({ agent }: ToAgentResponseParams): AgentResponse
     userId: agent.userId!,
     status: agent.status!,
     integrationCredentialId: agent.integrationCredentialId,
+    assignedMcpIds: agent.assignedMcpIds ?? [],
     createdAt: toIsoString({ value: agent.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: agent.updatedAt!, fieldName: 'updatedAt' }),
     removedAt: toNullableIsoString(agent.removedAt),

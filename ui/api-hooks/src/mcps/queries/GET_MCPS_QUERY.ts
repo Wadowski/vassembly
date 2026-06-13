@@ -12,8 +12,9 @@ export const GET_MCPS_QUERY = gql`
         slug
         documentationUrl
         repositoryUrl
-        configurationStatus
-        createdAt
+      configurationStatus
+      agentUsageCount
+      createdAt
         updatedAt
       }
       total

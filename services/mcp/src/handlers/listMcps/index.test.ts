@@ -6,9 +6,10 @@ import type { McpListItemResponse } from '@vassembly/domain-mcp';
 
 import type { ListMcpsResult, ServiceContext } from './types';
 
-const { mockGetList, mockEnrichMcpListWithUserStatus } = vi.hoisted(() => ({
+const { mockGetList, mockEnrichMcpListWithUserStatus, mockGetMcpAgentUsageCount } = vi.hoisted(() => ({
   mockGetList: vi.fn(),
   mockEnrichMcpListWithUserStatus: vi.fn(),
+  mockGetMcpAgentUsageCount: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-mcp', () => ({
@@ -22,6 +23,10 @@ vi.mock('@vassembly/domain-mcp', () => ({
 
 vi.mock('../enrichMcpListWithUserStatus', () => ({
   enrichMcpListWithUserStatus: mockEnrichMcpListWithUserStatus,
+}));
+
+vi.mock('../../helpers/getMcpAgentUsageCount', () => ({
+  getMcpAgentUsageCount: mockGetMcpAgentUsageCount,
 }));
 
 import { listMcps } from './index';
@@ -55,6 +60,7 @@ const buildDomainResult = (overrides: Partial<ListMcpsResult> = {}): ListMcpsRes
 describe('listMcps handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetMcpAgentUsageCount.mockResolvedValue(0);
     mockEnrichMcpListWithUserStatus.mockImplementation(async ({ mcps }) =>
       mcps.map((mcp: McpListItemResponse) => ({
         ...mcp,
@@ -154,7 +160,7 @@ describe('listMcps handler', () => {
 
       const result = await listMcps({ search: 'github' }, buildContext());
 
-      expect(result.items).toEqual([{ ...githubMcp, configurationStatus: 'pending' }]);
+      expect(result.items).toEqual([{ ...githubMcp, configurationStatus: 'pending', agentUsageCount: 0 }]);
       expect(result.total).toBe(1);
     });
 
@@ -171,7 +177,7 @@ describe('listMcps handler', () => {
 
       const result = await listMcps({ tags: ['email'] }, buildContext());
 
-      expect(result.items).toEqual([{ ...emailMcp, configurationStatus: 'pending' }]);
+      expect(result.items).toEqual([{ ...emailMcp, configurationStatus: 'pending', agentUsageCount: 0 }]);
       expect(result.total).toBe(1);
     });
 
@@ -244,7 +250,7 @@ describe('listMcps handler', () => {
 
       expect(result).toEqual({
         ...domainResult,
-        items: [{ ...domainResult.items[0]!, configurationStatus: 'pending' }],
+        items: [{ ...domainResult.items[0]!, configurationStatus: 'pending', agentUsageCount: 0 }],
       });
     });
   });

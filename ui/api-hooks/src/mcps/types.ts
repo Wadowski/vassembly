@@ -44,6 +44,7 @@ export interface McpWithConfigurationStatus {
   documentationUrl?: string;
   repositoryUrl?: string;
   configurationStatus: McpConfigurationStatus;
+  agentUsageCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -165,4 +166,34 @@ export interface SaveMcpConfigurationResponse {
   fieldValues: McpConfigurationFieldValue[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface McpWithAgentsAgent {
+  id: string;
+  name: string;
+  category: string;
+  status: string;
+  assignedMcpIds: string[];
+}
+
+export interface McpWithAgentsData {
+  mcp: {
+    id: string;
+    name: string;
+    slug: string;
+    iconPath: string;
+  };
+  agents: McpWithAgentsAgent[];
+  totalCount: number;
+  page: number;
+  size: number;
+  configurationStatus: McpConfigurationStatus;
+  agentUsageCount: number;
+}
+
+export interface UseMcpWithAgentsResult {
+  data: McpWithAgentsData | null | undefined;
+  loading: boolean;
+  error?: CommonError;
+  refetch?: () => void;
 }

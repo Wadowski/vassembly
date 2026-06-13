@@ -20,7 +20,7 @@ vi.mock('../../clients', () => ({
 }));
 
 vi.mock('@vassembly/commands', () => ({
-  updateDb: vi.fn(() => mockUpdateDb),
+  updateDbById: vi.fn(() => mockUpdateDb),
 }));
 
 import { update } from './index';
@@ -58,6 +58,67 @@ describe('update agent command', () => {
     expect(result.data.updatedAt).toEqual(updatedAt);
   });
 
+  it('should accept assignedMcpIds replacement on update', async () => {
+    mockUpdateDb.mockResolvedValue({
+      data: {
+        id: 'agent-1',
+        userId: 'user-1',
+        name: 'Renamed',
+        assignedMcpIds: ['mcp-1', 'mcp-2'],
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-03-01T00:00:00.000Z'),
+      },
+    });
+
+    const result = await update({
+      id: 'agent-1',
+      data: { assignedMcpIds: ['mcp-1', 'mcp-2'] },
+    });
+
+    expect(result.data.assignedMcpIds).toEqual(['mcp-1', 'mcp-2']);
+  });
+
+  it('should accept clearing assignedMcpIds to empty array on update', async () => {
+    mockUpdateDb.mockResolvedValue({
+      data: {
+        id: 'agent-1',
+        userId: 'user-1',
+        assignedMcpIds: [],
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-03-01T00:00:00.000Z'),
+      },
+    });
+
+    const result = await update({
+      id: 'agent-1',
+      data: { assignedMcpIds: [] },
+    });
+
+    expect(result.data.assignedMcpIds).toEqual([]);
+  });
+
+  it('should reject update when assignedMcpIds exceeds maximum length', async () => {
+    await expect(
+      update({
+        id: 'agent-1',
+        data: { assignedMcpIds: ['mcp-1', 'mcp-2', 'mcp-3', 'mcp-4', 'mcp-5', 'mcp-6'] },
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject update when assignedMcpIds contains duplicates', async () => {
+    await expect(
+      update({
+        id: 'agent-1',
+        data: { assignedMcpIds: ['mcp-1', 'mcp-1'] },
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
   it('should reject update payloads whose strings violate maximum lengths', async () => {
     await expect(
       update({
@@ -71,7 +132,7 @@ describe('update agent command', () => {
     await expect(
       update({
         id: 'agent-1',
-        data: { category: AgentCategory.Coding },
+        data: { category: 'research' as AgentCategory },
       }),
     ).rejects.toThrow(ValidationError);
   });

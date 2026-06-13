@@ -15,6 +15,7 @@ export const gqlMcpSchema = (builder: Builder): void => {
       documentationUrl: t.exposeString('documentationUrl', { nullable: true }),
       repositoryUrl: t.exposeString('repositoryUrl', { nullable: true }),
       configurationStatus: t.exposeString('configurationStatus', { nullable: true }),
+      agentUsageCount: t.exposeInt('agentUsageCount', { nullable: true }),
       configSchema: t.field({
         type: 'ConfigSchema' as any,
         nullable: true,
@@ -87,6 +88,24 @@ export const gqlMcpSchema = (builder: Builder): void => {
         type: ['UserMcpConfig'],
         resolve: (parent: { items: unknown[] }) => parent.items,
       }),
+    }),
+  });
+
+  builder.objectType('McpWithAgents' as any, {
+    fields: (t: any) => ({
+      mcp: t.field({
+        type: 'Mcp',
+        resolve: (parent: { mcp: unknown }) => parent.mcp,
+      }),
+      agents: t.field({
+        type: ['Agent'],
+        resolve: (parent: { agents: unknown[] }) => parent.agents,
+      }),
+      totalCount: t.exposeInt('totalCount'),
+      page: t.exposeInt('page'),
+      size: t.exposeInt('size'),
+      configurationStatus: t.exposeString('configurationStatus', { nullable: true }),
+      agentUsageCount: t.exposeInt('agentUsageCount', { nullable: true }),
     }),
   });
 

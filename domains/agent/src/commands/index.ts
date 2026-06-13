@@ -5,4 +5,4 @@ export type { RemoveSoftAgentCommandInput } from './removeSoft';
 export { restore } from './restore';
 export type { RestoreAgentCommandInput } from './restore';
 export { invoke } from './invoke';
-export type { ModeledProviderClient } from './invoke/types';
+export type { AgentInvokeMcpServerConfig, ModeledProviderClient } from './invoke/types';

@@ -1,6 +1,7 @@
 import { applyResolvers } from '@vassembly/graphql';
 import { gqlSchema as gqlMcpSchema } from '@vassembly/domain-mcp';
 import { UnauthorizedError } from '@vassembly/errors';
+import agentService from '@vassembly/service-agent';
 import mcpService from '@vassembly/service-mcp';
 import type { Builder } from '@vassembly/graphql';
 
@@ -18,6 +19,12 @@ interface McpConfigurationResolverArgs {
 interface UserConfiguredMcpsResolverArgs {
   limit?: number | null;
   offset?: number | null;
+}
+
+interface McpWithAgentsResolverArgs {
+  mcpId: string;
+  page?: number | null;
+  size?: number | null;
 }
 
 interface ApiGraphQLContext {
@@ -129,6 +136,37 @@ export const registerMcpResolvers = (builder: Builder): void => {
           );
 
           return { items: configs };
+        },
+      }),
+      mcpWithAgents: t.field({
+        type: 'McpWithAgents',
+        args: {
+          mcpId: t.arg.string({ required: true }),
+          page: t.arg.int({ required: false, defaultValue: 0 }),
+          size: t.arg.int({ required: false, defaultValue: 10 }),
+        },
+        resolve: async (
+          _root: unknown,
+          args: McpWithAgentsResolverArgs,
+          context: ApiGraphQLContext,
+        ) => {
+          const userId = context.authenticatedUserId;
+          if (userId === undefined) {
+            throw new UnauthorizedError('Authentication required to view MCP agents');
+          }
+
+          const result = await agentService.getMcpWithAgents({
+            userId,
+            mcpId: args.mcpId,
+            page: args.page ?? 0,
+            size: args.size ?? 10,
+          });
+
+          return {
+            ...result,
+            configurationStatus: 'configured',
+            agentUsageCount: result.totalCount,
+          };
         },
       }),
     }),

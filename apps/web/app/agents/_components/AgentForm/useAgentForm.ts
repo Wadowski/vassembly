@@ -1,5 +1,6 @@
 import { AgentCategory, type AgentFormValues, type UseAgentFormResult } from '@vassembly/ui-api-hooks';
 
+import { AGENT_MAX_ASSIGNED_MCPS } from '../McpAssignmentPicker/constants';
 import { AGENT_DESCRIPTION_MAX, AGENT_NAME_MAX, AGENT_RULE_MAX } from './constants';
 import { validatorFactory } from '@vassembly/validation';
 import { useCallback, useMemo, useState } from 'react';
@@ -19,6 +20,12 @@ const schema = z.object({
     .min(1, 'Rule is required.')
     .max(AGENT_RULE_MAX, `Rule must be at most ${AGENT_RULE_MAX} characters.`),
   integrationCredentialId: z.string(),
+  assignedMcpIds: z
+    .array(z.string().min(1))
+    .max(AGENT_MAX_ASSIGNED_MCPS, `At most ${AGENT_MAX_ASSIGNED_MCPS} MCPs can be assigned.`)
+    .refine((ids) => new Set(ids).size === ids.length, {
+      message: 'Duplicate MCP assignments are not allowed.',
+    }),
 });
 
 const validateAgentForm = validatorFactory(schema);
@@ -29,6 +36,7 @@ const toFormValues = (initial?: Partial<AgentFormValues>): AgentFormValues => ({
   description: initial?.description ?? '',
   rule: initial?.rule ?? '',
   integrationCredentialId: initial?.integrationCredentialId ?? null,
+  assignedMcpIds: initial?.assignedMcpIds ?? [],
 });
 
 export const useAgentForm = (initial?: Partial<AgentFormValues>): UseAgentFormResult => {

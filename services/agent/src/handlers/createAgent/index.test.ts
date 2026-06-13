@@ -15,6 +15,10 @@ vi.mock('@vassembly/domain-ai-integration', () => ({
   },
 }));
 
+vi.mock('../../helpers/validateAssignedMcpIds', () => ({
+  validateAssignedMcpIds: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('@vassembly/domain-agent', async () => {
   const { toAgentResponse } = await import('../../../../../domains/agent/src/model/toAgentResponse.js');
   const { AgentCategory } = await import('../../../../../domains/agent/src/model/model.js');

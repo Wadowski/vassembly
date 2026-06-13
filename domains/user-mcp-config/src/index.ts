@@ -26,5 +26,6 @@ export { UserMcpConfigFactory } from './model/factory';
 export { McpConfigFieldType } from './model/configSchema';
 export type { McpConfigSchema, McpConfigFieldSchema, McpConfigFieldTypeValue } from './model/configSchema';
 export { setupUserMcpConfigIndexes, UserMcpConfigDAO } from './clients/mongodb';
+export type { McpServerConfig } from './commands/resolveMcpServerConfigs/types';
 export * from './types';
 export * from './constants';

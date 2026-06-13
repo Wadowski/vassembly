@@ -12,6 +12,7 @@ export interface UpdateAgentHandlerInput {
     rule: string;
     status: AgentStatus;
     integrationCredentialId: string;
+    assignedMcpIds: string[];
   }>;
 }
 

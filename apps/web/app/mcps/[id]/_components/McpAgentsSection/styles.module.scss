@@ -1,0 +1,55 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-4;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
+}
+
+.agentList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.agentRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-3;
+}
+
+.agentMeta {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+}
+
+.agentActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.categoryText {
+  color: $color-text-secondary;
+}
+
+.emptyText {
+  color: $color-text-secondary;
+}
+
+.modalStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.toolbarRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-3;
+}

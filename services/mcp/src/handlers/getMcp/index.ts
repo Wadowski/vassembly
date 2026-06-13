@@ -1,6 +1,9 @@
 import mcpDomain from '@vassembly/domain-mcp';
 import { UnauthorizedError } from '@vassembly/errors';
 
+import { getMcpAgentUsageCount } from '../../helpers/getMcpAgentUsageCount';
+import { enrichMcpListWithUserStatus } from '../enrichMcpListWithUserStatus';
+
 import type { GetMcpInput, GetMcpResult, ServiceContext } from './types';
 
 export const getMcp = async (
@@ -11,5 +14,29 @@ export const getMcp = async (
     throw new UnauthorizedError('Authentication required');
   }
 
-  return mcpDomain.queries.getById(args);
+  const result = await mcpDomain.queries.getById(args);
+  const agentUsageCount = await getMcpAgentUsageCount({
+    userId: context.authenticatedUserId,
+    mcpId: args.id,
+  });
+  const [enrichedMcp] = await enrichMcpListWithUserStatus(
+    { mcps: [result.data] },
+    { userId: context.authenticatedUserId },
+  );
+
+  if (enrichedMcp === undefined) {
+    return {
+      data: {
+        ...result.data,
+        agentUsageCount,
+      },
+    };
+  }
+
+  return {
+    data: {
+      ...enrichedMcp,
+      agentUsageCount,
+    },
+  };
 };

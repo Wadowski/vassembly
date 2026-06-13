@@ -37,6 +37,7 @@ export interface McpSecretFieldProps {
 export interface McpRemoveConfigModalProps {
   open: boolean;
   mcpName: string;
+  agentUsageCount?: number;
   onConfirm: () => void;
   onCancel: () => void;
   isLoading: boolean;

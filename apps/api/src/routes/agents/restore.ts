@@ -15,6 +15,7 @@ export const agentResponseSchema = z.object({
   userId: z.string().optional(),
   status: z.string().optional(),
   integrationCredentialId: z.string().optional(),
+  assignedMcpIds: z.array(z.string()),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   removedAt: z.string().nullable().optional(),

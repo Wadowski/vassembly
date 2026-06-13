@@ -10,6 +10,7 @@ export const LIST_AGENTS_QUERY = `
         userId
         status
         integrationCredentialId
+        assignedMcpIds
         createdAt
         updatedAt
         removedAt

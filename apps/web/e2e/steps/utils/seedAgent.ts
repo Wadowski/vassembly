@@ -9,6 +9,7 @@ export interface SeedAgentParams extends InitDomainContextParams {
   description?: string;
   rule?: string;
   integrationCredentialId?: string;
+  assignedMcpIds?: string[];
 }
 
 export interface SoftDeleteAgentParams extends InitDomainContextParams {
@@ -39,6 +40,7 @@ export const seedAgent = async ({
   description = DEFAULT_DESCRIPTION,
   rule = DEFAULT_RULE,
   integrationCredentialId,
+  assignedMcpIds,
 }: SeedAgentParams): Promise<string> => {
   await ensureAgentIndexes({ context });
 
@@ -53,6 +55,7 @@ export const seedAgent = async ({
     description,
     rule,
     ...(integrationCredentialId !== undefined ? { integrationCredentialId } : {}),
+    ...(assignedMcpIds !== undefined ? { assignedMcpIds } : {}),
   });
 
   const agentId = result.data.id;

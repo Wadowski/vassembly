@@ -62,13 +62,15 @@ Given(
     const mcpId = await getMcpIdBySlug({ context: seed, slug });
     const apiBaseUrl = getE2eEnvironment().apiBaseUrl;
     const token = await resolveAuthToken({ page, fallbackToken: world.auth.token });
-    const headers = buildAuthHeaders({ token });
+    const authHeaders = buildAuthHeaders({ token });
     const configurationUrl = `${apiBaseUrl}/mcps/${mcpId}/configuration`;
 
-    await request.delete(configurationUrl, { headers });
+    await request.delete(configurationUrl, {
+      headers: { Authorization: authHeaders.Authorization },
+    });
 
     const response = await request.post(configurationUrl, {
-      headers,
+      headers: authHeaders,
       data: { fieldValues: BRAVE_SEARCH_FIELD_VALUES },
     });
 

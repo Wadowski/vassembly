@@ -1,0 +1,1 @@
+export const MCP_TOOL_MAX_ITERATIONS = 10;

@@ -4,9 +4,13 @@ export interface AiProviderTestResult {
   error?: string;
 }
 
+import type { McpServerConfig } from './mcp/types';
+
 export interface AiProviderInvokeParams {
   model: string;
   message: string;
+  systemMessage?: string;
+  mcpServerConfigs?: McpServerConfig[];
 }
 
 export interface AiProviderInvokeResult {

@@ -10,6 +10,7 @@ import { useMcp, useMcpConfiguration } from '@vassembly/ui-api-hooks';
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
 
 import { EmptySchemaMessage } from './_components/EmptySchemaMessage';
+import { McpAgentsSection } from './_components/McpAgentsSection';
 import { McpConfigForm } from './_components/McpConfigForm';
 import { McpDetailHeader } from './_components/McpDetailHeader';
 import { McpDetailSkeleton } from './_components/McpDetailSkeleton';
@@ -55,6 +56,7 @@ export default function McpDetailPage(): JSX.Element {
     const fields = mcp.configSchema?.fields ?? [];
     const hasSchema = fields.length > 0;
     const configuration = configData?.configuration ?? null;
+    const isConfigured = mcp.configurationStatus === 'configured';
 
     return (
       <main
@@ -68,6 +70,7 @@ export default function McpDetailPage(): JSX.Element {
         ) : (
           <EmptySchemaMessage />
         )}
+        {isConfigured ? <McpAgentsSection mcpId={mcpId} mcpName={mcp.name} /> : null}
       </main>
     );
   })();
