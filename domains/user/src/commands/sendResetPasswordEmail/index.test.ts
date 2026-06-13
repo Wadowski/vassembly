@@ -29,6 +29,7 @@ describe("sendResetPasswordEmail", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSendEmail = vi.fn().mockResolvedValue(undefined);
+    configModule.config.aws.ses.fromEmail = "noreply@example.com";
 
     mockAwsSesClient.mockReturnValue({
       sendEmail: mockSendEmail,

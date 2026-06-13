@@ -3,20 +3,10 @@ import { describe, it, expect } from 'vitest';
 import { createBuilder } from './builder';
 import { defineModelSchema } from './defineSchema';
 import { applyResolvers } from './resolvers';
-import type { Builder } from './types';
-
-const prepareBuilderForObjectSchemaTests = (builder: Builder): void => {
-  builder.scalarType('DateTime', {
-    serialize: (value: unknown) => value as Date,
-    parseValue: (value: unknown) => value as Date,
-  });
-  builder.queryType({});
-};
 
 describe('defineModelSchema', () => {
   it('registers object type with common fields merged into domain fields by default', () => {
     const builder = createBuilder();
-    prepareBuilderForObjectSchemaTests(builder);
     defineModelSchema({
       builder,
       name: 'Widget',
@@ -56,7 +46,6 @@ describe('defineModelSchema', () => {
 
   it('registers object type with only domain fields when includeCommonFields is false', () => {
     const builder = createBuilder();
-    prepareBuilderForObjectSchemaTests(builder);
     defineModelSchema({
       builder,
       name: 'Gadget',

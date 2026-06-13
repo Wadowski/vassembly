@@ -14,10 +14,14 @@ const testApiHooksStubs = vi.hoisted(() => {
     patch: vi.fn(),
     delete: vi.fn(),
   };
+  const mockShowSnackbar = vi.fn();
+  const mockDismissSnackbar = vi.fn();
 
   return {
     mockAgentsFetch,
     mockHttpClient,
+    mockShowSnackbar,
+    mockDismissSnackbar,
   };
 });
 
@@ -35,8 +39,8 @@ vi.mock('next/navigation', () => ({
 vi.mock('@vassembly/ui-snackbar', () => ({
   SnackbarProvider: ({ children }: { children: unknown }) => children,
   useSnackbar: vi.fn(() => ({
-    show: vi.fn(),
-    dismiss: vi.fn(),
+    show: testApiHooksStubs.mockShowSnackbar,
+    dismiss: testApiHooksStubs.mockDismissSnackbar,
   })),
 }));
 
@@ -67,6 +71,27 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
     useTestConnection: vi.fn(() => ({
       mutate: vi.fn().mockResolvedValue(undefined),
       isLoading: false,
+    })),
+    useInvokePersonalAgent: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      error: undefined,
+    })),
+    useMcps: vi.fn(() => ({
+      data: { mcps: [] },
+      loading: false,
+      error: undefined,
+      refetch: vi.fn(),
+    })),
+    useUserConfiguredMcps: vi.fn(() => ({
+      data: { mcps: [] },
+      loading: false,
+      error: undefined,
+    })),
+    useMcpWithAgents: vi.fn(() => ({
+      data: undefined,
+      loading: false,
+      refetch: vi.fn(),
     })),
     useHttpClient: vi.fn(() => testApiHooksStubs.mockHttpClient),
     useSystemAgents: vi.fn(() => ({

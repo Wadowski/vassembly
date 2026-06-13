@@ -18,7 +18,8 @@ const UPDATE_DB_SCHEMA = z
     status: z.enum(Object.values(AgentStatus) as [string, ...string[]]).optional(),
     integrationCredentialId: z.string().optional(),
     assignedMcpIds: assignedMcpIdsUpdateSchema,
-  });
+  })
+  .strict();
 
 const validateUpdateData = validatorFactory(UPDATE_DB_SCHEMA);
 

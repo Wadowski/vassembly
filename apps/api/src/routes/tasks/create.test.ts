@@ -19,6 +19,13 @@ const TASK_RESPONSE = {
   type: 'user' as const,
   status: 'created' as const,
   agentAssignedId: null,
+  title: null,
+  llmResponse: null,
+  errorMessage: null,
+  errorCode: null,
+  startedAt: null,
+  completedAt: null,
+  failedAt: null,
   createdAt: '2026-05-26T12:00:00.000Z',
   updatedAt: '2026-05-26T12:00:00.000Z',
 };

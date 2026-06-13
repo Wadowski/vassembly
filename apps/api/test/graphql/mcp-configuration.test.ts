@@ -77,6 +77,10 @@ const captureMcpConfigResolvers = (): CapturedMcpConfigResolvers => {
     }) => void) => {
       fieldsFactory({
         field: (config) => {
+          if (config.args !== undefined && 'mcpId' in config.args && 'page' in config.args) {
+            return;
+          }
+
           if (config.args !== undefined && 'mcpId' in config.args) {
             captured.resolveMcpConfiguration = config.resolve as McpConfigurationResolver;
             return;

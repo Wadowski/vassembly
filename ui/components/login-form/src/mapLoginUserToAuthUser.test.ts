@@ -9,7 +9,12 @@ describe('mapLoginUserToAuthUser', () => {
       firstName: 'John',
       lastName: 'Doe',
     });
-    expect(result).toEqual({ id: 'user123', email: 'user@example.com' });
+    expect(result).toEqual({
+      id: 'user123',
+      email: 'user@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+    });
   });
 
   it('should map a minimal user with id and email only', () => {
@@ -20,11 +25,21 @@ describe('mapLoginUserToAuthUser', () => {
 
   it('should not require firstName or lastName', () => {
     const result = mapLoginUserToAuthUser({ id: 'user123', email: 'user@example.com' });
-    expect(result).toEqual({ id: 'user123', email: 'user@example.com' });
+    expect(result).toEqual({
+      id: 'user123',
+      email: 'user@example.com',
+      firstName: undefined,
+      lastName: undefined,
+    });
   });
 
   it('should allow email to be undefined when missing from the payload', () => {
     const result = mapLoginUserToAuthUser({ id: 'user123' });
-    expect(result).toEqual({ id: 'user123', email: undefined });
+    expect(result).toEqual({
+      id: 'user123',
+      email: undefined,
+      firstName: undefined,
+      lastName: undefined,
+    });
   });
 });

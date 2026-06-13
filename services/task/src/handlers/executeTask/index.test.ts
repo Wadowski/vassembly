@@ -139,7 +139,7 @@ describe('executeTask handler', () => {
     );
   });
 
-  it('should fail task with INVALID_STATE when task has no agentAssignedId', async () => {
+  it('should fail task with INVALID_AGENT_ASSIGNED when task has no agentAssignedId', async () => {
     mockGetModelById.mockResolvedValue({
       data: { ...BASE_TASK, agentAssignedId: null },
     });
@@ -147,7 +147,7 @@ describe('executeTask handler', () => {
     await executeTask({ taskId: 'task-1', userId: 'user-1' });
 
     expect(mockFail).toHaveBeenCalledWith(
-      expect.objectContaining({ errorCode: 'INVALID_STATE' }),
+      expect.objectContaining({ errorCode: 'INVALID_AGENT_ASSIGNED' }),
     );
     expect(mockInvoke).not.toHaveBeenCalled();
   });

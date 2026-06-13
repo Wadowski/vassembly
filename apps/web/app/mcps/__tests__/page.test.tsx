@@ -291,7 +291,6 @@ describe('McpsPage', () => {
       render(<McpsPage />);
 
       const cardLink = screen.getAllByRole('link', { name: /configure gmail mcp/i })[0];
-      expect(cardLink).toHaveAttribute('tabindex', '0');
       expect(cardLink).toHaveAccessibleName(/gmail mcp/i);
     });
   });

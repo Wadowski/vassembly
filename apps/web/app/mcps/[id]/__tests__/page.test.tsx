@@ -75,6 +75,15 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
     useSaveMcpConfiguration: (...args: unknown[]) => mockUseSaveMcpConfiguration(...args),
     useUpdateMcpConfiguration: (...args: unknown[]) => mockUseUpdateMcpConfiguration(...args),
     useDeleteMcpConfiguration: (...args: unknown[]) => mockUseDeleteMcpConfiguration(...args),
+    useMcpWithAgents: vi.fn(() => ({
+      data: { agents: [], totalCount: 0, page: 0, size: 10 },
+      loading: false,
+      refetch: vi.fn(),
+    })),
+    useUnassignMcpFromAgent: vi.fn(() => [
+      vi.fn().mockResolvedValue(undefined),
+      { loading: false, error: null },
+    ] as const),
   };
 });
 

@@ -6,7 +6,7 @@
     "dev": "npm run storybook",
     "lint": "eslint . --max-warnings 0",
     "storybook": "storybook dev -p 6006",
-    "test": "npm run test",
+    "test": "vitest run",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "tsc --noEmit",
     "build-storybook": "storybook build"
@@ -30,7 +30,8 @@
     "storybook": "^10.3.1",
     "style-loader": "^4.0.0",
     "turbo": "^2.8.1",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^2.0.0"
   },
   "dependencies": {
     "next": "16.1.0"

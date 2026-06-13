@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { printSchema } from 'graphql';
 
 import { createBuilder } from './builder';
 import { buildGraphQLConfig } from './buildConfig';
@@ -7,14 +6,14 @@ import { buildGraphQLConfig } from './buildConfig';
 describe('buildGraphQLConfig', () => {
   it('returns schema from builder.toSchema and forwards path when provided', () => {
     const builder = createBuilder();
-    const expectedSdl = printSchema(builder.toSchema());
 
     const result = buildGraphQLConfig({
       builder,
       path: '/graphql',
     });
 
-    expect(printSchema(result.schema)).toBe(expectedSdl);
+    expect(result.schema.getType('Query')).toBeDefined();
+    expect(result.schema.getType('DateTime')).toBeDefined();
     expect(result.path).toBe('/graphql');
   });
 

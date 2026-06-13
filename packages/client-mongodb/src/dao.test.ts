@@ -77,7 +77,7 @@ describe('MongoDbDAO', () => {
 
       expect(mockInsertOne).toHaveBeenCalledWith(
         { name: 'test' },
-        null
+        undefined
       );
       expect(result).toBe('new-id-123');
     });
@@ -114,21 +114,21 @@ describe('MongoDbDAO', () => {
 
       expect(mockInsertMany).toHaveBeenCalledWith(
         [{ name: 'test' }, { name: 'test' }],
-        null
+        undefined
       );
       expect(result).toEqual(['id-1', 'id-2']);
     });
   });
 
   describe('get', () => {
-    it('returns null when document not found', async () => {
+    it('returns empty object when document not found', async () => {
       mockFindOne.mockResolvedValue(null);
 
       const dao = await getDao();
       const where = createMockModel();
       const result = await dao.get(asModel(where));
 
-      expect(result).toBeNull();
+      expect(result).toEqual({});
     });
 
     it('returns document with id when found', async () => {
@@ -239,7 +239,7 @@ describe('MongoDbDAO', () => {
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { id: '123' },
         { $set: expect.objectContaining({ name: 'updated' }) },
-        null
+        undefined
       );
     });
   });
@@ -256,7 +256,7 @@ describe('MongoDbDAO', () => {
       expect(mockUpdateMany).toHaveBeenCalledWith(
         { id: '123' },
         expect.objectContaining({ $set: expect.any(Object) }),
-        null
+        undefined
       );
     });
   });
@@ -304,7 +304,7 @@ describe('MongoDbDAO', () => {
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { id: '123' },
         expect.objectContaining({ $set: expect.objectContaining({ deleted: true }) }),
-        null
+        undefined
       );
     });
   });
@@ -320,7 +320,7 @@ describe('MongoDbDAO', () => {
       expect(mockUpdateMany).toHaveBeenCalledWith(
         { id: '123' },
         expect.objectContaining({ $set: expect.objectContaining({ deleted: true }) }),
-        null
+        undefined
       );
     });
   });
@@ -333,7 +333,7 @@ describe('MongoDbDAO', () => {
       const where = createMockModel();
       await dao.removeHard(asModel(where));
 
-      expect(mockDeleteOne).toHaveBeenCalledWith({ id: '123' }, null);
+      expect(mockDeleteOne).toHaveBeenCalledWith({ id: '123' }, undefined);
     });
   });
 
@@ -345,7 +345,7 @@ describe('MongoDbDAO', () => {
       const where = createMockModel();
       await dao.removeHardMany(asModel(where));
 
-      expect(mockDeleteMany).toHaveBeenCalledWith({ id: '123' }, null);
+      expect(mockDeleteMany).toHaveBeenCalledWith({ id: '123' }, undefined);
     });
   });
 

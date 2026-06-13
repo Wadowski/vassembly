@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { WrongParamError } from "@vassembly/errors";
 import { Model, ModelWithTranslation, MONGODB_VALUE_MAP } from "./model";
 
 class TestModel extends Model {}
@@ -156,11 +157,14 @@ describe("Model", () => {
         const instance = new TestModel();
         instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
-        const testError = new Error("Validation failed");
-        const validatorMock = vi.fn().mockReturnValue({ success: false, error: testError });
+        const zodError = { issues: [{ path: ["id"], message: "Invalid id format" }] };
+        const validatorError = new WrongParamError("Validation failed", zodError);
+        const validatorMock = vi.fn().mockReturnValue({ success: false, error: validatorError });
         (instance as unknown as Record<string, unknown>).validator = validatorMock;
 
-        expect(() => instance.isValid({ shouldThrow: true })).toThrow(testError);
+        expect(() => instance.isValid({ shouldThrow: true })).toThrow(
+          new WrongParamError("TestModel :: id: Invalid id format"),
+        );
       });
 
       it("should return result when shouldThrow is true and validator succeeds", () => {
