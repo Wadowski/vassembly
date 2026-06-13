@@ -117,7 +117,7 @@ describe("Model", () => {
         instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
         const validatorMock = vi.fn().mockReturnValue({ success: true, data: instance });
-        (instance as Record<string, unknown>).validator = validatorMock;
+        (instance as unknown as Record<string, unknown>).validator = validatorMock;
 
         const result = instance.isValid();
 
@@ -131,7 +131,7 @@ describe("Model", () => {
 
         const error = { field: "id", message: "Invalid id format" };
         const validatorMock = vi.fn().mockReturnValue({ success: false, error });
-        (instance as Record<string, unknown>).validator = validatorMock;
+        (instance as unknown as Record<string, unknown>).validator = validatorMock;
 
         const result = instance.isValid();
 
@@ -144,7 +144,7 @@ describe("Model", () => {
         instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
         const validatorMock = vi.fn().mockReturnValue({ success: true, data: instance });
-        (instance as Record<string, unknown>).validator = validatorMock;
+        (instance as unknown as Record<string, unknown>).validator = validatorMock;
 
         const result = instance.isValid();
 
@@ -158,7 +158,7 @@ describe("Model", () => {
 
         const testError = new Error("Validation failed");
         const validatorMock = vi.fn().mockReturnValue({ success: false, error: testError });
-        (instance as Record<string, unknown>).validator = validatorMock;
+        (instance as unknown as Record<string, unknown>).validator = validatorMock;
 
         expect(() => instance.isValid({ shouldThrow: true })).toThrow(testError);
       });
@@ -168,7 +168,7 @@ describe("Model", () => {
         instance.id = "65de1f2a9b3c4d5e6f7a8b9c";
 
         const validatorMock = vi.fn().mockReturnValue({ success: true, data: instance });
-        (instance as Record<string, unknown>).validator = validatorMock;
+        (instance as unknown as Record<string, unknown>).validator = validatorMock;
 
         const result = instance.isValid({ shouldThrow: true });
 

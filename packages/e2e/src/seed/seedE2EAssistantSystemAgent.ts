@@ -1,6 +1,4 @@
-import { randomUUID } from 'node:crypto';
-
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
 
@@ -34,7 +32,7 @@ export const seedE2EAssistantSystemAgent = async ({
     const now = new Date();
 
     await collection.insertOne({
-      _id: randomUUID(),
+      _id: new ObjectId(),
       name: SYSTEM_AGENT_NAME.Assistant,
       rule: 'E2E assistant system agent rule',
       description: 'E2E assistant',

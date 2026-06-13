@@ -1,11 +1,9 @@
 import { z } from 'zod';
-import { validatorFactory } from '@vassembly/validation';
+import { getValidatorIssues, validatorFactory } from '@vassembly/validation';
 
 import { RESET_PASSWORD_CONFIRM_REQUIRED, RESET_PASSWORD_MISMATCH } from './constants';
 import { getResetPasswordPolicyFieldError } from './getResetPasswordFieldErrors';
 import type { ValidateResetPasswordFormParams, ValidateResetPasswordFormResult } from './types';
-
-type ValidationIssue = { path: ReadonlyArray<PropertyKey>; message?: string };
 
 const schema = z
   .object({
@@ -56,7 +54,7 @@ export const validateResetPasswordForm = (
     return { isValid: true };
   }
 
-  const issues: ValidationIssue[] = (result.error.error?.issues ?? []) as ValidationIssue[];
+  const issues = getValidatorIssues(result);
   const passwordIssue = issues.find((issue) => issue.path[0] === 'password');
   const confirmIssue = issues.find((issue) => issue.path[0] === 'confirmPassword');
   return {

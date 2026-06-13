@@ -75,7 +75,7 @@ export const getTranslationListList = (
   translationsKey: string,
   instance: Record<string, unknown>,
   language: COUNTRIES
-): unknown[][] | undefined => {
+): Record<string, unknown>[][] | undefined => {
   const [topLevelFieldKey, bottomLevelFieldKey] = fieldKey.split(".[].[].");
   const [topLevelTranslationKey, bottomLevelTranslationKey] =
     translationsKey.split(".[].[].");

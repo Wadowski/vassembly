@@ -258,7 +258,7 @@ describe("AwsS3Client", () => {
       vi.mocked(Upload).mockImplementationOnce(
         () => ({
           done: vi.fn().mockRejectedValueOnce(new Error("AWS Error")),
-        }) as ReturnType<typeof Upload>
+        }) as unknown as InstanceType<typeof Upload>
       );
 
       await expect(

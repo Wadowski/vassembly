@@ -3,42 +3,42 @@ import { hasRoleAccess } from './requireAuthUtils';
 
 describe('hasRoleAccess', () => {
   describe('when no required roles', () => {
-    it('should return true regardless of user roles', () => {
-      expect(hasRoleAccess({ userRoles: [] })).toBe(true);
-      expect(hasRoleAccess({ userRoles: ['admin'] })).toBe(true);
-      expect(hasRoleAccess({ userRoles: ['user', 'moderator'] })).toBe(true);
+    it('should return true regardless of user role', () => {
+      expect(hasRoleAccess({ userRole: '' })).toBe(true);
+      expect(hasRoleAccess({ userRole: 'admin' })).toBe(true);
+      expect(hasRoleAccess({ userRole: 'user' })).toBe(true);
     });
 
     it('should return true when requiredRoles is empty', () => {
-      expect(hasRoleAccess({ userRoles: ['admin'], requiredRoles: [] })).toBe(true);
+      expect(hasRoleAccess({ userRole: 'admin', requiredRoles: [] })).toBe(true);
     });
   });
 
   describe('with "any" match strategy', () => {
-    it('should return true if user has at least one required role', () => {
+    it('should return true if user has a required role', () => {
       expect(
         hasRoleAccess({
-          userRoles: ['admin', 'user'],
+          userRole: 'admin',
           requiredRoles: ['admin'],
           match: 'any',
         }),
       ).toBe(true);
     });
 
-    it('should return true if user has multiple required roles', () => {
+    it('should return true if user role matches one of multiple required roles', () => {
       expect(
         hasRoleAccess({
-          userRoles: ['admin', 'moderator', 'user'],
+          userRole: 'admin',
           requiredRoles: ['admin', 'moderator'],
           match: 'any',
         }),
       ).toBe(true);
     });
 
-    it('should return false if user has none of the required roles', () => {
+    it('should return false if user role does not match any required role', () => {
       expect(
         hasRoleAccess({
-          userRoles: ['user'],
+          userRole: 'user',
           requiredRoles: ['admin', 'moderator'],
           match: 'any',
         }),
@@ -48,7 +48,7 @@ describe('hasRoleAccess', () => {
     it('should be the default match strategy', () => {
       expect(
         hasRoleAccess({
-          userRoles: ['admin'],
+          userRole: 'admin',
           requiredRoles: ['admin', 'moderator'],
         }),
       ).toBe(true);
@@ -56,30 +56,30 @@ describe('hasRoleAccess', () => {
   });
 
   describe('with "all" match strategy', () => {
-    it('should return true if user has all required roles', () => {
+    it('should return true if user role matches the single required role', () => {
       expect(
         hasRoleAccess({
-          userRoles: ['admin', 'moderator', 'user'],
-          requiredRoles: ['admin', 'moderator'],
+          userRole: 'admin',
+          requiredRoles: ['admin'],
           match: 'all',
         }),
       ).toBe(true);
     });
 
-    it('should return false if user is missing any required role', () => {
+    it('should return false if user role does not match all required roles', () => {
       expect(
         hasRoleAccess({
-          userRoles: ['admin', 'user'],
+          userRole: 'admin',
           requiredRoles: ['admin', 'moderator'],
           match: 'all',
         }),
       ).toBe(false);
     });
 
-    it('should return false if user has no required roles', () => {
+    it('should return false if user role does not match any required role', () => {
       expect(
         hasRoleAccess({
-          userRoles: ['user'],
+          userRole: 'user',
           requiredRoles: ['admin', 'moderator'],
           match: 'all',
         }),

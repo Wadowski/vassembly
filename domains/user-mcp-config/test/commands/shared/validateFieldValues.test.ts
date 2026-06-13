@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
 import { validateFieldValues } from '../../../src/commands/shared/validateFieldValues';
+import type { McpConfigSchema } from '../../../src/model/configSchema';
 
 describe('validateFieldValues', () => {
   const schema = {
@@ -17,7 +18,7 @@ describe('validateFieldValues', () => {
       },
       { key: 'acceptTerms', label: 'Accept', type: 'checkbox', required: true },
     ],
-  };
+  } as McpConfigSchema;
 
   describe('required validation', () => {
     it('should reject missing required field when name is omitted', () => {

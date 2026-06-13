@@ -4,7 +4,7 @@ import { z } from "zod";
 import { WrongParamError } from "@vassembly/errors";
 import { updateDbById } from ".";
 import type { CommonDbCommandGeneratorParams } from "../types";
-import { MongoDbDAO } from "@vassembly/client-mongodb";
+import type { MongoDbDAOType } from "@vassembly/client-mongodb";
 
 interface TestModel extends Model {
   id: string;
@@ -19,7 +19,7 @@ type MockTestInstance = Partial<TestModel> & {
 const createMockInstance = (data: Partial<TestModel>): MockTestInstance => {
   const instance = {
     ...data,
-    isValid: vi.fn(() => ({ success: true, data })),
+    isValid: vi.fn(() => ({ success: true as const, data: data as TestModel })),
   };
   return instance;
 };
@@ -38,7 +38,7 @@ describe("updateDbById", () => {
 
   const params: CommonDbCommandGeneratorParams<TestModel> = {
     factory: mockFactory,
-    dao: mockDao as unknown as MongoDbDAO<TestModel>,
+    dao: mockDao as unknown as MongoDbDAOType<TestModel>,
   };
 
   beforeEach(() => {

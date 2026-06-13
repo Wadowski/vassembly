@@ -1,10 +1,7 @@
 import React, { useMemo } from 'react';
-import type { ApolloProviderProps } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
 import { createApolloInstance } from './createApolloInstance';
 import type { GraphQLClientConfig } from './types';
-
-const ApolloProviderComponent = ApolloProvider as React.ComponentType<ApolloProviderProps>;
 
 interface GraphQLProviderProps {
   config: GraphQLClientConfig;
@@ -14,5 +11,5 @@ interface GraphQLProviderProps {
 export function GraphQLProvider({ config, children }: GraphQLProviderProps) {
   const apolloClient = useMemo(() => createApolloInstance(config), [config]);
 
-  return <ApolloProviderComponent client={apolloClient}>{children}</ApolloProviderComponent>;
+  return <ApolloProvider client={apolloClient}>{children}</ApolloProvider>;
 }

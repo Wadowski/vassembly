@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildUrl } from './buildUrl';
+import type { BuildUrlProps } from './types';
 
 describe('buildUrl', () => {
   it('should join base URL and path, trimming trailing slashes and adding a leading slash on the path', () => {
@@ -22,7 +23,7 @@ describe('buildUrl', () => {
         flag: true,
         empty: null,
         missing: undefined,
-      },
+      } as unknown as NonNullable<BuildUrlProps['query']>,
     });
 
     const parsed = new URL(url);

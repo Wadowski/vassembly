@@ -1,10 +1,13 @@
 import type SchemaBuilder from '@pothos/core';
 import type { GraphQLSchema } from 'graphql';
 
-export type GraphQLSchemaTypes = Record<string, unknown> & {
+export type GraphQLSchemaTypes = {
   Scalars: {
     DateTime: { Input: Date; Output: Date };
   };
+  Objects: Record<string, object>;
+  Queries: Record<string, { Args: Record<string, unknown>; Output: unknown }>;
+  Mutations: Record<string, { Args: Record<string, unknown>; Output: unknown }>;
 };
 
 export type Builder = InstanceType<typeof SchemaBuilder<GraphQLSchemaTypes>>;

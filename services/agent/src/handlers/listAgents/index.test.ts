@@ -13,6 +13,8 @@ vi.mock('@vassembly/domain-agent', () => ({
   },
 }));
 
+import { AgentStatus } from '@vassembly/domain-agent';
+
 import { listAgents } from './index';
 
 describe('listAgents handler', () => {
@@ -49,7 +51,7 @@ describe('listAgents handler', () => {
       page: 1,
       size: 5,
       search: 'Invoice',
-      status: 'archived',
+      status: AgentStatus.Archived,
     });
 
     expect(result.page).toBe(1);

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { InternalError } from "@vassembly/errors";
-import * as configModule from "@vassembly/package-config";
+import * as configModule from "@vassembly/config";
 
 import { sendResetPasswordEmail } from ".";
 
@@ -12,7 +12,7 @@ vi.mock("@vassembly/client-aws-ses", () => ({
   AwsSesClient: mockAwsSesClient,
 }));
 
-vi.mock("@vassembly/package-config", () => ({
+vi.mock("@vassembly/config", () => ({
   config: {
     aws: {
       ses: {

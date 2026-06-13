@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { validatorFactory } from '@vassembly/validation';
+import { getValidatorIssues, validatorFactory } from '@vassembly/validation';
 import type { ValidateRegisterFormParams, ValidateRegisterFormResult } from './types';
 import { validatePasswordStrength } from './validatePasswordStrength';
 
@@ -55,7 +55,7 @@ export const validateRegisterForm = (
     return { isValid: true };
   }
 
-  const firstIssue = result.error.error?.issues?.[0];
+  const firstIssue = getValidatorIssues(result)[0];
   const errorMessage = firstIssue?.message ?? 'Validation failed.';
   return { isValid: false, message: errorMessage };
 };

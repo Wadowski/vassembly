@@ -8,7 +8,7 @@ import { useHomeTaskList } from './useHomeTaskList';
 
 const mockFetch = vi.fn();
 const mockShowSnackbar = vi.fn();
-const mockUseDebouncedValue = vi.fn<[string, number], string>((value) => value);
+const mockUseDebouncedValue = vi.fn((value: string, _delayMs: number) => value);
 
 vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@vassembly/ui-api-hooks')>();
@@ -63,7 +63,7 @@ describe('useHomeTaskList', () => {
       show: mockShowSnackbar,
       dismiss: vi.fn(),
     });
-    mockUseDebouncedValue.mockImplementation((value) => value);
+    mockUseDebouncedValue.mockImplementation((value: string) => value);
     mockFetch.mockResolvedValue(
       buildListResponse({
         items: [],

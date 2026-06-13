@@ -1,4 +1,4 @@
-import { defineModelSchema } from '@vassembly/graphql';
+import { defineModelSchema, defineObjectType, graphQLListType } from '@vassembly/graphql';
 import type { Builder } from '@vassembly/graphql';
 
 export const gqlAgentSchema = (builder: Builder): void => {
@@ -17,10 +17,10 @@ export const gqlAgentSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('AgentsList', {
+  defineObjectType(builder, 'AgentsList', {
     fields: (t) => ({
       items: t.field({
-        type: ['Agent'],
+        type: graphQLListType('Agent'),
         resolve: (parent: { items: unknown[] }) => parent.items,
       }),
       totalCount: t.exposeInt('totalCount'),

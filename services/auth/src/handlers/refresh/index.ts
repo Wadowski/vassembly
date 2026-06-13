@@ -1,4 +1,4 @@
-import refreshTokenDomain from "@vassembly/domain-refresh-token";
+import * as refreshTokenDomain from "@vassembly/domain-refresh-token";
 
 import type { RefreshInput } from "./types";
 

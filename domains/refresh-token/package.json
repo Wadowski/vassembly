@@ -24,6 +24,7 @@
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/model": "workspace:*",
-    "@vassembly/queries": "workspace:*"
+    "@vassembly/queries": "workspace:*",
+    "zod": "^4.3.6"
   }
 }

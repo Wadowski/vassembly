@@ -40,14 +40,14 @@ describe("createRefreshToken", () => {
     mockEncode.mockReturnValue(mockTokenHash);
 
     const mockExpiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-    const mockCreatedToken: RefreshTokenModel = {
+    const mockCreatedToken = {
       id: "token-id-123",
       userId: mockUserId,
       tokenHash: mockTokenHash,
       token: mockToken,
       expiresAt: mockExpiresAt,
       revokedAt: null,
-    };
+    } as RefreshTokenModel;
 
     mockCreateRefreshTokenDb.mockResolvedValue({
       data: mockCreatedToken,
@@ -73,7 +73,7 @@ describe("createRefreshToken", () => {
     mockEncode.mockReturnValue(mockTokenHash);
 
     const mockExpiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-    const mockCreatedToken: RefreshTokenModel = {
+    const mockCreatedToken = {
       id: "token-id-456",
       userId: mockUserId,
       tokenHash: mockTokenHash,
@@ -81,7 +81,7 @@ describe("createRefreshToken", () => {
       description,
       expiresAt: mockExpiresAt,
       revokedAt: null,
-    };
+    } as RefreshTokenModel;
 
     mockCreateRefreshTokenDb.mockResolvedValue({
       data: mockCreatedToken,

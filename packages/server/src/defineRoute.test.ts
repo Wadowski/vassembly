@@ -13,7 +13,7 @@ describe("defineRoute", () => {
 
     expect(route.method).toBe("GET");
     expect(route.url).toBe("/items");
-    const body = await route.handler({ body: undefined, query: {} });
+    const body = await route.handler({ body: undefined, query: {}, headers: {} });
     expect(body).toEqual({ count: 2 });
   });
 

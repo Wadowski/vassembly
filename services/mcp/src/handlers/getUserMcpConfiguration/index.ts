@@ -29,7 +29,7 @@ export const getUserMcpConfiguration = async (
   const config = await userMcpConfigDomain.queries.getUserMcpConfig({
     userId: context.userId,
     mcpId: input.mcpId,
-    configSchema: mcpResult.data.configSchema,
+    configSchema: mcpResult.data.configSchema ?? undefined,
   });
 
   if (!config) {

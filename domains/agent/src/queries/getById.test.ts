@@ -21,6 +21,7 @@ vi.mock('../clients', () => ({
 }));
 
 import type { AgentModel } from '../model';
+import { AgentCategory, AgentStatus } from '../model';
 import { getById } from './getById';
 
 const AGENT_ID = '507f1f77bcf86cd799439011';
@@ -29,16 +30,16 @@ const buildAgentDoc = (overrides: Partial<AgentModel & { _id: string }> = {}): A
   _id: AGENT_ID,
   id: AGENT_ID,
   name: 'Agent',
-  category: 'coding',
+  category: AgentCategory.Coding,
   description: 'Desc',
   rule: 'Rule text',
   userId: 'user-1',
-  status: 'active',
+  status: AgentStatus.Active,
   removedAt: null,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-02T00:00:00.000Z'),
   ...overrides,
-});
+} as AgentModel & { _id: string });
 
 describe('getById agent query', () => {
   beforeEach(() => {
@@ -69,7 +70,7 @@ describe('getById agent query', () => {
   it('should expose archived agents when explicitly fetched by identifier', async () => {
     mockGet.mockResolvedValue(
       buildAgentDoc({
-        status: 'archived',
+        status: AgentStatus.Archived,
         removedAt: new Date('2026-02-01T00:00:00.000Z'),
       }),
     );

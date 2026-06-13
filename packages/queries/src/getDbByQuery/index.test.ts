@@ -3,7 +3,7 @@ import type { Model } from "@vassembly/model";
 import { z } from 'zod';
 import { getListDbByQuery } from './index';
 import type { CommonDbQueryGeneratorParams } from "../types";
-import { MongoDbDAO } from '@vassembly/client-mongodb';
+import type { MongoDbDAOType } from '@vassembly/client-mongodb';
 
 interface TestModel extends Model {
   id: string;
@@ -24,7 +24,7 @@ describe('getListDbByQuery', () => {
 
   const params: CommonDbQueryGeneratorParams<TestModel> = {
     factory: mockFactory,
-    dao: mockDao as unknown as MongoDbDAO<TestModel>,
+    dao: mockDao as unknown as MongoDbDAOType<TestModel>,
   };
 
   beforeEach(() => {

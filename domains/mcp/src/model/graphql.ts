@@ -1,4 +1,4 @@
-import { defineModelSchema } from '@vassembly/graphql';
+import { defineModelSchema, defineObjectType, graphQLListType, graphQLType } from '@vassembly/graphql';
 import type { Builder } from '@vassembly/graphql';
 
 export const gqlMcpSchema = (builder: Builder): void => {
@@ -17,19 +17,19 @@ export const gqlMcpSchema = (builder: Builder): void => {
       configurationStatus: t.exposeString('configurationStatus', { nullable: true }),
       agentUsageCount: t.exposeInt('agentUsageCount', { nullable: true }),
       configSchema: t.field({
-        type: 'ConfigSchema',
+        type: graphQLType('ConfigSchema'),
         nullable: true,
-        resolve: (parent: { configSchema?: unknown }) => parent.configSchema,
+        resolve: (parent) => parent.configSchema ?? null,
       }),
       createdAt: t.exposeString('createdAt'),
       updatedAt: t.exposeString('updatedAt'),
     }),
   });
 
-  builder.objectType('McpsList', {
+  defineObjectType(builder,'McpsList', {
     fields: (t) => ({
       items: t.field({
-        type: ['Mcp'],
+        type: graphQLListType('Mcp'),
         resolve: (parent: { items: unknown[] }) => parent.items,
       }),
       total: t.exposeInt('total'),
@@ -38,17 +38,17 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('AvailableTags', {
+  defineObjectType(builder,'AvailableTags', {
     fields: (t) => ({
       tags: t.exposeStringList('tags'),
     }),
   });
 
-  builder.objectType('UserMcpConfigFieldValue', {
+  defineObjectType(builder,'UserMcpConfigFieldValue', {
     fields: (t) => ({
       key: t.exposeString('key'),
       value: t.field({
-        type: 'String',
+        type: graphQLType('String'),
         nullable: true,
         resolve: (parent: { value?: string | boolean }) => {
           if (parent.value === undefined) {
@@ -66,7 +66,7 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('UserMcpConfig', {
+  defineObjectType(builder,'UserMcpConfig', {
     fields: (t) => ({
       id: t.exposeString('id'),
       userId: t.exposeString('userId'),
@@ -76,29 +76,29 @@ export const gqlMcpSchema = (builder: Builder): void => {
       createdAt: t.exposeString('createdAt'),
       updatedAt: t.exposeString('updatedAt'),
       fieldValues: t.field({
-        type: ['UserMcpConfigFieldValue'],
+        type: graphQLListType('UserMcpConfigFieldValue'),
         resolve: (parent: { fieldValues: unknown[] }) => parent.fieldValues,
       }),
     }),
   });
 
-  builder.objectType('UserMcpConfigList', {
+  defineObjectType(builder,'UserMcpConfigList', {
     fields: (t) => ({
       items: t.field({
-        type: ['UserMcpConfig'],
+        type: graphQLListType('UserMcpConfig'),
         resolve: (parent: { items: unknown[] }) => parent.items,
       }),
     }),
   });
 
-  builder.objectType('McpWithAgents', {
+  defineObjectType(builder,'McpWithAgents', {
     fields: (t) => ({
       mcp: t.field({
-        type: 'Mcp',
-        resolve: (parent: { mcp: unknown }) => parent.mcp,
+        type: graphQLType('Mcp'),
+        resolve: (parent) => parent.mcp,
       }),
       agents: t.field({
-        type: ['Agent'],
+        type: graphQLListType('Agent'),
         resolve: (parent: { agents: unknown[] }) => parent.agents,
       }),
       totalCount: t.exposeInt('totalCount'),
@@ -109,14 +109,14 @@ export const gqlMcpSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('ConfigSchemaFieldOption', {
+  defineObjectType(builder,'ConfigSchemaFieldOption', {
     fields: (t) => ({
       value: t.exposeString('value'),
       label: t.exposeString('label'),
     }),
   });
 
-  builder.objectType('ConfigSchemaField', {
+  defineObjectType(builder,'ConfigSchemaField', {
     fields: (t) => ({
       key: t.exposeString('key'),
       label: t.exposeString('label'),
@@ -130,17 +130,17 @@ export const gqlMcpSchema = (builder: Builder): void => {
       minLength: t.exposeInt('minLength', { nullable: true }),
       maxLength: t.exposeInt('maxLength', { nullable: true }),
       options: t.field({
-        type: ['ConfigSchemaFieldOption'],
+        type: graphQLListType('ConfigSchemaFieldOption'),
         nullable: true,
         resolve: (parent: { options?: unknown[] }) => parent.options,
       }),
     }),
   });
 
-  builder.objectType('ConfigSchema', {
+  defineObjectType(builder,'ConfigSchema', {
     fields: (t) => ({
       fields: t.field({
-        type: ['ConfigSchemaField'],
+        type: graphQLListType('ConfigSchemaField'),
         resolve: (parent: { fields: unknown[] }) => parent.fields,
       }),
     }),

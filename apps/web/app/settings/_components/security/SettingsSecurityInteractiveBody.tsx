@@ -8,7 +8,7 @@ import { Button } from '@vassembly/ui-button';
 import { useSnackbar } from '@vassembly/ui-snackbar';
 import { Text } from '@vassembly/ui-text';
 import { useState } from 'react';
-import type { z } from 'zod';
+import { getValidatorIssues } from '@vassembly/validation';
 
 import { resolveOfflineRestrictionMessage } from '../../onlineStatus';
 import { validateSettingsChangePasswordForm } from '../../formSchemas';
@@ -42,7 +42,7 @@ export const SettingsSecurityInteractiveBody = (): JSX.Element => {
     });
 
     if (!validated.success) {
-      const keyedEntries = ((validated.error.error?.issues ?? []) as z.ZodIssue[])
+      const keyedEntries = getValidatorIssues(validated)
         .map((singleIssue): [string, string] | undefined => {
           const piece = singleIssue.path[0];
           if (typeof piece !== 'string') {

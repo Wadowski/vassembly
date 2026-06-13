@@ -12,7 +12,7 @@ interface MongoDbConvertible {
 }
 
 export const MONGODB_VALUE_MAP = {
-  value: (data: string) => new ObjectId(data),
+  value: (data: unknown) => new ObjectId(data as string),
   list: (data: string[]) => {
     return Array.isArray(data) ? data.map((r) => new ObjectId(r)) : data;
   },
@@ -72,7 +72,8 @@ export abstract class Model {
     const result = this.validator(this);
 
     if (options?.shouldThrow && !result.success) {
-      const issuesMessages = result.error.error.issues
+      const zodError = result.error.error as { issues: ZodIssue[] } | undefined;
+      const issuesMessages = (zodError?.issues ?? [])
         .map((issue: ZodIssue) => `${issue.path.join(".")}: ${issue.message}`)
         .join(", ");
       const errorMessage = `${this.constructor.name} :: ${issuesMessages}`;
@@ -101,7 +102,7 @@ export abstract class Model {
         const mongoValue = this.mongoDbValueMap[key];
 
         let newAcc = acc;
-        let mappedValue = value;
+        let mappedValue: unknown = value;
 
         if (mongoValue && value) {
           mappedValue = mongoValue(value);

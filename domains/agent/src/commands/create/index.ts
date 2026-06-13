@@ -36,5 +36,9 @@ export const create = async (input: CreateAgentCommandInput) => {
   };
   const validated = assertValidInput(validateCreateInput(payload));
 
-  return createDbAgent(validated);
+  return createDbAgent({
+    ...validated,
+    category: validated.category as AgentCategory,
+    status: validated.status as AgentStatus,
+  });
 };

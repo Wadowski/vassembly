@@ -25,11 +25,12 @@ vi.mock('@vassembly/commands', () => ({
 }));
 
 import { create } from './index';
+import { AgentCategory } from '../../model';
 
 const BASE_INPUT = {
   userId: 'user-1',
   name: 'Valid Agent',
-  category: 'coding' as const,
+  category: AgentCategory.Coding,
   description: 'Helps with reviews',
   rule: 'Stay concise',
 };
@@ -117,7 +118,7 @@ describe('create agent command', () => {
     await expect(
       create({
         ...BASE_INPUT,
-        category: 'research' as 'coding',
+        category: 'research' as AgentCategory,
       }),
     ).rejects.toThrow(ValidationError);
   });

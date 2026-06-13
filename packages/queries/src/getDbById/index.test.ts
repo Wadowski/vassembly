@@ -4,7 +4,7 @@ import type { ValidatorResult } from "@vassembly/validation";
 import { NotFoundError, WrongParamError } from "@vassembly/errors";
 import { getDbById } from './index';
 import type { CommonDbQueryGeneratorParams } from "../types";
-import { MongoDbDAO } from '@vassembly/client-mongodb';
+import type { MongoDbDAOType } from '@vassembly/client-mongodb';
 
 interface TestModel extends Model {
   id: string;
@@ -22,7 +22,7 @@ const createMockInstance = (
 ): MockTestInstance => {
   const instance = {
     ...data,
-    isValid: vi.fn(() => isValidResult || { success: true, data }),
+    isValid: vi.fn(() => isValidResult ?? { success: true as const, data: data as TestModel }),
   };
   return instance;
 };
@@ -40,7 +40,7 @@ describe('getDbById', () => {
 
   const params: CommonDbQueryGeneratorParams<TestModel> = {
     factory: mockFactory,
-    dao: mockDao as unknown as MongoDbDAO<TestModel>,
+    dao: mockDao as unknown as MongoDbDAOType<TestModel>,
   };
 
   beforeEach(() => {

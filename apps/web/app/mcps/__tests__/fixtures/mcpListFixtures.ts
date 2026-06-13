@@ -60,8 +60,8 @@ export const MOCK_DISCOVER_MCPS: McpWithConfigurationStatus[] = [
 ];
 
 export const MOCK_CONFIGURED_MCP_LOOKUP: Record<string, McpWithConfigurationStatus> = {
-  'mcp-gmail': MOCK_DISCOVER_MCPS[0],
-  'mcp-brave': MOCK_DISCOVER_MCPS[1],
+  'mcp-gmail': MOCK_DISCOVER_MCPS[0]!,
+  'mcp-brave': MOCK_DISCOVER_MCPS[1]!,
 };
 
 export const YOUR_MCPS_EMPTY_MESSAGE =

@@ -24,7 +24,8 @@ vi.mock('@vassembly/service-agent', () => ({
   },
 }));
 
-import { agentRestoreRoute } from './restore';
+import { agentRestoreRoute, agentResponseSchema } from './restore';
+import type { z } from 'zod';
 
 describe('POST /agents/:id/restore route', () => {
   beforeEach(() => {
@@ -48,12 +49,12 @@ describe('POST /agents/:id/restore route', () => {
       },
     });
 
-    const result = await agentRestoreRoute.handler({
+    const result = (await agentRestoreRoute.handler({
       body: {},
       query: {},
       headers: { authorization: 'Bearer token' },
       params: { id: 'agent-1' },
-    } as never);
+    } as never)) as z.infer<typeof agentResponseSchema>;
 
     expect(result.removedAt).toBeNull();
     expect(result.status).toBe('active');

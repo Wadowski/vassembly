@@ -2,7 +2,7 @@ import { AgentCategory, type AgentFormValues, type UseAgentFormResult } from '@v
 
 import { AGENT_MAX_ASSIGNED_MCPS } from '../McpAssignmentPicker/constants';
 import { AGENT_DESCRIPTION_MAX, AGENT_NAME_MAX, AGENT_RULE_MAX } from './constants';
-import { validatorFactory } from '@vassembly/validation';
+import { getValidatorIssues, validatorFactory } from '@vassembly/validation';
 import { useCallback, useMemo, useState } from 'react';
 import { z } from 'zod';
 
@@ -77,7 +77,7 @@ export const useAgentForm = (initial?: Partial<AgentFormValues>): UseAgentFormRe
         if (fieldResult.success) {
           delete next[key];
         } else {
-          const first = fieldResult.error.error?.issues?.[0];
+          const first = getValidatorIssues(fieldResult)[0];
           next[key] = first?.message ?? 'Invalid value.';
         }
         return next;
@@ -95,7 +95,7 @@ export const useAgentForm = (initial?: Partial<AgentFormValues>): UseAgentFormRe
     }
     setSubmitAttempted(true);
     const messages: Partial<Record<keyof AgentFormValues, string>> = {};
-    for (const issue of result.error.error?.issues ?? []) {
+    for (const issue of getValidatorIssues(result)) {
       const path = issue.path[0];
       if (path === undefined) {
         continue;

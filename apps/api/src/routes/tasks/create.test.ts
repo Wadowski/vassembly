@@ -60,7 +60,8 @@ vi.mock('@vassembly/server', async () => {
   };
 });
 
-import { taskCreateBodySchema, taskCreateRoute } from './create';
+import { taskCreateBodySchema, taskCreateRoute, taskResponseSchema } from './create';
+import type { z } from 'zod';
 
 const createTestServer = async () => {
   const fastify = Fastify();
@@ -333,11 +334,11 @@ describe('POST /tasks route', () => {
         },
       });
 
-      const result = await taskCreateRoute.handler({
+      const result = (await taskCreateRoute.handler({
         body: VALID_BODY,
         query: {},
         headers: { authorization: 'Bearer other-user-token' },
-      });
+      })) as z.infer<typeof taskResponseSchema>;
 
       expect(result.userId).toBe('user-2');
     });

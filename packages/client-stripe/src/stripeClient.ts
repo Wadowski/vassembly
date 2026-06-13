@@ -173,6 +173,12 @@ export const StripeClient = ({
         );
       }
 
+      if (!cancelCheckoutUrl) {
+        throw new InternalError(
+          `${CONSOLE_LOG_PREFIX} cancelCheckoutUrl must be configured`
+        );
+      }
+
       const finalSuccessUrl = buildUrlWithParams(
         successCheckoutUrl,
         successUrlParams
@@ -258,6 +264,12 @@ export const StripeClient = ({
       if (!accountLinkReturnUrl) {
         throw new InternalError(
           `${CONSOLE_LOG_PREFIX} accountLinkReturnUrl must be configured`
+        );
+      }
+
+      if (!accountLinkRefreshUrl) {
+        throw new InternalError(
+          `${CONSOLE_LOG_PREFIX} accountLinkRefreshUrl must be configured`
         );
       }
 
