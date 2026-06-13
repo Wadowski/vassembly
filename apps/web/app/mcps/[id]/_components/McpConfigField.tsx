@@ -58,7 +58,7 @@ export const McpConfigField = ({
           onBlur={onBlur}
         >
           <option value="">Select…</option>
-          {field.options?.map((option) => (
+          {field.options?.map((option: { value: string; label: string }) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

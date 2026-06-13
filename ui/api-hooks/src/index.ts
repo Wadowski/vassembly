@@ -35,7 +35,10 @@ export type {
   TestConnectionInput,
   TestConnectionResult as McpTestConnectionResult,
   McpConfiguration,
+  McpConfigurationStatus,
+  McpConfigSchemaField,
   McpDetail,
+  McpWithConfigurationStatus,
   UserConfiguredMcpItem,
   UseAvailableTagsResult,
 } from './mcps';

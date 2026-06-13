@@ -31,12 +31,12 @@ export const McpDetailHeader = ({ mcp, configuration }: McpDetailHeaderProps): J
         ))}
       </div>
       <div className={styles.links}>
-        {mcp.documentationUrl !== undefined && mcp.documentationUrl !== null ? (
+        {mcp.documentationUrl ? (
           <a className={styles.link} href={mcp.documentationUrl} target="_blank" rel="noopener noreferrer">
             Documentation
           </a>
         ) : null}
-        {mcp.repositoryUrl !== undefined && mcp.repositoryUrl !== null ? (
+        {mcp.repositoryUrl ? (
           <a className={styles.link} href={mcp.repositoryUrl} target="_blank" rel="noopener noreferrer">
             Repository
           </a>

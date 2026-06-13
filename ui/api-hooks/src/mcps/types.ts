@@ -41,8 +41,8 @@ export interface McpWithConfigurationStatus {
   tags: string[];
   iconPath: string;
   slug: string;
-  documentationUrl?: string | null;
-  repositoryUrl?: string | null;
+  documentationUrl?: string;
+  repositoryUrl?: string;
   configurationStatus: McpConfigurationStatus;
   createdAt: string;
   updatedAt: string;

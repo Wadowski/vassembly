@@ -30,7 +30,7 @@ export const McpConfigForm = ({ mcp, savedConfiguration }: McpConfigFormProps): 
             <McpConfigField
               key={field.key}
               field={field}
-              value={form.fieldValues[field.key]}
+              value={form.fieldValues[field.key] ?? ''}
               error={form.errors[field.key]}
               touched={form.touched[field.key] ?? false}
               isMobile={isMobile}
@@ -116,7 +116,7 @@ export const McpConfigForm = ({ mcp, savedConfiguration }: McpConfigFormProps): 
 
       <McpDiscardChangesModal
         open={form.showDiscardModal}
-        returnFocusRef={form.cancelButtonRef}
+        returnFocusRef={form.cancelButtonRef as any}
         onStay={form.closeDiscardModal}
         onDiscard={form.handleDiscard}
       />

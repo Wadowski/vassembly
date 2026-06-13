@@ -55,9 +55,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
-    "@vassembly/domain-mcp": "workspace:*",
-    "@vassembly/domain-user-mcp-config": "workspace:*",
-    "@vassembly/e2e": "workspace:*",
     "@next/env": "16.1.0",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.3.2",
@@ -66,6 +63,7 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@vassembly/eslint-config": "workspace:*",
+    "@vassembly/e2e": "workspace:*",
     "@vassembly/typescript-config": "workspace:*",
     "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^9.39.1",

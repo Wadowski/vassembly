@@ -74,7 +74,7 @@ export const McpListItem = ({
           ))}
         </div>
         <div className={styles.links}>
-          {mcp.documentationUrl !== undefined && mcp.documentationUrl !== null ? (
+          {mcp.documentationUrl ? (
             <a
               className={styles.link}
               href={mcp.documentationUrl}
@@ -85,7 +85,7 @@ export const McpListItem = ({
               Documentation
             </a>
           ) : null}
-          {mcp.repositoryUrl !== undefined && mcp.repositoryUrl !== null ? (
+          {mcp.repositoryUrl ? (
             <a
               className={styles.link}
               href={mcp.repositoryUrl}

@@ -28,7 +28,10 @@ export type {
   TestConnectionInput,
   TestConnectionResult,
   McpConfiguration,
+  McpConfigurationStatus,
+  McpConfigSchemaField,
   McpDetail,
+  McpWithConfigurationStatus,
   UserConfiguredMcpItem,
 } from './types';
 export type { UseAvailableTagsResult } from './useAvailableTags';

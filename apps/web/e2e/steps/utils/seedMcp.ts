@@ -87,8 +87,8 @@ export const seedMcp = async ({
     description,
     tags: [provider],
     iconPath: DEFAULT_MCP_ICON_PATH,
-    documentationUrl: null,
-    repositoryUrl: null,
+    documentationUrl: undefined,
+    repositoryUrl: undefined,
   });
 
   await mcpMongodbDao.create(instance);

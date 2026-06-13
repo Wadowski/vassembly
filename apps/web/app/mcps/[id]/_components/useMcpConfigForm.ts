@@ -143,7 +143,7 @@ export const useMcpConfigForm = ({ mcp, savedConfiguration }: UseMcpConfigFormPa
       setTouched((previous) => ({ ...previous, [field.key]: true }));
       const message = validateMcpConfigField({
         field,
-        value: fieldValues[field.key],
+        value: fieldValues[field.key] ?? '',
         savedSecretKeys,
       });
 

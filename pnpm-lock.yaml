@@ -303,12 +303,6 @@ importers:
       '@types/react-dom':
         specifier: 19.2.2
         version: 19.2.2(@types/react@19.2.2)
-      '@vassembly/domain-mcp':
-        specifier: workspace:*
-        version: link:../../domains/mcp
-      '@vassembly/domain-user-mcp-config':
-        specifier: workspace:*
-        version: link:../../domains/user-mcp-config
       '@vassembly/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
