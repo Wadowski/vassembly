@@ -24,27 +24,38 @@ export const waitForAgentCreateFormReady = async ({ page }: { page: Page }): Pro
     timeout: 20_000,
   });
   await expect(page.locator('main form')).toBeVisible({ timeout: 20_000 });
-  await Promise.all([
-    page
-      .waitForResponse(
-        (response) =>
-          response.url().includes('/graphql') &&
-          response.request().postData()?.includes('ListAiIntegrations') === true &&
-          response.ok(),
-        { timeout: 20_000 },
-      )
-      .catch(() => undefined),
-    page
-      .waitForResponse(
-        (response) =>
-          response.url().includes('/graphql') &&
-          response.request().postData()?.includes('InternalTools') === true &&
-          response.ok(),
-        { timeout: 20_000 },
-      )
-      .catch(() => undefined),
-  ]);
-  await expect(page.locator('#agent-internal-tool-assignment')).toBeEnabled({ timeout: 20_000 });
+
+  const internalToolPicker = page.locator('#agent-internal-tool-assignment');
+  const isPickerReady = await internalToolPicker.isEnabled().catch(() => false);
+
+  if (!isPickerReady) {
+    await Promise.all([
+      page
+        .waitForResponse(
+          (response) =>
+            response.url().includes('/graphql') &&
+            response.request().postData()?.includes('ListAiIntegrations') === true &&
+            response.ok(),
+          { timeout: 20_000 },
+        )
+        .catch(() => undefined),
+      page
+        .waitForResponse(
+          (response) =>
+            response.url().includes('/graphql') &&
+            response.request().postData()?.includes('InternalTools') === true &&
+            response.ok(),
+          { timeout: 20_000 },
+        )
+        .catch(() => undefined),
+    ]);
+  }
+
+  await internalToolPicker.scrollIntoViewIfNeeded();
+  await expect(internalToolPicker).toBeEnabled({ timeout: 20_000 });
+  await expect(
+    page.getByText('No internal tools are available for this agent type.', { exact: true }),
+  ).not.toBeVisible();
 };
 
 export const waitForAgentEditPageReady = async ({ page }: { page: Page }): Promise<void> => {

@@ -116,15 +116,9 @@ Then('the task {string} appears in the list', async ({ page }, description: stri
     return;
   }
 
-  await expect(async () => {
-    const taskByTestId = page.getByTestId('task-description').filter({ hasText: description });
-    const isTaskByTestIdVisible = await taskByTestId.isVisible().catch(() => false);
-    if (isTaskByTestIdVisible) {
-      return;
-    }
-
-    await expect(page.getByText(description, { exact: false }).first()).toBeVisible();
-  }).toPass({ timeout: 15_000 });
+  await expect(
+    page.getByTestId('task-description').filter({ hasText: description }).first(),
+  ).toBeVisible({ timeout: 15_000 });
 });
 
 Then('I am on the task detail page for that task', async ({ page, world }) => {

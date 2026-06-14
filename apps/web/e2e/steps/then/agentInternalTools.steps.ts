@@ -3,12 +3,14 @@ import { createBdd } from 'playwright-bdd';
 
 import { bddTest } from '@vassembly/e2e';
 
+import {
+  INTERNAL_TOOL_ASSIGNMENT_PICKER_ID,
+  openInternalToolPicker,
+} from '../utils/agentInternalToolsPicker';
 import { waitForAgentCreateFormReady, waitForAgentEditPageReady } from '../utils/agentsListing';
 import { dismissNavigationDrawer } from '../utils/settingsPage';
 
 const { Then } = createBdd(bddTest);
-
-const INTERNAL_TOOL_ASSIGNMENT_PICKER_ID = 'agent-internal-tool-assignment';
 
 const getInternalToolsSection = (page: NonNullable<import('@playwright/test').Page>) =>
   page
@@ -26,25 +28,15 @@ const getMcpToolsSection = (page: NonNullable<import('@playwright/test').Page>) 
     })
     .last();
 
-const openInternalToolPicker = async ({
-  page,
-}: {
-  page: NonNullable<import('@playwright/test').Page>;
-}): Promise<void> => {
-  await dismissNavigationDrawer({ page });
-  const toolPicker = page.locator(`#${INTERNAL_TOOL_ASSIGNMENT_PICKER_ID}`);
-  await expect(toolPicker).toBeEnabled({ timeout: 20_000 });
-  await toolPicker.click();
-  await expect(page.locator('[role="listbox"]:visible')).toBeVisible({ timeout: 5_000 });
-};
-
 Then('I see the internal tools picker on the agent form', async ({ page }) => {
   if (!page) {
     return;
   }
 
   await waitForAgentCreateFormReady({ page });
-  await expect(page.locator(`#${INTERNAL_TOOL_ASSIGNMENT_PICKER_ID}`)).toBeVisible();
+  const toolPicker = page.locator(`#${INTERNAL_TOOL_ASSIGNMENT_PICKER_ID}`);
+  await toolPicker.scrollIntoViewIfNeeded();
+  await expect(toolPicker).toBeVisible();
   await expect(
     page.getByText('Platform capabilities such as listing agents and delegating to another agent.', {
       exact: true,
@@ -57,9 +49,7 @@ Then('I see the internal tools catalog loaded on the agent form', async ({ page 
     return;
   }
 
-  await waitForAgentCreateFormReady({ page });
-  await openInternalToolPicker({ page });
-  const listbox = page.locator('[role="listbox"]:visible');
+  const listbox = await openInternalToolPicker({ page });
   await expect(listbox.getByRole('option', { name: /^Use agent$/i })).toBeVisible();
   await expect(listbox.getByRole('option', { name: /^List agents$/i })).toBeVisible();
   await page.keyboard.press('Escape');
@@ -71,10 +61,8 @@ Then('I see internal tool {string} available on the agent form', async ({ page }
   }
 
   await waitForAgentCreateFormReady({ page });
-  await openInternalToolPicker({ page });
-  await expect(
-    page.locator('[role="listbox"]:visible').getByRole('option', { name: new RegExp(`^${toolName}$`, 'i') }),
-  ).toBeVisible();
+  const listbox = await openInternalToolPicker({ page });
+  await expect(listbox.getByRole('option', { name: new RegExp(`^${toolName}$`, 'i') })).toBeVisible();
   await page.keyboard.press('Escape');
 });
 

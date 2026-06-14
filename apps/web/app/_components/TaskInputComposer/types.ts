@@ -4,7 +4,7 @@ export type TaskSubmitResult =
   | { status: 'error'; message: string };
 
 export interface TaskInputComposerProps {
-  onCreateSuccess?: () => void;
+  onCreateSuccess?: () => void | Promise<void>;
 }
 
 export interface UseTaskInputResult {
