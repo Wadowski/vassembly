@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
 import { getCommonFields } from './defineSchema';
+import type { GraphQLFieldBuilder } from './types';
 
 describe('getCommonFields', () => {
   it('maps standard model field definitions from the field builder', () => {
@@ -11,9 +12,9 @@ describe('getCommonFields', () => {
         name,
         opts,
       }),
-    };
+    } as unknown as Pick<GraphQLFieldBuilder, 'exposeID' | 'expose'>;
 
-    expect(getCommonFields(t)).toEqual({
+    expect(getCommonFields(t as GraphQLFieldBuilder)).toEqual({
       id: { kind: 'id', name: 'id', opts: { nullable: true } },
       createdAt: { kind: 'expose', name: 'createdAt', opts: { type: 'DateTime', nullable: true } },
       updatedAt: { kind: 'expose', name: 'updatedAt', opts: { type: 'DateTime', nullable: true } },

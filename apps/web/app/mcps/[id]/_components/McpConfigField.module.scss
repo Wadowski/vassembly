@@ -1,0 +1,55 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.selectLabel {
+  color: $color-text-primary;
+}
+
+.select {
+  width: 100%;
+  padding: $spacing-3;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
+  background-color: $color-surface-container;
+  color: $color-text-primary;
+  font-size: $font-size-body-md;
+}
+
+.selectError {
+  border-color: $color-error;
+}
+
+.selectHelper {
+  color: $color-text-secondary;
+}
+
+.selectErrorText {
+  color: $color-error;
+}
+
+.toggleButton {
+  align-self: flex-start;
+}
+
+.touchTarget {
+  min-height: 44px;
+}
+
+.nativeInput {
+  width: 100%;
+  padding: $spacing-3;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
+  background-color: $color-surface-container;
+  color: $color-text-primary;
+  font-size: $font-size-body-md;
+}
+
+.nativeInputError {
+  border-color: $color-error;
+}

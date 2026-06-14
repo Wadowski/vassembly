@@ -8,5 +8,6 @@ export interface CreateAgentCommandInput {
   rule: string;
   status?: AgentStatus;
   integrationCredentialId?: string;
+  assignedMcpIds?: string[];
   removedAt?: null;
 }

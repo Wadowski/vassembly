@@ -1,6 +1,6 @@
 import Fastify from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   InternalError,
@@ -19,6 +19,13 @@ const TASK_RESPONSE = {
   type: 'user' as const,
   status: 'created' as const,
   agentAssignedId: null,
+  title: null,
+  llmResponse: null,
+  errorMessage: null,
+  errorCode: null,
+  startedAt: null,
+  completedAt: null,
+  failedAt: null,
   createdAt: '2026-05-26T12:00:00.000Z',
   updatedAt: '2026-05-26T12:00:00.000Z',
 };
@@ -60,7 +67,8 @@ vi.mock('@vassembly/server', async () => {
   };
 });
 
-import { taskCreateBodySchema, taskCreateRoute } from './create';
+import { taskCreateBodySchema, taskCreateRoute, taskResponseSchema } from './create';
+import type { z } from 'zod';
 
 const createTestServer = async () => {
   const fastify = Fastify();
@@ -333,11 +341,11 @@ describe('POST /tasks route', () => {
         },
       });
 
-      const result = await taskCreateRoute.handler({
+      const result = (await taskCreateRoute.handler({
         body: VALID_BODY,
         query: {},
         headers: { authorization: 'Bearer other-user-token' },
-      });
+      })) as z.infer<typeof taskResponseSchema>;
 
       expect(result.userId).toBe('user-2');
     });

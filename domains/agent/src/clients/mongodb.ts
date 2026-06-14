@@ -14,6 +14,8 @@ export const mongodbIndexes = async (): Promise<void> => {
   await collection.createIndex({ status: 1 });
   await collection.createIndex({ userId: 1, status: 1 });
   await collection.createIndex({ userId: 1, integrationCredentialId: 1 });
+  await collection.createIndex({ assignedMcpIds: 1 });
+  await collection.createIndex({ userId: 1, assignedMcpIds: 1 });
   await collection.createIndex({ createdAt: -1 });
   await collection.createIndex({ name: 'text', description: 'text' });
 };

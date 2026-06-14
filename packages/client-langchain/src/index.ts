@@ -13,3 +13,6 @@ export type {
   GeminiProviderParams,
   LmStudioProviderParams,
 } from "./types";
+
+export { loadMcpTools, MCP_TOOL_MAX_ITERATIONS } from "./mcp";
+export type { McpServerConfig, LoadMcpToolsParams, LoadMcpToolsResult } from "./mcp";

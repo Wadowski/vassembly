@@ -1,7 +1,7 @@
 import z from "zod";
 import { getById } from "./getById";
 import { refreshTokenMongodbDao } from "../clients";
-import { RefreshTokenModel, refreshTokenFactory } from "../model";
+import { refreshTokenFactory } from "../model";
 import { NotFoundError } from "@vassembly/errors";
 
 const VALIDATION_SCHEMA = z.object({

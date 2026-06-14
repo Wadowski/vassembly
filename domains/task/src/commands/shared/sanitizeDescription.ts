@@ -4,6 +4,7 @@ export const descriptionSchema = z
   .string()
   .trim()
   .max(5000, 'Description cannot exceed 5000 characters')
+  // eslint-disable-next-line no-control-regex -- strip control characters from user input
   .transform((value) => value.replace(/[\x00-\x09\x0B-\x1F\x7F-\x9F]/g, ''))
   .pipe(z.string().min(1, 'Description cannot be empty'));
 

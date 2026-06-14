@@ -3,7 +3,7 @@ import type { Model } from "@vassembly/model";
 import { WrongParamError } from "@vassembly/errors";
 import { removeDb } from "./index";
 import type { CommonDbCommandGeneratorParams } from "../types";
-import { MongoDbDAO } from "@vassembly/client-mongodb";
+import type { MongoDbDAOType } from "@vassembly/client-mongodb";
 
 interface TestModel extends Model {
   id: string;
@@ -23,7 +23,7 @@ describe("removeDb", () => {
 
   const params: CommonDbCommandGeneratorParams<TestModel> = {
     factory: mockFactory,
-    dao: mockDao as unknown as MongoDbDAO<TestModel>,
+    dao: mockDao as unknown as MongoDbDAOType<TestModel>,
   };
 
   beforeEach(() => {

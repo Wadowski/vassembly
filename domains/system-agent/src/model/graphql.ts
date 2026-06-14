@@ -1,11 +1,11 @@
-import { defineModelSchema } from '@vassembly/graphql';
+import { defineModelSchema, defineObjectType, graphQLListType } from '@vassembly/graphql';
 import type { Builder } from '@vassembly/graphql';
 
 export const gqlSystemAgentSchema = (builder: Builder): void => {
   defineModelSchema({
     builder,
     name: 'SystemAgent',
-    fields: (t: any) => ({
+    fields: (t) => ({
       id: t.exposeString('id'),
       name: t.exposeString('name'),
       description: t.exposeString('description', { nullable: true }),
@@ -20,10 +20,10 @@ export const gqlSystemAgentSchema = (builder: Builder): void => {
     }),
   });
 
-  builder.objectType('SystemAgentsList' as any, {
-    fields: (t: any) => ({
+  defineObjectType(builder, 'SystemAgentsList', {
+    fields: (t) => ({
       items: t.field({
-        type: ['SystemAgent'],
+        type: graphQLListType('SystemAgent'),
         resolve: (parent: { items: unknown[] }) => parent.items,
       }),
       total: t.exposeInt('total'),
@@ -35,7 +35,7 @@ export const gqlSystemAgentSchema = (builder: Builder): void => {
   defineModelSchema({
     builder,
     name: 'SystemAgentPreference',
-    fields: (t: any) => ({
+    fields: (t) => ({
       userId: t.exposeString('userId'),
       integrationCredentialId: t.exposeString('integrationCredentialId'),
       updatedAt: t.exposeString('updatedAt'),

@@ -1,13 +1,13 @@
-const isObject = (ob: any): ob is Record<string, any> =>
+const isObject = (ob: unknown): ob is Record<string, unknown> =>
   typeof ob === "object" && ob !== null && !(ob instanceof Date);
 
 export const flattenObject = (
-  ob: Record<string, any>,
-  additionalObjectCheck: (data: any) => boolean = () => true
-): Record<string, any> => {
-  const toReturn: Record<string, any> = {};
+  ob: Record<string, unknown>,
+  additionalObjectCheck: (data: unknown) => boolean = () => true
+): Record<string, unknown> => {
+  const toReturn: Record<string, unknown> = {};
 
-  const isObjectToFlatten = (data: any): boolean =>
+  const isObjectToFlatten = (data: unknown): boolean =>
     isObject(data) && additionalObjectCheck(data);
 
   for (const i in ob) {
@@ -16,17 +16,17 @@ export const flattenObject = (
 
     if (isObjectToFlatten(ob[i])) {
       if (Array.isArray(ob[i])) {
-        const obList: Array<any> = [];
+        const obList: Array<unknown> = [];
 
-        ob[i].forEach((c: any) => {
+        (ob[i] as unknown[]).forEach((c: unknown) => {
           if (isObjectToFlatten(c))
-            obList.push(flattenObject(c, additionalObjectCheck));
+            obList.push(flattenObject(c as Record<string, unknown>, additionalObjectCheck));
           else obList.push(c);
         });
 
         toReturn[i] = obList;
       } else {
-        const flatObject = flattenObject(ob[i], additionalObjectCheck);
+        const flatObject = flattenObject(ob[i] as Record<string, unknown>, additionalObjectCheck);
         for (const x in flatObject) {
           // eslint-disable-next-line no-prototype-builtins
           if (!flatObject.hasOwnProperty(x)) continue;

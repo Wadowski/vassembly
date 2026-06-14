@@ -29,7 +29,7 @@ export const DirectoryClient = ({
         name: entry.name,
         isDirectory: entry.isDirectory(),
       }));
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to list directory at ${dirPath}`
       );
@@ -42,7 +42,7 @@ export const DirectoryClient = ({
     try {
       const resolvedPath = resolvePath(dirPath);
       await fs.mkdir(resolvedPath, { recursive: true });
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to create directory at ${dirPath}`
       );
@@ -55,7 +55,7 @@ export const DirectoryClient = ({
     try {
       const resolvedPath = resolvePath(dirPath);
       await fs.rm(resolvedPath, { recursive: true, force: true });
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to remove directory at ${dirPath}`
       );

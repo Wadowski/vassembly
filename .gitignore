@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+**/test-results
 
 # next.js
 /.next/
@@ -17,7 +18,7 @@
 /build
 
 # storybook
-/storybook-static
+**/storybook-static
 
 # misc
 .DS_Store

@@ -2,7 +2,28 @@
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
   "envMode": "loose",
-  "globalDependencies": [".env"],
+  "globalDependencies": [
+    ".env",
+    ".env.e2e.example",
+    "**/vitest.config.ts",
+    "**/playwright.config.ts"
+  ],
+  "globalEnv": [
+    "CI",
+    "AUTH_PASSWORD_RESET_WEB_URL",
+    "CACHE_BACKEND",
+    "CACHE_DEFAULT_TTL_MS",
+    "REDIS_URL",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_REGION",
+    "DEEP_SEEK_AI_API_KEY",
+    "DEEP_SEEK_AI_BASE_URL",
+    "ENCODER_SECRET",
+    "MONGODB_URL",
+    "MONGODB_DATABASE",
+    "JWT_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -14,6 +35,18 @@
     },
     "test": {
       "dependsOn": ["^test"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": [
+        "MONGODB_URL",
+        "MONGODB_DATABASE",
+        "JWT_SECRET",
+        "E2E_WEB_BASE_URL",
+        "E2E_API_BASE_URL",
+        "NODE_ENV"
+      ]
     },
     "check-types": {
       "dependsOn": ["^check-types"]

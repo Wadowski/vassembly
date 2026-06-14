@@ -15,6 +15,6 @@ export const createBuilder = (): Builder => {
   builder.addScalarType('DateTime', DateTimeResolver, {
     serialize: (value: unknown) => value as Date,
   });
-  
+
   return builder as unknown as Builder;
 };

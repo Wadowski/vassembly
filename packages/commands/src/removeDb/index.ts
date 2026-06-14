@@ -10,7 +10,7 @@ const VALIDATION_SCHEMA = z.object({
 export const removeDb = <T extends Model>({
   factory,
   dao,
-}: CommonDbCommandGeneratorParams<T>): RemoveDbHandler<T> =>
+}: CommonDbCommandGeneratorParams<T>): RemoveDbHandler =>
   async ({ id }) => {
     const queryInstance = factory.create({ id } as Partial<T>, { validationSchema: VALIDATION_SCHEMA });
     queryInstance.isValid({ shouldThrow: true });

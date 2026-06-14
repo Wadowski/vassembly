@@ -1,4 +1,5 @@
 import { parse } from 'graphql';
+import type { ApolloError } from '@apollo/client';
 import type { DocumentNode } from 'graphql';
 import { mapApolloError } from './mapApolloError';
 import type { CommonError } from '@vassembly/errors';
@@ -10,7 +11,7 @@ export const parseGraphQLDocument = (document: string | DocumentNode): DocumentN
   return document;
 };
 
-export const mapGraphQLError = (error: any): CommonError | undefined => {
+export const mapGraphQLError = (error: ApolloError | undefined): CommonError | undefined => {
   if (!error) {
     return undefined;
   }

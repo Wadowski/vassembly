@@ -15,6 +15,12 @@ const buildTask = (partial: Partial<TaskListItemDto> = {}): TaskListItemDto => (
   status: partial.status ?? TaskStatus.Created,
   agentAssignedId: partial.agentAssignedId ?? null,
   title: partial.title ?? null,
+  llmResponse: partial.llmResponse ?? null,
+  errorMessage: partial.errorMessage ?? null,
+  errorCode: partial.errorCode ?? null,
+  startedAt: partial.startedAt ?? null,
+  completedAt: partial.completedAt ?? null,
+  failedAt: partial.failedAt ?? null,
   createdAt: partial.createdAt ?? '2026-05-26T12:00:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-05-26T12:00:00.000Z',
 });
@@ -50,7 +56,7 @@ describe('TaskList', () => {
       render(
         <TaskList
           {...defaultProps}
-          tasks={[buildTask({ description: 'Parse invoices', status: 'in-progress' })]}
+          tasks={[buildTask({ description: 'Parse invoices', status: TaskStatus.InProgress })]}
         />,
       );
 
@@ -62,7 +68,7 @@ describe('TaskList', () => {
       render(
         <TaskList
           {...defaultProps}
-          tasks={[buildTask({ status: 'created' })]}
+          tasks={[buildTask({ status: TaskStatus.Created })]}
         />,
       );
 

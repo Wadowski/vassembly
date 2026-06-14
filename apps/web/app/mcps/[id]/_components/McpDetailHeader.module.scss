@@ -1,0 +1,52 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-4;
+}
+
+.icon {
+  flex-shrink: 0;
+  border-radius: $border-radius-md;
+}
+
+.titleContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-2;
+  flex: 1;
+}
+
+.description {
+  color: $color-text-secondary;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+}
+
+.link {
+  color: $color-primary;
+  font-size: $font-size-body-sm;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

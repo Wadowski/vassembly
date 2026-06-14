@@ -38,7 +38,7 @@ describe("factory", () => {
       toMongoDb: () => ({}),
       toJSON: () => ({}),
       setLanguageTranslation: () => {},
-    } as any;
+    } as Partial<TestModel> & Record<string, unknown>;
 
     const result = testFactory.create(data);
 

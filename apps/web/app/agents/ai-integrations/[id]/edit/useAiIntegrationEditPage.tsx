@@ -74,7 +74,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
     }
     setTestResult(undefined);
     form.handleChange('model', '');
-  }, [credential, form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
+  }, [credential, form, form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
 
   useEffect(() => {
     if (credentialId === '') {
@@ -109,7 +109,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
     return (): void => {
       cancelled = true;
     };
-  }, [credentialId, http]);
+  }, [credentialId, form, http]);
 
   const handleTest = useCallback(async (): Promise<void> => {
     if (!form.validate()) {

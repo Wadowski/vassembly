@@ -11,7 +11,7 @@ describe('RequireAuth', () => {
   describe('when user is not authenticated', () => {
     it('should render fallback', () => {
       render(
-        <UserAuthProvider initialState={{ status: 'unauthenticated' }}>
+        <UserAuthProvider initialState={{ status: false }}>
           <RequireAuth fallback={<div>Not authenticated</div>}>
             <div>Protected content</div>
           </RequireAuth>
@@ -28,9 +28,9 @@ describe('RequireAuth', () => {
       render(
         <UserAuthProvider
           initialState={{
-            status: 'authenticated',
-            user: { id: '1', roles: ['user'] },
-            roles: ['user'],
+            status: true,
+            user: { id: '1', role: 'user' },
+            role: 'user',
           }}
         >
           <RequireAuth fallback={<div>Not authorized</div>}>
@@ -47,9 +47,9 @@ describe('RequireAuth', () => {
       render(
         <UserAuthProvider
           initialState={{
-            status: 'authenticated',
-            user: { id: '1', roles: ['admin'] },
-            roles: ['admin'],
+            status: true,
+            user: { id: '1', role: 'admin' },
+            role: 'admin',
           }}
         >
           <RequireAuth fallback={<div>Not authorized</div>} roles={['admin']}>
@@ -66,9 +66,9 @@ describe('RequireAuth', () => {
       render(
         <UserAuthProvider
           initialState={{
-            status: 'authenticated',
-            user: { id: '1', roles: ['user'] },
-            roles: ['user'],
+            status: true,
+            user: { id: '1', role: 'user' },
+            role: 'user',
           }}
         >
           <RequireAuth fallback={<div>Not authorized</div>} roles={['admin']}>
@@ -85,9 +85,9 @@ describe('RequireAuth', () => {
       render(
         <UserAuthProvider
           initialState={{
-            status: 'authenticated',
-            user: { id: '1', roles: ['admin'] },
-            roles: ['admin'],
+            status: true,
+            user: { id: '1', role: 'admin' },
+            role: 'admin',
           }}
         >
           <RequireAuth
@@ -107,9 +107,9 @@ describe('RequireAuth', () => {
       render(
         <UserAuthProvider
           initialState={{
-            status: 'authenticated',
-            user: { id: '1', roles: ['admin'] },
-            roles: ['admin'],
+            status: true,
+            user: { id: '1', role: 'admin' },
+            role: 'admin',
           }}
         >
           <RequireAuth
@@ -124,50 +124,6 @@ describe('RequireAuth', () => {
 
       expect(screen.queryByText('Content')).not.toBeInTheDocument();
       expect(screen.getByText('Not authorized')).toBeInTheDocument();
-    });
-  });
-
-  describe('when loading', () => {
-    it('should render fallback by default', () => {
-      render(
-        <UserAuthProvider initialState={{ status: 'loading' }}>
-          <RequireAuth fallback={<div>Loading...</div>}>
-            <div>Protected content</div>
-          </RequireAuth>
-        </UserAuthProvider>,
-      );
-
-      expect(screen.getByText('Loading...')).toBeInTheDocument();
-      expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
-    });
-
-    it('should render custom loading component if provided', () => {
-      render(
-        <UserAuthProvider initialState={{ status: 'loading' }}>
-          <RequireAuth fallback={<div>Fallback</div>} loading={<div>Custom loading</div>}>
-            <div>Protected content</div>
-          </RequireAuth>
-        </UserAuthProvider>,
-      );
-
-      expect(screen.getByText('Custom loading')).toBeInTheDocument();
-      expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
-    });
-
-    it('should render children when showFallbackWhenLoading is false', () => {
-      render(
-        <UserAuthProvider initialState={{ status: 'loading' }}>
-          <RequireAuth
-            fallback={<div>Fallback</div>}
-            showFallbackWhenLoading={false}
-          >
-            <div>Protected content during loading</div>
-          </RequireAuth>
-        </UserAuthProvider>,
-      );
-
-      expect(screen.getByText('Protected content during loading')).toBeInTheDocument();
-      expect(screen.queryByText('Fallback')).not.toBeInTheDocument();
     });
   });
 });

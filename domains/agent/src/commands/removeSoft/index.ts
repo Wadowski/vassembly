@@ -1,7 +1,7 @@
 import { removeSoftDb } from '@vassembly/commands';
 
 import { agentMongodbDao } from '../../clients';
-import { AgentModel, agentFactory } from '../../model';
+import { AgentModel, agentFactory, AgentStatus } from '../../model';
 import { getModelById } from '../../queries';
 
 export interface RemoveSoftAgentCommandInput {
@@ -12,7 +12,7 @@ export interface RemoveSoftAgentCommandInput {
 const persistRemoveSoft = removeSoftDb<AgentModel>({
   dao: agentMongodbDao,
   factory: agentFactory,
-  additionalPartial: () => ({ status: 'archived' }),
+  additionalPartial: () => ({ status: AgentStatus.Archived }),
 });
 
 export const removeSoft = async (input: RemoveSoftAgentCommandInput) => {

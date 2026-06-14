@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Brave Search">
+  <circle cx="24" cy="24" r="22" fill="#fb542b"/>
+  <path fill="#fff" d="M24 10c-7.73 0-14 6.27-14 14s6.27 14 14 14 14-6.27 14-14-6.27-14-14-14zm0 4c5.52 0 10 4.48 10 10s-4.48 10-10 10-10-4.48-10-10 4.48-10 10-10z"/>
+  <path fill="#fff" d="M32.5 32.5 28 28l4.5-4.5 2.12 2.12L32.12 30.12z"/>
+  <path fill="#fff" d="M22 20h4v10h-4z"/>
+</svg>

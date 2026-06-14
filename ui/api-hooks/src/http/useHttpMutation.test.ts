@@ -1,4 +1,4 @@
-import { CommonError, InternalError } from '@vassembly/errors';
+import { CommonError, ErrorTypes, InternalError } from '@vassembly/errors';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -76,7 +76,7 @@ describe('useHttpMutation', () => {
   });
 
   it('should handle CommonError correctly', async () => {
-    const error = new CommonError('Test error');
+    const error = new CommonError(400, ErrorTypes.INTERNAL_ERROR, 'Test error');
     hoisted.post.mockRejectedValue(error);
 
     const { result } = renderHook(() =>
@@ -148,7 +148,7 @@ describe('useHttpMutation', () => {
   });
 
   it('should clear error on new request', async () => {
-    const error = new CommonError('First error');
+    const error = new CommonError(400, ErrorTypes.INTERNAL_ERROR, 'First error');
     hoisted.post.mockRejectedValueOnce(error).mockResolvedValueOnce({ success: true });
 
     const { result } = renderHook(() =>

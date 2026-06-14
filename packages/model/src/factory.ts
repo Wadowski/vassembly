@@ -12,13 +12,13 @@ export const factory = <T extends Model>(
 
     Object.entries(data).forEach(([key, value]) => {
       if (!KEYS_TO_OMIT.includes(key)) {
-        (instance as any)[key] = value;
+        (instance as Record<string, unknown>)[key] = value;
       }
     });
 
     if (options?.validationSchema) {
       const validator = validatorFactory(options.validationSchema);
-      (instance as any).validator = validator;
+      (instance as Record<string, unknown>).validator = validator;
     }
 
     return instance;

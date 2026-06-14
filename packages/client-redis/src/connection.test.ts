@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-const { mockConnect, mockPing, mockGet, mockSet, mockDel, mockCreateClient } = vi.hoisted(() => {
+const { mockConnect, mockPing, mockCreateClient } = vi.hoisted(() => {
   const mockConnect = vi.fn();
   const mockPing = vi.fn();
   const mockGet = vi.fn();
@@ -13,7 +13,7 @@ const { mockConnect, mockPing, mockGet, mockSet, mockDel, mockCreateClient } = v
     set: mockSet,
     del: mockDel,
   }));
-  return { mockConnect, mockPing, mockGet, mockSet, mockDel, mockCreateClient };
+  return { mockConnect, mockPing, mockCreateClient };
 });
 
 vi.mock('redis', () => ({

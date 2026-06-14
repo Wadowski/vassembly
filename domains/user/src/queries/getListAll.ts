@@ -1,7 +1,6 @@
 import { getListDbByQuery as getListDbByQueryHelper } from "@vassembly/queries";
 import { userMongodbDao } from "../clients";
 import { UserModel, userFactory } from "../model";
-import z from "zod";
 
 interface GetListAllParams {
   limit?: number;

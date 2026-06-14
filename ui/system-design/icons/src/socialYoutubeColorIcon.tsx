@@ -18,9 +18,9 @@ export const SocialYoutubeColorIcon = ({ className, style }: IconProps) => (
       y2="41.301"
       gradientUnits="userSpaceOnUse"
     >
-      <stop offset="0" stop-color="#f44f5a" />
-      <stop offset=".443" stop-color="#ee3d4a" />
-      <stop offset="1" stop-color="#e52030" />
+      <stop offset="0" stopColor="#f44f5a" />
+      <stop offset=".443" stopColor="#ee3d4a" />
+      <stop offset="1" stopColor="#e52030" />
     </linearGradient>
     <path
       fill="url(#PgB_UHa29h0TpFV_moJI9a)"

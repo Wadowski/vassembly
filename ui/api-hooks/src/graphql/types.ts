@@ -18,7 +18,7 @@ export interface UseApolloQueryOptions<TVariables extends OperationVariables = O
   fetchPolicy?: 'cache-first' | 'cache-and-network' | 'network-only' | 'no-cache' | 'cache-only';
   pollInterval?: number;
   notifyOnNetworkStatusChange?: boolean;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   errorPolicy?: 'none' | 'ignore' | 'all';
   withAuth?: boolean;
   skip?: boolean;
@@ -32,11 +32,14 @@ export interface UseApolloQueryState<TData, TVariables extends OperationVariable
   networkStatus?: number;
 }
 
-export interface UseApolloMutationOptions<TVariables extends OperationVariables = OperationVariables> {
+export interface UseApolloMutationOptions<
+  TData = unknown,
+  TVariables extends OperationVariables = OperationVariables,
+> {
   variables?: TVariables;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   errorPolicy?: 'none' | 'ignore' | 'all';
-  onCompleted?: (data: any) => void;
+  onCompleted?: (data: TData) => void;
   onError?: (error: CommonError) => void;
   withAuth?: boolean;
   refetchQueries?: MutationHookOptions['refetchQueries'];

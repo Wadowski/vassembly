@@ -1,0 +1,8 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-6;
+}

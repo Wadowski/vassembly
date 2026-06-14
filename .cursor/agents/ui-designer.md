@@ -1,6 +1,6 @@
 ---
 name: ui-designer
-model: default
+model: inherit
 description: Senior UI/UX designer specializing in design systems, visual consistency, and user-centered interfaces.
 ---
 

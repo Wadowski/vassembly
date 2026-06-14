@@ -18,6 +18,14 @@ export const createTask = async ({ userId, body }: CreateTaskHandlerInput): Prom
     agentAssignedId: assistant.data.id!,
   });
 
+  logger('task.status.in_progress', {
+    meta: { sessionId: 'TASK_EXECUTION', taskId: result.data.id, userId },
+    data: {
+      previousStatus: null,
+      newStatus: 'in_progress',
+    },
+  });
+
   const response = {
     task: toTaskResponse({ task: result.data }),
   };

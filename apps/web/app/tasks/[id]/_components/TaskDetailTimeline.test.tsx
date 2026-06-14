@@ -7,8 +7,8 @@ import { TaskStatus, TaskType, type TaskDto } from '@vassembly/ui-api-hooks';
 import { TaskDetailTimelineSkeleton } from './TaskDetailTimeline';
 
 const LazyTaskDetailTimeline = lazy(async () => {
-  const module = await import('./TaskDetailTimeline');
-  return { default: module.TaskDetailTimeline };
+  const timelineModule = await import('./TaskDetailTimeline');
+  return { default: timelineModule.TaskDetailTimeline };
 });
 
 const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
@@ -28,8 +28,6 @@ const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
   createdAt: partial.createdAt ?? '2026-03-12T15:45:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-03-12T16:10:00.000Z',
 });
-
-const formatDateTime = (value: string): string => new Date(value).toLocaleString();
 
 const renderLazyTimeline = (task: TaskDto): void => {
   render(

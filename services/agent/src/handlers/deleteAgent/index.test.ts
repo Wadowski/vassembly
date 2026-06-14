@@ -50,7 +50,7 @@ describe('deleteAgent handler', () => {
   });
 
   it('should prevent deleting agents owned by another account', async () => {
-    mockGetById.mockRejectedValue(new NotFoundError('Agent not found'));
+    mockRemoveSoft.mockRejectedValue(new NotFoundError('Agent not found'));
 
     await expect(deleteAgent({ userId: 'user-2', agentId: 'agent-1' })).rejects.toThrow(NotFoundError);
   });

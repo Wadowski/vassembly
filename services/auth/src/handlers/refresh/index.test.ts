@@ -1,17 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@vassembly/domain-refresh-token");
-
 const { mockRefreshToken } = vi.hoisted(() => {
   const mockRefreshToken = vi.fn();
   return { mockRefreshToken };
 });
 
 vi.mock("@vassembly/domain-refresh-token", () => ({
-  default: {
-    commands: {
-      refresh: mockRefreshToken,
-    },
+  commands: {
+    refresh: mockRefreshToken,
   },
 }));
 

@@ -1,28 +1,51 @@
 import type SchemaBuilder from '@pothos/core';
 import type { GraphQLSchema } from 'graphql';
 
-export type Builder = InstanceType<
-  typeof SchemaBuilder<
-    Record<string, unknown> & {
-      Scalars: {
-        DateTime: { Input: Date; Output: Date };
-      };
-    }
-  >
->;
+export type GraphQLSchemaTypes = {
+  Scalars: {
+    DateTime: { Input: Date; Output: Date };
+  };
+  Objects: Record<string, object>;
+  Queries: Record<string, { Args: Record<string, unknown>; Output: unknown }>;
+  Mutations: Record<string, { Args: Record<string, unknown>; Output: unknown }>;
+};
 
+export type Builder = InstanceType<typeof SchemaBuilder<GraphQLSchemaTypes>>;
 
-export interface DefineModelSchemaProps<T extends object = object> {
+type ObjectTypeOptionsParam = Parameters<Builder['objectType']>[1];
+
+type ObjectFieldsFn = NonNullable<ObjectTypeOptionsParam['fields']>;
+
+export type GraphQLFieldBuilder =
+  ObjectFieldsFn extends (t: infer FieldBuilder) => unknown ? FieldBuilder : never;
+
+type QueryFieldsCallback = Parameters<Builder['queryFields']>[0];
+
+type MutationFieldsCallback = Parameters<Builder['mutationFields']>[0];
+
+export type GraphQLQueryFieldBuilder = QueryFieldsCallback extends (
+  t: infer FieldBuilder,
+) => unknown
+  ? FieldBuilder
+  : never;
+
+export type GraphQLMutationFieldBuilder = MutationFieldsCallback extends (
+  t: infer FieldBuilder,
+) => unknown
+  ? FieldBuilder
+  : never;
+
+export interface DefineModelSchemaProps {
   builder: Builder;
   name: string;
-  fields: (t: any) => Record<string, unknown>;
+  fields: (t: GraphQLFieldBuilder) => Record<string, unknown>;
   includeCommonFields?: boolean;
 }
 
 export interface ApplyResolversProps {
   builder: Builder;
-  queries?: (t: any) => Record<string, unknown>;
-  mutations?: (t: any) => Record<string, unknown>;
+  queries?: QueryFieldsCallback;
+  mutations?: MutationFieldsCallback;
 }
 
 export interface BuildGraphQLConfigProps {

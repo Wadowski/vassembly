@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { InternalError } from "@vassembly/errors";
-import * as configModule from "@vassembly/package-config";
+import * as configModule from "@vassembly/config";
 
 import { sendResetPasswordEmail } from ".";
 
@@ -12,7 +12,7 @@ vi.mock("@vassembly/client-aws-ses", () => ({
   AwsSesClient: mockAwsSesClient,
 }));
 
-vi.mock("@vassembly/package-config", () => ({
+vi.mock("@vassembly/config", () => ({
   config: {
     aws: {
       ses: {
@@ -29,6 +29,7 @@ describe("sendResetPasswordEmail", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSendEmail = vi.fn().mockResolvedValue(undefined);
+    configModule.config.aws.ses.fromEmail = "noreply@example.com";
 
     mockAwsSesClient.mockReturnValue({
       sendEmail: mockSendEmail,
@@ -58,7 +59,7 @@ describe("sendResetPasswordEmail", () => {
     const originalNodeEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "production";
 
-    (configModule.config as any).aws.ses.fromEmail = "";
+    configModule.config.aws.ses.fromEmail = "";
 
     try {
       await expect(
@@ -76,7 +77,7 @@ describe("sendResetPasswordEmail", () => {
     const originalNodeEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "development";
 
-    (configModule.config as any).aws.ses.fromEmail = "";
+    configModule.config.aws.ses.fromEmail = "";
 
     try {
       await sendResetPasswordEmail({

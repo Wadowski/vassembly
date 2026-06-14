@@ -1,6 +1,6 @@
 ---
 name: product-manager
-model: default
+model: inherit
 description: Technical Product Manager specializing in PRD creation. Translates feature descriptions into high-quality Product Requirement Documents for engineers, designers, and QA. Use proactively when working on feature specifications or user story definitions.
 ---
 

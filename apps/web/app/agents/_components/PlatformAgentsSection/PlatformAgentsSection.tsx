@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@vassembly/ui-button';
@@ -45,9 +45,9 @@ export function PlatformAgentsSection(): JSX.Element {
     router.push(SYSTEM_AGENTS_CREATE_PATH);
   };
 
-  const handleEdit = (agent: SystemAgentAdminItem): void => {
+  const handleEdit = useCallback((agent: SystemAgentAdminItem): void => {
     router.push(systemAgentEditPath(agent.id));
-  };
+  }, [router]);
 
   const columns = useMemo(
     () =>

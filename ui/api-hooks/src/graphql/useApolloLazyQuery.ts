@@ -15,7 +15,7 @@ export const useApolloLazyQuery = <TData, TVariables extends OperationVariables 
     [typeof query === 'string' ? query : JSON.stringify(query)],
   );
 
-  const [execute, { data, loading, error, networkStatus }] = useApolloClientLazyQuery<TData, TVariables>(document, {
+  const [execute, { data, loading, error }] = useApolloClientLazyQuery<TData, TVariables>(document, {
     variables: options?.variables,
     fetchPolicy: options?.fetchPolicy,
     pollInterval: options?.pollInterval,

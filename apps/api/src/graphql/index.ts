@@ -12,6 +12,7 @@ import { registerAiIntegrationResolvers } from './resolvers/aiIntegration';
 import { registerTaskResolvers } from './resolvers/task';
 import { registerUserResolvers } from './resolvers/user';
 import { registerSystemAgentResolvers } from './resolvers/systemAgent';
+import { registerMcpResolvers, gqlMcpSchema } from './resolvers/mcp';
 
 const builder = createBuilder();
 
@@ -20,11 +21,13 @@ agentDomain.gqlSchema(builder);
 aiIntegrationDomain.gqlSchema(builder);
 systemAgentDomain.gqlSchema(builder);
 taskDomain.gqlSchema(builder);
+gqlMcpSchema(builder);
 registerUserResolvers(builder);
 registerAgentResolvers(builder);
 registerAiIntegrationResolvers(builder);
 registerSystemAgentResolvers(builder);
 registerTaskResolvers(builder);
+registerMcpResolvers(builder);
 
 const { schema, path } = buildGraphQLConfig({
   builder,

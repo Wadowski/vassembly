@@ -87,6 +87,7 @@ export function useAgentEditPage(): UseAgentEditPageResult {
             description: payload.description,
             rule: payload.rule,
             integrationCredentialId: payload.integrationCredentialId,
+            assignedMcpIds: payload.assignedMcpIds,
           },
         });
         snackbar.show({ variant: 'success', message: 'Agent updated successfully', duration: 4000 });

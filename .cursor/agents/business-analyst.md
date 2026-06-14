@@ -1,6 +1,6 @@
 ---
 name: business-analyst
-model: default
+model: inherit
 description: Product discovery and requirements analysis specialist. Conducts stakeholder interviews, market research, problem discovery, and creates product briefs. Use for product brief, brainstorm, research, discovery, requirements gathering, problem analysis, user needs, competitive analysis, and setting foundation before product planning. Hands off to product manager when analysis complete.
 ---
 

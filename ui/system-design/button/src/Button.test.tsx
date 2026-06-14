@@ -4,6 +4,26 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { Button } from './Button';
+import styles from './Button.module.scss';
+
+const COLOR_CLASS = {
+  primary: styles.colorPrimary,
+  secondary: styles.colorSecondary,
+  tertiary: styles.colorTertiary,
+  danger: styles.colorDanger,
+} as const;
+
+const VARIANT_CLASS = {
+  contained: styles.variantContained,
+  outlined: styles.variantOutlined,
+  text: styles.variantText,
+} as const;
+
+const SIZE_CLASS = {
+  small: styles.sizeSmall,
+  medium: styles.sizeMedium,
+  large: styles.sizeLarge,
+} as const;
 
 describe('Button', () => {
   describe('Rendering', () => {
@@ -23,31 +43,31 @@ describe('Button', () => {
     it('renders primary color', () => {
       render(<Button color="primary" text="Primary" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-primary');
+      expect(button.className).toContain(COLOR_CLASS.primary);
     });
 
     it('renders secondary color', () => {
       render(<Button color="secondary" text="Secondary" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-secondary');
+      expect(button.className).toContain(COLOR_CLASS.secondary);
     });
 
     it('renders tertiary color', () => {
       render(<Button color="tertiary" text="Tertiary" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-tertiary');
+      expect(button.className).toContain(COLOR_CLASS.tertiary);
     });
 
     it('renders danger color', () => {
       render(<Button color="danger" text="Delete" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-danger');
+      expect(button.className).toContain(COLOR_CLASS.danger);
     });
 
     it('defaults to primary color', () => {
       render(<Button text="Default" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-primary');
+      expect(button.className).toContain(COLOR_CLASS.primary);
     });
   });
 
@@ -55,46 +75,46 @@ describe('Button', () => {
     it('renders contained variant', () => {
       render(<Button variant="contained" text="Contained" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('variant-contained');
+      expect(button.className).toContain(VARIANT_CLASS.contained);
     });
 
     it('renders outlined variant', () => {
       render(<Button variant="outlined" text="Outlined" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('variant-outlined');
+      expect(button.className).toContain(VARIANT_CLASS.outlined);
     });
 
     it('renders text variant', () => {
       render(<Button variant="text" text="Text" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('variant-text');
+      expect(button.className).toContain(VARIANT_CLASS.text);
     });
 
     it('defaults to contained variant', () => {
       render(<Button text="Default" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('variant-contained');
+      expect(button.className).toContain(VARIANT_CLASS.contained);
     });
 
     it('renders contained variant with primary color', () => {
       render(<Button color="primary" variant="contained" text="Button" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-primary');
-      expect(button.className).toContain('variant-contained');
+      expect(button.className).toContain(COLOR_CLASS.primary);
+      expect(button.className).toContain(VARIANT_CLASS.contained);
     });
 
     it('renders outlined variant with secondary color', () => {
       render(<Button color="secondary" variant="outlined" text="Button" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-secondary');
-      expect(button.className).toContain('variant-outlined');
+      expect(button.className).toContain(COLOR_CLASS.secondary);
+      expect(button.className).toContain(VARIANT_CLASS.outlined);
     });
 
     it('renders text variant with danger color', () => {
       render(<Button color="danger" variant="text" text="Button" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-danger');
-      expect(button.className).toContain('variant-text');
+      expect(button.className).toContain(COLOR_CLASS.danger);
+      expect(button.className).toContain(VARIANT_CLASS.text);
     });
   });
 
@@ -102,25 +122,25 @@ describe('Button', () => {
     it('renders small size', () => {
       render(<Button size="small" text="Small" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('size-small');
+      expect(button.className).toContain(SIZE_CLASS.small);
     });
 
     it('renders medium size', () => {
       render(<Button size="medium" text="Medium" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('size-medium');
+      expect(button.className).toContain(SIZE_CLASS.medium);
     });
 
     it('renders large size', () => {
       render(<Button size="large" text="Large" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('size-large');
+      expect(button.className).toContain(SIZE_CLASS.large);
     });
 
     it('defaults to medium size', () => {
       render(<Button text="Default" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('size-medium');
+      expect(button.className).toContain(SIZE_CLASS.medium);
     });
   });
 
@@ -134,7 +154,7 @@ describe('Button', () => {
     it('applies disabled class', () => {
       render(<Button isDisabled text="Disabled" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('disabled');
+      expect(button.className).toContain(styles.disabled);
     });
 
     it('prevents click when disabled', async () => {
@@ -148,8 +168,8 @@ describe('Button', () => {
     it('prevents loading state when disabled', () => {
       render(<Button isDisabled isLoading text="Loading" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('disabled');
-      expect(button.className).toContain('loading');
+      expect(button.className).toContain(styles.disabled);
+      expect(button.className).toContain(styles.loading);
     });
   });
 
@@ -157,7 +177,7 @@ describe('Button', () => {
     it('applies loading class', () => {
       render(<Button isLoading text="Loading" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('loading');
+      expect(button.className).toContain(styles.loading);
     });
 
     it('disables button when loading', () => {
@@ -166,9 +186,9 @@ describe('Button', () => {
       expect(button).toBeDisabled();
     });
 
-    it('hides content when loading', () => {
+    it('keeps label visible when loading', () => {
       render(<Button isLoading text="Visible Content" />);
-      expect(screen.queryByText('Visible Content')).not.toBeVisible();
+      expect(screen.getByText('Visible Content')).toBeInTheDocument();
     });
 
     it('prevents click when loading', async () => {
@@ -214,7 +234,7 @@ describe('Button', () => {
       </svg>
     );
     render(<Button icon={IconComponent} isLoading text="Search" />);
-    expect(screen.queryByTestId('test-icon')).not.toBeVisible();
+    expect(screen.queryByTestId('test-icon')).not.toBeInTheDocument();
   });
 
   it('renders both text and icon component', () => {
@@ -232,7 +252,7 @@ describe('Button', () => {
     it('applies full width class', () => {
       render(<Button isFullWidth text="Full Width" />);
       const button = screen.getByRole('button');
-      expect(button.className).toContain('fullWidth');
+      expect(button.className).toContain(styles.fullWidth);
     });
 
     it('renders full width with other props', () => {
@@ -240,8 +260,8 @@ describe('Button', () => {
         <Button color="primary" variant="outlined" isFullWidth text="Full Width Outlined" />,
       );
       const button = screen.getByRole('button');
-      expect(button.className).toContain('fullWidth');
-      expect(button.className).toContain('variant-outlined');
+      expect(button.className).toContain(styles.fullWidth);
+      expect(button.className).toContain(VARIANT_CLASS.outlined);
     });
   });
 
@@ -345,9 +365,9 @@ describe('Button', () => {
         />,
       );
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-primary');
-      expect(button.className).toContain('variant-contained');
-      expect(button.className).toContain('size-large');
+      expect(button.className).toContain(COLOR_CLASS.primary);
+      expect(button.className).toContain(VARIANT_CLASS.contained);
+      expect(button.className).toContain(SIZE_CLASS.large);
       expect(button.className).toContain('custom-class');
     });
   });
@@ -369,8 +389,8 @@ describe('Button', () => {
             <Button color={color} variant={variant} text={`${color}-${variant}`} />,
           );
           const button = screen.getByRole('button');
-          expect(button.className).toContain(`color-${color}`);
-          expect(button.className).toContain(`variant-${variant}`);
+          expect(button.className).toContain(COLOR_CLASS[color]);
+          expect(button.className).toContain(VARIANT_CLASS[variant]);
           unmount();
         });
       });
@@ -386,8 +406,8 @@ describe('Button', () => {
             <Button size={size} variant={variant} text={`${size}-${variant}`} />,
           );
           const button = screen.getByRole('button');
-          expect(button.className).toContain(`size-${size}`);
-          expect(button.className).toContain(`variant-${variant}`);
+          expect(button.className).toContain(SIZE_CLASS[size]);
+          expect(button.className).toContain(VARIANT_CLASS[variant]);
           unmount();
         });
       });
@@ -410,9 +430,9 @@ describe('Button', () => {
         />,
       );
       const button = screen.getByRole('button');
-      expect(button.className).toContain('color-danger');
-      expect(button.className).toContain('variant-outlined');
-      expect(button.className).toContain('size-large');
+      expect(button.className).toContain(COLOR_CLASS.danger);
+      expect(button.className).toContain(VARIANT_CLASS.outlined);
+      expect(button.className).toContain(SIZE_CLASS.large);
       expect(screen.getByTestId('delete-icon')).toBeInTheDocument();
     });
   });

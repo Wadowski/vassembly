@@ -34,7 +34,7 @@ export const AwsSqsClient = ({ queueUrl }: ClientAwsSqsParams): ClientAwsSqs => 
       });
       const response = await sqsClient.send(command);
       return response.MessageId || "";
-    } catch (err) {
+    } catch {
       throw new InternalError(`${CONSOLE_LOG_PREFIX} aws error on push message`);
     }
   };

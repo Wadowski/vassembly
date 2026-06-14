@@ -1,4 +1,4 @@
-import type { AgentCategory, AgentStatus, AgentResponse } from '@vassembly/domain-agent';
+import type { AgentCategory, AgentResponse } from '@vassembly/domain-agent';
 
 export type AgentResponseDto = AgentResponse;
 
@@ -10,5 +10,6 @@ export interface CreateAgentHandlerInput {
     description: string;
     rule: string;
     integrationCredentialId?: string;
+    assignedMcpIds?: string[];
   };
 }

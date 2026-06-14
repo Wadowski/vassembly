@@ -14,6 +14,7 @@ import { AGENT_LIST_STATUS_OPTIONS } from './types';
 import type { AgentListStatusFilter } from './types';
 import { AGENT_LIST_PAGE_SIZE } from './listQuery';
 import { AgentDeleteDialog } from '../AgentDeleteDialog';
+import { AgentInvokeModal } from '../AgentInvokeModal';
 import { AgentRestoreDialog } from '../AgentRestoreDialog';
 import { getAgentListTableColumns } from './tableColumns';
 import { useAgentList } from './useAgentList';
@@ -30,10 +31,11 @@ export function AgentList(): JSX.Element {
     () =>
       getAgentListTableColumns({
         onEditAgent: (agentId) => catalog.router.push(`/agents/${agentId}/edit`),
+        onRunAgent: catalog.openInvokeFor,
         onRestoreAgent: catalog.openRestoreFor,
         onDeleteAgent: catalog.openDeleteFor,
       }),
-    [catalog.openDeleteFor, catalog.openRestoreFor, catalog.router],
+    [catalog.openDeleteFor, catalog.openInvokeFor, catalog.openRestoreFor, catalog.router],
   );
 
   return (
@@ -92,6 +94,11 @@ export function AgentList(): JSX.Element {
         onClose={catalog.closeRestoreDialog}
         isConfirmBusy={catalog.restoreBusy}
         onConfirm={catalog.confirmRestore}
+      />
+      <AgentInvokeModal
+        open={catalog.invokeOpen}
+        agent={catalog.focusAgent ?? undefined}
+        onClose={catalog.closeInvokeDialog}
       />
     </section>
   );

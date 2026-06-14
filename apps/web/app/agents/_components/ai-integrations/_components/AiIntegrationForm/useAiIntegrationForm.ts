@@ -3,6 +3,9 @@ import type { FormEvent } from 'react';
 
 import type { AiIntegrationFormInput } from '@vassembly/ui-api-hooks';
 
+import { getValidatorIssues } from '@vassembly/validation';
+import type { z } from 'zod';
+
 import {
   createValidateAiIntegrationForm,
   toAiIntegrationFormValues,
@@ -10,7 +13,7 @@ import {
 import type { UseAiIntegrationFormOptions, UseAiIntegrationFormResult } from './types';
 
 interface CollectFieldErrorsParams {
-  issues: { path: (string | number)[]; message: string }[];
+  issues: z.ZodIssue[];
 }
 
 const collectFieldErrors = ({ issues }: CollectFieldErrorsParams): Record<string, string> => {
@@ -65,7 +68,7 @@ export const useAiIntegrationForm = ({
         });
         return;
       }
-      const fieldErrors = collectFieldErrors({ issues: result.error.error?.issues ?? [] });
+      const fieldErrors = collectFieldErrors({ issues: getValidatorIssues(result) });
       setErrors((prev) => ({
         ...prev,
         ...(fieldErrors[fieldKey] !== undefined ? { [fieldKey]: fieldErrors[fieldKey] } : {}),
@@ -80,7 +83,7 @@ export const useAiIntegrationForm = ({
       setErrors({});
       return true;
     }
-    const fieldErrors = collectFieldErrors({ issues: result.error.error?.issues ?? [] });
+    const fieldErrors = collectFieldErrors({ issues: getValidatorIssues(result) });
     setErrors(fieldErrors);
     setTouched((prev) => {
       const next = { ...prev };

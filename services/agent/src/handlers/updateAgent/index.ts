@@ -2,6 +2,8 @@ import agentDomain, { toAgentResponse } from '@vassembly/domain-agent';
 import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import { InternalError, WrongParamError } from '@vassembly/errors';
 
+import { validateAssignedMcpIds } from '../../helpers/validateAssignedMcpIds';
+
 import type { UpdateAgentHandlerInput, UpdateAgentHandlerOutput } from './types';
 
 export const updateAgent = async (input: UpdateAgentHandlerInput): Promise<UpdateAgentHandlerOutput> => {
@@ -21,6 +23,13 @@ export const updateAgent = async (input: UpdateAgentHandlerInput): Promise<Updat
     await aiIntegrationDomain.queries.getById({
       id: nextIntegrationCredentialId,
       userId: input.userId,
+    });
+  }
+
+  if (input.patch.assignedMcpIds && input.patch.assignedMcpIds.length > 0) {
+    await validateAssignedMcpIds({
+      userId: input.userId,
+      assignedMcpIds: input.patch.assignedMcpIds,
     });
   }
 

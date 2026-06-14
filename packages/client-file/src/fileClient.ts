@@ -25,7 +25,7 @@ export const FileClient = ({
       const resolvedPath = resolvePath(filePath);
       const content = await fs.readFile(resolvedPath, "utf-8");
       return content;
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to read file at ${filePath}`
       );
@@ -39,7 +39,7 @@ export const FileClient = ({
     try {
       const resolvedPath = resolvePath(filePath);
       await fs.writeFile(resolvedPath, content, "utf-8");
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to write file at ${filePath}`
       );
@@ -52,7 +52,7 @@ export const FileClient = ({
     try {
       const resolvedPath = resolvePath(filePath);
       await fs.unlink(resolvedPath);
-    } catch (err) {
+    } catch {
       throw new InternalError(
         `${CONSOLE_LOG_PREFIX} failed to remove file at ${filePath}`
       );

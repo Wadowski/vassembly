@@ -14,14 +14,11 @@ export const usePolling = (
       return;
     }
 
-    let cancelled = false;
-
     const intervalId = setInterval(() => {
       void Promise.resolve(callback()).catch(() => undefined);
     }, intervalMs);
 
     return (): void => {
-      cancelled = true;
       clearInterval(intervalId);
     };
   }, [callback, enabled, intervalMs]);

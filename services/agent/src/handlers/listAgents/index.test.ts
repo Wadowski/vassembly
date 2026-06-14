@@ -4,14 +4,21 @@ const { mockGetListForUser } = vi.hoisted(() => ({
   mockGetListForUser: vi.fn(),
 }));
 
-vi.mock('@vassembly/domain-agent', () => ({
-  default: {
-    commands: {},
-    queries: {
-      getListForUser: mockGetListForUser,
+vi.mock('@vassembly/domain-agent', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vassembly/domain-agent')>();
+
+  return {
+    ...actual,
+    default: {
+      commands: {},
+      queries: {
+        getListForUser: mockGetListForUser,
+      },
     },
-  },
-}));
+  };
+});
+
+import { AgentStatus } from '@vassembly/domain-agent';
 
 import { listAgents } from './index';
 
@@ -49,7 +56,7 @@ describe('listAgents handler', () => {
       page: 1,
       size: 5,
       search: 'Invoice',
-      status: 'archived',
+      status: AgentStatus.Archived,
     });
 
     expect(result.page).toBe(1);

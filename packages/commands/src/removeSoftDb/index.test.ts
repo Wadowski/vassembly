@@ -3,7 +3,7 @@ import type { Model } from "@vassembly/model";
 import { WrongParamError } from "@vassembly/errors";
 import { removeSoftDb } from "./index";
 import type { CommonDbCommandGeneratorParams } from "../types";
-import { MongoDbDAO } from "@vassembly/client-mongodb";
+import type { MongoDbDAOType } from "@vassembly/client-mongodb";
 
 interface TestModel extends Model {
   id: string;
@@ -12,10 +12,14 @@ interface TestModel extends Model {
   removedAt?: Date;
 }
 
-const createMockInstance = (data: Partial<TestModel>): any => {
+type MockTestInstance = Partial<TestModel> & {
+  isValid: ReturnType<typeof vi.fn>;
+};
+
+const createMockInstance = (data: Partial<TestModel>): MockTestInstance => {
   const instance = {
     ...data,
-    isValid: vi.fn(() => ({ success: true, data })),
+    isValid: vi.fn(() => ({ success: true as const, data: data as TestModel })),
   };
   return instance;
 };
@@ -34,7 +38,7 @@ describe("removeSoftDb", () => {
 
   const params: CommonDbCommandGeneratorParams<TestModel> = {
     factory: mockFactory,
-    dao: mockDao as unknown as MongoDbDAO<TestModel>,
+    dao: mockDao as unknown as MongoDbDAOType<TestModel>,
   };
 
   beforeEach(() => {

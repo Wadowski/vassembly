@@ -113,7 +113,7 @@ describe('Table', () => {
       expect(screen.getByText('Row 9')).toBeInTheDocument();
       expect(screen.queryByText('Row 10')).not.toBeInTheDocument();
 
-      await user.click(screen.getByRole('button', { name: 'Next page' }));
+      await user.click(screen.getByRole('button', { name: 'Next' }));
 
       expect(screen.queryByText('Row 0')).not.toBeInTheDocument();
       expect(screen.getByText('Row 10')).toBeInTheDocument();
@@ -126,8 +126,8 @@ describe('Table', () => {
       const data = makeRows(25);
       render(<Table columns={defaultColumns} data={data} pageSize={10} />);
 
-      await user.click(screen.getByRole('button', { name: 'Next page' }));
-      await user.click(screen.getByRole('button', { name: 'Next page' }));
+      await user.click(screen.getByRole('button', { name: 'Next' }));
+      await user.click(screen.getByRole('button', { name: 'Next' }));
 
       expect(screen.getByText('Row 20')).toBeInTheDocument();
       expect(screen.getByText('Row 24')).toBeInTheDocument();
@@ -195,10 +195,10 @@ describe('Table', () => {
       const data = makeRows(25);
       render(<Table columns={defaultColumns} data={data} pageSize={10} />);
 
-      await user.click(screen.getByRole('button', { name: 'Next page' }));
+      await user.click(screen.getByRole('button', { name: 'Next' }));
       expect(screen.getByText('Row 10')).toBeInTheDocument();
 
-      await user.click(screen.getByRole('button', { name: 'Previous page' }));
+      await user.click(screen.getByRole('button', { name: 'Previous' }));
       expect(screen.getByText('Row 0')).toBeInTheDocument();
     });
 
@@ -206,8 +206,8 @@ describe('Table', () => {
       const data = makeRows(25);
       render(<Table columns={defaultColumns} data={data} pageSize={10} />);
 
-      expect(screen.getByRole('button', { name: 'Previous page' })).toBeDisabled();
-      expect(screen.getByRole('button', { name: 'Next page' })).not.toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Next' })).not.toBeDisabled();
     });
 
     it('disables next on last page of multi-page data', async () => {
@@ -215,11 +215,11 @@ describe('Table', () => {
       const data = makeRows(25);
       render(<Table columns={defaultColumns} data={data} pageSize={10} />);
 
-      await user.click(screen.getByRole('button', { name: 'Next page' }));
-      await user.click(screen.getByRole('button', { name: 'Next page' }));
+      await user.click(screen.getByRole('button', { name: 'Next' }));
+      await user.click(screen.getByRole('button', { name: 'Next' }));
 
-      expect(screen.getByRole('button', { name: 'Next page' })).toBeDisabled();
-      expect(screen.getByRole('button', { name: 'Previous page' })).not.toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Previous' })).not.toBeDisabled();
     });
   });
 

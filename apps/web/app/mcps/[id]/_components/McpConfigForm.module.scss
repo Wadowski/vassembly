@@ -1,0 +1,42 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-5;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $spacing-4;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  align-items: center;
+}
+
+.successIndicator {
+  color: $color-success;
+}
+
+.liveRegion {
+  color: $color-error;
+}
+
+.touchTarget {
+  min-height: 44px;
+}
+
+.deleteButton {
+  margin-top: $spacing-2;
+}
+
+@media #{$media-mobile-only} {
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+}

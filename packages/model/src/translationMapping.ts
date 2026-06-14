@@ -8,8 +8,8 @@ const isValidLanguage = (language: COUNTRIES): boolean => {
 const findTranslationValue = (
   translationArray: Translation[] | undefined,
   language: COUNTRIES,
-  fallbackValue: any
-): any => {
+  fallbackValue: unknown
+): unknown => {
   if (!Array.isArray(translationArray)) return fallbackValue;
 
   const translation = translationArray.find(
@@ -22,9 +22,9 @@ const findTranslationValue = (
 export const getTranslation = (
   fieldKey: string,
   translationsKey: string,
-  instance: any,
+  instance: Record<string, unknown> | null | undefined,
   language: COUNTRIES
-): any => {
+): unknown => {
   if (
     instance?.[fieldKey] === undefined ||
     instance?.[translationsKey] === undefined ||
@@ -42,9 +42,9 @@ export const getTranslation = (
 export const getTranslationList = (
   fieldKey: string,
   translationsKey: string,
-  instance: any,
+  instance: Record<string, unknown>,
   language: COUNTRIES
-): any[] | undefined => {
+): unknown[] | undefined => {
   const [topLevelFieldKey, bottomLevelFieldKey] = fieldKey.split(".[].");
   const [topLevelTranslationKey, bottomLevelTranslationKey] =
     translationsKey.split(".[].");
@@ -60,7 +60,7 @@ export const getTranslationList = (
   )
     return;
 
-  return instance[topLevelFieldKey].map((item) =>
+  return (instance[topLevelFieldKey] as Record<string, unknown>[]).map((item) =>
     getTranslation(
       bottomLevelFieldKey,
       bottomLevelTranslationKey,
@@ -73,9 +73,9 @@ export const getTranslationList = (
 export const getTranslationListList = (
   fieldKey: string,
   translationsKey: string,
-  instance: any,
+  instance: Record<string, unknown>,
   language: COUNTRIES
-): any[][] | undefined => {
+): Record<string, unknown>[][] | undefined => {
   const [topLevelFieldKey, bottomLevelFieldKey] = fieldKey.split(".[].[].");
   const [topLevelTranslationKey, bottomLevelTranslationKey] =
     translationsKey.split(".[].[].");
@@ -89,12 +89,12 @@ export const getTranslationListList = (
   )
     return;
 
-  return instance[topLevelFieldKey].map((level1Items) => {
+  return (instance[topLevelFieldKey] as unknown[]).map((level1Items) => {
     if (!Array.isArray(level1Items) || !bottomLevelFieldKey || !bottomLevelTranslationKey) {
       return [];
     }
 
-    return level1Items.map((level2Item) => ({
+    return (level1Items as Record<string, unknown>[]).map((level2Item) => ({
         ...level2Item,
         [bottomLevelFieldKey]: getTranslation(
             bottomLevelFieldKey,

@@ -25,11 +25,12 @@ vi.mock('@vassembly/commands', () => ({
 }));
 
 import { create } from './index';
+import { AgentCategory } from '../../model';
 
 const BASE_INPUT = {
   userId: 'user-1',
   name: 'Valid Agent',
-  category: 'coding' as const,
+  category: AgentCategory.Coding,
   description: 'Helps with reviews',
   rule: 'Stay concise',
 };
@@ -59,6 +60,51 @@ describe('create agent command', () => {
     expect(result.data.name).toBe(BASE_INPUT.name);
   });
 
+  it('should default assignedMcpIds to empty array when omitted', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'agent-new',
+        ...BASE_INPUT,
+        assignedMcpIds: [],
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-05T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-05T00:00:00.000Z'),
+      },
+    });
+
+    const result = await create(BASE_INPUT);
+
+    expect(result.data.assignedMcpIds).toEqual([]);
+  });
+
+  it('should reject create when assignedMcpIds exceeds maximum length', async () => {
+    await expect(
+      create({
+        ...BASE_INPUT,
+        assignedMcpIds: ['mcp-1', 'mcp-2', 'mcp-3', 'mcp-4', 'mcp-5', 'mcp-6'],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject create when assignedMcpIds contains duplicates', async () => {
+    await expect(
+      create({
+        ...BASE_INPUT,
+        assignedMcpIds: ['mcp-1', 'mcp-1'],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject create when assignedMcpIds contains empty strings', async () => {
+    await expect(
+      create({
+        ...BASE_INPUT,
+        assignedMcpIds: [''],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
   it('should reject create when name exceeds maximum length', async () => {
     await expect(
       create({
@@ -72,7 +118,7 @@ describe('create agent command', () => {
     await expect(
       create({
         ...BASE_INPUT,
-        category: 'research' as 'coding',
+        category: 'research' as AgentCategory,
       }),
     ).rejects.toThrow(ValidationError);
   });

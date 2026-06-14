@@ -32,9 +32,8 @@ export const applyFrameworkErrorHandler = ({ fastify }: ApplyFrameworkErrorHandl
       return sendCommonErrorShape(reply, error);
     }
     if (isFastifyRequestValidationError(err)) {
-      const fastifyErr = err as any;
       const error = new WrongParamError("Request doesn't match the schema", {
-        validation: fastifyErr.validation || [],
+        validation: err.validation ?? [],
       });
       return sendCommonErrorShape(reply, error);
     }

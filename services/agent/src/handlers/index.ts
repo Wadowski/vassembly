@@ -68,3 +68,15 @@ export type {
   GetCredentialWithAgentsHandlerOutput,
 } from './getCredentialWithAgents/types';
 export type { TestConnectionHandlerInput, TestConnectionHandlerOutput } from './testConnection/types';
+export { getMcpWithAgents } from './getMcpWithAgents';
+export type {
+  GetMcpWithAgentsHandlerInput,
+  GetMcpWithAgentsHandlerOutput,
+} from './getMcpWithAgents/types';
+export { unassignMcpFromAgent } from './unassignMcpFromAgent';
+export type {
+  UnassignMcpFromAgentHandlerInput,
+  UnassignMcpFromAgentHandlerOutput,
+} from './unassignMcpFromAgent/types';
+export { invokePersonalAgent } from './invokePersonalAgent';
+export type { InvokePersonalAgentParams, InvokePersonalAgentResult } from './invokePersonalAgent/types';

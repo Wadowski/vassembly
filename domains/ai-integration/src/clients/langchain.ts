@@ -1,17 +1,24 @@
-import { createProviderClient } from "@vassembly/client-langchain";
+import { createProviderClient } from '@vassembly/client-langchain';
 
 import type {
   AiProviderClient,
+  AiProviderInvokeParams,
   AiProviderTestResult,
   CreateProviderClientParams,
-} from "@vassembly/client-langchain";
+} from '@vassembly/client-langchain';
 
 export const getProviderClient = (
   params: CreateProviderClientParams,
 ): AiProviderClient => createProviderClient(params);
 
+export interface ModeledProviderInvokeParams {
+  message: string;
+  systemMessage?: string;
+  mcpServerConfigs?: AiProviderInvokeParams['mcpServerConfigs'];
+}
+
 export interface ModeledProviderClient {
-  invoke(message: string): Promise<{ message: string }>;
+  invoke(params: ModeledProviderInvokeParams | string): Promise<{ message: string }>;
 }
 
 export const getModeledProviderClient = (
@@ -21,7 +28,18 @@ export const getModeledProviderClient = (
   const model = params.model;
 
   return {
-    invoke: (message: string) => client.invoke({ model, message }),
+    invoke: (messageOrParams: ModeledProviderInvokeParams | string) => {
+      if (typeof messageOrParams === 'string') {
+        return client.invoke({ model, message: messageOrParams });
+      }
+
+      return client.invoke({
+        model,
+        message: messageOrParams.message,
+        systemMessage: messageOrParams.systemMessage,
+        mcpServerConfigs: messageOrParams.mcpServerConfigs,
+      });
+    },
   };
 };
 

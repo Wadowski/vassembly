@@ -5,9 +5,14 @@ import { COUNTRIES } from "@vassembly/constants";
 import { getTranslation, getTranslationList, getTranslationListList } from "./translationMapping";
 import { ValidatorResult } from "@vassembly/validation";
 import { WrongParamError } from "@vassembly/errors";
+import type { ZodIssue } from "zod";
+
+interface MongoDbConvertible {
+  toMongoDb: () => Record<string, unknown>;
+}
 
 export const MONGODB_VALUE_MAP = {
-  value: (data: string) => new ObjectId(data),
+  value: (data: unknown) => new ObjectId(data as string),
   list: (data: string[]) => {
     return Array.isArray(data) ? data.map((r) => new ObjectId(r)) : data;
   },
@@ -27,6 +32,15 @@ export const MONGODB_VALUE_MAP = {
   }
 };
 
+const MODEL_JSON_OMIT_KEYS = new Set([
+  "toJSON",
+  "toMongoDb",
+  "mongoDbKeyMap",
+  "mongoDbValueMap",
+  "validator",
+  "isValid",
+]);
+
 export abstract class Model {
   id?: string;
   
@@ -42,7 +56,7 @@ export abstract class Model {
   };
 
   @MongoDbOmit
-  mongoDbValueMap: Record<string, (data: string) => any> = {
+  mongoDbValueMap: Record<string, (data: unknown) => unknown> = {
     id: MONGODB_VALUE_MAP.value,
   };
 
@@ -58,7 +72,10 @@ export abstract class Model {
     const result = this.validator(this);
 
     if (options?.shouldThrow && !result.success) {
-      const issuesMessages = result.error.error.issues.map((issue: any) => `${issue.path.join(".")}: ${issue.message}`).join(", ");
+      const zodError = result.error.error as { issues: ZodIssue[] } | undefined;
+      const issuesMessages = (zodError?.issues ?? [])
+        .map((issue: ZodIssue) => `${issue.path.join(".")}: ${issue.message}`)
+        .join(", ");
       const errorMessage = `${this.constructor.name} :: ${issuesMessages}`;
       throw new WrongParamError(errorMessage);
     }
@@ -71,10 +88,10 @@ export abstract class Model {
     isCreate,
     isUpdate,
     isRemove,
-  }: { isCreate?: boolean; isUpdate?: boolean; isRemove?: boolean } = {}): Record<string, any> => {
-    const cleanupDocument = (data: any) => {
+  }: { isCreate?: boolean; isUpdate?: boolean; isRemove?: boolean } = {}): Record<string, unknown> => {
+    const cleanupDocument = (data: Record<string, unknown>): Record<string, unknown> => {
       const omitKeys =
-        Reflect.getMetadata(mongoDbDocumentParamOmitDecorator, data) || [];
+        (Reflect.getMetadata(mongoDbDocumentParamOmitDecorator, data) as string[] | undefined) ?? [];
 
       return Object.entries(data).reduce((acc, [key, value]) => {
         if (value === undefined) {
@@ -85,12 +102,17 @@ export abstract class Model {
         const mongoValue = this.mongoDbValueMap[key];
 
         let newAcc = acc;
-        let mappedValue = value;
+        let mappedValue: unknown = value;
 
         if (mongoValue && value) {
-          mappedValue = mongoValue(value as any);
-        } else if ((value as any)?.toMongoDb) {
-          mappedValue = (value as any).toMongoDb();
+          mappedValue = mongoValue(value);
+        } else if (
+          typeof value === "object" &&
+          value !== null &&
+          "toMongoDb" in value &&
+          typeof (value as MongoDbConvertible).toMongoDb === "function"
+        ) {
+          mappedValue = (value as MongoDbConvertible).toMongoDb();
         }
 
         if (!omitKeys.includes(key)) {
@@ -103,7 +125,7 @@ export abstract class Model {
       }, {});
     };
 
-    const cleanData = cleanupDocument(this);
+    const cleanData = cleanupDocument(this as unknown as Record<string, unknown>);
 
     if (isCreate) {
       return {
@@ -127,17 +149,10 @@ export abstract class Model {
   };
 
   @MongoDbOmit
-  toJSON(): Record<string, any> {
-    const {
-      toJSON,
-      toMongoDb,
-      mongoDbKeyMap,
-      mongoDbValueMap,
-      validator,
-      isValid,
-      ...rest
-    } = this;
-    return rest;
+  toJSON(): Record<string, unknown> {
+    return Object.fromEntries(
+      Object.entries(this).filter(([key]) => !MODEL_JSON_OMIT_KEYS.has(key))
+    );
   }
 }
 
@@ -154,10 +169,10 @@ export abstract class ModelWithTranslation extends Model {
             return; 
           }
 
-          (this as any)[topLevelFieldKey] = getTranslationListList(
+          (this as Record<string, unknown>)[topLevelFieldKey] = getTranslationListList(
             fieldKey,
             translationsKey,
-            this,
+            this as unknown as Record<string, unknown>,
             language
           );
         } else {
@@ -166,10 +181,10 @@ export abstract class ModelWithTranslation extends Model {
             return; 
           }
 
-          (this as any)[topLevelFieldKey] = getTranslationList(
+          (this as Record<string, unknown>)[topLevelFieldKey] = getTranslationList(
             fieldKey,
             translationsKey,
-            this,
+            this as unknown as Record<string, unknown>,
             language
           );
         }
@@ -178,19 +193,21 @@ export abstract class ModelWithTranslation extends Model {
           return; 
         }
 
-        (this as any)[fieldKey] = getTranslation(
+        (this as Record<string, unknown>)[fieldKey] = getTranslation(
           fieldKey,
           translationsKey,
-          this,
+          this as unknown as Record<string, unknown>,
           language
         );
       }
     };
 
   @MongoDbOmit
-  override toJSON(): Record<string, any> {
-    const { setLanguageTranslation, ...rest } = super.toJSON();
-    return rest;
+  override toJSON(): Record<string, unknown> {
+    const rest = super.toJSON();
+    return Object.fromEntries(
+      Object.entries(rest).filter(([key]) => key !== "setLanguageTranslation")
+    );
   }
 }
 

@@ -67,8 +67,8 @@ describe('flattenObject', () => {
 
   it('uses additionalObjectCheck to exclude objects', () => {
     const input = { a: { b: 1 }, c: { _bsontype: 'ObjectID' } };
-    const excludeObjectId = (field: { _bsontype?: string }) =>
-      field?._bsontype !== 'ObjectID';
+    const excludeObjectId = (field: unknown) =>
+      (field as { _bsontype?: string })?._bsontype !== 'ObjectID';
     expect(flattenObject(input, excludeObjectId)).toEqual({
       'a.b': 1,
       c: { _bsontype: 'ObjectID' },
@@ -77,8 +77,8 @@ describe('flattenObject', () => {
 
   it('excludes nested objects when additionalObjectCheck returns false', () => {
     const input = { a: { _bsontype: 'ObjectID', value: '123' } };
-    const excludeObjectId = (field: { _bsontype?: string }) =>
-      field?._bsontype !== 'ObjectID';
+    const excludeObjectId = (field: unknown) =>
+      (field as { _bsontype?: string })?._bsontype !== 'ObjectID';
     expect(flattenObject(input, excludeObjectId)).toEqual({
       a: { _bsontype: 'ObjectID', value: '123' },
     });

@@ -45,7 +45,7 @@ export function SystemAgentForm({
       rule: initialAgent.rule,
     });
     setLocalNameError(undefined);
-  }, [initialAgent, mode, form.reset]);
+  }, [form, initialAgent, mode]);
 
   useEffect(() => {
     setLocalNameError(nameConflictError);

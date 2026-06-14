@@ -21,7 +21,7 @@ export const PASSWORD_VALIDATION_SCHEMA = z.object({
     .refine((password: string) => /\d/.test(password), {
       message: "Password must contain at least one number",
     })
-    .refine((password: string) => /[!@#$%^&*()_+\-=\[\]{};:'",.<>?/\\|~`]/.test(password), {
+    .refine((password: string) => /[!@#$%^&*()_+\-=[\]{};:'",.<>?/\\|~`]/.test(password), {
       message: "Password must contain at least one special character",
     }),
 });

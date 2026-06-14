@@ -5,11 +5,12 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
+    "dev": "tsx watch src/routes/index.ts",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "start": "tsx src/routes/index.ts",
-    "dev": "tsx watch src/routes/index.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "^22.19.7",
@@ -30,15 +31,18 @@
     "@vassembly/constants": "workspace:^",
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
+    "@vassembly/domain-mcp": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
+    "@vassembly/domain-user-mcp-config": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",
     "@vassembly/server": "workspace:*",
     "@vassembly/service-auth": "workspace:*",
     "@vassembly/service-agent": "workspace:*",
+    "@vassembly/service-mcp": "workspace:*",
     "@vassembly/service-task": "workspace:*",
     "@vassembly/validation": "workspace:*",
     "zod": "^4.3.6"

@@ -5,7 +5,6 @@ import {
   getTranslationListList,
 } from "./translationMapping";
 import { COUNTRIES } from "@vassembly/constants";
-import { Translation } from "./types";
 
 describe("translationMapping", () => {
   describe("getTranslation", () => {

@@ -24,7 +24,8 @@ vi.mock('@vassembly/service-agent', () => ({
   },
 }));
 
-import { agentListRoute } from './list';
+import { agentListRoute, agentListResponseSchema } from './list';
+import type { z } from 'zod';
 
 describe('GET /agents route', () => {
   beforeEach(() => {
@@ -40,7 +41,7 @@ describe('GET /agents route', () => {
       size: 5,
     });
 
-    const result = await agentListRoute.handler({
+    const result = (await agentListRoute.handler({
       body: {},
       query: {
         page: 1,
@@ -49,7 +50,7 @@ describe('GET /agents route', () => {
         status: 'archived',
       },
       headers: { authorization: 'Bearer token' },
-    });
+    })) as z.infer<typeof agentListResponseSchema>;
 
     expect(result.totalCount).toBe(1);
     expect(result.page).toBe(1);

@@ -23,7 +23,7 @@ describe('resolveLayoutConfig', () => {
     const workspace = config.drawer.sections.find((section) => section.id === 'workspace');
     const itemIds = workspace?.items.map((item) => item.id) ?? [];
 
-    expect(itemIds).toEqual(['home', 'agents']);
+    expect(itemIds).toEqual(['home', 'agents', 'mcps']);
   });
 
   it('keeps explicit drawer sections override', () => {

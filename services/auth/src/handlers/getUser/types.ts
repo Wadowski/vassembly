@@ -1,5 +1,9 @@
+import type { UserPublicResponse } from '@vassembly/domain-user';
+
 export interface GetUserInput {
   id: string;
 }
 
-export type GetUserOutput = any;
+export interface GetUserOutput {
+  user: UserPublicResponse;
+}

@@ -50,7 +50,7 @@ describe('buildSyntheticTimelineEvents', () => {
     const events = buildSyntheticTimelineEvents(task);
     const completedEvent = events.find((event) => event.id === 'completed');
 
-    expect(completedEvent?.title).toBe('Completed (150000ms)');
+    expect(completedEvent?.title).toBe('Completed in 150.0s');
   });
 
   it('should include failed event with error code when task failed', () => {

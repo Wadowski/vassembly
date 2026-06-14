@@ -28,9 +28,10 @@ const toAgentDto = (row: GraphQLAgentRow): AgentDto => ({
   userId: row.userId ?? '',
   status: toAgentStatus(row.status),
   integrationCredentialId: row.integrationCredentialId ?? null,
+  assignedMcpIds: row.assignedMcpIds ?? [],
   createdAt: toIsoString(row.createdAt),
   updatedAt: toIsoString(row.updatedAt),
-  removedAt: toIsoString(row.removedAt) ?? null,
+  removedAt: row.removedAt ?? null,
 });
 
 export const mapAgentsListData = (data: GraphQLAgentsListData | undefined): AgentsListResponse | undefined => {

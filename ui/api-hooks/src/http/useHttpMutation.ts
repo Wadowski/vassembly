@@ -77,7 +77,12 @@ export const useHttpMutation = <
         } else if (method === 'put') {
           response = await httpClient.put<TBody, THttpResponse>(requestOptions);
         } else if (method === 'delete') {
-          response = await httpClient.delete<THttpResponse>(requestOptions as any);
+          response = await httpClient.delete<THttpResponse>({
+            path,
+            ...(config.withAuth !== undefined && { withAuth: config.withAuth }),
+            ...(config.query && { query: config.query }),
+            ...(config.headers && { headers: config.headers }),
+          });
         } else {
           throw new Error(`Unsupported HTTP method: ${method}`);
         }

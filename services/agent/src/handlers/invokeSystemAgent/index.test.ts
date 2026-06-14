@@ -2,10 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ForbiddenError, NotFoundError, TimeoutError } from '@vassembly/errors';
 import {
-  AiIntegrationConnectionStatus,
-  AiIntegrationStatus,
-} from '@vassembly/domain-ai-integration';
-import {
   SYSTEM_AGENT_ERROR_CODES,
   throwSystemAgentConnectionInvalidError,
   throwSystemAgentConnectionRequiredError,

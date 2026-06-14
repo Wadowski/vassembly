@@ -31,9 +31,16 @@
     "@vassembly/typescript-config": "workspace:*",
     "sass": "^1.69.0",
     "typescript": "^5.0.0",
-    "vitest": "^1.0.0"
+    "vitest": "^1.0.0",
+    "vite": "5.4.21"
   },
-  "keywords": ["snackbar", "toast", "ui", "component", "notifications"],
+  "keywords": [
+    "snackbar",
+    "toast",
+    "ui",
+    "component",
+    "notifications"
+  ],
   "author": "",
   "license": "MIT"
 }

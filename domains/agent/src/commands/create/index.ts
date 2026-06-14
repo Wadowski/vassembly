@@ -1,9 +1,12 @@
 import { createDb } from '@vassembly/commands';
+import { validatorFactory } from '@vassembly/validation';
 import { z } from 'zod';
 
 import { agentMongodbDao } from '../../clients';
 import { AgentModel, agentFactory, AgentCategory, AgentStatus } from '../../model';
 
+import { assertValidInput } from '../shared/assertValidInput';
+import { assignedMcpIdsCreateSchema } from '../shared/assignedMcpIdsSchema';
 import type { CreateAgentCommandInput } from './types';
 
 const CREATE_SCHEMA = z.object({
@@ -14,8 +17,11 @@ const CREATE_SCHEMA = z.object({
   rule: z.string().max(2000),
   status: z.enum(Object.values(AgentStatus) as [string, ...string[]]),
   integrationCredentialId: z.string().optional(),
+  assignedMcpIds: assignedMcpIdsCreateSchema,
   removedAt: z.null().default(null),
 });
+
+const validateCreateInput = validatorFactory(CREATE_SCHEMA);
 
 const createDbAgent = createDb<AgentModel>({
   dao: agentMongodbDao,
@@ -24,8 +30,15 @@ const createDbAgent = createDb<AgentModel>({
 });
 
 export const create = async (input: CreateAgentCommandInput) => {
-  return createDbAgent({
+  const payload = {
     ...input,
     status: input.status ?? AgentStatus.Active,
+  };
+  const validated = assertValidInput(validateCreateInput(payload));
+
+  return createDbAgent({
+    ...validated,
+    category: validated.category as AgentCategory,
+    status: validated.status as AgentStatus,
   });
 };

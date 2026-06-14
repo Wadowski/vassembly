@@ -8,7 +8,7 @@ const DEFAULT_NAV_LABEL = 'Main';
 export const HeaderNav = (props: HeaderNavProps): JSX.Element | null => {
   const { links, navAriaLabel, className } = props;
 
-  if (links?.length) {
+  if (!links?.length) {
     return null;
   }
 

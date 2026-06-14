@@ -1,4 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ClientSession } from 'mongodb';
+import type { Model } from '@vassembly/model';
+import type { ContextGenerator } from './types.js';
 
 const mockInsertOne = vi.fn();
 const mockInsertMany = vi.fn();
@@ -39,6 +42,17 @@ const createMockModel = (overrides: Record<string, unknown> = {}) => ({
   toJSON: vi.fn(() => ({ id: '123', ...overrides })),
 });
 
+type MockModel = ReturnType<typeof createMockModel>;
+
+const asModel = (mock: MockModel): Partial<Model> => mock as unknown as Partial<Model>;
+
+const createContextGenerator = (session: ClientSession): ContextGenerator => () => ({
+  init: vi.fn().mockResolvedValue(undefined),
+  commit: vi.fn().mockResolvedValue(undefined),
+  rollback: vi.fn().mockResolvedValue(undefined),
+  session,
+});
+
 describe('MongoDbDAO', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -59,23 +73,23 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const data = createMockModel();
-      const result = await dao.create(data as any);
+      const result = await dao.create(asModel(data));
 
       expect(mockInsertOne).toHaveBeenCalledWith(
         { name: 'test' },
-        null
+        undefined
       );
       expect(result).toBe('new-id-123');
     });
 
     it('passes transaction options when context provided', async () => {
-      const mockSession = {};
+      const mockSession = {} as ClientSession;
       mockInsertOne.mockResolvedValue({ insertedId: { toString: () => 'id' } });
 
       const dao = await getDao();
       const data = createMockModel();
-      await dao.create(data as any, {
-        context: { session: mockSession } as any,
+      await dao.create(asModel(data), {
+        context: createContextGenerator(mockSession),
       });
 
       expect(mockInsertOne).toHaveBeenCalledWith(
@@ -96,25 +110,25 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const data = [createMockModel(), createMockModel()];
-      const result = await dao.createMany(data as any);
+      const result = await dao.createMany(data.map(asModel));
 
       expect(mockInsertMany).toHaveBeenCalledWith(
         [{ name: 'test' }, { name: 'test' }],
-        null
+        undefined
       );
       expect(result).toEqual(['id-1', 'id-2']);
     });
   });
 
   describe('get', () => {
-    it('returns null when document not found', async () => {
+    it('returns empty object when document not found', async () => {
       mockFindOne.mockResolvedValue(null);
 
       const dao = await getDao();
       const where = createMockModel();
-      const result = await dao.get(where as any);
+      const result = await dao.get(asModel(where));
 
-      expect(result).toBeNull();
+      expect(result).toEqual({});
     });
 
     it('returns document with id when found', async () => {
@@ -126,7 +140,7 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      const result = await dao.get(where as any);
+      const result = await dao.get(asModel(where));
 
       expect(result).toMatchObject({
         name: 'found',
@@ -140,7 +154,7 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      await dao.get(where as any, { projection: { name: 1 } });
+      await dao.get(asModel(where), { projection: { name: 1 } });
 
       expect(mockFindOne).toHaveBeenCalledWith(
         { id: '123' },
@@ -159,7 +173,7 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      const result = await dao.getMany(where as any);
+      const result = await dao.getMany(asModel(where));
 
       expect(mockAggregate).toHaveBeenCalledWith([
         { $match: { id: '123' } },
@@ -175,7 +189,7 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      await dao.getMany(where as any, { limit: 10, offset: 5 });
+      await dao.getMany(asModel(where), { limit: 10, offset: 5 });
 
       expect(mockAggregate).toHaveBeenCalledWith([
         { $match: { id: '123' } },
@@ -220,12 +234,12 @@ describe('MongoDbDAO', () => {
       const dao = await getDao();
       const where = createMockModel();
       const data = createMockModel({ name: 'updated' });
-      await dao.update(where as any, data as any);
+      await dao.update(asModel(where), asModel(data));
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { id: '123' },
         { $set: expect.objectContaining({ name: 'updated' }) },
-        null
+        undefined
       );
     });
   });
@@ -237,12 +251,12 @@ describe('MongoDbDAO', () => {
       const dao = await getDao();
       const where = createMockModel();
       const data = createMockModel({ status: 'active' });
-      await dao.updateMany(where as any, data as any);
+      await dao.updateMany(asModel(where), asModel(data));
 
       expect(mockUpdateMany).toHaveBeenCalledWith(
         { id: '123' },
         expect.objectContaining({ $set: expect.any(Object) }),
-        null
+        undefined
       );
     });
   });
@@ -256,7 +270,7 @@ describe('MongoDbDAO', () => {
       const dao = await getDao();
       const where = createMockModel();
       const data = createMockModel();
-      const result = await dao.upsert(where as any, data as any);
+      const result = await dao.upsert(asModel(where), asModel(data));
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { id: '123' },
@@ -273,7 +287,7 @@ describe('MongoDbDAO', () => {
       const dao = await getDao();
       const where = createMockModel();
       const data = createMockModel();
-      const result = await dao.upsert(where as any, data as any);
+      const result = await dao.upsert(asModel(where), asModel(data));
 
       expect(result).toBe('existing-id');
     });
@@ -285,12 +299,12 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      await dao.remove(where as any);
+      await dao.remove(asModel(where));
 
       expect(mockUpdateOne).toHaveBeenCalledWith(
         { id: '123' },
         expect.objectContaining({ $set: expect.objectContaining({ deleted: true }) }),
-        null
+        undefined
       );
     });
   });
@@ -301,12 +315,12 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      await dao.removeMany(where as any);
+      await dao.removeMany(asModel(where));
 
       expect(mockUpdateMany).toHaveBeenCalledWith(
         { id: '123' },
         expect.objectContaining({ $set: expect.objectContaining({ deleted: true }) }),
-        null
+        undefined
       );
     });
   });
@@ -317,9 +331,9 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      await dao.removeHard(where as any);
+      await dao.removeHard(asModel(where));
 
-      expect(mockDeleteOne).toHaveBeenCalledWith({ id: '123' }, null);
+      expect(mockDeleteOne).toHaveBeenCalledWith({ id: '123' }, undefined);
     });
   });
 
@@ -329,9 +343,9 @@ describe('MongoDbDAO', () => {
 
       const dao = await getDao();
       const where = createMockModel();
-      await dao.removeHardMany(where as any);
+      await dao.removeHardMany(asModel(where));
 
-      expect(mockDeleteMany).toHaveBeenCalledWith({ id: '123' }, null);
+      expect(mockDeleteMany).toHaveBeenCalledWith({ id: '123' }, undefined);
     });
   });
 

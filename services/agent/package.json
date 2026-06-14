@@ -24,6 +24,8 @@
     "@vassembly/constants": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
+    "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/domain-user-mcp-config": "workspace:*",
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
