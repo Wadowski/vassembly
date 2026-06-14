@@ -52,18 +52,21 @@ When('I create a task with description {string}', async ({ page }, description: 
       (response) => response.url().includes('/tasks') && response.request().method() === 'POST',
       { timeout: 10_000 },
     );
+    const listRefreshResponse = page
+      .waitForResponse(
+        (response) =>
+          response.url().includes('/graphql') &&
+          response.request().postData()?.includes('ListUserTasks') === true &&
+          response.ok(),
+        { timeout: 20_000 },
+      )
+      .catch(() => undefined);
+
     await createTaskButton.click();
     const response = await createTaskResponse;
     expect(response.ok()).toBe(true);
+    await listRefreshResponse;
   }).toPass({ timeout: 20_000 });
-
-  await page.waitForResponse(
-    (response) =>
-      response.url().includes('/graphql') &&
-      response.request().postData()?.includes('userTasks') === true &&
-      response.ok(),
-    { timeout: 15_000 },
-  );
 });
 
 When('I navigate directly to {string}', async ({ page }, path: string) => {

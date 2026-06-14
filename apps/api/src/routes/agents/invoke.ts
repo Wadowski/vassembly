@@ -14,8 +14,11 @@ export const invokeAgentResponseSchema = z.object({
   message: z.string(),
   metadata: z
     .object({
-      mcpIdsUsed: z.array(z.string()),
-      skippedMcpIds: z.array(z.string()),
+      mcpIdsUsed: z.array(z.string()).optional(),
+      skippedMcpIds: z.array(z.string()).optional(),
+      internalToolIdsUsed: z.array(z.string()).optional(),
+      skippedInternalToolIds: z.array(z.string()).optional(),
+      maxUseAgentDepth: z.number().optional(),
     })
     .optional(),
 });

@@ -30,6 +30,11 @@ const schema = z.object({
     .string()
     .min(1, 'Prompt is required.')
     .max(SYSTEM_AGENT_RULE_MAX, `Prompt must not exceed ${SYSTEM_AGENT_RULE_MAX} characters.`),
+  assignedToolIds: z
+    .array(z.string().min(1))
+    .refine((ids) => new Set(ids).size === ids.length, {
+      message: 'Duplicate internal tool assignments are not allowed.',
+    }),
 });
 
 const validateForm = validatorFactory(schema);
@@ -39,6 +44,7 @@ const toFormValues = (initial?: Partial<SystemAgentFormValues>): SystemAgentForm
   category: initial?.category ?? '',
   description: initial?.description ?? '',
   rule: initial?.rule ?? '',
+  assignedToolIds: initial?.assignedToolIds ?? [],
 });
 
 export const useSystemAgentForm = (initial?: Partial<SystemAgentFormValues>): UseSystemAgentFormResult => {
@@ -119,6 +125,7 @@ export const useSystemAgentForm = (initial?: Partial<SystemAgentFormValues>): Us
       name: values.name.trim(),
       rule: values.rule.trim(),
       category: values.category === '' ? undefined : values.category,
+      assignedToolIds: values.assignedToolIds,
       ...(description !== '' ? { description } : {}),
     };
   }, [values]);

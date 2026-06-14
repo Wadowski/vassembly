@@ -3,6 +3,7 @@ import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import { InternalError, WrongParamError } from '@vassembly/errors';
 
 import { validateAssignedMcpIds } from '../../helpers/validateAssignedMcpIds';
+import { validateAssignedToolIds } from '../../helpers/validateAssignedToolIds';
 
 import type { UpdateAgentHandlerInput, UpdateAgentHandlerOutput } from './types';
 
@@ -14,6 +15,14 @@ export const updateAgent = async (input: UpdateAgentHandlerInput): Promise<Updat
 
   if (existing.data.removedAt) {
     throw new WrongParamError('Agent has been deleted; restore before updating.');
+  }
+
+  if (input.patch.name !== undefined) {
+    await agentDomain.queries.assertUniqueNameForUser({
+      userId: input.userId,
+      name: input.patch.name,
+      excludeId: input.agentId,
+    });
   }
 
   const nextIntegrationCredentialId = input.patch.integrationCredentialId;
@@ -30,6 +39,13 @@ export const updateAgent = async (input: UpdateAgentHandlerInput): Promise<Updat
     await validateAssignedMcpIds({
       userId: input.userId,
       assignedMcpIds: input.patch.assignedMcpIds,
+    });
+  }
+
+  if (input.patch.assignedToolIds !== undefined) {
+    await validateAssignedToolIds({
+      assignedToolIds: input.patch.assignedToolIds,
+      agentType: 'personal',
     });
   }
 

@@ -49,6 +49,11 @@ export type {
   UseMcpWithAgentsResult,
 } from './mcps';
 export * from './tasks';
+export {
+  INTERNAL_TOOLS_QUERY,
+  useInternalTools,
+} from './internalTools';
+export type { InternalToolDto, UseInternalToolsResult, InternalToolAccessScope } from './internalTools';
 export { GraphQLProvider } from './graphql';
 export { HttpClientProvider, useHttpClient } from './http';
 export { usePolling } from './hooks/usePolling';

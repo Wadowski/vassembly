@@ -11,14 +11,28 @@ export const getProviderClient = (
   params: CreateProviderClientParams,
 ): AiProviderClient => createProviderClient(params);
 
+export interface InternalToolBinding {
+  toolId: string;
+  handler: (args: Record<string, unknown>) => Promise<string>;
+}
+
+export interface ModeledProviderToolUsage {
+  internalToolIdsUsed: string[];
+  skippedInternalToolIds: string[];
+  skippedMcpToolNames?: string[];
+}
+
 export interface ModeledProviderInvokeParams {
   message: string;
   systemMessage?: string;
   mcpServerConfigs?: AiProviderInvokeParams['mcpServerConfigs'];
+  internalToolBindings?: InternalToolBinding[];
 }
 
 export interface ModeledProviderClient {
-  invoke(params: ModeledProviderInvokeParams | string): Promise<{ message: string }>;
+  invoke(
+    params: ModeledProviderInvokeParams | string,
+  ): Promise<{ message: string; toolUsage?: ModeledProviderToolUsage }>;
 }
 
 export const getModeledProviderClient = (
@@ -38,6 +52,7 @@ export const getModeledProviderClient = (
         message: messageOrParams.message,
         systemMessage: messageOrParams.systemMessage,
         mcpServerConfigs: messageOrParams.mcpServerConfigs,
+        internalToolBindings: messageOrParams.internalToolBindings,
       });
     },
   };

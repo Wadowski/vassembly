@@ -22,6 +22,7 @@ export interface AgentDto {
   status: AgentStatus;
   integrationCredentialId: string | null;
   assignedMcpIds: string[];
+  assignedToolIds: string[];
   createdAt: string;
   updatedAt: string;
   removedAt: string | null;
@@ -41,6 +42,7 @@ export interface AgentFormValues {
   rule: string;
   integrationCredentialId: string | null;
   assignedMcpIds: string[];
+  assignedToolIds: string[];
 }
 
 export interface UseAgentFormResult {
@@ -73,6 +75,7 @@ export interface GraphQLAgentRow {
   status?: string | null;
   integrationCredentialId?: string | null;
   assignedMcpIds?: string[] | null;
+  assignedToolIds?: string[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;
   removedAt?: string | null;

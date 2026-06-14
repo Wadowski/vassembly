@@ -3,7 +3,7 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { useEffect, useMemo } from 'react';
 
-import { useAiIntegrations, useMcps, useUserConfiguredMcps } from '@vassembly/ui-api-hooks';
+import { useAiIntegrations, useInternalTools, useMcps, useUserConfiguredMcps } from '@vassembly/ui-api-hooks';
 import { Alert } from '@vassembly/ui-alert';
 import { Button } from '@vassembly/ui-button';
 import { Dropdown } from '@vassembly/ui-dropdown';
@@ -15,6 +15,9 @@ import { useAgentForm } from './useAgentForm';
 import styles from './styles.module.scss';
 import { AgentFormMode, type AgentFormProps } from './types';
 import { IntegrationCredentialPicker } from '../IntegrationCredentialPicker';
+import { InternalToolAssignmentPicker } from '../InternalToolAssignmentPicker';
+import { filterEligibleInternalTools } from '../InternalToolAssignmentPicker/filterEligibleInternalTools';
+import type { InternalToolItem } from '../InternalToolAssignmentPicker';
 import { McpAssignmentPicker } from '../McpAssignmentPicker';
 import type { McpAssignmentOption } from '../McpAssignmentPicker';
 
@@ -50,11 +53,13 @@ export function AgentForm({
     rule: initialAgent?.rule ?? '',
     integrationCredentialId: initialAgent?.integrationCredentialId ?? null,
     assignedMcpIds: initialAgent?.assignedMcpIds ?? [],
+    assignedToolIds: initialAgent?.assignedToolIds ?? [],
   });
 
   const { data: integrationsData, fetch: fetchIntegrations, isLoading: isIntegrationsLoading } = useAiIntegrations();
   const { data: configuredMcpsData, loading: isConfiguredMcpsLoading } = useUserConfiguredMcps();
   const { data: allMcpsData } = useMcps();
+  const { data: internalToolsData, loading: isInternalToolsLoading } = useInternalTools();
 
   useEffect(() => {
     void fetchIntegrations({ status: 'active', size: 100 });
@@ -103,6 +108,22 @@ export function AgentForm({
     return [...configured, ...staleSelections];
   }, [allMcpsData?.mcps, configuredMcpsData?.mcps, values.assignedMcpIds]);
 
+  const internalToolOptions = useMemo((): InternalToolItem[] => {
+    const catalog = internalToolsData ?? [];
+    const accessScopesById = new Map(catalog.map((tool) => [tool.id, tool.accessScope]));
+    const catalogItems: InternalToolItem[] = catalog.map((tool) => ({
+      id: tool.id,
+      displayName: tool.displayName,
+      description: tool.description,
+    }));
+
+    return filterEligibleInternalTools({
+      tools: catalogItems,
+      agentType: 'personal',
+      accessScopesById,
+    });
+  }, [internalToolsData]);
+
   useEffect(() => {
     if (initialAgent === undefined) {
       return;
@@ -114,6 +135,7 @@ export function AgentForm({
       rule: initialAgent.rule,
       integrationCredentialId: initialAgent.integrationCredentialId,
       assignedMcpIds: initialAgent.assignedMcpIds,
+      assignedToolIds: initialAgent.assignedToolIds,
     });
   }, [initialAgent, reset]);
 
@@ -182,6 +204,14 @@ export function AgentForm({
     blurField('assignedMcpIds');
   };
 
+  const handleAssignedToolsChange = (nextValue: string[]): void => {
+    setField('assignedToolIds', nextValue);
+  };
+
+  const handleAssignedToolsBlur = (): void => {
+    blurField('assignedToolIds');
+  };
+
   const isSubmitBlocked = archived || isSubmitting || !isValid;
   const categoryMsg = getFieldErrorMessage('category');
   const integrationMsg = getFieldErrorMessage('integrationCredentialId');
@@ -242,6 +272,16 @@ export function AgentForm({
           isLoading={isConfiguredMcpsLoading}
           isDisabled={archived}
           errorMessage={getFieldErrorMessage('assignedMcpIds')}
+        />
+      </div>
+      <div onBlur={handleAssignedToolsBlur}>
+        <InternalToolAssignmentPicker
+          value={values.assignedToolIds}
+          onChange={handleAssignedToolsChange}
+          tools={internalToolOptions}
+          isLoading={isInternalToolsLoading}
+          isDisabled={archived}
+          errorMessage={getFieldErrorMessage('assignedToolIds')}
         />
       </div>
       <TextField

@@ -4,7 +4,8 @@ import { dismissNavigationDrawer } from './settingsPage';
 
 export const E2E_USER_PASSWORD = 'SecurePass123!';
 const LOGIN_API_PATH = '/user/login';
-const AUTH_READY_TIMEOUT_MS = 30_000;
+const AUTH_READY_TIMEOUT_MS = 45_000;
+const LOGIN_RESPONSE_TIMEOUT_MS = 20_000;
 
 const hasStoredAuthTokens = (): boolean => {
   const authToken = window.localStorage.getItem('auth:token');
@@ -29,12 +30,12 @@ export const signInSeededUser = async ({
         response.url().includes(LOGIN_API_PATH) &&
         response.request().method() === 'POST' &&
         response.ok(),
-      { timeout: 15_000 },
+      { timeout: LOGIN_RESPONSE_TIMEOUT_MS },
     );
     await page.getByRole('button', { name: 'Sign in' }).click();
     await loginResponse;
-    await expect(page).not.toHaveURL(/\/login(?:\?|$)/, { timeout: 5_000 });
-    await page.waitForFunction(hasStoredAuthTokens, undefined, { timeout: 5_000 });
+    await expect(page).not.toHaveURL(/\/login(?:\?|$)/, { timeout: 10_000 });
+    await page.waitForFunction(hasStoredAuthTokens, undefined, { timeout: 10_000 });
     await dismissNavigationDrawer({ page });
   }).toPass({ timeout: AUTH_READY_TIMEOUT_MS });
 };

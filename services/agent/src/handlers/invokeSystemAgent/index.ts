@@ -1,8 +1,9 @@
+import { randomUUID } from 'node:crypto';
+
 import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
-import aiIntegrationDomain from '@vassembly/domain-ai-integration';
-import systemAgentDomain, { throwSystemAgentNotFoundError } from '@vassembly/domain-system-agent';
 import userDomain from '@vassembly/domain-user';
 
+import { runAgentInvokeWithTools } from '../../helpers/internalTools/runAgentInvokeWithTools';
 import { resolveSystemCallCredentialId } from '../shared/resolveSystemCallCredentialId';
 
 import type { InvokeSystemAgentParams, InvokeSystemAgentResult } from './types';
@@ -16,12 +17,6 @@ export const invokeSystemAgent = async (
     await userDomain.queries.assertHasRole({ userId, role: AUTH_TOKEN_ROLE.ADMIN });
   }
 
-  const agentResult = await systemAgentDomain.queries.getActiveById({ id: systemAgentId });
-
-  if (!agentResult.data) {
-    throwSystemAgentNotFoundError();
-  }
-
   let connectionOverrideParam = connectionOverride;
   if (!connectionOverride) {
     try {
@@ -32,14 +27,32 @@ export const invokeSystemAgent = async (
     }
   }
 
-  const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
+  const result = await runAgentInvokeWithTools({
     userId,
+    agentType: 'system',
+    agentId: systemAgentId,
+    message,
     connectionOverride: connectionOverrideParam,
+    toolContext: {
+      userId,
+      callerAgentId: systemAgentId,
+      callerAgentType: 'system',
+      recursionDepth: 0,
+      rootInvokeId: randomUUID(),
+    },
   });
 
-  return systemAgentDomain.commands.invoke({
-    modeledProviderClient,
-    systemAgentId,
-    message,
-  });
+  return {
+    message: result.message,
+    usage: result.usage,
+    metadata: {
+      model: result.metadata?.model,
+      provider: result.metadata?.provider,
+      mcpIdsUsed: result.metadata.mcpIdsUsed,
+      skippedMcpIds: result.metadata.skippedMcpIds,
+      internalToolIdsUsed: result.metadata.internalToolIdsUsed,
+      skippedInternalToolIds: result.metadata.skippedInternalToolIds,
+      maxUseAgentDepth: result.metadata.maxUseAgentDepth,
+    },
+  };
 };

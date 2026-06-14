@@ -8,6 +8,7 @@ export interface CreateSystemAgentParams {
   category?: AgentCategory;
   createdByAdminId: string;
   updatedByAdminId?: string;
+  assignedToolIds?: string[];
 }
 
 export interface CreateSystemAgentResult {

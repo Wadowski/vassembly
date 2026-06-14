@@ -3,6 +3,8 @@ import systemAgentDomain, { toSystemAgentResponse } from '@vassembly/domain-syst
 import userDomain from '@vassembly/domain-user';
 import { NotFoundError } from '@vassembly/errors';
 
+import { validateAssignedToolIds } from '../../helpers/validateAssignedToolIds';
+
 import type { UpdateSystemAgentParams, UpdateSystemAgentResult } from './types';
 
 export const updateSystemAgent = async (
@@ -22,6 +24,13 @@ export const updateSystemAgent = async (
     await systemAgentDomain.queries.assertUniqueActiveName({
       name: body.name,
       excludeId: systemAgentId,
+    });
+  }
+
+  if (body.assignedToolIds !== undefined) {
+    await validateAssignedToolIds({
+      assignedToolIds: body.assignedToolIds,
+      agentType: 'system',
     });
   }
 

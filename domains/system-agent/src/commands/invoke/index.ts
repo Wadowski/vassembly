@@ -28,12 +28,17 @@ export const invoke = async (
     throw new NotFoundError(NOT_FOUND_MESSAGE);
   }
 
-  const prompt = `${agentResult.data.rule}\n\n${validated.message}`;
-  const response = await params.modeledProviderClient.invoke(prompt);
+  const response = await params.modeledProviderClient.invoke({
+    message: validated.message,
+    systemMessage: agentResult.data.rule,
+    mcpServerConfigs: params.mcpServerConfigs,
+    internalToolBindings: params.internalToolBindings,
+  });
 
   return {
     message: response.message,
     usage: response.usage,
     metadata: response.metadata,
+    toolUsage: response.toolUsage,
   };
 };

@@ -1,5 +1,7 @@
 import { expect } from '@playwright/test';
 
+import { dismissNavigationDrawer } from './settingsPage';
+
 type Page = NonNullable<import('@playwright/test').Page>;
 
 export const getAgentListSection = (page: Page) =>
@@ -17,19 +19,32 @@ export const waitForAgentListReady = async ({ page }: { page: Page }): Promise<v
 };
 
 export const waitForAgentCreateFormReady = async ({ page }: { page: Page }): Promise<void> => {
+  await dismissNavigationDrawer({ page });
   await expect(page.getByRole('heading', { name: /Create agent/i })).toBeVisible({
     timeout: 20_000,
   });
   await expect(page.locator('main form')).toBeVisible({ timeout: 20_000 });
-  await page
-    .waitForResponse(
-      (response) =>
-        response.url().includes('/graphql') &&
-        response.request().postData()?.includes('ListAiIntegrations') === true &&
-        response.ok(),
-      { timeout: 20_000 },
-    )
-    .catch(() => undefined);
+  await Promise.all([
+    page
+      .waitForResponse(
+        (response) =>
+          response.url().includes('/graphql') &&
+          response.request().postData()?.includes('ListAiIntegrations') === true &&
+          response.ok(),
+        { timeout: 20_000 },
+      )
+      .catch(() => undefined),
+    page
+      .waitForResponse(
+        (response) =>
+          response.url().includes('/graphql') &&
+          response.request().postData()?.includes('InternalTools') === true &&
+          response.ok(),
+        { timeout: 20_000 },
+      )
+      .catch(() => undefined),
+  ]);
+  await expect(page.locator('#agent-internal-tool-assignment')).toBeEnabled({ timeout: 20_000 });
 };
 
 export const waitForAgentEditPageReady = async ({ page }: { page: Page }): Promise<void> => {

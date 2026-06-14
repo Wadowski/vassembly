@@ -8,14 +8,28 @@ export interface AgentInvokeMcpServerConfig {
   headers?: Record<string, string>;
 }
 
+export interface InternalToolBinding {
+  toolId: string;
+  handler: (args: Record<string, unknown>) => Promise<string>;
+}
+
+export interface ModeledProviderToolUsage {
+  internalToolIdsUsed: string[];
+  skippedInternalToolIds: string[];
+  skippedMcpToolNames?: string[];
+}
+
 export interface ModeledProviderInvokeParams {
   message: string;
   systemMessage?: string;
   mcpServerConfigs?: AgentInvokeMcpServerConfig[];
+  internalToolBindings?: InternalToolBinding[];
 }
 
 export interface ModeledProviderClient {
-  invoke(params: ModeledProviderInvokeParams | string): Promise<{ message: string }>;
+  invoke(
+    params: ModeledProviderInvokeParams | string,
+  ): Promise<{ message: string; toolUsage?: ModeledProviderToolUsage }>;
 }
 
 export interface InvokeAgentParams {
@@ -25,8 +39,10 @@ export interface InvokeAgentParams {
   message: string;
   systemMessage?: string;
   mcpServerConfigs?: AgentInvokeMcpServerConfig[];
+  internalToolBindings?: InternalToolBinding[];
 }
 
 export interface InvokeAgentResult {
   message: string;
+  toolUsage?: ModeledProviderToolUsage;
 }

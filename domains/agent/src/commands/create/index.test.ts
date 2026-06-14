@@ -78,6 +78,70 @@ describe('create agent command', () => {
     expect(result.data.assignedMcpIds).toEqual([]);
   });
 
+  it('should default assignedToolIds to empty array when omitted', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'agent-new',
+        ...BASE_INPUT,
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-05T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-05T00:00:00.000Z'),
+      },
+    });
+
+    const result = await create(BASE_INPUT);
+
+    expect(result.data.assignedToolIds).toEqual([]);
+  });
+
+  it('should persist create with valid registry assignedToolIds', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'agent-new',
+        ...BASE_INPUT,
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-05T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-05T00:00:00.000Z'),
+      },
+    });
+
+    const result = await create({
+      ...BASE_INPUT,
+      assignedToolIds: ['use-agent', 'list-agents'],
+    });
+
+    expect(result.data.assignedToolIds).toEqual(['use-agent', 'list-agents']);
+  });
+
+  it('should reject create when assignedToolIds contains duplicates', async () => {
+    await expect(
+      create({
+        ...BASE_INPUT,
+        assignedToolIds: ['use-agent', 'use-agent'],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject create when assignedToolIds contains empty strings', async () => {
+    await expect(
+      create({
+        ...BASE_INPUT,
+        assignedToolIds: [''],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject create when assignedToolIds contains unknown registry ids', async () => {
+    await expect(
+      create({
+        ...BASE_INPUT,
+        assignedToolIds: ['unknown-tool'],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
   it('should reject create when assignedMcpIds exceeds maximum length', async () => {
     await expect(
       create({

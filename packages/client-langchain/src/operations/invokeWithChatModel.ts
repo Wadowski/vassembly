@@ -2,6 +2,8 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { InternalError } from '@vassembly/errors';
 
+import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
+import { mapExecutedLlmToolNamesToIds } from '../internalTools/mapExecutedLlmToolNamesToIds';
 import { MCP_TOOL_MAX_ITERATIONS, loadMcpTools } from '../mcp';
 import { runToolCallLoop } from './runToolCallLoop';
 
@@ -35,33 +37,81 @@ const buildInitialMessages = (invokeParams: AiProviderInvokeParams) => {
   return messages;
 };
 
+const buildHandlerMap = (
+  internalToolBindings: NonNullable<AiProviderInvokeParams['internalToolBindings']>,
+): Record<string, (args: Record<string, unknown>) => Promise<string>> =>
+  Object.fromEntries(internalToolBindings.map((binding) => [binding.toolId, binding.handler]));
+
+interface InvokeModelResult {
+  message: string;
+  toolUsage?: AiProviderInvokeResult['toolUsage'];
+}
+
 const invokeModel = async ({
   createChatModel,
   invokeParams,
 }: {
   createChatModel: (model: string) => BaseChatModel;
   invokeParams: AiProviderInvokeParams;
-}) => {
+}): Promise<InvokeModelResult> => {
   const chatModel = createChatModel(invokeParams.model);
   const messages = buildInitialMessages(invokeParams);
   const mcpServerConfigs = invokeParams.mcpServerConfigs ?? [];
+  const internalToolBindings = invokeParams.internalToolBindings ?? [];
+  const hasTools = mcpServerConfigs.length > 0 || internalToolBindings.length > 0;
 
-  if (mcpServerConfigs.length === 0) {
+  if (!hasTools) {
     const result = await chatModel.invoke(messages);
-    return extractMessageContent(result.content);
+    return {
+      message: extractMessageContent(result.content),
+    };
   }
 
-  const { tools, close } = await loadMcpTools({ serverConfigs: mcpServerConfigs });
+  const {
+    tools: internalTools,
+    skippedToolIds,
+  } = buildInternalTools({
+    toolIds: internalToolBindings.map((binding) => binding.toolId),
+    handlers: buildHandlerMap(internalToolBindings),
+  });
+
+  let mcpTools: Awaited<ReturnType<typeof loadMcpTools>>['tools'] = [];
+  let close: () => Promise<void> = async () => undefined;
+
+  if (mcpServerConfigs.length > 0) {
+    const loadedMcpTools = await loadMcpTools({ serverConfigs: mcpServerConfigs });
+    mcpTools = loadedMcpTools.tools;
+    close = loadedMcpTools.close;
+  }
+
+  const { tools: mergedTools, skippedMcpToolNames } = mergeToolsWithInternalPrecedence({
+    internalTools,
+    mcpTools,
+  });
+
+  if (skippedMcpToolNames.length > 0) {
+    console.warn(
+      `${CONSOLE_LOG_PREFIX} skipped MCP tools due to internal tool name collision`,
+      skippedMcpToolNames,
+    );
+  }
 
   try {
-    const response = await runToolCallLoop({
+    const { response, executedToolNames } = await runToolCallLoop({
       model: chatModel,
-      tools,
+      tools: mergedTools,
       messages,
       maxIterations: MCP_TOOL_MAX_ITERATIONS,
     });
 
-    return extractMessageContent(response.content);
+    return {
+      message: extractMessageContent(response.content),
+      toolUsage: {
+        internalToolIdsUsed: mapExecutedLlmToolNamesToIds(executedToolNames),
+        skippedInternalToolIds: skippedToolIds,
+        skippedMcpToolNames: skippedMcpToolNames.length > 0 ? skippedMcpToolNames : undefined,
+      },
+    };
   } finally {
     await close();
   }
@@ -73,11 +123,12 @@ export const invokeWithChatModel = async ({
   errorMessage,
 }: InvokeWithChatModelParams): Promise<AiProviderInvokeResult> => {
   try {
-    const message = await invokeModel({ createChatModel, invokeParams });
+    const { message, toolUsage } = await invokeModel({ createChatModel, invokeParams });
 
     return {
       message,
       model: invokeParams.model,
+      toolUsage,
     };
   } catch (error) {
     console.error(`${CONSOLE_LOG_PREFIX} invoke failed`, error);

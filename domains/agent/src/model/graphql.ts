@@ -14,6 +14,7 @@ export const gqlAgentSchema = (builder: Builder): void => {
       status: t.exposeString('status', { nullable: true }),
       integrationCredentialId: t.exposeString('integrationCredentialId', { nullable: true }),
       assignedMcpIds: t.exposeStringList('assignedMcpIds'),
+      assignedToolIds: t.exposeStringList('assignedToolIds'),
     }),
   });
 

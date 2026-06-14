@@ -10,6 +10,11 @@ export interface RunToolCallLoopParams {
   maxIterations: number;
 }
 
+export interface RunToolCallLoopResult {
+  response: BaseMessage;
+  executedToolNames: string[];
+}
+
 const serializeToolContent = (content: unknown): string => {
   if (typeof content === 'string') {
     return content;
@@ -23,35 +28,52 @@ export const runToolCallLoop = async ({
   tools,
   messages,
   maxIterations,
-}: RunToolCallLoopParams): Promise<BaseMessage> => {
+}: RunToolCallLoopParams): Promise<RunToolCallLoopResult> => {
   const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
   const modelWithTools =
     tools.length > 0 && typeof model.bindTools === 'function' ? model.bindTools(tools) : model;
   let currentMessages = messages;
+  const executedToolNames: string[] = [];
+
+  const recordExecutedTool = (toolName: string): void => {
+    if (!executedToolNames.includes(toolName)) {
+      executedToolNames.push(toolName);
+    }
+  };
 
   for (let iteration = 0; iteration < maxIterations; iteration += 1) {
     const response = await modelWithTools.invoke(currentMessages);
     const toolCalls = response.tool_calls ?? [];
 
     if (toolCalls.length === 0) {
-      return response;
+      return { response, executedToolNames };
     }
 
     currentMessages = [...currentMessages, response];
 
     for (const toolCall of toolCalls) {
       const tool = toolsByName[toolCall.name];
-      const toolContent = tool
-        ? await tool.invoke(toolCall.args)
-        : `Tool ${toolCall.name} not found`;
+      if (tool) {
+        recordExecutedTool(toolCall.name);
+        const toolContent = await tool.invoke(toolCall.args);
+        currentMessages.push(
+          new ToolMessage({
+            content: serializeToolContent(toolContent),
+            tool_call_id: toolCall.id ?? `${toolCall.name}-${iteration}`,
+          }),
+        );
+        continue;
+      }
+
       currentMessages.push(
         new ToolMessage({
-          content: serializeToolContent(toolContent),
+          content: `Tool ${toolCall.name} not found`,
           tool_call_id: toolCall.id ?? `${toolCall.name}-${iteration}`,
         }),
       );
     }
   }
 
-  return modelWithTools.invoke(currentMessages);
+  const response = await modelWithTools.invoke(currentMessages);
+  return { response, executedToolNames };
 };

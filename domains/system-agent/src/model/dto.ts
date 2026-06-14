@@ -12,6 +12,7 @@ export interface SystemAgentAdminResponse {
   createdAt: string;
   updatedAt: string;
   removedAt: string | null;
+  assignedToolIds: string[];
 }
 
 export interface SystemAgentPreferenceResponse {

@@ -110,6 +110,7 @@ For each requirement, provide:
 - Which layers and packages are involved (domain, service, utility, etc.)
 - **Whether new packages/domains/services are needed** or if existing packages can accommodate changes
 - **Justification for new domain creation** (if required) - explain why it can't extend existing domains based on their documented purpose
+- **Test strategy** — unit tests (`tdd-unit-test-writer`) for backend/packages; E2E acceptance tests (`tdd-e2e-test-writer`) when the PRD has Gherkin scenarios for user-facing `apps/web` flows
 
 ### Architecture & Package Placement
 - Identify which packages/layers should contain the code
@@ -142,7 +143,7 @@ Format each todo item as:
 1. **[Package Name]** - [Type: new package/domain/service/utility]
    - Changes needed: [brief description of what changes]
    - Files to modify/create: [list specific file paths]
-   - Suggested subagent workflow: [e.g., "unit-test-writer → coder → code-reviewer → documentation-writer"]
+   - Suggested subagent workflow: [e.g., "tdd-unit-test-writer → coder → code-reviewer → documentation-writer"]
    - Dependencies: [list other todo items this depends on, if any]
 
 2. **[Package Name]** - [Type]
@@ -161,6 +162,28 @@ Format each todo item as:
 - **Suggest workflow**: Indicate the subagent sequence with standard patterns (see Subagent Workflows below)
 - **Parallel when possible**: If todos have no dependencies, they can be worked on in parallel
 - **New packages as dependencies**: If new packages are needed, create a separate todo item that must be completed first before any implementation todos depend on it
+- **E2E todos for user-facing features**: When the PRD includes Gherkin Use Cases and Edge Cases, add a dedicated todo for `apps/web` E2E feature files (see Test Strategy below)
+
+### Test Strategy
+
+Decide which test types each todo needs and state them explicitly in the todo item.
+
+| Test type | Subagent | When to use | Input required |
+|-----------|----------|-------------|----------------|
+| **Unit** | `tdd-unit-test-writer` | Domain logic, service handlers, utilities, pure functions | Architecture plan + requirement context |
+| **E2E / acceptance** | `tdd-e2e-test-writer` | User-facing flows in `apps/web` with PRD Gherkin scenarios | Architecture plan + **PRD** (Use Cases, Edge Cases, Content & Messaging) |
+
+**E2E todo item format** (product tasks with PRD Gherkin only):
+
+```
+N. **apps/web** - [Type: app / E2E tests]
+   - Changes needed: Write failing Playwright BDD feature files for [feature name]
+   - Files to modify/create: apps/web/e2e/features/{domain}/{feature}.feature, apps/web/e2e/steps/... (only if new steps needed)
+   - Suggested subagent workflow: tdd-e2e-test-writer → coder ↔ code-reviewer (loop: max 2 iterations) → documentation-writer
+   - Dependencies: [PRD must exist; list backend todos that must complete before E2E can pass, if any]
+```
+
+**Combined unit + E2E**: When a feature spans backend and UI, plan separate todos per package. E2E tests can be written in parallel with unit tests once the PRD exists; mark backend todos as dependencies only when E2E scenarios need live API behavior to pass (not to write failing tests).
 
 ### New Package Creation Todo Items
 
@@ -185,21 +208,39 @@ This structure separates package creation from implementation, ensuring packages
 
 ## Subagent Workflow Patterns
 
-Use these standard patterns when suggesting subagent workflows in todo items:
+Use these standard patterns when suggesting subagent workflows in todo items. Subagent names must match Task tool `subagent_type` values exactly: `tdd-unit-test-writer`, `tdd-e2e-test-writer`.
 
-### Pattern 1: Test-First Development
+### Pattern 1: Unit Test-First Development
 ```
-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations) → Done
+tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations) → documentation-writer
 ```
-- Unit test writer creates tests first
+- Unit test writer creates failing unit tests first
 - Coder implements code to pass tests
 - Code reviewer reviews → requests changes (iteration 1)
 - Coder fixes issues → code reviewer verifies (iteration 2)
 - If issues remain after iteration 2, coder makes final fixes
 - If tests pass = implementation complete
-- Documentation writer updates Readme
+- Documentation writer updates README
 
-### Pattern 2: Simple Changes (No Review Loop Needed)
+### Pattern 2: E2E Test-First Development (user-facing features)
+```
+tdd-e2e-test-writer → coder ↔ code-reviewer (loop: max 2 iterations) → documentation-writer
+```
+- Use when the PRD defines Gherkin Use Cases and Edge Cases for `apps/web`
+- E2E test writer translates PRD scenarios into failing Playwright BDD feature files under `apps/web/e2e/features/`
+- Reuses existing steps from `packages/e2e/src/steps/` and `apps/web/e2e/steps/` before adding new ones
+- Coder implements UI and backend changes until scenarios pass
+- **PRD is required input** for `tdd-e2e-test-writer` — do not suggest this workflow without Gherkin scenarios in the PRD
+
+### Pattern 3: Combined Unit + E2E (full-stack features)
+```
+tdd-unit-test-writer + tdd-e2e-test-writer (parallel, separate todos) → coder (per package) ↔ code-reviewer → documentation-writer
+```
+- Split into one todo per package (domains/services for unit tests, `apps/web` for E2E)
+- Both test writers can run in parallel once the architecture plan and PRD exist
+- E2E tests are written failing first (red phase); backend todos may complete before E2E turns green
+
+### Pattern 4: Simple Changes (No Review Loop Needed)
 ```
 coder → Done
 ```
@@ -207,7 +248,7 @@ coder → Done
 - Code reviewer optional for critical paths
 - Documentation writer updates Readme
 
-### Pattern 3: New Package Creation
+### Pattern 5: New Package Creation
 ```
 coder → Done
 ```

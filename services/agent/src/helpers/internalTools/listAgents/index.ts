@@ -1,0 +1,53 @@
+import agentDomain, { AgentStatus } from '@vassembly/domain-agent';
+import systemAgentDomain, { AgentStatus as SystemAgentStatus } from '@vassembly/domain-system-agent';
+
+import type { ListAgentRow, ListAgentsParams } from './types';
+
+const LIST_PAGE = 0;
+const LIST_SIZE = 50;
+
+const mapPersonalAgentRow = (agent: {
+  name?: string;
+  description?: string;
+  category?: string;
+}): ListAgentRow => ({
+  name: agent.name ?? '',
+  description: agent.description,
+  category: agent.category ?? null,
+  agentType: 'personal',
+});
+
+const mapSystemAgentRow = (agent: {
+  name: string;
+  description?: string;
+}): ListAgentRow => ({
+  name: agent.name,
+  description: agent.description,
+  category: null,
+  agentType: 'system',
+});
+
+export const listAgents = async ({ context }: ListAgentsParams): Promise<string> => {
+  const personalResult = await agentDomain.queries.getListForUser({
+    userId: context.userId,
+    page: LIST_PAGE,
+    size: LIST_SIZE,
+    status: AgentStatus.Active,
+  });
+
+  const personalAgents = personalResult.items.map(mapPersonalAgentRow);
+
+  if (context.callerAgentType === 'personal') {
+    return JSON.stringify(personalAgents);
+  }
+
+  const systemResult = await systemAgentDomain.queries.getAdminList({
+    page: LIST_PAGE,
+    size: LIST_SIZE,
+    status: SystemAgentStatus.Active,
+  });
+
+  const systemAgents = systemResult.items.map(mapSystemAgentRow);
+
+  return JSON.stringify([...systemAgents, ...personalAgents]);
+};

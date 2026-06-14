@@ -101,6 +101,65 @@ describe('update agent command', () => {
     expect(result.data.assignedMcpIds).toEqual([]);
   });
 
+  it('should accept assignedToolIds replacement on update', async () => {
+    mockUpdateDb.mockResolvedValue({
+      data: {
+        id: 'agent-1',
+        userId: 'user-1',
+        name: 'Renamed',
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-03-01T00:00:00.000Z'),
+      },
+    });
+
+    const result = await update({
+      id: 'agent-1',
+      data: { assignedToolIds: ['use-agent', 'list-agents'] },
+    });
+
+    expect(result.data.assignedToolIds).toEqual(['use-agent', 'list-agents']);
+  });
+
+  it('should accept clearing assignedToolIds to empty array on update', async () => {
+    mockUpdateDb.mockResolvedValue({
+      data: {
+        id: 'agent-1',
+        userId: 'user-1',
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-03-01T00:00:00.000Z'),
+      },
+    });
+
+    const result = await update({
+      id: 'agent-1',
+      data: { assignedToolIds: [] },
+    });
+
+    expect(result.data.assignedToolIds).toEqual([]);
+  });
+
+  it('should reject update when assignedToolIds contains duplicates', async () => {
+    await expect(
+      update({
+        id: 'agent-1',
+        data: { assignedToolIds: ['list-agents', 'list-agents'] },
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject update when assignedToolIds contains unknown registry ids', async () => {
+    await expect(
+      update({
+        id: 'agent-1',
+        data: { assignedToolIds: ['unknown-tool'] },
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
   it('should reject update when assignedMcpIds exceeds maximum length', async () => {
     await expect(
       update({

@@ -88,6 +88,12 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       loading: false,
       error: undefined,
     })),
+    useInternalTools: vi.fn(() => ({
+      data: [],
+      loading: false,
+      error: undefined,
+      refetch: vi.fn(),
+    })),
     useMcpWithAgents: vi.fn(() => ({
       data: undefined,
       loading: false,

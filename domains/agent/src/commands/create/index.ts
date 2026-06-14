@@ -7,6 +7,7 @@ import { AgentModel, agentFactory, AgentCategory, AgentStatus } from '../../mode
 
 import { assertValidInput } from '../shared/assertValidInput';
 import { assignedMcpIdsCreateSchema } from '../shared/assignedMcpIdsSchema';
+import { assignedToolIdsCreateSchema } from '../shared/assignedToolIdsSchema';
 import type { CreateAgentCommandInput } from './types';
 
 const CREATE_SCHEMA = z.object({
@@ -18,6 +19,7 @@ const CREATE_SCHEMA = z.object({
   status: z.enum(Object.values(AgentStatus) as [string, ...string[]]),
   integrationCredentialId: z.string().optional(),
   assignedMcpIds: assignedMcpIdsCreateSchema,
+  assignedToolIds: assignedToolIdsCreateSchema,
   removedAt: z.null().default(null),
 });
 
@@ -36,9 +38,15 @@ export const create = async (input: CreateAgentCommandInput) => {
   };
   const validated = assertValidInput(validateCreateInput(payload));
 
-  return createDbAgent({
+  const result = await createDbAgent({
     ...validated,
     category: validated.category as AgentCategory,
     status: validated.status as AgentStatus,
   });
+
+  const { data } = result;
+  data.assignedMcpIds = data.assignedMcpIds ?? validated.assignedMcpIds;
+  data.assignedToolIds = data.assignedToolIds ?? validated.assignedToolIds;
+
+  return { data };
 };

@@ -13,6 +13,7 @@ export interface UpdateAgentHandlerInput {
     status: AgentStatus;
     integrationCredentialId: string;
     assignedMcpIds: string[];
+    assignedToolIds: string[];
   }>;
 }
 

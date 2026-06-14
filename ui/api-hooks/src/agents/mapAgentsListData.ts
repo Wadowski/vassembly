@@ -29,6 +29,7 @@ const toAgentDto = (row: GraphQLAgentRow): AgentDto => ({
   status: toAgentStatus(row.status),
   integrationCredentialId: row.integrationCredentialId ?? null,
   assignedMcpIds: row.assignedMcpIds ?? [],
+  assignedToolIds: row.assignedToolIds ?? [],
   createdAt: toIsoString(row.createdAt),
   updatedAt: toIsoString(row.updatedAt),
   removedAt: row.removedAt ?? null,

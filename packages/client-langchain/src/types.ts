@@ -6,16 +6,27 @@ export interface AiProviderTestResult {
 
 import type { McpServerConfig } from './mcp/types';
 
+export interface InternalToolBinding {
+  toolId: string;
+  handler: (args: Record<string, unknown>) => Promise<string>;
+}
+
 export interface AiProviderInvokeParams {
   model: string;
   message: string;
   systemMessage?: string;
   mcpServerConfigs?: McpServerConfig[];
+  internalToolBindings?: InternalToolBinding[];
 }
 
 export interface AiProviderInvokeResult {
   message: string;
   model: string;
+  toolUsage?: {
+    internalToolIdsUsed: string[];
+    skippedInternalToolIds: string[];
+    skippedMcpToolNames?: string[];
+  };
 }
 
 export interface AiProviderClient {

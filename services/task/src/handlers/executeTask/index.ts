@@ -1,6 +1,8 @@
-import aiIntegrationDomain from '@vassembly/domain-ai-integration';
+import { randomUUID } from 'node:crypto';
+
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import taskDomain from '@vassembly/domain-task';
+import { runAgentInvokeWithTools } from '@vassembly/service-agent';
 
 import { logTaskTransition } from './logTaskTransition';
 import { mapExecutionError } from './mapExecutionError';
@@ -56,15 +58,19 @@ export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promis
       return;
     }
 
-    const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
+    const invokeResult = await runAgentInvokeWithTools({
       userId,
-      connectionOverride: { integrationCredentialId: credentialId },
-    });
-
-    const invokeResult = await systemAgentDomain.commands.invoke({
-      modeledProviderClient,
-      systemAgentId: task.agentAssignedId,
+      agentType: 'system',
+      agentId: task.agentAssignedId,
       message: task.description!,
+      connectionOverride: { integrationCredentialId: credentialId },
+      toolContext: {
+        userId,
+        callerAgentId: task.agentAssignedId,
+        callerAgentType: 'system',
+        recursionDepth: 0,
+        rootInvokeId: randomUUID(),
+      },
     });
 
     await taskDomain.commands.complete({ taskId, llmResponse: invokeResult.message });

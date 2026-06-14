@@ -10,6 +10,8 @@ import {
   SYSTEM_AGENT_RULE_MIN_LENGTH,
 } from '../../constants';
 
+import { assignedToolIdsCreateSchema, assignedToolIdsUpdateSchema } from './assignedToolIdsSchema';
+
 const CATEGORY_VALUES = Object.values(AgentCategory) as [AgentCategory, ...AgentCategory[]];
 
 const STATUS_VALUES = Object.values(AgentStatus) as [AgentStatus, ...AgentStatus[]];
@@ -40,6 +42,7 @@ export const CREATE_SYSTEM_AGENT_SCHEMA = z.object({
   category: SYSTEM_AGENT_CATEGORY_SCHEMA.optional(),
   createdByAdminId: z.string().min(1),
   updatedByAdminId: z.string().min(1).optional(),
+  assignedToolIds: assignedToolIdsCreateSchema,
 });
 
 export const UPDATE_SYSTEM_AGENT_DATA_SCHEMA = z
@@ -49,6 +52,7 @@ export const UPDATE_SYSTEM_AGENT_DATA_SCHEMA = z
     description: SYSTEM_AGENT_DESCRIPTION_SCHEMA.nullable().optional(),
     category: SYSTEM_AGENT_CATEGORY_SCHEMA.nullable().optional(),
     status: SYSTEM_AGENT_STATUS_SCHEMA.optional(),
+    assignedToolIds: assignedToolIdsUpdateSchema,
   })
   .strict();
 

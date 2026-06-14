@@ -8,6 +8,7 @@ import { AgentCategory, AgentStatus } from '../../constants';
 
 import { assertValidInput } from '../shared/assertValidInput';
 import { assignedMcpIdsUpdateSchema } from '../shared/assignedMcpIdsSchema';
+import { assignedToolIdsUpdateSchema } from '../shared/assignedToolIdsSchema';
 
 const UPDATE_DB_SCHEMA = z
   .object({
@@ -18,6 +19,7 @@ const UPDATE_DB_SCHEMA = z
     status: z.enum(Object.values(AgentStatus) as [string, ...string[]]).optional(),
     integrationCredentialId: z.string().optional(),
     assignedMcpIds: assignedMcpIdsUpdateSchema,
+    assignedToolIds: assignedToolIdsUpdateSchema,
   })
   .strict();
 
@@ -30,7 +32,17 @@ const persistUpdate = updateDbById<AgentModel>({
 });
 
 export const update = async (input: Parameters<typeof persistUpdate>[0]) => {
-  assertValidInput(validateUpdateData(input.data));
+  const validated = assertValidInput(validateUpdateData(input.data));
+  const result = await persistUpdate(input);
+  const { data } = result;
 
-  return persistUpdate(input);
+  if (validated.assignedMcpIds !== undefined) {
+    data.assignedMcpIds = data.assignedMcpIds ?? validated.assignedMcpIds;
+  }
+
+  if (validated.assignedToolIds !== undefined) {
+    data.assignedToolIds = data.assignedToolIds ?? validated.assignedToolIds;
+  }
+
+  return { data };
 };

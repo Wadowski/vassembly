@@ -17,6 +17,7 @@ export const gqlSystemAgentSchema = (builder: Builder): void => {
       createdAt: t.exposeString('createdAt'),
       updatedAt: t.exposeString('updatedAt'),
       removedAt: t.exposeString('removedAt', { nullable: true }),
+      assignedToolIds: t.exposeStringList('assignedToolIds'),
     }),
   });
 
