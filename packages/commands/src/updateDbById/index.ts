@@ -1,4 +1,5 @@
 import type { Model } from "@vassembly/model";
+import { WrongParamError } from "@vassembly/errors";
 import { getDbById } from "@vassembly/queries";
 import type { CommonDbCommandGeneratorParams } from "../types";
 import type { UpdateDbHandler } from "./types";
@@ -17,10 +18,14 @@ export const updateDbById = <T extends Model>({
     const queryInstance = factory.create({ id } as Partial<T>, { validationSchema: VALIDATION_SCHEMA });
     queryInstance.isValid({ shouldThrow: true });
 
-    const updatedInstance = factory.create(data as Partial<T>, { validationSchema: updateValidationSchema });
     if (updateValidationSchema) {
-      updatedInstance.isValid({ shouldThrow: true });
+      const validationResult = updateValidationSchema.safeParse(data);
+      if (!validationResult.success) {
+        throw new WrongParamError("Validation failed", validationResult.error);
+      }
     }
+
+    const updatedInstance = factory.create(data as Partial<T>);
 
     await dao.update(queryInstance, updatedInstance);
     const result = await getDbById({ factory, dao })({ id });

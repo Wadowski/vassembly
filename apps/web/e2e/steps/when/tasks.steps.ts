@@ -42,17 +42,26 @@ When('I create a task with description {string}', async ({ page }, description: 
     return;
   }
 
+  const createTaskButton = page.getByRole('button', { name: /Create Task/i });
+
   await page.getByPlaceholder(TASK_INPUT_PLACEHOLDER).fill(description);
-  const createTaskResponse = page.waitForResponse(
-    (response) => response.url().includes('/tasks') && response.request().method() === 'POST',
-    { timeout: 15_000 },
-  );
-  await page.getByRole('button', { name: /Create Task/i }).click();
-  await createTaskResponse;
+  await expect(createTaskButton).toBeEnabled({ timeout: 10_000 });
+
+  await expect(async () => {
+    const createTaskResponse = page.waitForResponse(
+      (response) => response.url().includes('/tasks') && response.request().method() === 'POST',
+      { timeout: 10_000 },
+    );
+    await createTaskButton.click();
+    const response = await createTaskResponse;
+    expect(response.ok()).toBe(true);
+  }).toPass({ timeout: 20_000 });
+
   await page.waitForResponse(
     (response) =>
       response.url().includes('/graphql') &&
-      response.request().postData()?.includes('userTasks') === true,
+      response.request().postData()?.includes('userTasks') === true &&
+      response.ok(),
     { timeout: 15_000 },
   );
 });

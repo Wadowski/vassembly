@@ -208,7 +208,7 @@ describe("updateDbById", () => {
       expect(queryInstance.isValid).toHaveBeenCalledWith({ shouldThrow: true });
     });
 
-    it("should not call isValid for data when validationSchema is not provided", async () => {
+    it("should not validate data when validationSchema is not provided", async () => {
       const id = "test-id-123";
       const inputData = {
         name: "John Doe Updated",
@@ -219,45 +219,39 @@ describe("updateDbById", () => {
         ...inputData,
       };
       const queryInstance = createMockInstance({ id } as TestModel);
-      const commandInstance = {
-        ...inputData,
-        isValid: vi.fn(),
-      };
+      const commandInstance = createMockInstance(inputData as TestModel);
 
       mockFactory.create
         .mockReturnValueOnce(queryInstance)
-        .mockReturnValueOnce(commandInstance as Partial<TestModel>)
+        .mockReturnValueOnce(commandInstance)
         .mockReturnValueOnce(createMockInstance(updatedInstance))
         .mockReturnValueOnce(updatedInstance);
       mockDao.update.mockResolvedValueOnce(updatedInstance);
       mockDao.get.mockResolvedValueOnce(updatedInstance);
 
       const handler = updateDbById(params);
-      await handler({ id, data: inputData });
+      const result = await handler({ id, data: inputData });
 
-      expect(commandInstance.isValid).not.toHaveBeenCalled();
+      expect(result).toEqual({ data: updatedInstance });
+      expect(mockDao.update).toHaveBeenCalled();
     });
 
-    it("should propagate validation errors when isValid throws for data", async () => {
+    it("should throw WrongParamError when data fails schema validation", async () => {
       const id = "test-id-123";
       const inputData = {
         name: "John Doe Updated",
         email: "john.updated@example.com",
+        unexpectedField: "not allowed",
       };
-      const validationSchema = { validate: vi.fn() } as unknown as z.ZodSchema;
-      const validationError = new Error("Invalid update data");
-
+      const validationSchema = z
+        .object({
+          name: z.string(),
+          email: z.string(),
+        })
+        .strict();
       const queryInstance = createMockInstance({ id } as TestModel);
-      const commandInstance = {
-        ...inputData,
-        isValid: vi.fn().mockImplementation(() => {
-          throw validationError;
-        }),
-      };
 
-      mockFactory.create
-        .mockReturnValueOnce(queryInstance)
-        .mockReturnValueOnce(commandInstance as Partial<TestModel>);
+      mockFactory.create.mockReturnValueOnce(queryInstance);
 
       const paramsWithSchema: CommonDbCommandGeneratorParams<TestModel> = {
         ...params,
@@ -266,8 +260,8 @@ describe("updateDbById", () => {
 
       const handler = updateDbById(paramsWithSchema);
 
-      const promise = handler({ id, data: inputData });
-      await expect(promise).rejects.toThrow("Invalid update data");
+      await expect(handler({ id, data: inputData })).rejects.toThrow(WrongParamError);
+      expect(mockDao.update).not.toHaveBeenCalled();
     });
 
     it("should complete successfully when data validation passes", async () => {
@@ -280,16 +274,16 @@ describe("updateDbById", () => {
         id,
         ...inputData,
       };
-      const validationSchema = { validate: vi.fn() } as unknown as z.ZodSchema;
+      const validationSchema = z.object({
+        name: z.string(),
+        email: z.string(),
+      });
       const queryInstance = createMockInstance({ id } as TestModel);
-      const commandInstance = {
-        ...inputData,
-        isValid: vi.fn(),
-      };
+      const commandInstance = createMockInstance(inputData as TestModel);
 
       mockFactory.create
         .mockReturnValueOnce(queryInstance)
-        .mockReturnValueOnce(commandInstance as Partial<TestModel>)
+        .mockReturnValueOnce(commandInstance)
         .mockReturnValueOnce(createMockInstance(updatedInstance))
         .mockReturnValueOnce(updatedInstance);
       mockDao.update.mockResolvedValueOnce(updatedInstance);
@@ -304,7 +298,6 @@ describe("updateDbById", () => {
       const result = await handler({ id, data: inputData });
 
       expect(result).toEqual({ data: updatedInstance });
-      expect(commandInstance.isValid).toHaveBeenCalledWith({ shouldThrow: true });
       expect(mockDao.update).toHaveBeenCalled();
     });
   });
