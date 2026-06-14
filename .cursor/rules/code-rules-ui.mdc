@@ -15,15 +15,59 @@ alwaysApply: false
 - any complex className must be resolved using function in ui-utils
 - Use scss files
 
-## File split (required)
+## Component folder structure (required)
 
-- Keep UI code split into distinct files in a subfolder for all the component related files:
-  - `types.ts`: types for the component/hook (props, state shape, options, return types)
-  - `<Component>.tsx`: rendering only
-  - `<Component>.module.scss`: all styles (scss modules)
-  - `<Component>.stories.tsx`: Storybook stories for all supported variants/states
-  - `<Component>.test.tsx`: tests colocated with the component when applicable
-- All files related to a component must be added to a folder with the same name as the component
+Every component and subcomponent **must** live in its own dedicated folder. Never place multiple component `.tsx` files as siblings in the same directory.
+
+### Folder layout
+
+Each component folder is named after the component (PascalCase) and contains only files for that component:
+
+```
+ParentFeature/
+  index.ts                          # re-exports child components for this feature
+  AgentForm/
+    index.ts
+    AgentForm.tsx                     # rendering only
+    useAgentForm.ts                   # when logic is needed
+    types.ts
+    constants.ts                      # when constants are needed
+    AgentForm.module.scss
+    AgentForm.stories.tsx
+    AgentForm.test.tsx
+    AgentFormField/                   # subcomponent — own folder, nested under parent
+      index.ts
+      AgentFormField.tsx
+      useAgentFormField.ts
+      types.ts
+      AgentFormField.module.scss
+  AgentList/
+    index.ts
+    AgentList.tsx
+    ...
+```
+
+### Rules
+
+- **One folder per component** — `AgentForm.tsx` must live in `AgentForm/`, not next to `AgentList.tsx`
+- **One folder per subcomponent** — lists, list items, and extracted parts each get their own folder; nest under the parent component folder when they belong to it, or under `_components/` when shared across the route
+- **No sibling component files** — a directory must not contain two or more `*.tsx` component files at the same level
+- Parent directories (`_components/`, feature `src/`) may contain only: component subfolders, `index.ts` barrels, route/page hooks (`use<Page>.ts`), and non-component helpers (`utils/`, `graphql/`, etc.) — never bare component `.tsx` files
+- Export each component from its folder via `index.ts`; import from the folder path, not the inner `.tsx` file
+
+### Forbidden
+
+```
+❌ _components/
+     AgentForm.tsx
+     AgentList.tsx
+     AgentListItem.tsx
+
+❌ AgentForm/
+     AgentForm.tsx
+     AgentFormField.tsx        # subcomponent must be AgentFormField/AgentFormField.tsx
+```
+
 
 ## Constants (required)
 
@@ -42,13 +86,13 @@ alwaysApply: false
 
 ## Composition and subcomponents (required)
 
-- Component is considered as subcomponent if it's:
+- Component is considered a subcomponent if it's:
   - list
   - item in list
   - dom tree deeper than 3 layers
-- If a component is composed of multiple meaningful parts, create subcomponents:
-  - extract each part into its own `*.tsx` (and `*.module.scss` if needed)
-  - subcomponents should also be render-focused; shared logic stays in hooks
+- If a component is composed of multiple meaningful parts, extract each part into its own **folder** (same file split as parent — `types.ts`, hook, styles, tests)
+- Subcomponents follow the same folder rules as top-level components; nest them inside the parent component folder or under `_components/` when shared across siblings
+- Subcomponents must be render-focused; shared logic stays in hooks
 
 ## Apps package rules (required)
 
@@ -68,6 +112,7 @@ Apps packages under `apps/*` own routing and connect `ui/*` components to data a
 
 ### Components in `apps/*` (required)
 
+- Route-scoped components live under `_components/` with **one folder per component** (same rules as above)
 - Components defined inside `apps/*` are **structural connectors only**:
   - They wire `ui/*` components to API clients, hooks, or other logic packages
   - They may not define new visual language, new design primitives, or business rules
