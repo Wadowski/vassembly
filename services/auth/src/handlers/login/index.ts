@@ -14,8 +14,7 @@ export const login = async (input: LoginInput): Promise<LoginOutput> => {
     throw new InternalError("Failed to verify credentials");
   }
 
-  const userModel = await userDomain.queries.getModelById({ id: user.id });
-  const role = userModel.data.role ?? AUTH_TOKEN_ROLE.USER;
+  const role = user.role ?? AUTH_TOKEN_ROLE.USER;
 
   const refreshToken = await refreshTokenDomain.commands.create({ userId: user.id });
   if (!refreshToken.id || !refreshToken.token) {

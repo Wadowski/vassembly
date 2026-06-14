@@ -1,3 +1,4 @@
+import { AUTH_TOKEN_ROLE } from "@vassembly/constants";
 import { defineRoute } from "@vassembly/server";
 import { z } from "zod";
 
@@ -14,6 +15,7 @@ export const userPublicResponseSchema = z.object({
   email: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  role: z.nativeEnum(AUTH_TOKEN_ROLE).optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
