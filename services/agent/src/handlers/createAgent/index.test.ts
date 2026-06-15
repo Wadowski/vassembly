@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ValidationError } from '@vassembly/errors';
 
-const { mockCreate, mockGetCredentialById } = vi.hoisted(() => ({
+const { mockCreate, mockGetCredentialById, mockAssertUniqueNameForUser } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
   mockGetCredentialById: vi.fn(),
+  mockAssertUniqueNameForUser: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-ai-integration', () => ({
@@ -19,6 +20,10 @@ vi.mock('../../helpers/validateAssignedMcpIds', () => ({
   validateAssignedMcpIds: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('../../helpers/validateAssignedToolIds', () => ({
+  validateAssignedToolIds: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('@vassembly/domain-agent', async () => {
   const { toAgentResponse } = await import('../../../../../domains/agent/src/model/toAgentResponse.js');
   const { AgentCategory } = await import('../../../../../domains/agent/src/model/model.js');
@@ -28,7 +33,9 @@ vi.mock('@vassembly/domain-agent', async () => {
       commands: {
         create: mockCreate,
       },
-      queries: {},
+      queries: {
+        assertUniqueNameForUser: mockAssertUniqueNameForUser,
+      },
     },
     toAgentResponse,
     AgentCategory,
@@ -48,6 +55,7 @@ const BODY = {
 describe('createAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertUniqueNameForUser.mockResolvedValue(undefined);
   });
 
   it('should return persisted agent scoped to authenticated userId', async () => {

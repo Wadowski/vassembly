@@ -13,6 +13,7 @@ export const LIST_SYSTEM_AGENTS_QUERY = `
         createdAt
         updatedAt
         removedAt
+        assignedToolIds
       }
       page
       size

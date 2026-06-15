@@ -11,5 +11,6 @@ export interface CreateAgentHandlerInput {
     rule: string;
     integrationCredentialId?: string;
     assignedMcpIds?: string[];
+    assignedToolIds?: string[];
   };
 }

@@ -8,8 +8,7 @@ const {
   mockComplete,
   mockFail,
   mockGetPreferenceByUserId,
-  mockResolveAndBuildClient,
-  mockInvoke,
+  mockRunAgentInvokeWithTools,
   mockLogger,
 } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
@@ -17,8 +16,7 @@ const {
   mockComplete: vi.fn(),
   mockFail: vi.fn(),
   mockGetPreferenceByUserId: vi.fn(),
-  mockResolveAndBuildClient: vi.fn(),
-  mockInvoke: vi.fn(),
+  mockRunAgentInvokeWithTools: vi.fn(),
   mockLogger: vi.fn(),
 }));
 
@@ -37,14 +35,11 @@ vi.mock('@vassembly/domain-task', () => ({
 vi.mock('@vassembly/domain-system-agent', () => ({
   default: {
     queries: { getPreferenceByUserId: mockGetPreferenceByUserId },
-    commands: { invoke: mockInvoke },
   },
 }));
 
-vi.mock('@vassembly/domain-ai-integration', () => ({
-  default: {
-    commands: { resolveAndBuildClient: mockResolveAndBuildClient },
-  },
+vi.mock('@vassembly/service-agent', () => ({
+  runAgentInvokeWithTools: mockRunAgentInvokeWithTools,
 }));
 
 vi.mock('@vassembly/logger', () => ({
@@ -69,10 +64,17 @@ describe('executeTask handler', () => {
     mockGetPreferenceByUserId.mockResolvedValue({
       data: { integrationCredentialId: 'cred-1' },
     });
-    mockResolveAndBuildClient.mockResolvedValue({ invoke: vi.fn() });
-    mockInvoke.mockResolvedValue({
+    mockRunAgentInvokeWithTools.mockResolvedValue({
       message: 'LLM result',
-      metadata: { provider: 'openai', model: 'gpt-4' },
+      metadata: {
+        provider: 'openai',
+        model: 'gpt-4',
+        mcpIdsUsed: [],
+        skippedMcpIds: [],
+        internalToolIdsUsed: ['list-agents'],
+        skippedInternalToolIds: [],
+        maxUseAgentDepth: 2,
+      },
     });
     mockComplete.mockResolvedValue({ data: {} });
     mockFail.mockResolvedValue({ data: {} });
@@ -81,6 +83,21 @@ describe('executeTask handler', () => {
   it('should complete task when credential exists and LLM invoke succeeds', async () => {
     await executeTask({ taskId: 'task-1', userId: 'user-1' });
 
+    expect(mockRunAgentInvokeWithTools).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: 'user-1',
+        agentType: 'system',
+        agentId: 'agent-1',
+        message: 'Summarize report',
+        connectionOverride: { integrationCredentialId: 'cred-1' },
+        toolContext: expect.objectContaining({
+          userId: 'user-1',
+          callerAgentId: 'agent-1',
+          callerAgentType: 'system',
+          recursionDepth: 0,
+        }),
+      }),
+    );
     expect(mockComplete).toHaveBeenCalledWith({
       taskId: 'task-1',
       llmResponse: 'LLM result',
@@ -103,10 +120,11 @@ describe('executeTask handler', () => {
       expect.objectContaining({ errorCode: 'MISSING_CREDENTIAL' }),
     );
     expect(mockComplete).not.toHaveBeenCalled();
+    expect(mockRunAgentInvokeWithTools).not.toHaveBeenCalled();
   });
 
-  it('should fail task with INVALID_CREDENTIAL when resolveAndBuildClient throws ValidationError', async () => {
-    mockResolveAndBuildClient.mockRejectedValue(
+  it('should fail task with INVALID_CREDENTIAL when runAgentInvokeWithTools throws ValidationError', async () => {
+    mockRunAgentInvokeWithTools.mockRejectedValue(
       new ValidationError("Your system agent connection isn't working.", {
         code: 'SYSTEM_AGENT_CONNECTION_INVALID',
       }),
@@ -120,7 +138,7 @@ describe('executeTask handler', () => {
   });
 
   it('should fail task with AGENT_UNAVAILABLE when invoke throws NotFoundError', async () => {
-    mockInvoke.mockRejectedValue(new NotFoundError('System agent not found'));
+    mockRunAgentInvokeWithTools.mockRejectedValue(new NotFoundError('System agent not found'));
 
     await executeTask({ taskId: 'task-1', userId: 'user-1' });
 
@@ -130,7 +148,7 @@ describe('executeTask handler', () => {
   });
 
   it('should fail task with PROVIDER_TIMEOUT when invoke throws TimeoutError', async () => {
-    mockInvoke.mockRejectedValue(new TimeoutError('timed out'));
+    mockRunAgentInvokeWithTools.mockRejectedValue(new TimeoutError('timed out'));
 
     await executeTask({ taskId: 'task-1', userId: 'user-1' });
 
@@ -149,6 +167,6 @@ describe('executeTask handler', () => {
     expect(mockFail).toHaveBeenCalledWith(
       expect.objectContaining({ errorCode: 'INVALID_AGENT_ASSIGNED' }),
     );
-    expect(mockInvoke).not.toHaveBeenCalled();
+    expect(mockRunAgentInvokeWithTools).not.toHaveBeenCalled();
   });
 });

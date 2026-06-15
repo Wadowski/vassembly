@@ -21,5 +21,6 @@ export const toUserPublicResponse = ({
   email: user.email,
   firstName: user.firstName,
   lastName: user.lastName,
+  role: user.role,
   verifiedAt: user.verifiedAt === undefined ? undefined : toNullableIsoString(user.verifiedAt),
 });

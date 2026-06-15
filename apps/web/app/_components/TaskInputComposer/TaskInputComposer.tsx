@@ -32,12 +32,12 @@ export const TaskInputComposer = ({ onCreateSuccess }: TaskInputComposerProps): 
         return;
       }
       if (result.status === 'success') {
+        await onCreateSuccess?.();
         snackbar.show({
           variant: 'success',
           message: 'Task created successfully',
           duration: 4000,
         });
-        onCreateSuccess?.();
         return;
       }
       if (result.status === 'error') {

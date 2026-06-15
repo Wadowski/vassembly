@@ -1,9 +1,6 @@
-import agentDomain, { type AgentInvokeMcpServerConfig } from '@vassembly/domain-agent';
-import aiIntegrationDomain from '@vassembly/domain-ai-integration';
-import userMcpConfigDomain from '@vassembly/domain-user-mcp-config';
-import { WrongParamError } from '@vassembly/errors';
+import { randomUUID } from 'node:crypto';
 
-import { resolveMcpSlugs } from '../../helpers/resolveMcpSlugs';
+import { runAgentInvokeWithTools } from '../../helpers/internalTools/runAgentInvokeWithTools';
 
 import type { InvokePersonalAgentParams, InvokePersonalAgentResult } from './types';
 
@@ -12,45 +9,28 @@ export const invokePersonalAgent = async (
 ): Promise<InvokePersonalAgentResult> => {
   const { userId, agentId, message } = input;
 
-  const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
-
-  if (!agent.integrationCredentialId) {
-    throw new WrongParamError('Agent has no AI integration configured');
-  }
-
-  const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
+  const result = await runAgentInvokeWithTools({
     userId,
-    connectionOverride: { integrationCredentialId: agent.integrationCredentialId },
-  });
-
-  const mcpIds = agent.assignedMcpIds ?? [];
-  let mcpServerConfigs: AgentInvokeMcpServerConfig[] = [];
-  let skippedMcpIds: string[] = [];
-
-  if (mcpIds.length > 0) {
-    const slugByMcpId = await resolveMcpSlugs({ mcpIds });
-    const configsResult = await userMcpConfigDomain.commands.resolveMcpServerConfigs({
-      userId,
-      mcpConfigs: mcpIds.map((id) => ({ mcpId: id, slug: slugByMcpId[id] ?? '' })),
-    });
-    mcpServerConfigs = configsResult.serverConfigs;
-    skippedMcpIds = configsResult.skippedMcpIds;
-  }
-
-  const result = await agentDomain.commands.invoke({
-    modeledProviderClient,
+    agentType: 'personal',
     agentId,
-    userId,
     message,
-    systemMessage: agent.rule,
-    mcpServerConfigs,
+    toolContext: {
+      userId,
+      callerAgentId: agentId,
+      callerAgentType: 'personal',
+      recursionDepth: 0,
+      rootInvokeId: randomUUID(),
+    },
   });
 
   return {
-    ...result,
+    message: result.message,
     metadata: {
-      mcpIdsUsed: mcpIds.filter((id) => !skippedMcpIds.includes(id)),
-      skippedMcpIds,
+      mcpIdsUsed: result.metadata.mcpIdsUsed,
+      skippedMcpIds: result.metadata.skippedMcpIds,
+      internalToolIdsUsed: result.metadata.internalToolIdsUsed,
+      skippedInternalToolIds: result.metadata.skippedInternalToolIds,
+      maxUseAgentDepth: result.metadata.maxUseAgentDepth,
     },
   };
 };

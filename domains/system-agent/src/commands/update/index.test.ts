@@ -154,4 +154,88 @@ describe('update system agent command', () => {
       }),
     ).rejects.toThrow(ValidationError);
   });
+
+  it('should accept assignedToolIds replacement on update', async () => {
+    mockUpdateDb.mockResolvedValue({
+      data: {
+        id: AGENT_ID,
+        name: 'Onboarding Helper',
+        assignedToolIds: ['use-agent', 'list-agents'],
+        category: 'onboarding',
+        description: 'Desc',
+        rule: 'Rule',
+        status: 'active',
+        createdByAdminId: 'admin-1',
+        updatedByAdminId: 'admin-2',
+        removedAt: null,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-03-01T00:00:00.000Z'),
+      },
+    });
+
+    const result = await update({
+      id: AGENT_ID,
+      updatedByAdminId: 'admin-2',
+      data: { assignedToolIds: ['use-agent', 'list-agents'] },
+    });
+
+    expect(result.data.assignedToolIds).toEqual(['use-agent', 'list-agents']);
+  });
+
+  it('should accept clearing assignedToolIds to empty array on update', async () => {
+    mockUpdateDb.mockResolvedValue({
+      data: {
+        id: AGENT_ID,
+        name: 'Onboarding Helper',
+        assignedToolIds: [],
+        category: 'onboarding',
+        description: 'Desc',
+        rule: 'Rule',
+        status: 'active',
+        createdByAdminId: 'admin-1',
+        updatedByAdminId: 'admin-2',
+        removedAt: null,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-03-01T00:00:00.000Z'),
+      },
+    });
+
+    const result = await update({
+      id: AGENT_ID,
+      updatedByAdminId: 'admin-2',
+      data: { assignedToolIds: [] },
+    });
+
+    expect(result.data.assignedToolIds).toEqual([]);
+  });
+
+  it('should reject update when assignedToolIds exceeds maximum count', async () => {
+    await expect(
+      update({
+        id: AGENT_ID,
+        updatedByAdminId: 'admin-1',
+        data: { assignedToolIds: ['use-agent', 'list-agents', 'extra-tool'] },
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject update when assignedToolIds contains duplicates', async () => {
+    await expect(
+      update({
+        id: AGENT_ID,
+        updatedByAdminId: 'admin-1',
+        data: { assignedToolIds: ['list-agents', 'list-agents'] },
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should reject update when assignedToolIds contains unknown registry ids', async () => {
+    await expect(
+      update({
+        id: AGENT_ID,
+        updatedByAdminId: 'admin-1',
+        data: { assignedToolIds: ['unknown-tool'] },
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
 });

@@ -10,6 +10,7 @@ export const CREATE_SYSTEM_AGENT_BODY_SCHEMA = z.object({
   rule: z.string().min(1).max(5000),
   description: z.string().max(500).optional(),
   category: z.enum(AGENT_CATEGORY_VALUES).optional(),
+  assignedToolIds: z.array(z.string().min(1)).optional().default([]),
 });
 
 export const UPDATE_SYSTEM_AGENT_BODY_SCHEMA = CREATE_SYSTEM_AGENT_BODY_SCHEMA.partial().strict();

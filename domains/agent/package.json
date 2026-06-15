@@ -19,6 +19,7 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/constants": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",
@@ -27,6 +28,7 @@
     "@vassembly/model": "workspace:*",
     "@vassembly/queries": "workspace:*",
     "@vassembly/validation": "workspace:*",
+    "mongodb": "^7.0.0",
     "zod": "^4.3.6"
   }
 }

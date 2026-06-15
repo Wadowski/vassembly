@@ -9,11 +9,6 @@ const { mockVerifyCredentials } = vi.hoisted(() => {
   return { mockVerifyCredentials };
 });
 
-const { mockGetModelById } = vi.hoisted(() => {
-  const mockGetModelById = vi.fn();
-  return { mockGetModelById };
-});
-
 const { mockCreateRefreshToken } = vi.hoisted(() => {
   const mockCreateRefreshToken = vi.fn();
   return { mockCreateRefreshToken };
@@ -28,7 +23,6 @@ vi.mock("@vassembly/domain-user", () => {
   const impl = {
     queries: {
       verify: mockVerifyCredentials,
-      getModelById: mockGetModelById,
     },
   };
   return { ...impl, default: impl };
@@ -80,9 +74,9 @@ describe("login", () => {
   };
 
   const setupSuccessfulLoginMocks = (role?: AUTH_TOKEN_ROLE): void => {
-    mockVerifyCredentials.mockResolvedValue(mockUser);
-    mockGetModelById.mockResolvedValue({
-      data: role === undefined ? { id: mockUser.id } : { id: mockUser.id, role },
+    mockVerifyCredentials.mockResolvedValue({
+      ...mockUser,
+      ...(role === undefined ? {} : { role }),
     });
     mockCreateRefreshToken.mockResolvedValue(mockRefreshToken);
     mockCreateAuthToken.mockResolvedValue({ token: "auth-token-value" });
@@ -93,7 +87,6 @@ describe("login", () => {
 
     await login(input);
 
-    expect(mockGetModelById).toHaveBeenCalledWith({ id: mockUser.id });
     expect(mockCreateAuthToken).toHaveBeenCalledWith({
       input: {
         userId: mockUser.id,
@@ -141,6 +134,7 @@ describe("login", () => {
       email: mockUser.email,
       firstName: mockUser.firstName,
       lastName: mockUser.lastName,
+      role: AUTH_TOKEN_ROLE.USER,
       createdAt: undefined,
       updatedAt: undefined,
       removedAt: undefined,
@@ -165,15 +159,13 @@ describe("login", () => {
 
     await expect(login(input)).rejects.toThrow("Invalid credentials");
 
-    expect(mockGetModelById).not.toHaveBeenCalled();
     expect(mockCreateRefreshToken).not.toHaveBeenCalled();
     expect(mockCreateAuthToken).not.toHaveBeenCalled();
   });
 
   it("should throw error when refresh token creation fails", async () => {
     const error = new Error("Database error");
-    mockVerifyCredentials.mockResolvedValue(mockUser);
-    mockGetModelById.mockResolvedValue({ data: { id: mockUser.id, role: AUTH_TOKEN_ROLE.USER } });
+    mockVerifyCredentials.mockResolvedValue({ ...mockUser, role: AUTH_TOKEN_ROLE.USER });
     mockCreateRefreshToken.mockRejectedValue(error);
 
     await expect(login(input)).rejects.toThrow("Database error");
@@ -183,8 +175,7 @@ describe("login", () => {
 
   it("should throw error when auth token creation fails", async () => {
     const error = new Error("Token creation failed");
-    mockVerifyCredentials.mockResolvedValue(mockUser);
-    mockGetModelById.mockResolvedValue({ data: { id: mockUser.id, role: AUTH_TOKEN_ROLE.USER } });
+    mockVerifyCredentials.mockResolvedValue({ ...mockUser, role: AUTH_TOKEN_ROLE.USER });
     mockCreateRefreshToken.mockResolvedValue(mockRefreshToken);
     mockCreateAuthToken.mockRejectedValue(error);
 

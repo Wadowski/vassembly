@@ -33,6 +33,15 @@ describe('mapLoginUserToAuthUser', () => {
     });
   });
 
+  it('should map role when present in the login payload', () => {
+    const result = mapLoginUserToAuthUser({
+      id: 'user123',
+      email: 'admin@example.com',
+      role: 'admin',
+    });
+    expect(result.role).toBe('admin');
+  });
+
   it('should allow email to be undefined when missing from the payload', () => {
     const result = mapLoginUserToAuthUser({ id: 'user123' });
     expect(result).toEqual({

@@ -2,10 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { NotFoundError, ValidationError } from '@vassembly/errors';
 
-const { mockGetById, mockUpdate, mockGetCredentialById } = vi.hoisted(() => ({
+const { mockGetById, mockUpdate, mockGetCredentialById, mockAssertUniqueNameForUser } = vi.hoisted(() => ({
   mockGetById: vi.fn(),
   mockUpdate: vi.fn(),
   mockGetCredentialById: vi.fn(),
+  mockAssertUniqueNameForUser: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-ai-integration', () => ({
@@ -20,6 +21,10 @@ vi.mock('../../helpers/validateAssignedMcpIds', () => ({
   validateAssignedMcpIds: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('../../helpers/validateAssignedToolIds', () => ({
+  validateAssignedToolIds: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('@vassembly/domain-agent', async () => {
   const { toAgentResponse } = await import('../../../../../domains/agent/src/model/toAgentResponse.js');
 
@@ -30,6 +35,7 @@ vi.mock('@vassembly/domain-agent', async () => {
       },
       queries: {
         getById: mockGetById,
+        assertUniqueNameForUser: mockAssertUniqueNameForUser,
       },
     },
     toAgentResponse,
@@ -54,6 +60,7 @@ const ACTIVE_AGENT = {
 describe('updateAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAssertUniqueNameForUser.mockResolvedValue(undefined);
   });
 
   it('should persist partial updates for owned agents that remain active', async () => {

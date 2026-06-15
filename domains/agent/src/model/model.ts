@@ -28,4 +28,6 @@ export class AgentModel extends ModelWithTranslation {
   integrationCredentialId?: string;
 
   assignedMcpIds?: string[];
+
+  assignedToolIds?: string[];
 }

@@ -39,5 +39,6 @@ export const toSystemAgentResponse = ({
     createdAt: toIsoString({ value: systemAgent.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: systemAgent.updatedAt!, fieldName: 'updatedAt' }),
     removedAt: toNullableIsoString(systemAgent.removedAt),
+    assignedToolIds: systemAgent.assignedToolIds ?? [],
   };
 };

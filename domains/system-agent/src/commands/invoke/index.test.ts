@@ -25,11 +25,22 @@ const SYSTEM_AGENT_ID = '507f1f77bcf86cd799439011';
 const AGENT_RULE = 'You are a compliance assistant.';
 
 const buildEchoClient = (): ModeledProviderClient => ({
-  invoke: async (prompt: string) => ({
-    message: prompt,
-    usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
-    metadata: { model: 'gpt-4', provider: 'openai' },
-  }),
+  invoke: async (params) => {
+    if (typeof params === 'string') {
+      return {
+        message: params,
+        usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+        metadata: { model: 'gpt-4', provider: 'openai' },
+      };
+    }
+
+    const systemMessage = params.systemMessage ?? '';
+    return {
+      message: `${systemMessage}\n\n${params.message}`,
+      usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+      metadata: { model: 'gpt-4', provider: 'openai' },
+    };
+  },
 });
 
 describe('invoke system agent command', () => {
@@ -37,7 +48,7 @@ describe('invoke system agent command', () => {
     vi.clearAllMocks();
   });
 
-  it('should compose prompt from agent rule and user message then return client response', async () => {
+  it('should pass structured invoke params with agent rule as systemMessage', async () => {
     mockGetActiveById.mockResolvedValue({
       data: {
         id: SYSTEM_AGENT_ID,
@@ -57,6 +68,37 @@ describe('invoke system agent command', () => {
     expect(result.message).toBe(`${AGENT_RULE}\n\nSummarize policy section 4.`);
     expect(result.usage?.totalTokens).toBe(15);
     expect(result.metadata?.provider).toBe('openai');
+  });
+
+  it('should pass internalToolBindings through to modeled provider client', async () => {
+    mockGetActiveById.mockResolvedValue({
+      data: {
+        id: SYSTEM_AGENT_ID,
+        name: 'Compliance Bot',
+        rule: AGENT_RULE,
+        status: 'active',
+        removedAt: null,
+      },
+    });
+
+    const handler = vi.fn().mockResolvedValue('tool result');
+    const invokeSpy = vi.fn().mockResolvedValue({ message: 'Done' });
+    const client: ModeledProviderClient = { invoke: invokeSpy };
+
+    await invoke({
+      modeledProviderClient: client,
+      systemAgentId: SYSTEM_AGENT_ID,
+      message: 'Run tools',
+      internalToolBindings: [{ toolId: 'list-agents', handler }],
+    });
+
+    expect(invokeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Run tools',
+        systemMessage: AGENT_RULE,
+        internalToolBindings: [{ toolId: 'list-agents', handler }],
+      }),
+    );
   });
 
   it('should throw NotFoundError when system agent does not exist', async () => {

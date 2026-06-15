@@ -12,10 +12,15 @@ export interface InvokeSystemAgentResult {
   usage?: {
     promptTokens: number;
     completionTokens: number;
-    totalTokens: number;
+    totalTokens?: number;
   };
   metadata?: {
-    model: string;
-    provider: string;
+    model?: string;
+    provider?: string;
+    mcpIdsUsed?: string[];
+    skippedMcpIds?: string[];
+    internalToolIdsUsed?: string[];
+    skippedInternalToolIds?: string[];
+    maxUseAgentDepth?: number;
   };
 }

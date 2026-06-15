@@ -35,6 +35,7 @@ export function useAgentCreatePage(): UseAgentCreatePageResult {
             rule: payload.rule,
             integrationCredentialId: payload.integrationCredentialId,
             assignedMcpIds: payload.assignedMcpIds,
+            assignedToolIds: payload.assignedToolIds,
           },
         });
         snackbar.show({ variant: 'success', message: 'Agent created successfully', duration: 4000 });

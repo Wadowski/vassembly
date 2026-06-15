@@ -9,5 +9,8 @@ export interface InvokePersonalAgentResult {
   metadata?: {
     mcpIdsUsed: string[];
     skippedMcpIds: string[];
+    internalToolIdsUsed?: string[];
+    skippedInternalToolIds?: string[];
+    maxUseAgentDepth?: number;
   };
 }

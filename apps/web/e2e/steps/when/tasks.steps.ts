@@ -37,6 +37,15 @@ When('I click the back link', async ({ page }) => {
   await page.getByTestId('task-detail-back').click();
 });
 
+const isListUserTasksResponse = (response: import('@playwright/test').Response): boolean => {
+  const postData = response.request().postData();
+  return (
+    response.url().includes('/graphql') &&
+    (postData?.includes('ListUserTasks') === true || postData?.includes('userTasks') === true) &&
+    response.ok()
+  );
+};
+
 When('I create a task with description {string}', async ({ page }, description: string) => {
   if (!page) {
     return;
@@ -47,23 +56,17 @@ When('I create a task with description {string}', async ({ page }, description: 
   await page.getByPlaceholder(TASK_INPUT_PLACEHOLDER).fill(description);
   await expect(createTaskButton).toBeEnabled({ timeout: 10_000 });
 
-  await expect(async () => {
-    const createTaskResponse = page.waitForResponse(
-      (response) => response.url().includes('/tasks') && response.request().method() === 'POST',
-      { timeout: 10_000 },
-    );
-    await createTaskButton.click();
-    const response = await createTaskResponse;
-    expect(response.ok()).toBe(true);
-  }).toPass({ timeout: 20_000 });
-
-  await page.waitForResponse(
-    (response) =>
-      response.url().includes('/graphql') &&
-      response.request().postData()?.includes('userTasks') === true &&
-      response.ok(),
-    { timeout: 15_000 },
+  const createTaskResponse = page.waitForResponse(
+    (response) => response.url().includes('/tasks') && response.request().method() === 'POST',
+    { timeout: 20_000 },
   );
+  const listRefreshResponse = page.waitForResponse(isListUserTasksResponse, { timeout: 25_000 });
+
+  await createTaskButton.click();
+
+  const response = await createTaskResponse;
+  expect(response.ok()).toBe(true);
+  await listRefreshResponse;
 });
 
 When('I navigate directly to {string}', async ({ page }, path: string) => {

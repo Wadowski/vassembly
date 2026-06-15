@@ -19,6 +19,7 @@ export const systemAgentAdminResponseSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   removedAt: z.string().nullable(),
+  assignedToolIds: z.array(z.string()),
 });
 
 export const systemAgentCreateRoute = defineRoute({

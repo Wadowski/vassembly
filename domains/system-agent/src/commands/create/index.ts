@@ -10,6 +10,7 @@ import { invalidateActiveByNameCache } from '../../cache/keys';
 import { assertUniqueActiveName } from '../../queries';
 
 import { assertValidInput } from '../shared/assertValidInput';
+import { assignedToolIdsCreateSchema } from '../shared/assignedToolIdsSchema';
 import { CREATE_SYSTEM_AGENT_SCHEMA } from '../shared/schemas';
 
 import type { CreateSystemAgentParams, CreateSystemAgentResult } from './types';
@@ -24,6 +25,7 @@ const CREATE_DB_SCHEMA = z.object({
   status: z.enum(Object.values(AgentStatus) as [string, ...string[]]),
   createdByAdminId: z.string().min(1),
   updatedByAdminId: z.string().min(1),
+  assignedToolIds: assignedToolIdsCreateSchema,
   removedAt: z.null().default(null),
 });
 
@@ -49,6 +51,7 @@ export const create = async (
     status: SYSTEM_AGENT_DEFAULT_STATUS,
     createdByAdminId: validated.createdByAdminId,
     updatedByAdminId,
+    assignedToolIds: validated.assignedToolIds,
     removedAt: null,
   });
 

@@ -9,5 +9,6 @@ export interface CreateAgentCommandInput {
   status?: AgentStatus;
   integrationCredentialId?: string;
   assignedMcpIds?: string[];
+  assignedToolIds?: string[];
   removedAt?: null;
 }

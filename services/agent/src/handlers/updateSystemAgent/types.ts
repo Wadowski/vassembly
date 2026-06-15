@@ -9,6 +9,7 @@ export interface UpdateSystemAgentParams {
     description?: string;
     category?: AgentCategory;
     status?: AgentStatus;
+    assignedToolIds?: string[];
   };
 }
 

@@ -26,6 +26,11 @@ const schema = z.object({
     .refine((ids) => new Set(ids).size === ids.length, {
       message: 'Duplicate MCP assignments are not allowed.',
     }),
+  assignedToolIds: z
+    .array(z.string().min(1))
+    .refine((ids) => new Set(ids).size === ids.length, {
+      message: 'Duplicate internal tool assignments are not allowed.',
+    }),
 });
 
 const validateAgentForm = validatorFactory(schema);
@@ -37,6 +42,7 @@ const toFormValues = (initial?: Partial<AgentFormValues>): AgentFormValues => ({
   rule: initial?.rule ?? '',
   integrationCredentialId: initial?.integrationCredentialId ?? null,
   assignedMcpIds: initial?.assignedMcpIds ?? [],
+  assignedToolIds: initial?.assignedToolIds ?? [],
 });
 
 export const useAgentForm = (initial?: Partial<AgentFormValues>): UseAgentFormResult => {
@@ -47,7 +53,7 @@ export const useAgentForm = (initial?: Partial<AgentFormValues>): UseAgentFormRe
 
   const shape = schema.shape;
 
-  const isValid = useMemo(() => validateAgentForm(values).success, [values]);
+  const isValid = useMemo(() => schema.safeParse(values).success, [values]);
 
   const getFieldErrorMessage = useCallback(
     (key: keyof AgentFormValues): string | undefined => {

@@ -1,5 +1,7 @@
 import * as handlers from './handlers';
 
+export { runAgentInvokeWithTools } from './helpers/internalTools';
+
 export default handlers;
 
 export type {

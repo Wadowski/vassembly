@@ -11,6 +11,7 @@ export const LIST_AGENTS_QUERY = `
         status
         integrationCredentialId
         assignedMcpIds
+        assignedToolIds
         createdAt
         updatedAt
         removedAt

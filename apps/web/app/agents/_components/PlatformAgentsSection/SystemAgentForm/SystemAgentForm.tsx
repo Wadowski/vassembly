@@ -1,12 +1,16 @@
 'use client';
 
 import type { FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { useInternalTools } from '@vassembly/ui-api-hooks';
 import { Button } from '@vassembly/ui-button';
 import { Tag } from '@vassembly/ui-tag';
 import { Text } from '@vassembly/ui-text';
 
+import { InternalToolAssignmentPicker } from '../../InternalToolAssignmentPicker';
+import { filterEligibleInternalTools } from '../../InternalToolAssignmentPicker/filterEligibleInternalTools';
+import type { InternalToolItem } from '../../InternalToolAssignmentPicker';
 import { SystemAgentFormFields } from '../SystemAgentFormFields';
 import { getSystemAgentStatusLabel, getSystemAgentStatusVariant } from '../tags';
 import { useSystemAgentForm } from '../useSystemAgentForm';
@@ -28,6 +32,23 @@ export function SystemAgentForm({
 }: SystemAgentFormProps): JSX.Element {
   const form = useSystemAgentForm();
   const [localNameError, setLocalNameError] = useState<string | undefined>(undefined);
+  const { data: internalToolsData, loading: isInternalToolsLoading } = useInternalTools();
+
+  const internalToolOptions = useMemo((): InternalToolItem[] => {
+    const catalog = internalToolsData ?? [];
+    const accessScopesById = new Map(catalog.map((tool) => [tool.id, tool.accessScope]));
+    const catalogItems: InternalToolItem[] = catalog.map((tool) => ({
+      id: tool.id,
+      displayName: tool.displayName,
+      description: tool.description,
+    }));
+
+    return filterEligibleInternalTools({
+      tools: catalogItems,
+      agentType: 'system',
+      accessScopesById,
+    });
+  }, [internalToolsData]);
 
   useEffect(() => {
     if (mode === SystemAgentFormMode.Create) {
@@ -43,6 +64,7 @@ export function SystemAgentForm({
       category: initialAgent.category ?? '',
       description: initialAgent.description ?? '',
       rule: initialAgent.rule,
+      assignedToolIds: initialAgent.assignedToolIds,
     });
     setLocalNameError(undefined);
   }, [form, initialAgent, mode]);
@@ -69,6 +91,14 @@ export function SystemAgentForm({
     onCancel();
   };
 
+  const handleAssignedToolsChange = (nextValue: string[]): void => {
+    form.setField('assignedToolIds', nextValue);
+  };
+
+  const handleAssignedToolsBlur = (): void => {
+    form.blurField('assignedToolIds');
+  };
+
   const submitLabel = SUBMIT_LABEL[mode];
   const nameError = localNameError ?? form.getFieldErrorMessage('name');
 
@@ -89,6 +119,16 @@ export function SystemAgentForm({
         isDisabled={isSubmitting}
         onSubmit={handleSubmit}
       />
+      <div onBlur={handleAssignedToolsBlur}>
+        <InternalToolAssignmentPicker
+          value={form.values.assignedToolIds}
+          onChange={handleAssignedToolsChange}
+          tools={internalToolOptions}
+          isLoading={isInternalToolsLoading}
+          isDisabled={isSubmitting}
+          errorMessage={form.getFieldErrorMessage('assignedToolIds')}
+        />
+      </div>
       <div className={styles.formActions}>
         <Button variant="outlined" text="Cancel" onClick={handleCancel} isDisabled={isSubmitting} />
         <Button

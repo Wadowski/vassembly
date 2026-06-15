@@ -38,7 +38,7 @@ alwaysApply: true
 - project-manager — orchestrates the full implementation workflow across all agents
  - tdd-unit-test-writer — writes failing unit tests first before implementation
  - tdd-e2e-test-writer — translates PRD Gherkin scenarios into failing Playwright BDD feature files before implementation
-- test-fixer — analyzes failing test output, applies fixes, reruns tests; tracks `try` (1–5), incrementing after every test check run; stops only on SUCCESS or when `try === 5` with failing tests. Always pass `try` in spawn prompts.
+- test-fixer — analyzes failing test output, applies fixes, reruns the quality gate (unit tests, e2e tests, lint, type-check); tracks `try` (1–5), incrementing after every verification run; stops only on SUCCESS (all checks green) or when `try === 5` with failing checks. Always pass `try` in spawn prompts.
 - ui-designer — design systems, visual consistency, and user-centered interfaces
  
  ### 2. Fall back to generalPurpose when no specialist fits

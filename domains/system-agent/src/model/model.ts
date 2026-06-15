@@ -18,4 +18,6 @@ export class SystemAgentModel extends ModelWithTranslation {
   createdByAdminId?: string;
 
   updatedByAdminId?: string;
+
+  assignedToolIds?: string[];
 }

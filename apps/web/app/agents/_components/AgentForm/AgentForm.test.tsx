@@ -37,8 +37,6 @@ describe('AgentForm', () => {
   });
 
   it('should refuse oversized textual payloads mirroring PRD limits', async () => {
-    const user = userEvent.setup();
-
     render(
       <AgentForm
         mode={AgentFormMode.Create}
@@ -48,7 +46,7 @@ describe('AgentForm', () => {
       />,
     );
 
-    await user.type(screen.getByLabelText(/name/i), 'x'.repeat(101));
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'x'.repeat(101) } });
     fireEvent.blur(screen.getByLabelText(/name/i));
 
     expect(screen.getByText(/name must be at most 100 characters/i)).not.toBeNull();
@@ -69,6 +67,7 @@ describe('AgentForm', () => {
           status: AgentStatus.Archived,
           integrationCredentialId: null,
           assignedMcpIds: [],
+          assignedToolIds: [],
           createdAt: '2026-01-01T00:00:00.000Z',
           updatedAt: '2026-03-01T00:00:00.000Z',
           removedAt: '2026-03-01T00:00:00.000Z',
@@ -106,6 +105,7 @@ describe('AgentForm', () => {
           status: AgentStatus.Active,
           integrationCredentialId: 'cred-1',
           assignedMcpIds: [],
+          assignedToolIds: [],
           createdAt: '2026-01-01T00:00:00.000Z',
           updatedAt: '2026-01-05T00:00:00.000Z',
           removedAt: null,

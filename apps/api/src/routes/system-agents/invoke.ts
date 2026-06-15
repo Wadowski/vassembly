@@ -19,8 +19,13 @@ export const invokeSystemAgentResponseSchema = z.object({
     .optional(),
   metadata: z
     .object({
-      model: z.string(),
-      provider: z.string(),
+      model: z.string().optional(),
+      provider: z.string().optional(),
+      mcpIdsUsed: z.array(z.string()).optional(),
+      skippedMcpIds: z.array(z.string()).optional(),
+      internalToolIdsUsed: z.array(z.string()).optional(),
+      skippedInternalToolIds: z.array(z.string()).optional(),
+      maxUseAgentDepth: z.number().optional(),
     })
     .optional(),
 });

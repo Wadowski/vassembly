@@ -8,6 +8,7 @@ export interface SystemAgentFormValues {
   category: SystemAgentCategory | '';
   description: string;
   rule: string;
+  assignedToolIds: string[];
 }
 
 export interface UseSystemAgentFormResult {

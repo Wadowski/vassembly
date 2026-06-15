@@ -1,0 +1,27 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.pickerStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.selectedList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.errorText {
+  color: $color-error;
+}
+
+.helperText {
+  color: $color-text-secondary;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}

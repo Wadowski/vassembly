@@ -128,11 +128,13 @@ const setupDefaultMocks = (): void => {
 };
 
 const fillValidForm = async (user: ReturnType<typeof userEvent.setup>): Promise<void> => {
-  await user.type(screen.getByLabelText(/client id/i), 'new-client-id');
-  await user.type(screen.getByLabelText(/client secret/i), 'new-client-secret');
+  fireEvent.change(screen.getByLabelText(/client id/i), { target: { value: 'new-client-id' } });
+  fireEvent.change(screen.getByLabelText(/client secret/i), { target: { value: 'new-client-secret' } });
   await user.selectOptions(screen.getByLabelText(/region/i), 'us-east-1');
-  await user.type(screen.getByLabelText(/webhook url/i), 'https://hooks.example.com/gmail');
-  await user.type(screen.getByLabelText(/contact email/i), 'admin@example.com');
+  fireEvent.change(screen.getByLabelText(/webhook url/i), {
+    target: { value: 'https://hooks.example.com/gmail' },
+  });
+  fireEvent.change(screen.getByLabelText(/contact email/i), { target: { value: 'admin@example.com' } });
 };
 
 describe('McpDetailPage', () => {

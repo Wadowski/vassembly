@@ -8,6 +8,7 @@ export interface CreateSystemAgentParams {
     rule: string;
     description?: string;
     category?: AgentCategory;
+    assignedToolIds?: string[];
   };
 }
 

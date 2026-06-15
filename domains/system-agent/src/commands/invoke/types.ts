@@ -1,5 +1,33 @@
+export interface AgentInvokeMcpServerConfig {
+  serverName: string;
+  transport: 'stdio' | 'http' | 'sse';
+  command?: string;
+  args?: string[];
+  env?: Record<string, string>;
+  url?: string;
+  headers?: Record<string, string>;
+}
+
+export interface InternalToolBinding {
+  toolId: string;
+  handler: (args: Record<string, unknown>) => Promise<string>;
+}
+
+export interface ModeledProviderToolUsage {
+  internalToolIdsUsed: string[];
+  skippedInternalToolIds: string[];
+  skippedMcpToolNames?: string[];
+}
+
+export interface ModeledProviderInvokeParams {
+  message: string;
+  systemMessage?: string;
+  mcpServerConfigs?: AgentInvokeMcpServerConfig[];
+  internalToolBindings?: InternalToolBinding[];
+}
+
 export interface ModeledProviderClient {
-  invoke(prompt: string): Promise<{
+  invoke(params: ModeledProviderInvokeParams | string): Promise<{
     message: string;
     usage?: {
       promptTokens: number;
@@ -10,6 +38,7 @@ export interface ModeledProviderClient {
       model: string;
       provider: string;
     };
+    toolUsage?: ModeledProviderToolUsage;
   }>;
 }
 
@@ -17,6 +46,8 @@ export interface InvokeSystemAgentParams {
   modeledProviderClient: ModeledProviderClient;
   systemAgentId: string;
   message: string;
+  mcpServerConfigs?: AgentInvokeMcpServerConfig[];
+  internalToolBindings?: InternalToolBinding[];
 }
 
 export interface InvokeSystemAgentResult {
@@ -30,4 +61,5 @@ export interface InvokeSystemAgentResult {
     model: string;
     provider: string;
   };
+  toolUsage?: ModeledProviderToolUsage;
 }

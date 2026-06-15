@@ -348,6 +348,9 @@ importers:
       '@vassembly/commands':
         specifier: workspace:*
         version: link:../../packages/commands
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
@@ -366,6 +369,9 @@ importers:
       '@vassembly/validation':
         specifier: workspace:*
         version: link:../../packages/validation
+      mongodb:
+        specifier: ^7.0.0
+        version: 7.1.1(gcp-metadata@8.1.2)
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -584,6 +590,9 @@ importers:
       '@vassembly/commands':
         specifier: workspace:*
         version: link:../../packages/commands
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors
@@ -1042,6 +1051,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 1.12.1
         version: 1.12.1
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../errors
@@ -1785,6 +1797,9 @@ importers:
       '@vassembly/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@vassembly/service-agent':
+        specifier: workspace:*
+        version: link:../agent
     devDependencies:
       '@types/node':
         specifier: ^22.19.7

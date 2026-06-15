@@ -12,6 +12,7 @@ interface LoginResponse {
     email: string;
     firstName: string;
     lastName: string;
+    role?: string;
     verifiedAt?: Date | null;
   };
   authToken: string;

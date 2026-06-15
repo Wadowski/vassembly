@@ -76,14 +76,75 @@ description: General coding standards and best practices for the project
 - Create separate test cases only for different flows (optional params, missing data, error cases)
 - Don't create multiple test cases for the same success flow with different response fields
 
-## File Organization
+## File and Folder Structure
 
+Every folder must group files that serve the **same purpose** or belong to the **same topic**. Do not place unrelated files in the same directory.
+
+### Core rules
+
+- **One concern per folder** — a folder name must describe what every file inside it does (e.g. `graphql/`, `hooks/`, `utils/`, `commands/`)
+- **One unit per subfolder** — each operation, handler, component, or util group gets its own subfolder when it has multiple related files (`index.ts`, `types.ts`, tests, styles)
+- **No flat dumping** — when a directory grows beyond a few single-purpose files, split into subfolders by topic before adding more files
 - Keep files focused and single-purpose (single responsibility per file)
-- Organize related functionality into directories with clear structure
-- Use index files to export public API
+- Use `index.ts` to export only the public API, types, components of a folder or package. Do not export internal logic, types or components
 - Colocate tests next to implementation files with `.test.ts` suffix
-- Each file should be no longer than 100 lines. If longer split it
-- **No duplicated code** - if the same code (function, type, etc) is written in at least two places, extract it to a separate file and reuse.
+- Each file should be no longer than 100 lines; split into additional files or subfolders when exceeded
+- **No duplicated code** — if the same code (function, type, etc.) appears in at least two places, extract it to a dedicated file and reuse
+
+### Folder naming
+
+- Use **camelCase** for folder names (`systemAgents/`, `useAgentForm/`)
+- Name folders after their **role or topic**, not after file types (`graphql/` not `queries.ts` siblings mixed with `http/` files)
+- Use `shared/` for helpers reused within the same layer (e.g. `commands/shared/`, `handlers/shared/`)
+- Prefix route-colocated UI with `_components/` in Next.js apps (not a routable segment)
+
+### Group by purpose — common folder roles
+
+| Purpose | Folder name | What goes inside |
+|---------|-------------|------------------|
+| Data reads (GraphQL) | `graphql/` or `queries/` | Query documents, query hooks, read-only mappers |
+| Data writes (REST) | `http/` | Mutation functions, command hooks |
+| React hooks | `hooks/` | Reusable hooks not tied to a single component |
+| UI components | `_components/` or component-named folder | Component, styles, hook, types, constants |
+| Business writes | `commands/` | One subfolder per command operation |
+| Business reads | `queries/` | One subfolder per query operation |
+| Entity shape | `model/` | Model, DTOs, factories, response mappers |
+| Data access | `clients/` | DB, cache, external API clients |
+| Use-case orchestration | `handlers/` | One subfolder per handler |
+| Pure helpers | `utils/` | Stateless functions grouped by topic |
+| Cross-cutting types | `types.ts` at folder scope | Types shared by all files in that folder |
+| Tests | `test/` or colocated `.test.ts` | Shared fixtures/mocks or per-file tests |
+
+### Examples
+
+```
+feature/
+  graphql/           # all reads for this feature
+    listItemsQuery.ts
+  http/              # all writes for this feature
+    createItem.ts
+  hooks/
+    useFeature.ts
+  utils/
+    formatItem.ts
+
+AgentForm/           # one folder per component
+  AgentForm.tsx
+  useAgentForm.ts
+  types.ts
+  constants.ts
+  AgentForm.module.scss
+  AgentForm.test.tsx
+```
+
+### Package-specific structure
+
+Follow dedicated rules when they exist — they extend these general rules:
+
+- **Domains** → `domain-package-structure.mdc` (`commands/`, `queries/`, `model/`, `clients/`)
+- **Services** → `service-package-structure.mdc` (`handlers/<name>/`)
+- **API gateway** → `api-gateway-package-structure.mdc` (`routes/`, `graphql/resolvers/`)
+- **UI components & apps** → `code-rules-ui.mdc` (component subfolders, `_components/`, hook split)
 
 ## Constants
 

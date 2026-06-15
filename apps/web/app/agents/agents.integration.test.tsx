@@ -16,6 +16,7 @@ const buildAgent = (overrides: Partial<AgentDto>): AgentDto => ({
   status: AgentStatus.Active,
   integrationCredentialId: null,
   assignedMcpIds: [],
+  assignedToolIds: [],
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
   removedAt: null,

@@ -30,6 +30,7 @@ export interface SystemAgentCatalogDetail extends SystemAgentCatalogItem {
 }
 
 export interface SystemAgentAdminItem extends SystemAgentCatalogDetail {
+  assignedToolIds: string[];
   createdByAdminId: string;
   updatedByAdminId: string;
   createdAt: string;
@@ -68,6 +69,7 @@ export interface SystemAgentFormInput {
   rule: string;
   description?: string;
   category?: SystemAgentCategory;
+  assignedToolIds?: string[];
 }
 
 export interface SystemAgentAdminListQuery {

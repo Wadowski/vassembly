@@ -8,6 +8,8 @@ export { getCountByMcpId } from './getCountByMcpId';
 export type { GetCountByMcpIdInput } from './getCountByMcpId/types';
 export { getListByMcpId } from './getListByMcpId';
 export type { GetListByMcpIdInput, GetListByMcpIdResult } from './getListByMcpId/types';
+export { assertUniqueNameForUser } from './assertUniqueNameForUser';
+export type { AssertUniqueNameForUserParams } from './assertUniqueNameForUser/types';
 export { getListForUser } from './getListForUser';
 export type {
   AgentListStatusFilter,

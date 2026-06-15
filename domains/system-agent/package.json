@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@vassembly/cache": "workspace:*",
+    "@vassembly/constants": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",

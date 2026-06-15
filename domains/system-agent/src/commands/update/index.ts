@@ -10,6 +10,7 @@ import { invalidateActiveByNameCache } from '../../cache/keys';
 import { assertUniqueActiveName, getModelById } from '../../queries';
 
 import { assertValidInput } from '../shared/assertValidInput';
+import { assignedToolIdsUpdateSchema } from '../shared/assignedToolIdsSchema';
 import { UPDATE_SYSTEM_AGENT_SCHEMA } from '../shared/schemas';
 
 import type { UpdateSystemAgentParams, UpdateSystemAgentResult } from './types';
@@ -23,6 +24,7 @@ const UPDATE_DB_SCHEMA = z
     description: z.string().max(500).nullable().optional(),
     category: z.enum(Object.values(AgentCategory) as [string, ...string[]]).nullable().optional(),
     status: z.enum(Object.values(AgentStatus) as [string, ...string[]]).optional(),
+    assignedToolIds: assignedToolIdsUpdateSchema,
     updatedByAdminId: z.string().min(1),
   });
 
