@@ -17,4 +17,7 @@ export interface E2eEnvironment {
   mongoUrl: string;
   mongoDatabase: string;
   jwtSecret: string;
+  consoleErrorPatterns: string[];
+  requestLoopThreshold: number;
+  enableDiagnostics: boolean;
 }

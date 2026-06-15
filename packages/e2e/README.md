@@ -68,6 +68,51 @@ pnpm --filter @vassembly/client-mongodb dev
 
 Global setup starts docker-compose automatically if MongoDB is not reachable.
 
+## Loop & Error Detection
+
+Automated diagnostics detect infinite update loops and request loops during test execution:
+
+### What is Detected
+
+- **React console errors**: "Maximum update depth exceeded", "Too many re-renders", and other infinite update errors
+- **API request loops**: URLs or GraphQL operations exceeding the request threshold (default: 20 requests)
+
+Tests are failed automatically if violations are detected, helping catch state management bugs early.
+
+### Configuration
+
+| Environment Variable | Default | Description |
+|---|---|---|
+| `E2E_CONSOLE_ERROR_PATTERNS` | `Maximum update depth exceeded\|Too many re-renders` | Pipe-separated patterns to match in console errors |
+| `E2E_REQUEST_LOOP_THRESHOLD` | `20` | Maximum allowed request count per URL or GraphQL operation before flagging as a loop |
+| `E2E_ENABLE_DIAGNOSTICS` | `true` | Enable/disable all diagnostic checks (set to `false` to disable) |
+
+### Opt-out Per Scenario
+
+For intentional error testing or known issues, skip diagnostics for a specific scenario using the `@skip-diagnostic-checks` tag:
+
+```gherkin
+@skip-diagnostic-checks
+Scenario: Intentionally trigger infinite loop to verify error boundary
+  When I navigate to a component with a bug
+  Then the error boundary catches the error
+```
+
+### Example
+
+```gherkin
+@smoke
+Scenario: Form submission does not trigger request loop
+  Given I am logged in
+  When I navigate to "/agents"
+  And I fill in "Name" with "Test Agent"
+  And I click "Create"
+  Then I see "Agent created successfully"
+  # Diagnostics automatically assert:
+  # - No "Maximum update depth exceeded" in console
+  # - POST /api/agents called <= 20 times
+```
+
 ## Public API
 
 - `createE2ePlaywrightConfig` — Playwright config factory
@@ -75,3 +120,4 @@ Global setup starts docker-compose automatically if MongoDB is not reachable.
 - `bddTest` — extended Playwright test fixture
 - `seedDatabase`, `seedUser`, `teardownDatabase` — data seeding helpers
 - Types: `BddWorld`, `AuthContext`, `SeedContext`
+- **Diagnostics**: `ConsoleErrorDetector`, `RequestLoopDetector`, `DiagnosticsReporter` — loop and error detection (auto-configured)
