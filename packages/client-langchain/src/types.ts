@@ -55,3 +55,12 @@ export interface LmStudioProviderParams {
   baseUrl: string;
   apiKey?: string | null;
 }
+
+export interface DeepSeekProviderParams {
+  apiKey: string;
+  baseUrl?: string | null;
+}
+
+export interface AnthropicProviderParams {
+  apiKey: string;
+}

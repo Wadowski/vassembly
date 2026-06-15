@@ -9,7 +9,7 @@ export const createAiIntegrationFormSchema = (
   z
     .object({
       name: z.string().min(1, 'Name is required').max(FORM_LIMITS.nameMaxLength),
-      provider: z.enum(['gemini', 'chatgpt', 'lm_studio']),
+      provider: z.enum(['gemini', 'chatgpt', 'lm_studio', 'deep_seek', 'anthropic']),
       apiKey: z.string().max(FORM_LIMITS.apiKeyMaxLength).optional(),
       baseUrl: z
         .union([z.string().url('Invalid URL').max(FORM_LIMITS.baseUrlMaxLength), z.literal(''), z.null()])
@@ -22,7 +22,12 @@ export const createAiIntegrationFormSchema = (
       model: z.string().max(FORM_LIMITS.modelMaxLength).optional(),
     })
     .superRefine((data, ctx) => {
-      const requiresApiKey = mode === 'create' && (data.provider === 'gemini' || data.provider === 'chatgpt');
+      const requiresApiKey =
+        mode === 'create' &&
+        (data.provider === 'gemini' ||
+          data.provider === 'chatgpt' ||
+          data.provider === 'deep_seek' ||
+          data.provider === 'anthropic');
 
       if (requiresApiKey && (!data.apiKey || data.apiKey.trim() === '')) {
         ctx.addIssue({ code: 'custom', message: 'API key is required', path: ['apiKey'] });

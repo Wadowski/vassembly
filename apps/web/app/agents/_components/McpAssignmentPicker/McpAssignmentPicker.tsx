@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 
 import { AGENT_MAX_ASSIGNED_MCPS, MCP_MANAGE_HREF } from './constants';
 import styles from './styles.module.scss';
+import tagListStyles from '../shared/tagList.module.scss';
 import type { McpAssignmentOption, McpAssignmentPickerProps } from './types';
 
 const buildMcpLabel = (mcp: McpAssignmentOption): string => `${mcp.name} (${mcp.slug})`;
@@ -89,11 +90,10 @@ export function McpAssignmentPicker({
             options={dropdownOptions}
             value=""
             isDisabled={isDisabled || isLoading || isAtLimit || availableOptions.length === 0}
-            isFullWidth
             onValueChange={handleAdd}
           />
           {value.length > 0 ? (
-            <div className={styles.selectedList}>
+            <div className={tagListStyles.tagList}>
               {value.map((mcpId) => (
                 <Tag
                   key={mcpId}

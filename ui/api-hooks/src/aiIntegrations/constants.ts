@@ -2,12 +2,16 @@ export const PROVIDER_OPTIONS = [
   { id: 'gemini', label: 'Google Gemini' },
   { id: 'chatgpt', label: 'OpenAI ChatGPT' },
   { id: 'lm_studio', label: 'LM Studio (Local)' },
+  { id: 'deep_seek', label: 'Deep Seek' },
+  { id: 'anthropic', label: 'Anthropic' },
 ] as const;
 
 export const PROVIDER_LABELS: Record<string, string> = {
   gemini: 'Google Gemini',
   chatgpt: 'OpenAI ChatGPT',
   lm_studio: 'LM Studio (Local)',
+  deep_seek: 'Deep Seek',
+  anthropic: 'Anthropic',
 };
 
 export const STATUS_OPTIONS = [

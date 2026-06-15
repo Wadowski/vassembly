@@ -9,6 +9,7 @@ import { TextField } from '@vassembly/ui-text-field';
 import { SYSTEM_AGENT_CATEGORY_OPTIONS, SYSTEM_AGENT_DESCRIPTION_MAX, SYSTEM_AGENT_RULE_MAX } from './constants';
 import type { SystemAgentFormFieldsProps } from './types';
 import styles from './styles.module.scss';
+import { AGENT_RULE_FIELD_MIN_ROWS } from '../constants';
 
 export function SystemAgentFormFields({
   form,
@@ -38,7 +39,6 @@ export function SystemAgentFormFields({
         options={SYSTEM_AGENT_CATEGORY_OPTIONS}
         value={form.values.category}
         isDisabled={isDisabled}
-        isFullWidth
         onValueChange={(value) =>
           form.setField('category', value === '' ? '' : (value as typeof form.values.category))
         }
@@ -67,6 +67,7 @@ export function SystemAgentFormFields({
         isDisabled={isDisabled}
         isFullWidth
         isMultiline
+        minRows={AGENT_RULE_FIELD_MIN_ROWS}
         onChange={(event: ChangeEvent<HTMLInputElement>) => form.setField('rule', event.target.value)}
         onBlur={() => form.blurField('rule')}
       />

@@ -13,6 +13,7 @@ import {
   INTERNAL_TOOL_STALE_CHIP_MESSAGE,
 } from './constants';
 import styles from './styles.module.scss';
+import tagListStyles from '../shared/tagList.module.scss';
 import type { InternalToolAssignmentPickerProps } from './types';
 
 export function InternalToolAssignmentPicker({
@@ -76,11 +77,10 @@ export function InternalToolAssignmentPicker({
             options={dropdownOptions}
             value=""
             isDisabled={isDisabled || isLoading || availableOptions.length === 0}
-            isFullWidth
             onValueChange={handleAdd}
           />
           {value.length > 0 ? (
-            <div className={styles.selectedList}>
+            <div className={tagListStyles.tagList}>
               {value.map((toolId) => (
                 <Tag
                   key={toolId}

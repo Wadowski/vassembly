@@ -1,0 +1,1 @@
+export const AGENT_RULE_FIELD_MIN_ROWS = 30;

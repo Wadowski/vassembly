@@ -15,6 +15,13 @@ export const resolveWorldPath = ({ path, world }: ResolveWorldPathParams): strin
     resolved = resolved.replace(/{agentId}/g, world.agentId);
   }
 
+  if (resolved.includes('{systemAgentId}')) {
+    if (!world.systemAgentId) {
+      throw new Error('systemAgentId is required but not set on world.');
+    }
+    resolved = resolved.replace(/{systemAgentId}/g, world.systemAgentId);
+  }
+
   if (resolved.includes('{taskId}')) {
     const taskId = world.taskId ?? world.storedFields?.taskId;
     if (!taskId) {

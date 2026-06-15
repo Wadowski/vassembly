@@ -114,6 +114,22 @@ export function AiIntegrationForm({
           />
         ) : null}
 
+        {values.provider === 'deep_seek' ? (
+          <TextField
+            label="Base URL (optional)"
+            placeholder="https://api.deepseek.com"
+            value={values.baseUrl ?? ''}
+            errorMessage={showError('baseUrl')}
+            helperText={showError('baseUrl')}
+            isFullWidth
+            maxLength={FORM_LIMITS.baseUrlMaxLength}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              onChange('baseUrl', event.target.value === '' ? null : event.target.value)
+            }
+            onBlur={() => onBlur('baseUrl')}
+          />
+        ) : null}
+
         {values.provider === 'chatgpt' ? (
           <TextField
             label="Organization ID (optional)"

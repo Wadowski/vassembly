@@ -14,6 +14,7 @@ import { AGENT_CATEGORY_OPTIONS, AGENT_DESCRIPTION_MAX, AGENT_RULE_MAX } from '.
 import { useAgentForm } from './useAgentForm';
 import styles from './styles.module.scss';
 import { AgentFormMode, type AgentFormProps } from './types';
+import { AGENT_RULE_FIELD_MIN_ROWS } from '../constants';
 import { IntegrationCredentialPicker } from '../IntegrationCredentialPicker';
 import { InternalToolAssignmentPicker } from '../InternalToolAssignmentPicker';
 import { filterEligibleInternalTools } from '../InternalToolAssignmentPicker/filterEligibleInternalTools';
@@ -220,7 +221,7 @@ export function AgentForm({
     <form className={styles.formStack} onSubmit={handleSubmit}>
       {archived ? (
         <div className={styles.toolbarRow}>
-          <div className={styles.formStack}>
+          <div className={`${styles.formStack} ${styles.stretchField}`}>
             <Alert variant="warning" message="This agent has been deleted. Restore it to make changes." />
             <Button
               variant="contained"
@@ -243,13 +244,11 @@ export function AgentForm({
       />
       <Dropdown
         id="agent-category"
-        className={styles.categoryDropdown}
         label="Category"
         placeholder="Select category"
         options={CATEGORY_OPTIONS}
         value={values.category}
         isDisabled={archived}
-        isFullWidth
         onValueChange={handleCategoryChange}
         onBlur={handleCategoryBlur}
       />
@@ -302,6 +301,7 @@ export function AgentForm({
         isDisabled={archived}
         isFullWidth
         isMultiline
+        minRows={AGENT_RULE_FIELD_MIN_ROWS}
         onChange={handleRuleChange}
         onBlur={handleRuleBlur}
       />

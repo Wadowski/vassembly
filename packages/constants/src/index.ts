@@ -1,5 +1,12 @@
 export { AUTH_TOKEN_ROLE } from './authTokenRole';
 export { SYSTEM_AGENT_NAME } from './SystemAgentName';
+export {
+  getIntentCategoryBySlug,
+  getIntentCategorySlugs,
+  INTENT_CATEGORIES,
+  INTENT_CATEGORY_SLUG,
+} from './intentCategories';
+export type { IntentCategoryDefinition } from './intentCategories';
 export { COUNTRIES } from './countries';
 export { CUSTOM_HEADERS } from './customHeaders';
 export {

@@ -31,6 +31,7 @@ export function SystemAgentForm({
   onCancel,
 }: SystemAgentFormProps): JSX.Element {
   const form = useSystemAgentForm();
+  const { reset } = form;
   const [localNameError, setLocalNameError] = useState<string | undefined>(undefined);
   const { data: internalToolsData, loading: isInternalToolsLoading } = useInternalTools();
 
@@ -52,14 +53,14 @@ export function SystemAgentForm({
 
   useEffect(() => {
     if (mode === SystemAgentFormMode.Create) {
-      form.reset();
+      reset();
       setLocalNameError(undefined);
       return;
     }
     if (initialAgent === undefined) {
       return;
     }
-    form.reset({
+    reset({
       name: initialAgent.name,
       category: initialAgent.category ?? '',
       description: initialAgent.description ?? '',
@@ -67,7 +68,7 @@ export function SystemAgentForm({
       assignedToolIds: initialAgent.assignedToolIds,
     });
     setLocalNameError(undefined);
-  }, [form, initialAgent, mode]);
+  }, [reset, initialAgent, mode]);
 
   useEffect(() => {
     setLocalNameError(nameConflictError);

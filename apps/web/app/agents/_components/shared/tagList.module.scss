@@ -1,0 +1,15 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+  align-items: flex-start;
+  width: fit-content;
+  max-width: 100%;
+
+  > * {
+    width: fit-content;
+    max-width: 100%;
+  }
+}

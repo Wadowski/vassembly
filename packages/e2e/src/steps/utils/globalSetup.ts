@@ -1,6 +1,6 @@
 import { getE2eEnvironment } from '../../config/environment';
 import { seedDatabase } from '../../seed/seedDatabase';
-import { seedE2EAssistantSystemAgent } from '../../seed/seedE2EAssistantSystemAgent';
+import { seedE2ESystemAgents } from '../../seed/seedE2ESystemAgents';
 import { isMongoReachable, startMongoDocker } from './mongoDocker';
 
 const MONGO_STARTUP_RETRIES = 30;
@@ -38,7 +38,7 @@ const globalSetup = async (): Promise<void> => {
     },
   });
 
-  await seedE2EAssistantSystemAgent({
+  await seedE2ESystemAgents({
     context: {
       mongoUrl: environment.mongoUrl,
       mongoDatabase: environment.mongoDatabase,

@@ -60,6 +60,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
         }
       : undefined,
   });
+  const { handleChange, values: formValues } = form;
 
   const { mutate: update, isLoading: isUpdating } = useAiIntegrationUpdate();
   const { mutate: testConnection, isLoading: isTesting } = useTestConnection();
@@ -73,8 +74,8 @@ export function AiIntegrationEditPageContent(): JSX.Element {
       return;
     }
     setTestResult(undefined);
-    form.handleChange('model', '');
-  }, [credential, form, form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
+    handleChange('model', '');
+  }, [credential, formValues.provider, formValues.apiKey, formValues.baseUrl, formValues.organizationId, handleChange]);
 
   useEffect(() => {
     if (credentialId === '') {

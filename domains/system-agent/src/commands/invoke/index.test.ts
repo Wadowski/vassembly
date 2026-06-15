@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
 import { NotFoundError, ValidationError } from '@vassembly/errors';
 
 vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
@@ -46,6 +47,28 @@ const buildEchoClient = (): ModeledProviderClient => ({
 describe('invoke system agent command', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('should append intent categories when invoking intent classifier', async () => {
+    mockGetActiveById.mockResolvedValue({
+      data: {
+        id: SYSTEM_AGENT_ID,
+        name: SYSTEM_AGENT_NAME.IntentClassifier,
+        rule: 'Classify the input.',
+        status: 'active',
+        removedAt: null,
+      },
+    });
+
+    const result = await invoke({
+      modeledProviderClient: buildEchoClient(),
+      systemAgentId: SYSTEM_AGENT_ID,
+      message: 'What is TypeScript?',
+    });
+
+    expect(result.message).toContain('Classify the input.');
+    expect(result.message).toContain('## Categories');
+    expect(result.message).toContain('### question');
   });
 
   it('should pass structured invoke params with agent rule as systemMessage', async () => {

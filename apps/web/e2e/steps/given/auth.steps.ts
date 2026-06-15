@@ -5,6 +5,7 @@ import { createBdd } from 'playwright-bdd';
 import { bddTest, seedUser } from '@vassembly/e2e';
 
 import { E2E_USER_PASSWORD, signInSeededUser } from '../utils/auth';
+import { promoteUserToAdmin } from '../utils/promoteUserToAdmin';
 
 const { Given, When } = createBdd(bddTest);
 
@@ -47,6 +48,20 @@ Given('I am authenticated as {string}', async ({ page, seed, world }, email: str
     token: user.token,
     email: user.email,
   };
+});
+
+Given('the current user has the admin role', async ({ page, seed, world }) => {
+  if (!world.auth?.userId || !world.auth.email) {
+    throw new Error('Current user must be logged in before granting admin role');
+  }
+
+  await promoteUserToAdmin({ context: seed, email: world.auth.email });
+
+  if (!page) {
+    return;
+  }
+
+  await signInSeededUser({ page, email: world.auth.email });
 });
 
 When('my session expires', async ({ page }) => {

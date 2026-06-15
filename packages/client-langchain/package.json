@@ -19,7 +19,9 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.57.0",
     "@google/genai": "^2.6.0",
+    "@langchain/anthropic": "^0.3.33",
     "@langchain/core": "^0.3.80",
     "@langchain/google-genai": "^0.2.18",
     "@langchain/mcp-adapters": "^0.5.0",

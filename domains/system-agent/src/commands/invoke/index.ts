@@ -2,6 +2,7 @@ import { NotFoundError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
 
 import { getActiveById } from '../../queries';
+import { buildSystemAgentSystemMessage } from '../../utils/buildSystemAgentSystemMessage';
 
 import { assertValidInput } from '../shared/assertValidInput';
 import { INVOKE_SYSTEM_AGENT_SCHEMA } from '../shared/schemas';
@@ -30,7 +31,10 @@ export const invoke = async (
 
   const response = await params.modeledProviderClient.invoke({
     message: validated.message,
-    systemMessage: agentResult.data.rule,
+    systemMessage: buildSystemAgentSystemMessage({
+      name: agentResult.data.name!,
+      rule: agentResult.data.rule,
+    }),
     mcpServerConfigs: params.mcpServerConfigs,
     internalToolBindings: params.internalToolBindings,
   });
