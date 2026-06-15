@@ -7,6 +7,7 @@ import { WrongParamError, NotFoundError } from '@vassembly/errors';
 
 import { resolveMcpSlugs } from '../resolveMcpSlugs';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
+import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
 
 import type {
   RunAgentInvokeWithToolsParams,
@@ -75,6 +76,7 @@ const invokePersonalAgent = async ({
 
   return {
     message: result.message,
+    usage: result.usage,
     metadata: {
       mcpIdsUsed: mcpIds.filter((id) => !skippedMcpIds.includes(id)),
       skippedMcpIds,
@@ -136,9 +138,61 @@ const invokeSystemAgent = async ({
 export const runAgentInvokeWithTools = async (
   params: RunAgentInvokeWithToolsParams,
 ): Promise<RunAgentInvokeWithToolsResult> => {
-  if (params.agentType === 'personal') {
-    return invokePersonalAgent(params);
+  const { toolContext } = params;
+  const recordProgress = toolContext.recordAgentInvokeProgress;
+  const invokeStartTime = Date.now();
+
+  if (recordProgress) {
+    await recordProgress({
+      agentId: params.agentId,
+      parentAgentId: toolContext.parentAgentId,
+      state: 'started',
+      timestamp: new Date(),
+      inputMessages: params.message,
+    });
   }
 
-  return invokeSystemAgent(params);
+  try {
+    const result =
+      params.agentType === 'personal'
+        ? await invokePersonalAgent(params)
+        : await invokeSystemAgent(params);
+
+    if (recordProgress) {
+      await recordProgress({
+        agentId: params.agentId,
+        parentAgentId: toolContext.parentAgentId,
+        state: 'completed',
+        timestamp: new Date(),
+        duration: Date.now() - invokeStartTime,
+        generatedResponse: result.message,
+        tokenUsage: mapInvokeUsageToTokenUsage({ usage: result.usage }),
+      });
+    }
+
+    return result;
+  } catch (error) {
+    if (recordProgress) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorType =
+        error instanceof Error && 'code' in error
+          ? String((error as Error & { code?: string }).code)
+          : undefined;
+
+      await recordProgress({
+        agentId: params.agentId,
+        parentAgentId: toolContext.parentAgentId,
+        state: 'failed',
+        timestamp: new Date(),
+        duration: Date.now() - invokeStartTime,
+        errorDetails: {
+          message: errorMessage,
+          type: errorType,
+          stackTrace: error instanceof Error ? error.stack : undefined,
+        },
+      });
+    }
+
+    throw error;
+  }
 };

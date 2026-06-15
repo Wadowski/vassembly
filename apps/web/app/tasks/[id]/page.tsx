@@ -1,12 +1,12 @@
 'use client';
 
+import { ExecutionProgressTracker } from '@vassembly/ui-execution-progress-tracker';
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
 import { TaskDetailAiResponse } from './_components/TaskDetailAiResponse/TaskDetailAiResponse';
 import { TaskDetailDescription } from './_components/TaskDetailDescription';
 import { TaskDetailExecutionError } from './_components/TaskDetailExecutionError/TaskDetailExecutionError';
 import { TaskDetailError } from './_components/TaskDetailError';
 import { TaskDetailHeader } from './_components/TaskDetailHeader';
-import { TaskDetailTimeline } from './_components/TaskDetailTimeline';
 import styles from './TaskDetailPage.module.scss';
 import { TaskDetailSkeleton } from './TaskDetailSkeleton';
 import { useTaskDetailPage } from './useTaskDetailPage';
@@ -28,7 +28,7 @@ export default function TaskDetailPage(): JSX.Element {
           <TaskDetailDescription description={view.task.description} />
           <TaskDetailAiResponse task={view.task} />
           <TaskDetailExecutionError task={view.task} />
-          <TaskDetailTimeline task={view.task} />
+          <ExecutionProgressTracker taskId={view.task.id} taskStatus={view.task.status} />
         </article>
       </main>
     );

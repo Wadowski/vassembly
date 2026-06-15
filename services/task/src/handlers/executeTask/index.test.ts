@@ -9,6 +9,7 @@ const {
   mockFail,
   mockGetPreferenceByUserId,
   mockRunAgentInvokeWithTools,
+  mockFinalizeTaskProgress,
   mockLogger,
 } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
@@ -17,6 +18,7 @@ const {
   mockFail: vi.fn(),
   mockGetPreferenceByUserId: vi.fn(),
   mockRunAgentInvokeWithTools: vi.fn(),
+  mockFinalizeTaskProgress: vi.fn(),
   mockLogger: vi.fn(),
 }));
 
@@ -35,6 +37,12 @@ vi.mock('@vassembly/domain-task', () => ({
 vi.mock('@vassembly/domain-system-agent', () => ({
   default: {
     queries: { getPreferenceByUserId: mockGetPreferenceByUserId },
+  },
+}));
+
+vi.mock('@vassembly/domain-task-progress', () => ({
+  default: {
+    commands: { finalizeTaskProgress: mockFinalizeTaskProgress },
   },
 }));
 
@@ -78,6 +86,7 @@ describe('executeTask handler', () => {
     });
     mockComplete.mockResolvedValue({ data: {} });
     mockFail.mockResolvedValue({ data: {} });
+    mockFinalizeTaskProgress.mockResolvedValue({ completedAt: new Date() });
   });
 
   it('should complete task when credential exists and LLM invoke succeeds', async () => {
@@ -95,9 +104,11 @@ describe('executeTask handler', () => {
           callerAgentId: 'agent-1',
           callerAgentType: 'system',
           recursionDepth: 0,
+          recordAgentInvokeProgress: expect.any(Function),
         }),
       }),
     );
+    expect(mockFinalizeTaskProgress).toHaveBeenCalledWith({ taskId: 'task-1' });
     expect(mockComplete).toHaveBeenCalledWith({
       taskId: 'task-1',
       llmResponse: 'LLM result',

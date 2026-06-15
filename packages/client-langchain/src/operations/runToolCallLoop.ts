@@ -3,6 +3,12 @@ import type { BaseMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { DynamicStructuredTool } from '@langchain/core/tools';
 
+import {
+  extractTokenUsageFromMessage,
+  mergeTokenUsage,
+} from '../utils/extractTokenUsageFromMessage';
+import type { AiProviderInvokeResult } from '../types';
+
 export interface RunToolCallLoopParams {
   model: BaseChatModel;
   tools: DynamicStructuredTool[];
@@ -13,6 +19,7 @@ export interface RunToolCallLoopParams {
 export interface RunToolCallLoopResult {
   response: BaseMessage;
   executedToolNames: string[];
+  usage?: NonNullable<AiProviderInvokeResult['usage']>;
 }
 
 const serializeToolContent = (content: unknown): string => {
@@ -34,6 +41,7 @@ export const runToolCallLoop = async ({
     tools.length > 0 && typeof model.bindTools === 'function' ? model.bindTools(tools) : model;
   let currentMessages = messages;
   const executedToolNames: string[] = [];
+  let usage: NonNullable<AiProviderInvokeResult['usage']> | undefined;
 
   const recordExecutedTool = (toolName: string): void => {
     if (!executedToolNames.includes(toolName)) {
@@ -43,10 +51,11 @@ export const runToolCallLoop = async ({
 
   for (let iteration = 0; iteration < maxIterations; iteration += 1) {
     const response = await modelWithTools.invoke(currentMessages);
+    usage = mergeTokenUsage(usage, extractTokenUsageFromMessage(response));
     const toolCalls = response.tool_calls ?? [];
 
     if (toolCalls.length === 0) {
-      return { response, executedToolNames };
+      return { response, executedToolNames, usage };
     }
 
     currentMessages = [...currentMessages, response];
@@ -75,5 +84,6 @@ export const runToolCallLoop = async ({
   }
 
   const response = await modelWithTools.invoke(currentMessages);
-  return { response, executedToolNames };
+  usage = mergeTokenUsage(usage, extractTokenUsageFromMessage(response));
+  return { response, executedToolNames, usage };
 };

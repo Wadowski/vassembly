@@ -1,0 +1,127 @@
+import React from 'react';
+
+import { Button } from '@vassembly/ui-button';
+import { Modal } from '@vassembly/ui-modal';
+import { Text } from '@vassembly/ui-text';
+
+import { formatDuration } from '../utils/formatDuration';
+import { formatRelativeTime } from '../utils/formatRelativeTime';
+import { getProgressEventTitle } from '../utils/getProgressEventTitle';
+import { TokenUsageWidget } from './TokenUsageWidget';
+import type { ProgressDetailModalProps } from '../types';
+import styles from './ProgressDetailModal.module.scss';
+
+const getStateLabel = (state: string): string => {
+  if (state === 'COMPLETED') {
+    return 'Completed';
+  }
+
+  if (state === 'FAILED') {
+    return 'Failed';
+  }
+
+  if (state === 'STARTED') {
+    return 'Started';
+  }
+
+  return state;
+};
+
+export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen, event, onClose }) => {
+  if (!event) {
+    return null;
+  }
+
+  const modalTitle = `@${event.agentName}`;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={modalTitle} size="md">
+      <div className={styles.modalStack}>
+        <div className={styles.summaryRow}>
+          <Text variant="body2" className={styles.eventTitle}>
+            {getProgressEventTitle(event)}
+          </Text>
+          <Text variant="body2" className={styles.stateLabel} data-state={event.state}>
+            {getStateLabel(event.state)}
+          </Text>
+        </div>
+
+        <section className={styles.section}>
+          <Text variant="label" className={styles.sectionLabel}>
+            Metadata
+          </Text>
+          <dl className={styles.metadataList}>
+            <div className={styles.metadataRow}>
+              <Text variant="body2" as="dt" className={styles.metadataLabel}>
+                Timestamp
+              </Text>
+              <Text variant="body2" as="dd" className={styles.metadataValue}>
+                {formatRelativeTime(event.timestamp)}
+              </Text>
+            </div>
+            {event.duration !== null && (
+              <div className={styles.metadataRow}>
+                <Text variant="body2" as="dt" className={styles.metadataLabel}>
+                  Duration
+                </Text>
+                <Text variant="body2" as="dd" className={styles.metadataValue}>
+                  {formatDuration(event.duration)}
+                </Text>
+              </div>
+            )}
+          </dl>
+        </section>
+
+        {event.tokenUsage && (
+          <section className={styles.section}>
+            <Text variant="label" className={styles.sectionLabel}>
+              Token usage
+            </Text>
+            <TokenUsageWidget tokenUsage={event.tokenUsage} variant="expanded" />
+          </section>
+        )}
+
+        {event.errorDetails && (
+          <section className={styles.section}>
+            <Text variant="label" className={styles.sectionLabel}>
+              Error details
+            </Text>
+            <div className={styles.errorBox}>
+              <Text variant="body2" className={styles.errorMessage}>
+                {event.errorDetails.message}
+              </Text>
+              <details className={styles.errorDetails}>
+                <summary>Type: {event.errorDetails.type}</summary>
+                {event.errorDetails.stackTrace && (
+                  <pre className={styles.stackTrace}>{event.errorDetails.stackTrace}</pre>
+                )}
+              </details>
+            </div>
+          </section>
+        )}
+
+        {event.inputMessages && (
+          <section className={styles.section}>
+            <Text variant="label" className={styles.sectionLabel}>
+              Input
+            </Text>
+            <pre className={styles.codeBlock}>{event.inputMessages}</pre>
+          </section>
+        )}
+
+        {event.generatedResponse && (
+          <section className={styles.section}>
+            <Text variant="label" className={styles.sectionLabel}>
+              Response
+            </Text>
+            <pre className={styles.codeBlock}>{event.generatedResponse}</pre>
+          </section>
+        )}
+
+        <div className={styles.toolbarRow}>
+          <Button variant="outlined" text="Close" onClick={onClose} />
+        </div>
+      </div>
+    </Modal>
+  );
+};

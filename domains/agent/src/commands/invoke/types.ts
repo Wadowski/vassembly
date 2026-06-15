@@ -29,7 +29,11 @@ export interface ModeledProviderInvokeParams {
 export interface ModeledProviderClient {
   invoke(
     params: ModeledProviderInvokeParams | string,
-  ): Promise<{ message: string; toolUsage?: ModeledProviderToolUsage }>;
+  ): Promise<{
+    message: string;
+    toolUsage?: ModeledProviderToolUsage;
+    usage?: { promptTokens: number; completionTokens: number; totalTokens?: number };
+  }>;
 }
 
 export interface InvokeAgentParams {
@@ -45,4 +49,5 @@ export interface InvokeAgentParams {
 export interface InvokeAgentResult {
   message: string;
   toolUsage?: ModeledProviderToolUsage;
+  usage?: { promptTokens: number; completionTokens: number; totalTokens?: number };
 }

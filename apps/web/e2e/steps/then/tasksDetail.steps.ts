@@ -91,12 +91,12 @@ Then('I see a loading skeleton', async ({ page }) => {
   await expect(page.getByTestId('task-detail-skeleton')).toBeVisible();
 });
 
-Then('I see {string} in the activity timeline', async ({ page }, text: string) => {
+Then('I see {string} in the execution progress tracker', async ({ page }, text: string) => {
   if (!page) {
     return;
   }
 
-  await expect(page.getByTestId('task-detail-timeline')).toContainText(text);
+  await expect(page.getByTestId('execution-progress-tracker')).toContainText(text);
 });
 
 Then('then I see an error message', async ({ page }) => {

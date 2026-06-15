@@ -1,0 +1,32 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.tokenUsageInline {
+  display: flex;
+  gap: $spacing-3;
+  font-size: $font-size-body-sm;
+  flex-wrap: wrap;
+}
+
+.tokenUsageExpanded {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.tokenUsageItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-4;
+}
+
+.tokenLabel {
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+}
+
+.tokenValue {
+  font-family: $font-family-mono;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}

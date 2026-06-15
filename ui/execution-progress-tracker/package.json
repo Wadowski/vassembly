@@ -1,0 +1,48 @@
+{
+  "name": "@vassembly/ui-execution-progress-tracker",
+  "version": "0.0.1",
+  "description": "Real-time execution progress tracking UI component for Vassembly",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.11.0",
+    "@vassembly/errors": "workspace:*",
+    "@vassembly/theme": "workspace:*",
+    "@vassembly/ui-button": "workspace:*",
+    "@vassembly/ui-modal": "workspace:*",
+    "@vassembly/ui-text": "workspace:*",
+    "graphql": "^16.11.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "^22.19.7",
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "@types/react-dom": "^18.0.0 || ^19.0.0",
+    "@vassembly/eslint-config": "workspace:*",
+    "@vassembly/typescript-config": "workspace:*",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^9.39.1",
+    "sass": "^1.69.0",
+    "typescript": "5.9.2",
+    "vite": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "execution",
+    "progress",
+    "tracking",
+    "real-time",
+    "ui",
+    "component"
+  ],
+  "author": "",
+  "license": "MIT"
+}

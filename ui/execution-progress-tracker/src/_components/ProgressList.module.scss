@@ -1,0 +1,21 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.eventList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.progressListEmpty {
+  padding: $spacing-4 0;
+  text-align: left;
+  color: $color-text-secondary;
+}
+
+.progressListEmpty p {
+  margin: 0;
+  font-size: $font-size-body-sm;
+}

@@ -4,6 +4,7 @@ import { TaskStatus } from '@vassembly/ui-api-hooks';
 import { Text } from '@vassembly/ui-text';
 
 import pageStyles from '../../TaskDetailPage.module.scss';
+import { MarkdownContent } from './MarkdownContent';
 import styles from './TaskDetailAiResponse.module.scss';
 import type { TaskDetailAiResponseProps } from './types';
 
@@ -30,9 +31,11 @@ export const TaskDetailAiResponse = ({ task }: TaskDetailAiResponseProps): JSX.E
       <Text variant="label" id="task-detail-ai-response-heading" className={pageStyles.sectionLabel}>
         {RESPONSE_HEADING}
       </Text>
-      <Text variant="body2" className={styles.responseBody} data-testid="task-detail-ai-response">
-        {task.llmResponse}
-      </Text>
+      <MarkdownContent
+        content={task.llmResponse}
+        className={styles.responseBody}
+        testId="task-detail-ai-response"
+      />
     </section>
   );
 };

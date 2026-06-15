@@ -23,6 +23,7 @@
     "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
+    "@vassembly/domain-task-progress": "workspace:*",
     "@vassembly/service-agent": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/logger": "workspace:*"

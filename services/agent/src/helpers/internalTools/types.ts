@@ -9,7 +9,25 @@ export interface InternalToolContext {
   callerAgentId: string;
   recursionDepth: number;
   rootInvokeId: string;
+  parentAgentId?: string;
+  recordAgentInvokeProgress?: RecordAgentInvokeProgress;
 }
+
+export interface AgentInvokeProgressEventInput {
+  agentId: string;
+  parentAgentId?: string;
+  state: 'started' | 'completed' | 'failed';
+  timestamp?: Date;
+  duration?: number;
+  inputMessages?: string;
+  generatedResponse?: string;
+  tokenUsage?: { input: number; output: number; total: number };
+  errorDetails?: { message: string; type?: string; stackTrace?: string };
+}
+
+export type RecordAgentInvokeProgress = (
+  input: AgentInvokeProgressEventInput,
+) => Promise<void>;
 
 export type InternalToolHandler = (args: Record<string, unknown>) => Promise<string>;
 

@@ -22,6 +22,11 @@ export interface AiProviderInvokeParams {
 export interface AiProviderInvokeResult {
   message: string;
   model: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
   toolUsage?: {
     internalToolIdsUsed: string[];
     skippedInternalToolIds: string[];

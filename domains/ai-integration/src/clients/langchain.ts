@@ -32,7 +32,15 @@ export interface ModeledProviderInvokeParams {
 export interface ModeledProviderClient {
   invoke(
     params: ModeledProviderInvokeParams | string,
-  ): Promise<{ message: string; toolUsage?: ModeledProviderToolUsage }>;
+  ): Promise<{
+    message: string;
+    usage?: {
+      promptTokens: number;
+      completionTokens: number;
+      totalTokens: number;
+    };
+    toolUsage?: ModeledProviderToolUsage;
+  }>;
 }
 
 export const getModeledProviderClient = (

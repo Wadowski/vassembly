@@ -1,14 +1,5 @@
 @import '@vassembly/theme/src/tokens/index.scss';
 
-.eventList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
 .eventRow {
   display: grid;
   grid-template-columns: 8px 1fr;
@@ -32,12 +23,24 @@
   }
 }
 
+.eventRowActive .eventContent {
+  background-color: rgba($color-primary, 0.06);
+}
+
 .eventNode {
   width: 8px;
   height: 8px;
   margin-top: 6px;
   border-radius: 50%;
   background-color: $color-primary;
+
+  &[data-state='COMPLETED'] {
+    background-color: $color-success;
+  }
+
+  &[data-state='FAILED'] {
+    background-color: $color-error;
+  }
 }
 
 .eventContent {
@@ -46,25 +49,45 @@
   align-items: baseline;
   gap: $spacing-2;
   min-width: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-radius: $border-radius-sm;
+
+  &:hover {
+    background-color: rgba($color-primary, 0.04);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
 }
 
 .eventAuthor {
   font-weight: $font-weight-semibold;
+  flex-shrink: 0;
 }
 
 .eventTitle {
   color: $color-text-primary;
   font-weight: $font-weight-bold;
+  min-width: 0;
+}
+
+.eventTokens {
+  color: $color-text-secondary;
+  font-family: $font-family-mono;
+  flex-shrink: 0;
 }
 
 .eventTimestamp {
   color: $color-text-secondary;
   font-weight: $font-weight-light;
-
-}
-
-.skeletonRows {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-3;
+  margin-left: auto;
+  flex-shrink: 0;
 }

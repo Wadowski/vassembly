@@ -1,0 +1,128 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.modalStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $spacing-3;
+  flex-wrap: wrap;
+}
+
+.eventTitle {
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+}
+
+.stateLabel {
+  color: $color-text-secondary;
+
+  &[data-state='COMPLETED'] {
+    color: $color-success;
+  }
+
+  &[data-state='FAILED'] {
+    color: $color-error;
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.sectionLabel {
+  color: $color-primary;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-tracked;
+}
+
+.metadataList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  margin: 0;
+}
+
+.metadataRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+
+  @media #{$media-tablet} {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: $spacing-4;
+    align-items: center;
+  }
+}
+
+.metadataLabel {
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.metadataValue {
+  margin: 0;
+  color: $color-text-primary;
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  padding: $spacing-4;
+  border-radius: $border-radius-lg;
+  border: 1px solid $color-error;
+  background-color: $color-error-container;
+}
+
+.errorMessage {
+  color: $color-error;
+  margin: 0;
+}
+
+.errorDetails {
+  color: $color-text-secondary;
+  font-size: $font-size-body-sm;
+
+  summary {
+    cursor: pointer;
+    color: $color-error;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.stackTrace,
+.codeBlock {
+  margin: $spacing-2 0 0;
+  padding: $spacing-3;
+  border-radius: $border-radius-md;
+  border: 1px solid $color-outline-variant;
+  background-color: rgba($color-neutral-0, 0.03);
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  font-size: $font-size-body-sm;
+  line-height: $line-height-relaxed;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.toolbarRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-3;
+  padding-top: $spacing-2;
+}

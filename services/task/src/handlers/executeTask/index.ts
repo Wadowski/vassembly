@@ -2,8 +2,10 @@ import { randomUUID } from 'node:crypto';
 
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import taskDomain from '@vassembly/domain-task';
+import taskProgressDomain from '@vassembly/domain-task-progress';
 import { runAgentInvokeWithTools } from '@vassembly/service-agent';
 
+import { createRecordAgentInvokeProgress } from './createRecordAgentInvokeProgress';
 import { logTaskTransition } from './logTaskTransition';
 import { mapExecutionError } from './mapExecutionError';
 
@@ -16,10 +18,11 @@ const INVALID_AGENT_ASSIGNED_MESSAGE = 'Task cannot be executed without an assig
 
 export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promise<void> => {
   const startedAt = Date.now();
+  let task: any;
 
   try {
     const taskResult = await taskDomain.queries.getModelById({ id: taskId });
-    const task = taskResult.data;
+    task = taskResult.data;
 
     if (!task?.agentAssignedId) {
       await taskDomain.commands.fail({
@@ -70,8 +73,11 @@ export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promis
         callerAgentType: 'system',
         recursionDepth: 0,
         rootInvokeId: randomUUID(),
+        recordAgentInvokeProgress: createRecordAgentInvokeProgress({ taskId, userId }),
       },
     });
+
+    await taskProgressDomain.commands.finalizeTaskProgress({ taskId });
 
     await taskDomain.commands.complete({ taskId, llmResponse: invokeResult.message });
     logTaskTransition({
@@ -84,6 +90,13 @@ export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promis
     });
   } catch (error) {
     const mapped = mapExecutionError(error);
+
+    try {
+      await taskProgressDomain.commands.finalizeTaskProgress({ taskId });
+    } catch {
+      // Silently fail if progress recording fails during error handling
+    }
+
     await taskDomain.commands.fail({ taskId, ...mapped });
     logTaskTransition({
       event: 'task.status.failed',

@@ -169,6 +169,39 @@ describe('runAgentInvokeWithTools', () => {
     expect(result.metadata.maxUseAgentDepth).toBe(2);
   });
 
+  it('should record started and completed events when progress callback is provided', async () => {
+    const recordProgress = vi.fn().mockResolvedValue(undefined);
+
+    await runAgentInvokeWithTools({
+      userId: 'user-1',
+      agentType: 'personal',
+      agentId: 'agent-1',
+      message: 'Hello',
+      toolContext: {
+        ...TOOL_CONTEXT,
+        recordAgentInvokeProgress: recordProgress,
+      },
+    });
+
+    expect(recordProgress).toHaveBeenCalledTimes(2);
+    expect(recordProgress).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        agentId: 'agent-1',
+        state: 'started',
+        inputMessages: 'Hello',
+      }),
+    );
+    expect(recordProgress).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        agentId: 'agent-1',
+        state: 'completed',
+        tokenUsage: { input: 10, output: 20, total: 30 },
+      }),
+    );
+  });
+
   it('should throw when personal agent has no integration credential', async () => {
     mockGetById.mockResolvedValue({
       data: {

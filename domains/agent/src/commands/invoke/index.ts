@@ -29,5 +29,6 @@ export const invoke = async (params: InvokeAgentParams): Promise<InvokeAgentResu
   return {
     message: response.message,
     toolUsage: response.toolUsage,
+    usage: response.usage,
   };
 };

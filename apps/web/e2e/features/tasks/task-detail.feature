@@ -31,10 +31,10 @@ Feature: Task Detail Page
     When I navigate to its detail page
     Then I see a title placeholder like "Task details"
 
-  Scenario: Unassigned agent displays message
+  Scenario: Unassigned agent shows empty progress state
     Given a task without an assigned agent exists
     When I navigate to its detail page
-    Then I see "@TBD" in the activity timeline
+    Then I see "No progress data available" in the execution progress tracker
 
   Scenario: Empty description displays placeholder message
     Given a task with an empty description exists

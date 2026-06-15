@@ -2,14 +2,14 @@
 
 import { ProtectedAuthRoute } from '../../../../../lib/auth/ProtectedAuthRoute';
 import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../aiIntegrationRoutes';
-import { AiIntegrationEditPageContent } from './useAiIntegrationEditPage';
+import { AiIntegrationEditPage } from './AiIntegrationEditPage';
 
 const LOGIN_ROUTE = `/login?returnUrl=${encodeURIComponent(AI_INTEGRATIONS_LIST_ANCHOR)}`;
 
-export default function AiIntegrationEditPage(): JSX.Element {
+export default function AiIntegrationEditPageRoute(): JSX.Element {
   return (
     <ProtectedAuthRoute requireAuthenticated redirectPath={LOGIN_ROUTE}>
-      <AiIntegrationEditPageContent />
+      <AiIntegrationEditPage />
     </ProtectedAuthRoute>
   );
 }

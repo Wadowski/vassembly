@@ -6,10 +6,8 @@ import { LoginForm } from "@vassembly/ui-login-form";
 import { ProtectedAuthRoute } from "../../lib/auth/ProtectedAuthRoute";
 import { setTokens } from "../../lib/auth/sessionStorage";
 
-function LoginPageContent() {
+function LoginPageContent({ returnUrl }: { returnUrl: string | null }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const returnUrl = searchParams.get("returnUrl");
 
   const handleLoginSuccess = (result: { authToken: string; refreshToken: string }) => {
     setTokens({
@@ -29,12 +27,23 @@ function LoginPageContent() {
   );
 }
 
-export default function LoginPage() {
+function LoginPageWrapper() {
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl");
+
   return (
-    <ProtectedAuthRoute>
+    <ProtectedAuthRoute redirectPath={returnUrl ?? "/"}>
       <Suspense fallback={<div>Loading...</div>}>
-        <LoginPageContent />
+        <LoginPageContent returnUrl={returnUrl} />
       </Suspense>
     </ProtectedAuthRoute>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageWrapper />
+    </Suspense>
   );
 }

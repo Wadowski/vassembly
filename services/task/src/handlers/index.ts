@@ -3,6 +3,8 @@ export { executeTask } from './executeTask';
 export type { ExecuteTaskParams } from './executeTask/types';
 export { getTask } from './getTask';
 export { listUserTasks } from './listUserTasks';
+export { recordTaskProgress } from './recordTaskProgress';
 export type { CreateTaskHandlerInput, CreateTaskHandlerOutput } from './createTask/types';
 export type { GetTaskHandlerInput } from './getTask/types';
 export type { ListUserTasksHandlerInput, ListUserTasksHandlerOutput } from './listUserTasks/types';
+export type { RecordTaskProgressInput, RecordTaskProgressOutput } from './recordTaskProgress/types';

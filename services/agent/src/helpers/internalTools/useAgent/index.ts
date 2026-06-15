@@ -65,6 +65,7 @@ export const useAgent = async ({ args, context }: UseAgentParams): Promise<strin
     toolContext: {
       ...context,
       recursionDepth: context.recursionDepth + 1,
+      parentAgentId: context.callerAgentId,
       callerAgentId: targetResult.agentId,
       callerAgentType: targetResult.agentType,
     },
