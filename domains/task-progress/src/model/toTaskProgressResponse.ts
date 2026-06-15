@@ -29,6 +29,9 @@ const toProgressEventResponse = (
   generatedResponse: event.generatedResponse,
   tokenUsage: event.tokenUsage,
   errorDetails: event.errorDetails,
+  integrationName: event.integrationName,
+  provider: event.provider,
+  model: event.model,
 });
 
 export const toTaskProgressResponse = ({

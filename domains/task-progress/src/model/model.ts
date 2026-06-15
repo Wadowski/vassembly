@@ -30,6 +30,9 @@ export interface ProgressEventModel {
   errorDetails?: ErrorDetails;
   parentAgentId?: string;
   childAgentIds?: string[];
+  integrationName?: string;
+  provider?: string;
+  model?: string;
 }
 
 export class TaskProgressModel extends Model {

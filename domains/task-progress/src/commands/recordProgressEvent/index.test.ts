@@ -110,6 +110,26 @@ describe('recordProgressEvent', () => {
       expect(result.tokenUsage).toEqual(tokenUsage);
     });
 
+    it('should include integration fields when provided', async () => {
+      mockCollection.updateOne.mockResolvedValue({
+        matchedCount: 1,
+        modifiedCount: 1,
+      });
+
+      const result = await recordProgressEvent({
+        taskId: 'task-123',
+        agentId: 'agent-123',
+        state: ProgressEventState.Started,
+        integrationName: 'My OpenAI',
+        provider: 'chatgpt',
+        model: 'gpt-4o',
+      });
+
+      expect(result.integrationName).toBe('My OpenAI');
+      expect(result.provider).toBe('chatgpt');
+      expect(result.model).toBe('gpt-4o');
+    });
+
     it('should include parentAgentId when provided', async () => {
       mockCollection.updateOne.mockResolvedValue({
         matchedCount: 1,

@@ -12,6 +12,9 @@ export interface ProgressEventResponse {
   generatedResponse?: string;
   tokenUsage?: TokenUsage;
   errorDetails?: ErrorDetails;
+  integrationName?: string;
+  provider?: string;
+  model?: string;
 }
 
 export interface TaskProgressResponse {

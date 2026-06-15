@@ -7,4 +7,13 @@ export interface ResolveAndBuildClientParams {
   };
 }
 
-export type ResolveAndBuildClientResult = ModeledProviderClient;
+export interface AiIntegrationSnapshot {
+  integrationName: string;
+  provider: string;
+  model: string;
+}
+
+export interface ResolveAndBuildClientResult {
+  client: ModeledProviderClient;
+  integrationSnapshot: AiIntegrationSnapshot;
+}

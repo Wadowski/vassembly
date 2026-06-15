@@ -7,8 +7,9 @@ import { Text } from '@vassembly/ui-text';
 import { formatDuration } from '../utils/formatDuration';
 import { formatRelativeTime } from '../utils/formatRelativeTime';
 import { getProgressEventTitle } from '../utils/getProgressEventTitle';
+import { getProviderLabel } from '../utils/getProviderLabel';
 import { TokenUsageWidget } from './TokenUsageWidget';
-import type { ProgressDetailModalProps } from '../types';
+import type { ProgressDetailModalProps, ProgressEvent } from '../types';
 import styles from './ProgressDetailModal.module.scss';
 
 const getStateLabel = (state: string): string => {
@@ -27,12 +28,17 @@ const getStateLabel = (state: string): string => {
   return state;
 };
 
+const hasIntegrationInfo = (event: ProgressEvent): boolean =>
+  Boolean(event.integrationName || event.provider || event.model);
+
 export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen, event, onClose }) => {
   if (!event) {
     return null;
   }
 
   const modalTitle = `@${event.agentName}`;
+  const showIntegrationSection = hasIntegrationInfo(event);
+  const providerLabel = getProviderLabel({ provider: event.provider });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={modalTitle} size="md">
@@ -71,6 +77,46 @@ export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen
             )}
           </dl>
         </section>
+
+        {showIntegrationSection && (
+          <section className={styles.section}>
+            <Text variant="label" className={styles.sectionLabel}>
+              AI Integration
+            </Text>
+            <dl className={styles.metadataList}>
+              {event.integrationName && (
+                <div className={styles.metadataRow}>
+                  <Text variant="body2" as="dt" className={styles.metadataLabel}>
+                    Name
+                  </Text>
+                  <Text variant="body2" as="dd" className={styles.metadataValue}>
+                    {event.integrationName}
+                  </Text>
+                </div>
+              )}
+              {event.provider && (
+                <div className={styles.metadataRow}>
+                  <Text variant="body2" as="dt" className={styles.metadataLabel}>
+                    Provider
+                  </Text>
+                  <Text variant="body2" as="dd" className={styles.metadataValue}>
+                    {providerLabel}
+                  </Text>
+                </div>
+              )}
+              {event.model && (
+                <div className={styles.metadataRow}>
+                  <Text variant="body2" as="dt" className={styles.metadataLabel}>
+                    Model
+                  </Text>
+                  <Text variant="body2" as="dd" className={styles.metadataValue}>
+                    {event.model}
+                  </Text>
+                </div>
+              )}
+            </dl>
+          </section>
+        )}
 
         {event.tokenUsage && (
           <section className={styles.section}>

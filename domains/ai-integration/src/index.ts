@@ -24,5 +24,6 @@ export type {
   GetListForUserQueryInput,
 } from './queries/getListForUser/types';
 export { AI_INTEGRATION_LIST_ALL_STATUSES } from './queries/getListForUser/types';
+export type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from './commands/resolveAndBuildClient/types';
 
 export default aiIntegrationDomain;

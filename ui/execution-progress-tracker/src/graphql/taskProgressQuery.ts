@@ -33,6 +33,9 @@ export const TASK_PROGRESS_QUERY = gql`
           type
           stackTrace
         }
+        integrationName
+        provider
+        model
       }
     }
   }

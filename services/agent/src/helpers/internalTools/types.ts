@@ -23,6 +23,9 @@ export interface AgentInvokeProgressEventInput {
   generatedResponse?: string;
   tokenUsage?: { input: number; output: number; total: number };
   errorDetails?: { message: string; type?: string; stackTrace?: string };
+  integrationName?: string;
+  provider?: string;
+  model?: string;
 }
 
 export type RecordAgentInvokeProgress = (

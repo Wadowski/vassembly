@@ -32,6 +32,9 @@ export const gqlTaskProgressSchema = (builder: Builder): void => {
       generatedResponse: t.exposeString('generatedResponse', { nullable: true }),
       tokenUsage: t.expose('tokenUsage', { type: 'TokenUsage', nullable: true }),
       errorDetails: t.expose('errorDetails', { type: 'ErrorDetails', nullable: true }),
+      integrationName: t.exposeString('integrationName', { nullable: true }),
+      provider: t.exposeString('provider', { nullable: true }),
+      model: t.exposeString('model', { nullable: true }),
     }),
   });
 

@@ -98,6 +98,17 @@ const MODELED_CLIENT = {
   invoke: vi.fn(),
 };
 
+const INTEGRATION_SNAPSHOT = {
+  integrationName: 'My OpenAI',
+  provider: 'chatgpt',
+  model: 'gpt-4o',
+};
+
+const RESOLVE_RESULT = {
+  client: MODELED_CLIENT,
+  integrationSnapshot: INTEGRATION_SNAPSHOT,
+};
+
 const INTERNAL_BINDINGS = [
   {
     toolId: 'list-agents',
@@ -131,7 +142,7 @@ describe('runAgentInvokeWithTools', () => {
         assignedToolIds: ['list-agents', 'use-agent'],
       },
     });
-    mockResolveAndBuildClient.mockResolvedValue(MODELED_CLIENT);
+    mockResolveAndBuildClient.mockResolvedValue(RESOLVE_RESULT);
     mockResolveMcpSlugs.mockResolvedValue({ 'mcp-1': 'example-mcp' });
     mockResolveMcpServerConfigs.mockResolvedValue({
       serverConfigs: MCP_SERVER_CONFIGS,
@@ -190,6 +201,9 @@ describe('runAgentInvokeWithTools', () => {
         agentId: 'agent-1',
         state: 'started',
         inputMessages: 'Hello',
+        integrationName: 'My OpenAI',
+        provider: 'chatgpt',
+        model: 'gpt-4o',
       }),
     );
     expect(recordProgress).toHaveBeenNthCalledWith(
@@ -198,6 +212,9 @@ describe('runAgentInvokeWithTools', () => {
         agentId: 'agent-1',
         state: 'completed',
         tokenUsage: { input: 10, output: 20, total: 30 },
+        integrationName: 'My OpenAI',
+        provider: 'chatgpt',
+        model: 'gpt-4o',
       }),
     );
   });
@@ -223,5 +240,66 @@ describe('runAgentInvokeWithTools', () => {
         toolContext: TOOL_CONTEXT,
       }),
     ).rejects.toThrow(WrongParamError);
+  });
+
+  it('should not record progress when resolveAndBuildClient rejects', async () => {
+    const recordProgress = vi.fn().mockResolvedValue(undefined);
+    mockResolveAndBuildClient.mockRejectedValue(new Error('Credential not found'));
+
+    await expect(
+      runAgentInvokeWithTools({
+        userId: 'user-1',
+        agentType: 'personal',
+        agentId: 'agent-1',
+        message: 'Hello',
+        toolContext: {
+          ...TOOL_CONTEXT,
+          recordAgentInvokeProgress: recordProgress,
+        },
+      }),
+    ).rejects.toThrow('Credential not found');
+
+    expect(recordProgress).not.toHaveBeenCalled();
+  });
+
+  it('should include integration snapshot fields in failed progress event when invoke rejects', async () => {
+    const recordProgress = vi.fn().mockResolvedValue(undefined);
+    mockInvoke.mockRejectedValue(new Error('Provider invoke failed'));
+
+    await expect(
+      runAgentInvokeWithTools({
+        userId: 'user-1',
+        agentType: 'personal',
+        agentId: 'agent-1',
+        message: 'Hello',
+        toolContext: {
+          ...TOOL_CONTEXT,
+          recordAgentInvokeProgress: recordProgress,
+        },
+      }),
+    ).rejects.toThrow('Provider invoke failed');
+
+    expect(recordProgress).toHaveBeenCalledTimes(2);
+    expect(recordProgress).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        state: 'started',
+        integrationName: 'My OpenAI',
+        provider: 'chatgpt',
+        model: 'gpt-4o',
+      }),
+    );
+    expect(recordProgress).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        state: 'failed',
+        integrationName: 'My OpenAI',
+        provider: 'chatgpt',
+        model: 'gpt-4o',
+        errorDetails: expect.objectContaining({
+          message: 'Provider invoke failed',
+        }),
+      }),
+    );
   });
 });

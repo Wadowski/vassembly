@@ -64,6 +64,15 @@ const MODELED_CLIENT = {
   invoke: vi.fn(),
 };
 
+const RESOLVE_RESULT = {
+  client: MODELED_CLIENT,
+  integrationSnapshot: {
+    integrationName: 'My OpenAI',
+    provider: 'chatgpt',
+    model: 'gpt-4o',
+  },
+};
+
 describe('invokePersonalAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -75,7 +84,7 @@ describe('invokePersonalAgent handler', () => {
         assignedMcpIds: ['mcp-1'],
       },
     });
-    mockResolveAndBuildClient.mockResolvedValue(MODELED_CLIENT);
+    mockResolveAndBuildClient.mockResolvedValue(RESOLVE_RESULT);
     mockResolveMcpSlugs.mockResolvedValue({ 'mcp-1': 'brave-search-mcp' });
     mockResolveMcpServerConfigs.mockResolvedValue({
       serverConfigs: [

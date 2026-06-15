@@ -11,4 +11,7 @@ export interface RecordProgressEventInput {
   tokenUsage?: TokenUsage;
   errorDetails?: ErrorDetails;
   parentAgentId?: string;
+  integrationName?: string;
+  provider?: string;
+  model?: string;
 }

@@ -12,6 +12,9 @@ export interface RecordTaskProgressInput {
   generatedResponse?: string;
   tokenUsage?: TokenUsage;
   errorDetails?: ErrorDetails;
+  integrationName?: string;
+  provider?: string;
+  model?: string;
 }
 
 export type RecordTaskProgressOutput = ProgressEventModel;

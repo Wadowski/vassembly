@@ -22,6 +22,9 @@ interface RawProgressEvent {
     type?: string | null;
     stackTrace?: string | null;
   } | null;
+  integrationName?: string | null;
+  provider?: string | null;
+  model?: string | null;
 }
 
 export interface RawTaskProgressData {
@@ -68,5 +71,8 @@ export const normalizeTaskProgress = (raw: RawTaskProgressData): TaskProgressDat
           stackTrace: event.errorDetails.stackTrace ?? undefined,
         }
       : null,
+    integrationName: event.integrationName ?? null,
+    provider: event.provider ?? null,
+    model: event.model ?? null,
   })),
 });

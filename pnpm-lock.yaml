@@ -2519,6 +2519,9 @@ importers:
       '@apollo/client':
         specifier: ^3.11.0
         version: 3.14.1(@types/react@18.2.47)(graphql@16.14.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors

@@ -20,3 +20,4 @@ export {
   MAX_USE_AGENT_DEPTH,
 } from './internalTools';
 export type { InternalToolDefinition } from './internalTools';
+export { AI_INTEGRATION_PROVIDER_LABELS } from './aiIntegrationProviderLabels';

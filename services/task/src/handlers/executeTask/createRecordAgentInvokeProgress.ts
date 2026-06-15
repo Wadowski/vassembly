@@ -20,6 +20,9 @@ export const createRecordAgentInvokeProgress = ({
       generatedResponse: input.generatedResponse,
       tokenUsage: input.tokenUsage,
       errorDetails: input.errorDetails,
+      integrationName: input.integrationName,
+      provider: input.provider,
+      model: input.model,
     });
   };
 };

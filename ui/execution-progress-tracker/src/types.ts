@@ -22,6 +22,9 @@ export interface ProgressEvent {
   generatedResponse: string | null;
   tokenUsage: TokenUsage | null;
   errorDetails: ErrorDetails | null;
+  integrationName: string | null;
+  provider: string | null;
+  model: string | null;
 }
 
 export interface TaskProgressData {

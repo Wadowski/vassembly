@@ -9,10 +9,40 @@ import { resolveMcpSlugs } from '../resolveMcpSlugs';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
 import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
 
+import type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from '@vassembly/domain-ai-integration';
 import type {
   RunAgentInvokeWithToolsParams,
   RunAgentInvokeWithToolsResult,
 } from './types';
+
+type ModeledProviderClient = ResolveAndBuildClientResult['client'];
+
+interface ResolveCredentialAndClientParams {
+  userId: string;
+  agentType: 'personal' | 'system';
+  agentId: string;
+  connectionOverride?: { integrationCredentialId: string };
+}
+
+interface ResolveCredentialAndClientResult {
+  client: ModeledProviderClient;
+  integrationSnapshot: AiIntegrationSnapshot;
+}
+
+interface InvokePersonalAgentParams {
+  userId: string;
+  agentId: string;
+  message: string;
+  client: ModeledProviderClient;
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'];
+}
+
+interface InvokeSystemAgentParams {
+  agentId: string;
+  message: string;
+  client: ModeledProviderClient;
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'];
+}
 
 const resolveMcpConfigs = async ({
   userId,
@@ -37,24 +67,48 @@ const resolveMcpConfigs = async ({
   };
 };
 
+const resolveCredentialAndClient = async ({
+  userId,
+  agentType,
+  agentId,
+  connectionOverride,
+}: ResolveCredentialAndClientParams): Promise<ResolveCredentialAndClientResult> => {
+  if (agentType === 'personal') {
+    const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
+    const credentialId = connectionOverride?.integrationCredentialId ?? agent.integrationCredentialId;
+
+    if (!credentialId) {
+      throw new WrongParamError('Agent has no AI integration configured');
+    }
+
+    return aiIntegrationDomain.commands.resolveAndBuildClient({
+      userId,
+      connectionOverride: { integrationCredentialId: credentialId },
+    });
+  }
+
+  const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
+
+  if (agent === null) {
+    throw new NotFoundError('This platform agent is no longer available.', {
+      code: SYSTEM_AGENT_ERROR_CODES.NOT_FOUND,
+    });
+  }
+
+  return aiIntegrationDomain.commands.resolveAndBuildClient({
+    userId,
+    connectionOverride,
+  });
+};
+
 const invokePersonalAgent = async ({
   userId,
   agentId,
   message,
-  connectionOverride,
+  client,
   toolContext,
-}: RunAgentInvokeWithToolsParams): Promise<RunAgentInvokeWithToolsResult> => {
+}: InvokePersonalAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
-  const credentialId = connectionOverride?.integrationCredentialId ?? agent.integrationCredentialId;
-
-  if (!credentialId) {
-    throw new WrongParamError('Agent has no AI integration configured');
-  }
-
-  const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
-    userId,
-    connectionOverride: { integrationCredentialId: credentialId },
-  });
 
   const mcpIds = agent.assignedMcpIds ?? [];
   const assignedToolIds = agent.assignedToolIds ?? [];
@@ -65,7 +119,7 @@ const invokePersonalAgent = async ({
   });
 
   const result = await agentDomain.commands.invoke({
-    modeledProviderClient,
+    modeledProviderClient: client,
     agentId,
     userId,
     message,
@@ -88,12 +142,11 @@ const invokePersonalAgent = async ({
 };
 
 const invokeSystemAgent = async ({
-  userId,
   agentId,
   message,
-  connectionOverride,
+  client,
   toolContext,
-}: RunAgentInvokeWithToolsParams): Promise<RunAgentInvokeWithToolsResult> => {
+}: InvokeSystemAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
 
   if (agent === null) {
@@ -102,11 +155,6 @@ const invokeSystemAgent = async ({
     });
   }
 
-  const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
-    userId,
-    connectionOverride,
-  });
-
   const assignedToolIds = agent.assignedToolIds ?? [];
   const { bindings, skippedToolIds } = await loadAssignedInternalTools({
     assignedToolIds,
@@ -114,7 +162,7 @@ const invokeSystemAgent = async ({
   });
 
   const result = await systemAgentDomain.commands.invoke({
-    modeledProviderClient,
+    modeledProviderClient: client,
     systemAgentId: agentId,
     message,
     internalToolBindings: bindings,
@@ -142,6 +190,13 @@ export const runAgentInvokeWithTools = async (
   const recordProgress = toolContext.recordAgentInvokeProgress;
   const invokeStartTime = Date.now();
 
+  const { client, integrationSnapshot } = await resolveCredentialAndClient({
+    userId: params.userId,
+    agentType: params.agentType,
+    agentId: params.agentId,
+    connectionOverride: params.connectionOverride,
+  });
+
   if (recordProgress) {
     await recordProgress({
       agentId: params.agentId,
@@ -149,14 +204,20 @@ export const runAgentInvokeWithTools = async (
       state: 'started',
       timestamp: new Date(),
       inputMessages: params.message,
+      ...integrationSnapshot,
     });
   }
 
   try {
     const result =
       params.agentType === 'personal'
-        ? await invokePersonalAgent(params)
-        : await invokeSystemAgent(params);
+        ? await invokePersonalAgent({ ...params, client })
+        : await invokeSystemAgent({
+            agentId: params.agentId,
+            message: params.message,
+            client,
+            toolContext: params.toolContext,
+          });
 
     if (recordProgress) {
       await recordProgress({
@@ -167,6 +228,7 @@ export const runAgentInvokeWithTools = async (
         duration: Date.now() - invokeStartTime,
         generatedResponse: result.message,
         tokenUsage: mapInvokeUsageToTokenUsage({ usage: result.usage }),
+        ...integrationSnapshot,
       });
     }
 
@@ -190,6 +252,7 @@ export const runAgentInvokeWithTools = async (
           type: errorType,
           stackTrace: error instanceof Error ? error.stack : undefined,
         },
+        ...integrationSnapshot,
       });
     }
 

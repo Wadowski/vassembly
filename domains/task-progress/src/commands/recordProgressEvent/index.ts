@@ -31,6 +31,9 @@ const VALIDATION_SCHEMA = z.object({
     })
     .optional(),
   parentAgentId: z.string().optional(),
+  integrationName: z.string().optional(),
+  provider: z.string().optional(),
+  model: z.string().optional(),
 });
 
 export const recordProgressEvent = async (
@@ -51,6 +54,9 @@ export const recordProgressEvent = async (
     tokenUsage: validated.tokenUsage,
     errorDetails: validated.errorDetails,
     parentAgentId: validated.parentAgentId,
+    integrationName: validated.integrationName,
+    provider: validated.provider,
+    model: validated.model,
   };
 
   const result = await collection.updateOne(
