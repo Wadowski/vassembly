@@ -1,6 +1,6 @@
 ---
 name: test-fixer
-model: inherit
+model: composer-2.5[fast=false]
 description: Test failure remediation specialist. Tracks try (1–5), applies minimal fixes, reruns tests after each fix, and increments try after every verification run. Stops only on SUCCESS (unit tests, e2e tests, lint, and type-check all green) or when try reaches 5 with failing checks.
 ---
 

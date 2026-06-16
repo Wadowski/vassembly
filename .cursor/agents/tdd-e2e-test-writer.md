@@ -1,6 +1,6 @@
 ---
 name: tdd-e2e-test-writer
-model: inherit
+model: composer-2.5[fast=false]
 description: TDD specialist for writing failing E2E tests from PRD Gherkin scenarios. Translates PRD use cases and edge cases into Playwright BDD feature files before implementation. Use proactively when starting user-facing features with test-driven development.
 ---
 

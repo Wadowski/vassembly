@@ -1,6 +1,6 @@
 ---
 name: coder
-model: inherit
+model: composer-2.5[fast=false]
 description: Implementation specialist that writes production code based on architect designs and test requirements. Use proactively when implementing logic to pass tests or when architect specifications exist without tests yet.
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: documentation-writer
-model: inherit
+model: composer-2.5[fast=false]
 description: Documentation specialist for maintaining package READMEs. Proactively updates package READMEs after code changes to reflect the current API, exposed functions/components, models, and dependencies with clear, concise descriptions.
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: ui-designer
-model: inherit
+model: composer-2.5[fast=false]
 description: Senior UI/UX designer specializing in design systems, visual consistency, and user-centered interfaces.
 ---
 

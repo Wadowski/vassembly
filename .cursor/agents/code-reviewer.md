@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-model: inherit
+model: composer-2.5[fast=false]
 description: Expert code review specialist. Proactively reviews code for quality, security, and maintainability. Use immediately after writing or modifying code to ensure high standards.
 ---
 
