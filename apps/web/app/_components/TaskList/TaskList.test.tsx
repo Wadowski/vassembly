@@ -21,6 +21,7 @@ const buildTask = (partial: Partial<TaskListItemDto> = {}): TaskListItemDto => (
   startedAt: partial.startedAt ?? null,
   completedAt: partial.completedAt ?? null,
   failedAt: partial.failedAt ?? null,
+  pausedAt: partial.pausedAt ?? null,
   createdAt: partial.createdAt ?? '2026-05-26T12:00:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-05-26T12:00:00.000Z',
 });

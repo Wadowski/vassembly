@@ -14,6 +14,7 @@ export interface TaskResponse {
   startedAt: string | null;
   completedAt: string | null;
   failedAt: string | null;
+  pausedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }

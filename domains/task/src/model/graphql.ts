@@ -18,6 +18,7 @@ export const gqlTaskSchema = (builder: Builder): void => {
       startedAt: t.exposeString('startedAt', { nullable: true }),
       completedAt: t.exposeString('completedAt', { nullable: true }),
       failedAt: t.exposeString('failedAt', { nullable: true }),
+      pausedAt: t.exposeString('pausedAt', { nullable: true }),
       createdAt: t.exposeString('createdAt'),
       updatedAt: t.exposeString('updatedAt'),
     }),

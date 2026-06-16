@@ -8,6 +8,7 @@ export interface TaskStatusBadgeProps {
 
 export interface TaskDetailHeaderProps {
   task: TaskDto;
+  onTaskUpdated: () => Promise<void>;
 }
 
 export interface TaskDetailDescriptionProps {

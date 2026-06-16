@@ -80,10 +80,18 @@ export const useTaskDetailPage = (): UseTaskDetailPageResult => {
     };
   }, [fetch, loadVersion, snackbar, taskIdParam]);
 
-  const pollCallback = useCallback(async (): Promise<void> => {
+  const refetchTask = useCallback(async (): Promise<void> => {
+    if (taskIdParam === '') {
+      return;
+    }
+
     const loadedTask = await fetch(taskIdParam);
     setTask(loadedTask);
   }, [fetch, taskIdParam]);
+
+  const pollCallback = useCallback(async (): Promise<void> => {
+    await refetchTask();
+  }, [refetchTask]);
 
   usePolling(
     { enabled: task?.status === TaskStatus.InProgress && taskIdParam !== '', intervalMs: 3000 },
@@ -118,5 +126,6 @@ export const useTaskDetailPage = (): UseTaskDetailPageResult => {
   return {
     loginRoute,
     view,
+    refetchTask,
   };
 };

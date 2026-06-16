@@ -9,6 +9,7 @@ export type TaskDetailPageView =
 export interface UseTaskDetailPageResult {
   loginRoute: string;
   view: TaskDetailPageView;
+  refetchTask: () => Promise<void>;
 }
 
 export interface BuildTaskDetailPageViewArgs {

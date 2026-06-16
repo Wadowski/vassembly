@@ -12,7 +12,7 @@ import { TaskDetailSkeleton } from './TaskDetailSkeleton';
 import { useTaskDetailPage } from './useTaskDetailPage';
 
 export default function TaskDetailPage(): JSX.Element {
-  const { loginRoute, view } = useTaskDetailPage();
+  const { loginRoute, view, refetchTask } = useTaskDetailPage();
 
   const body =
     view.phase === 'loading' ? (
@@ -23,7 +23,7 @@ export default function TaskDetailPage(): JSX.Element {
       <TaskDetailError variant="error" message={view.message} onRetry={view.onRetry} />
     ) : (
       <main className={styles.pageStack}>
-        <TaskDetailHeader task={view.task} />
+        <TaskDetailHeader task={view.task} onTaskUpdated={refetchTask} />
         <article className={styles.contentColumn}>
           <TaskDetailDescription description={view.task.description} />
           <TaskDetailAiResponse task={view.task} />

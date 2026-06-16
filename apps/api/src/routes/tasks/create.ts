@@ -23,6 +23,7 @@ export const taskResponseSchema = z.object({
   startedAt: z.string().datetime().nullable(),
   completedAt: z.string().datetime().nullable(),
   failedAt: z.string().datetime().nullable(),
+  pausedAt: z.string().datetime().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

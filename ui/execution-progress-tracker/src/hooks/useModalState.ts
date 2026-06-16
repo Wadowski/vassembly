@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 
 interface UseModalStateOptions {
   onClose?: () => void;
@@ -9,13 +9,13 @@ interface UseModalStateResult {
   selectedEventId: string | null;
   openModal: (eventId: string) => void;
   closeModal: () => void;
-  triggerRef: React.RefObject<HTMLButtonElement>;
+  triggerRef: RefObject<HTMLButtonElement | null>;
 }
 
 export const useModalState = (options?: UseModalStateOptions): UseModalStateResult => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const openModal = useCallback((eventId: string) => {
     setSelectedEventId(eventId);

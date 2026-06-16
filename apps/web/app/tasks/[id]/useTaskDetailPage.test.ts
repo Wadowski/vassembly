@@ -43,6 +43,7 @@ const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
   startedAt: partial.startedAt ?? '2026-03-12T15:46:00.000Z',
   completedAt: partial.completedAt ?? null,
   failedAt: partial.failedAt ?? null,
+  pausedAt: partial.pausedAt ?? null,
   createdAt: partial.createdAt ?? '2026-03-12T15:45:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-03-12T16:10:00.000Z',
 });

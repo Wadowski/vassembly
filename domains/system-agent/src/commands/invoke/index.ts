@@ -37,6 +37,7 @@ export const invoke = async (
     }),
     mcpServerConfigs: params.mcpServerConfigs,
     internalToolBindings: params.internalToolBindings,
+    signal: params.signal,
   });
 
   return {

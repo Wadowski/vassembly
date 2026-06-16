@@ -8,6 +8,7 @@ export enum TaskType {
 export enum TaskStatus {
   Created = 'created',
   InProgress = 'in-progress',
+  Paused = 'paused',
   Done = 'done',
   Failed = 'failed',
 }
@@ -36,4 +37,6 @@ export class TaskModel extends Model {
   completedAt?: Date | null;
 
   failedAt?: Date | null;
+
+  pausedAt?: Date | null;
 }

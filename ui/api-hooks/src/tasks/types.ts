@@ -1,6 +1,7 @@
 export enum TaskStatus {
   Created = 'created',
   InProgress = 'in-progress',
+  Paused = 'paused',
   Done = 'done',
   Failed = 'failed',
 }
@@ -24,6 +25,7 @@ export interface TaskResponse {
   startedAt: string | null;
   completedAt: string | null;
   failedAt: string | null;
+  pausedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -50,6 +52,7 @@ export interface TaskDto {
   startedAt: string | null;
   completedAt: string | null;
   failedAt: string | null;
+  pausedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -81,6 +84,7 @@ export interface GraphQLTaskRow {
   startedAt?: string | null;
   completedAt?: string | null;
   failedAt?: string | null;
+  pausedAt?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 }

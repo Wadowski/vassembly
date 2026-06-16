@@ -10,6 +10,11 @@ export interface WebBddWorld extends BddWorld {
   otherUserTaskId?: string;
   showDeletedFilter?: boolean;
   pollingRequestCount?: number;
+  secondPage?: import('@playwright/test').Page;
+  pauseApiRequestCount?: number;
+  progressEventCountAtPause?: number;
+  tabAPage?: import('@playwright/test').Page;
+  tabBPage?: import('@playwright/test').Page;
 }
 
 export interface SeedMcpParams {

@@ -19,6 +19,7 @@ module.exports = {
       'e2e/steps/given',
       'e2e/steps/when',
       'e2e/steps/then',
+      'e2e/steps/tasks',
     ],
     baseURL: process.env.E2E_WEB_BASE_URL ?? 'http://localhost:3000',
     webServers: [

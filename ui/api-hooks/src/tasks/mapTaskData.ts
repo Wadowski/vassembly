@@ -29,6 +29,7 @@ export const toTaskDto = (row: GraphQLTaskRow): TaskDto => ({
   startedAt: row.startedAt ?? null,
   completedAt: row.completedAt ?? null,
   failedAt: row.failedAt ?? null,
+  pausedAt: row.pausedAt ?? null,
   createdAt: row.createdAt ?? '',
   updatedAt: row.updatedAt ?? '',
 });

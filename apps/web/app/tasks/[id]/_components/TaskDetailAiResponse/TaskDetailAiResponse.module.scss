@@ -9,6 +9,6 @@
   @extend .sectionLabel;
 }
 
-.responseBody {
-  margin-top: $spacing-1;
+.pausedMessage {
+  color: $color-text-secondary;
 }

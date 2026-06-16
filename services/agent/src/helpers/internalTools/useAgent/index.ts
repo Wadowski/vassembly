@@ -1,4 +1,5 @@
 import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
+import { ExecutionPausedError } from '@vassembly/errors';
 
 import {
   buildUseAgentNotFoundError,
@@ -35,6 +36,14 @@ const resolveAgentPrompt = (args: Record<string, unknown>): string | undefined =
 };
 
 export const useAgent = async ({ args, context }: UseAgentParams): Promise<string> => {
+  if (context.abortSignal?.aborted) {
+    throw new ExecutionPausedError();
+  }
+
+  if (context.shouldAbort && (await context.shouldAbort())) {
+    throw new ExecutionPausedError();
+  }
+
   if (context.recursionDepth >= MAX_USE_AGENT_DEPTH) {
     return USE_AGENT_DEPTH_ERROR;
   }

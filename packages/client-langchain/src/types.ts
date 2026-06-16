@@ -17,6 +17,7 @@ export interface AiProviderInvokeParams {
   systemMessage?: string;
   mcpServerConfigs?: McpServerConfig[];
   internalToolBindings?: InternalToolBinding[];
+  signal?: AbortSignal;
 }
 
 export interface AiProviderInvokeResult {

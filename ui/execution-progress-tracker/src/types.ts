@@ -40,7 +40,7 @@ export interface TaskProgressData {
 export interface ExecutionProgressTrackerProps {
   taskId: string;
   userId?: string;
-  taskStatus?: 'created' | 'in-progress' | 'done' | 'failed';
+  taskStatus?: 'created' | 'in-progress' | 'done' | 'failed' | 'paused';
   onTaskCompleted?: (taskProgress: TaskProgressData) => void;
 }
 
@@ -69,5 +69,5 @@ export interface TokenUsageWidgetProps {
 
 export interface ProgressHeaderProps {
   taskProgress: TaskProgressData;
-  taskStatus?: 'created' | 'in-progress' | 'done' | 'failed';
+  taskStatus?: 'created' | 'in-progress' | 'done' | 'failed' | 'paused';
 }

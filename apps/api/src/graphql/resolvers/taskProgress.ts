@@ -1,5 +1,5 @@
 import { applyResolvers } from '@vassembly/graphql';
-import { ForbiddenError, NotFoundError } from '@vassembly/errors';
+import { NotFoundError } from '@vassembly/errors';
 import { UnauthorizedError } from '@vassembly/errors';
 import * as taskProgressDomain from '@vassembly/domain-task-progress';
 import type { ProgressEventResponse } from '@vassembly/domain-task-progress';

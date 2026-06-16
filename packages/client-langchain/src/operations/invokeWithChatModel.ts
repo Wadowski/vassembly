@@ -1,6 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { InternalError } from '@vassembly/errors';
+import { ExecutionPausedError, InternalError } from '@vassembly/errors';
 
 import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
 import { mapExecutedLlmToolNamesToIds } from '../internalTools/mapExecutedLlmToolNamesToIds';
@@ -105,6 +105,7 @@ const invokeModel = async ({
       tools: mergedTools,
       messages,
       maxIterations: MCP_TOOL_MAX_ITERATIONS,
+      signal: invokeParams.signal,
     });
 
     return {
@@ -135,7 +136,11 @@ export const invokeWithChatModel = async ({
       usage,
       toolUsage,
     };
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof ExecutionPausedError) {
+      throw error;
+    }
+
     console.error(`${CONSOLE_LOG_PREFIX} invoke failed`, error);
     throw new InternalError(errorMessage, error);
   }

@@ -6,7 +6,8 @@ Domain package for user-owned tasks. Encapsulates task creation, validation, san
 
 - **Create task command** — user-scoped task creation with validated input
 - **List user tasks query** — paginated, searchable list scoped to a user
-- **Task model** — status lifecycle (`created`, `in-progress`, `done`, `failed`)
+- **Task model** — status lifecycle (`created`, `in-progress`, `paused`, `done`, `failed`)
+- **Pause / resume / retry commands** — cooperative execution control with atomic status guards
 - **GraphQL schema** — `Task` and `TasksList` types for API gateway registration
 - **MongoDB persistence** — `tasks` collection with user-scoped index
 - **Future extensibility** — `agentAssignedId` and `type` reserved for agent assignment workflows
@@ -67,6 +68,33 @@ Update task execution outcome after async LLM processing.
 |---------|------|
 | `complete` | `status: done`, `llmResponse` (max 5000 chars), `completedAt` |
 | `fail` | `status: failed`, `errorMessage`, `errorCode`, `failedAt` |
+
+### `commands.pauseTask({ taskId })`
+
+Transitions `in-progress` → `paused` and sets `pausedAt`. Uses an atomic status guard; throws `ConflictError` with code `TASK_NOT_PAUSABLE` (409) when the task is not in-progress.
+
+```typescript
+import { commands } from '@vassembly/domain-task';
+
+await commands.pauseTask({ taskId: 'task-123' });
+// Returns: { data: TaskModel }
+```
+
+### `commands.resumeTask({ taskId })`
+
+Transitions `paused` → `in-progress`. Does not clear `pausedAt` (preserves last-pause timestamp). Throws `ConflictError` with code `TASK_NOT_RESUMABLE` (409) when the task is not paused.
+
+```typescript
+await commands.resumeTask({ taskId: 'task-123' });
+```
+
+### `commands.retryTask({ taskId })`
+
+Transitions `paused` or `failed` → `in-progress`. Clears `errorMessage`, `errorCode`, `failedAt`, and `pausedAt`. Throws `ConflictError` with code `TASK_NOT_RETRYABLE` (409) when the task is neither paused nor failed.
+
+```typescript
+await commands.retryTask({ taskId: 'task-123' });
+```
 
 ### `queries.getModelById({ id })`
 
@@ -129,13 +157,13 @@ See [`src/clients/mongodb.ts`](./src/clients/mongodb.ts).
 - `TaskModel` — domain entity ([`src/model/model.ts`](./src/model/model.ts))
 - `TaskResponse` — external DTO ([`src/model/dto.ts`](./src/model/dto.ts))
 - `TaskType` — `'user' | 'agent'`
-- `TaskStatus` — `'created' | 'in-progress' | 'done' | 'failed'`
+- `TaskStatus` — `'created' | 'in-progress' | 'paused' | 'done' | 'failed'`
 - `ListUserTasksQueryInput`, `ListUserTasksQueryResult` — list query types ([`src/queries/listUserTasks/types.ts`](./src/queries/listUserTasks/types.ts))
 
 ### GraphQL schema
 
 - `gqlSchema(builder)` — registers `Task` and `TasksList` GraphQL object types ([`src/model/graphql.ts`](./src/model/graphql.ts))
-- **`Task` fields:** `id`, `userId`, `description`, `type`, `status`, `agentAssignedId`, `title`, `llmResponse`, `errorMessage`, `errorCode`, `startedAt`, `completedAt`, `failedAt`, `createdAt`, `updatedAt`
+- **`Task` fields:** `id`, `userId`, `description`, `type`, `status`, `agentAssignedId`, `title`, `llmResponse`, `errorMessage`, `errorCode`, `startedAt`, `completedAt`, `failedAt`, `pausedAt`, `createdAt`, `updatedAt`
 - **`TasksList` fields:** `items`, `totalCount`, `page`, `size`
 
 ## Errors
@@ -144,6 +172,9 @@ See [`src/clients/mongodb.ts`](./src/clients/mongodb.ts).
 |-------|------|
 | `ValidationError` | Create: empty, whitespace-only, control-only description, exceeds 5000 chars, or missing `userId` |
 | `WrongParamError` | List: invalid pagination input (negative `page`, `size` < 1, empty `userId`) |
+| `ConflictError` (`TASK_NOT_PAUSABLE`) | Pause: task is not `in-progress` |
+| `ConflictError` (`TASK_NOT_RESUMABLE`) | Resume: task is not `paused` |
+| `ConflictError` (`TASK_NOT_RETRYABLE`) | Retry: task is neither `paused` nor `failed` |
 
 Implementation: [`src/commands/create/index.ts`](./src/commands/create/index.ts), [`src/commands/shared/sanitizeDescription.ts`](./src/commands/shared/sanitizeDescription.ts), [`src/queries/listUserTasks/index.ts`](./src/queries/listUserTasks/index.ts).
 
@@ -155,9 +186,10 @@ interface Task {
   userId: string;
   description: string;
   type: 'user' | 'agent';
-  status: 'created' | 'in-progress' | 'done' | 'failed';
+  status: 'created' | 'in-progress' | 'paused' | 'done' | 'failed';
   agentAssignedId: string | null;
   title: string | null;
+  pausedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -178,7 +210,8 @@ Descriptions are sanitized before persistence ([`src/commands/shared/sanitizeDes
 
 - `agentAssignedId` — reserved for future agent assignment
 - `type` — `'user'` today; `'agent'` for system-generated tasks later
-- `status` — `'in-progress'` and `'done'` support future workflow transitions
+- `status` — `'paused'` supports cooperative pause/resume/retry workflows
+- `pausedAt` — timestamp of the most recent pause; preserved on resume, cleared on retry
 
 ## MongoDB
 

@@ -1,5 +1,6 @@
 import {
   AlertCircleIcon,
+  ButtonStopIcon,
   CheckCircleIcon,
   SingleNeutralCircleIcon,
   TimeClockCircleIcon,
@@ -12,6 +13,7 @@ import type { ColorValue, IconComponent, TaskStatusValue } from './types';
 const STATUS_ICON_MAP: Record<string, IconComponent> = {
   [TaskStatus.Created]: TimeClockCircleIcon,
   [TaskStatus.InProgress]: SingleNeutralCircleIcon,
+  [TaskStatus.Paused]: ButtonStopIcon,
   [TaskStatus.Done]: CheckCircleIcon,
   [TaskStatus.Failed]: AlertCircleIcon,
 };
@@ -19,6 +21,7 @@ const STATUS_ICON_MAP: Record<string, IconComponent> = {
 const STATUS_COLOR_MAP: Record<string, ColorValue> = {
   [TaskStatus.Created]: 'secondary',
   [TaskStatus.InProgress]: 'info',
+  [TaskStatus.Paused]: 'warning',
   [TaskStatus.Done]: 'success',
   [TaskStatus.Failed]: 'error',
 };
@@ -26,6 +29,7 @@ const STATUS_COLOR_MAP: Record<string, ColorValue> = {
 const STATUS_LABEL_MAP: Record<string, string> = {
   [TaskStatus.Created]: 'Created',
   [TaskStatus.InProgress]: 'In progress',
+  [TaskStatus.Paused]: 'Paused',
   [TaskStatus.Done]: 'Done',
   [TaskStatus.Failed]: 'Failed',
 };

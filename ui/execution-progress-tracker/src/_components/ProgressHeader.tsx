@@ -25,6 +25,10 @@ const getStatusLabel = ({
     return 'In progress';
   }
 
+  if (taskStatus === 'paused') {
+    return 'Paused';
+  }
+
   if (completedAt) {
     return 'Completed';
   }

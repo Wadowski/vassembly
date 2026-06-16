@@ -9,6 +9,8 @@ import styles from './TaskDetailAiResponse.module.scss';
 import type { TaskDetailAiResponseProps } from './types';
 
 const PROCESSING_LABEL = 'Processing...';
+const PAUSED_LABEL =
+  'Task paused — click Resume to continue, or Retry to restart from scratch.';
 const RESPONSE_HEADING = 'AI Response';
 
 export const TaskDetailAiResponse = ({ task }: TaskDetailAiResponseProps): JSX.Element | null => {
@@ -17,6 +19,21 @@ export const TaskDetailAiResponse = ({ task }: TaskDetailAiResponseProps): JSX.E
       <section aria-labelledby="task-detail-ai-response-heading" className={pageStyles.sectionCard}>
         <Text variant="body2" id="task-detail-ai-response-heading" data-testid="task-detail-ai-processing">
           {PROCESSING_LABEL}
+        </Text>
+      </section>
+    );
+  }
+
+  if (task.status === TaskStatus.Paused) {
+    return (
+      <section aria-labelledby="task-detail-ai-response-heading" className={pageStyles.sectionCard}>
+        <Text
+          variant="body2"
+          id="task-detail-ai-response-heading"
+          className={styles.pausedMessage}
+          data-testid="task-detail-ai-paused"
+        >
+          {PAUSED_LABEL}
         </Text>
       </section>
     );

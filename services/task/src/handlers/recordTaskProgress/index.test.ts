@@ -3,6 +3,8 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { ForbiddenError, NotFoundError, ValidationError } from '@vassembly/errors';
 import type { ProgressEventModel } from '@vassembly/domain-task-progress';
 
+import type { RecordTaskProgressInput } from './types';
+
 const { mockGetModelById: mockTaskGetModelById } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
 }));
@@ -82,7 +84,7 @@ describe('recordTaskProgress handler', () => {
           taskId: 'task123',
           userId: 'user123',
           agentId: 'agent-123',
-          state: '' as any,
+          state: '' as RecordTaskProgressInput['state'],
         })
       ).rejects.toThrow(ValidationError);
     });

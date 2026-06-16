@@ -8,6 +8,7 @@ export enum ErrorTypes {
   TIMEOUT = 'TIMEOUT',
   CONFLICT = 'CONFLICT',
   TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS',
+  EXECUTION_PAUSED = 'EXECUTION_PAUSED',
 }
 
 export const ErrorStatusCodes: Record<ErrorTypes, number> = {
@@ -20,4 +21,5 @@ export const ErrorStatusCodes: Record<ErrorTypes, number> = {
   [ErrorTypes.TIMEOUT]: 408,
   [ErrorTypes.CONFLICT]: 409,
   [ErrorTypes.TOO_MANY_REQUESTS]: 429,
+  [ErrorTypes.EXECUTION_PAUSED]: 499,
 };

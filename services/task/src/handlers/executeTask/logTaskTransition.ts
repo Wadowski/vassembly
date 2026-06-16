@@ -1,7 +1,7 @@
 import { logger } from '@vassembly/logger';
 
 export interface LogTaskTransitionParams {
-  event: 'task.status.done' | 'task.status.failed';
+  event: 'task.status.done' | 'task.status.failed' | 'task.execution.paused';
   taskId: string;
   userId: string;
   durationMs: number;

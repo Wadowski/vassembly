@@ -7,9 +7,9 @@ describe('TaskStatus enum', () => {
     expect(TaskStatus.Failed).toBe('failed');
   });
 
-  it('should include all four task statuses', () => {
+  it('should include all five task statuses', () => {
     expect(Object.values(TaskStatus).sort()).toEqual(
-      ['created', 'done', 'failed', 'in-progress'].sort(),
+      ['created', 'done', 'failed', 'in-progress', 'paused'].sort(),
     );
   });
 });

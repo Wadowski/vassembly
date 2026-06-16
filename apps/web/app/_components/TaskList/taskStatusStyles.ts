@@ -6,4 +6,5 @@ export const STATUS_COLOR_CLASS_MAP: Record<ColorValue, string> = {
   info: styles.statusInfo ?? '',
   success: styles.statusSuccess ?? '',
   error: styles.statusError ?? '',
+  warning: styles.statusWarning ?? '',
 };

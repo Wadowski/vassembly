@@ -30,6 +30,7 @@ export const toTaskResponse = ({ task }: ToTaskResponseParams): TaskResponse => 
     startedAt: toNullableIsoString(task.startedAt),
     completedAt: toNullableIsoString(task.completedAt),
     failedAt: toNullableIsoString(task.failedAt),
+    pausedAt: toNullableIsoString(task.pausedAt),
     createdAt: toIsoString({ value: task.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: task.updatedAt!, fieldName: 'updatedAt' }),
   };

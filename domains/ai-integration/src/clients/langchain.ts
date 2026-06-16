@@ -27,6 +27,7 @@ export interface ModeledProviderInvokeParams {
   systemMessage?: string;
   mcpServerConfigs?: AiProviderInvokeParams['mcpServerConfigs'];
   internalToolBindings?: InternalToolBinding[];
+  signal?: AbortSignal;
 }
 
 export interface ModeledProviderClient {
@@ -61,6 +62,7 @@ export const getModeledProviderClient = (
         systemMessage: messageOrParams.systemMessage,
         mcpServerConfigs: messageOrParams.mcpServerConfigs,
         internalToolBindings: messageOrParams.internalToolBindings,
+        signal: messageOrParams.signal,
       });
     },
   };

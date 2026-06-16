@@ -38,6 +38,21 @@
   gap: $spacing-2;
 }
 
+.utilityHeaderEnd {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  margin-left: auto;
+}
+
+.headerActionButtons {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+}
+
 .backLink {
   align-self: flex-start;
   min-height: 44px;

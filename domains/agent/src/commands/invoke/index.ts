@@ -12,6 +12,7 @@ const resolveInvokeParams = (
   systemMessage: params.systemMessage ?? agentRule,
   mcpServerConfigs: params.mcpServerConfigs,
   internalToolBindings: params.internalToolBindings,
+  signal: params.signal,
 });
 
 export const invoke = async (params: InvokeAgentParams): Promise<InvokeAgentResult> => {

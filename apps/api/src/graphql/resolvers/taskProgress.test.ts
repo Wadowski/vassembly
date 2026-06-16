@@ -3,7 +3,6 @@ import type { Builder } from '@vassembly/graphql';
 import {
   NotFoundError,
   UnauthorizedError,
-  ForbiddenError,
 } from '@vassembly/errors';
 
 const { mockGetTaskProgressByTaskId, mockResolveAgentDisplayNames } = vi.hoisted(() => ({

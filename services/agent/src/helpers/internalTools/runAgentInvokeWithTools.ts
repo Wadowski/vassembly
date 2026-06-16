@@ -3,7 +3,7 @@ import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import systemAgentDomain, { SYSTEM_AGENT_ERROR_CODES } from '@vassembly/domain-system-agent';
 import userMcpConfigDomain from '@vassembly/domain-user-mcp-config';
 import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
-import { WrongParamError, NotFoundError } from '@vassembly/errors';
+import { WrongParamError, NotFoundError, ExecutionPausedError } from '@vassembly/errors';
 
 import { resolveMcpSlugs } from '../resolveMcpSlugs';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
@@ -126,6 +126,7 @@ const invokePersonalAgent = async ({
     systemMessage: agent.rule,
     mcpServerConfigs,
     internalToolBindings: bindings,
+    signal: toolContext.abortSignal,
   });
 
   return {
@@ -166,6 +167,7 @@ const invokeSystemAgent = async ({
     systemAgentId: agentId,
     message,
     internalToolBindings: bindings,
+    signal: toolContext.abortSignal,
   });
 
   return {
@@ -183,12 +185,26 @@ const invokeSystemAgent = async ({
   };
 };
 
+const assertNotAborted = async (
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'],
+): Promise<void> => {
+  if (toolContext.abortSignal?.aborted) {
+    throw new ExecutionPausedError();
+  }
+
+  if (toolContext.shouldAbort && (await toolContext.shouldAbort())) {
+    throw new ExecutionPausedError();
+  }
+};
+
 export const runAgentInvokeWithTools = async (
   params: RunAgentInvokeWithToolsParams,
 ): Promise<RunAgentInvokeWithToolsResult> => {
   const { toolContext } = params;
   const recordProgress = toolContext.recordAgentInvokeProgress;
   const invokeStartTime = Date.now();
+
+  await assertNotAborted(toolContext);
 
   const { client, integrationSnapshot } = await resolveCredentialAndClient({
     userId: params.userId,
@@ -198,6 +214,7 @@ export const runAgentInvokeWithTools = async (
   });
 
   if (recordProgress) {
+    await assertNotAborted(toolContext);
     await recordProgress({
       agentId: params.agentId,
       parentAgentId: toolContext.parentAgentId,
@@ -209,6 +226,7 @@ export const runAgentInvokeWithTools = async (
   }
 
   try {
+    await assertNotAborted(toolContext);
     const result =
       params.agentType === 'personal'
         ? await invokePersonalAgent({ ...params, client })
@@ -233,8 +251,8 @@ export const runAgentInvokeWithTools = async (
     }
 
     return result;
-  } catch (error) {
-    if (recordProgress) {
+  } catch (error: unknown) {
+    if (recordProgress && !(error instanceof ExecutionPausedError)) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const errorType =
         error instanceof Error && 'code' in error

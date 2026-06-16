@@ -10,6 +10,8 @@ export interface InternalToolContext {
   recursionDepth: number;
   rootInvokeId: string;
   parentAgentId?: string;
+  abortSignal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
   recordAgentInvokeProgress?: RecordAgentInvokeProgress;
 }
 

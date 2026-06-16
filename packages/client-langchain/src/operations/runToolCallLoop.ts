@@ -2,6 +2,7 @@ import { ToolMessage } from '@langchain/core/messages';
 import type { BaseMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { DynamicStructuredTool } from '@langchain/core/tools';
+import { ExecutionPausedError } from '@vassembly/errors';
 
 import {
   extractTokenUsageFromMessage,
@@ -14,6 +15,7 @@ export interface RunToolCallLoopParams {
   tools: DynamicStructuredTool[];
   messages: BaseMessage[];
   maxIterations: number;
+  signal?: AbortSignal;
 }
 
 export interface RunToolCallLoopResult {
@@ -35,6 +37,7 @@ export const runToolCallLoop = async ({
   tools,
   messages,
   maxIterations,
+  signal,
 }: RunToolCallLoopParams): Promise<RunToolCallLoopResult> => {
   const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
   const modelWithTools =
@@ -50,6 +53,10 @@ export const runToolCallLoop = async ({
   };
 
   for (let iteration = 0; iteration < maxIterations; iteration += 1) {
+    if (signal?.aborted) {
+      throw new ExecutionPausedError();
+    }
+
     const response = await modelWithTools.invoke(currentMessages);
     usage = mergeTokenUsage(usage, extractTokenUsageFromMessage(response));
     const toolCalls = response.tool_calls ?? [];
