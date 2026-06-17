@@ -7,12 +7,20 @@ import { TaskDetailDescription } from './_components/TaskDetailDescription';
 import { TaskDetailExecutionError } from './_components/TaskDetailExecutionError/TaskDetailExecutionError';
 import { TaskDetailError } from './_components/TaskDetailError';
 import { TaskDetailHeader } from './_components/TaskDetailHeader';
+import { TaskQuestionForm } from './_components/TaskQuestionForm';
+import { TaskQuestionsHistory } from './_components/TaskQuestionsHistory';
 import styles from './TaskDetailPage.module.scss';
 import { TaskDetailSkeleton } from './TaskDetailSkeleton';
 import { useTaskDetailPage } from './useTaskDetailPage';
 
 export default function TaskDetailPage(): JSX.Element {
-  const { loginRoute, view, refetchTask } = useTaskDetailPage();
+  const {
+    loginRoute,
+    view,
+    refetchTask,
+    taskQuestions,
+    handleAnswerSubmitted,
+  } = useTaskDetailPage();
 
   const body =
     view.phase === 'loading' ? (
@@ -24,11 +32,25 @@ export default function TaskDetailPage(): JSX.Element {
     ) : (
       <main className={styles.pageStack}>
         <TaskDetailHeader task={view.task} onTaskUpdated={refetchTask} />
+        {taskQuestions !== undefined && taskQuestions.pendingQuestions.length > 0 ? (
+          <TaskQuestionForm
+            taskId={view.task.id}
+            questions={taskQuestions.pendingQuestions}
+            onAnswerSubmitted={handleAnswerSubmitted}
+          />
+        ) : null}
         <article className={styles.contentColumn}>
           <TaskDetailDescription description={view.task.description} />
+          {taskQuestions !== undefined && taskQuestions.answeredQuestions.length > 0 ? (
+            <TaskQuestionsHistory questions={taskQuestions.answeredQuestions} />
+          ) : null}
           <TaskDetailAiResponse task={view.task} />
           <TaskDetailExecutionError task={view.task} />
-          <ExecutionProgressTracker taskId={view.task.id} taskStatus={view.task.status} />
+          <ExecutionProgressTracker
+            taskId={view.task.id}
+            taskStatus={view.task.status}
+            answeredQuestions={taskQuestions?.answeredQuestions}
+          />
         </article>
       </main>
     );

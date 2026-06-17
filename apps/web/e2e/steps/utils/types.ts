@@ -20,6 +20,9 @@ export interface WebBddWorld extends BddWorld {
   stopBackgroundProgressWriter?: () => void;
   tabAPage?: import('@playwright/test').Page;
   tabBPage?: import('@playwright/test').Page;
+  pendingQuestionIds?: string[];
+  questionsByText?: Record<string, string>;
+  lastSubmittedQuestionId?: string;
 }
 
 export interface SeedMcpParams {

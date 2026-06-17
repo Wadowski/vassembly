@@ -8,11 +8,13 @@ const {
   mockGetListForUser,
   mockGetPreferenceByUserId,
   mockRunAgentInvokeWithTools,
+  mockWaitForCompletion,
 } = vi.hoisted(() => ({
   mockGetActiveByName: vi.fn(),
   mockGetListForUser: vi.fn(),
   mockGetPreferenceByUserId: vi.fn(),
   mockRunAgentInvokeWithTools: vi.fn(),
+  mockWaitForCompletion: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-system-agent', async (importOriginal) => {
@@ -50,12 +52,22 @@ vi.mock('../runAgentInvokeWithTools', () => ({
   runAgentInvokeWithTools: mockRunAgentInvokeWithTools,
 }));
 
+vi.mock('../../../invocationResumeRegistry', () => ({
+  invocationResumeRegistry: {
+    waitForCompletion: mockWaitForCompletion,
+  },
+}));
+
+import { UserInputWaitingError } from '@vassembly/errors';
+
 import { useAgent } from './index';
 
 import type { InternalToolContext } from '../types';
 
 const BASE_CONTEXT: InternalToolContext = {
   userId: 'user-1',
+  taskId: 'task-1',
+  invocationId: 'parent-invocation-1',
   callerAgentId: 'caller-agent-1',
   callerAgentType: 'personal',
   recursionDepth: 0,
@@ -229,5 +241,24 @@ describe('useAgent internal tool handler', () => {
     });
 
     expect(result).toBe('Nested agent response');
+  });
+
+  it('should defer parent completion when child throws UserInputWaitingError', async () => {
+    mockRunAgentInvokeWithTools.mockRejectedValue(new UserInputWaitingError());
+    mockWaitForCompletion.mockResolvedValue('Resumed child output');
+
+    const result = await useAgent({
+      args: { name: 'Research Bot', agentPrompt: 'Ask the user' },
+      context: BASE_CONTEXT,
+    });
+
+    expect(mockWaitForCompletion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        taskId: 'task-1',
+        invocationId: expect.any(String),
+        resume: expect.any(Function),
+      }),
+    );
+    expect(result).toBe('Resumed child output');
   });
 });

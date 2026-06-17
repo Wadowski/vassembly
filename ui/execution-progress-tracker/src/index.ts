@@ -7,6 +7,7 @@ export { useProgressData } from './hooks/useProgressData';
 export { formatDuration } from './utils/formatDuration';
 export { formatTokens } from './utils/formatTokens';
 export { sortEventsByTimestamp } from './utils/sortEventsByTimestamp';
+export { mergeTimelineItems } from './utils/mergeTimelineItems';
 export { calculateMetrics } from './utils/calculateMetrics';
 export { TASK_PROGRESS_QUERY } from './graphql/taskProgressQuery';
 export {

@@ -19,8 +19,9 @@ This project uses Playwright BDD (Gherkin) for end-to-end testing.
 
 3. **Set environment variables:**
    ```bash
-   cp .env.e2e.example .env.local
+   cp .env.e2e .env.local
    # Update .env.local with your values if needed
+   # Or start dev servers with: pnpm dev:e2e
    ```
 
 4. **Run tests:**

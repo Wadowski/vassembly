@@ -88,29 +88,28 @@ export const runToolCallLoop = async ({
 
     currentMessages = [...currentMessages, response];
 
-    for (const toolCall of toolCalls) {
-      await assertNotAborted({ signal, shouldAbort });
+    const toolMessages = await Promise.all(
+      toolCalls.map(async (toolCall) => {
+        await assertNotAborted({ signal, shouldAbort });
 
-      const tool = toolsByName[toolCall.name];
-      if (tool) {
-        recordExecutedTool(toolCall.name);
-        const toolContent = await tool.invoke(toolCall.args);
-        currentMessages.push(
-          new ToolMessage({
+        const tool = toolsByName[toolCall.name];
+        if (tool) {
+          recordExecutedTool(toolCall.name);
+          const toolContent = await tool.invoke(toolCall.args);
+          return new ToolMessage({
             content: serializeToolContent(toolContent),
             tool_call_id: toolCall.id ?? `${toolCall.name}-${iteration}`,
-          }),
-        );
-        continue;
-      }
+          });
+        }
 
-      currentMessages.push(
-        new ToolMessage({
+        return new ToolMessage({
           content: `Tool ${toolCall.name} not found`,
           tool_call_id: toolCall.id ?? `${toolCall.name}-${iteration}`,
-        }),
-      );
-    }
+        });
+      }),
+    );
+
+    currentMessages.push(...toolMessages);
   }
 
   await assertNotAborted({ signal, shouldAbort });

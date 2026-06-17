@@ -9,6 +9,7 @@ export enum ErrorTypes {
   CONFLICT = 'CONFLICT',
   TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS',
   EXECUTION_PAUSED = 'EXECUTION_PAUSED',
+  USER_INPUT_WAITING = 'USER_INPUT_WAITING',
 }
 
 export const ErrorStatusCodes: Record<ErrorTypes, number> = {
@@ -22,4 +23,5 @@ export const ErrorStatusCodes: Record<ErrorTypes, number> = {
   [ErrorTypes.CONFLICT]: 409,
   [ErrorTypes.TOO_MANY_REQUESTS]: 429,
   [ErrorTypes.EXECUTION_PAUSED]: 499,
+  [ErrorTypes.USER_INPUT_WAITING]: 499,
 };

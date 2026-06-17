@@ -3,8 +3,8 @@ import { ProgressItem } from './ProgressItem';
 import type { ProgressListProps } from '../types';
 import styles from './ProgressList.module.scss';
 
-export const ProgressList: React.FC<ProgressListProps> = ({ events, selectedEventId, onSelectEvent }) => {
-  if (events.length === 0) {
+export const ProgressList: React.FC<ProgressListProps> = ({ items, selectedEventId, onSelectEvent }) => {
+  if (items.length === 0) {
     return (
       <div className={styles.progressListEmpty} role="status">
         <p>No progress events yet. Waiting for execution to start...</p>
@@ -14,12 +14,12 @@ export const ProgressList: React.FC<ProgressListProps> = ({ events, selectedEven
 
   return (
     <ul className={styles.eventList} aria-label="Progress events list">
-      {events.map((event) => (
+      {items.map((item) => (
         <ProgressItem
-          key={event.id}
-          event={event}
-          isSelected={selectedEventId === event.id}
-          onSelect={() => onSelectEvent(event.id)}
+          key={item.id}
+          item={item}
+          isSelected={selectedEventId === item.id}
+          onSelect={() => onSelectEvent(item.id)}
         />
       ))}
     </ul>

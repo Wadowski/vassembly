@@ -25,7 +25,7 @@ const filterToolsByAgentType = ({
   getAllInternalTools().filter((tool) => isToolEligibleForAgentType(tool, agentType));
 
 describe('internal tool registry', () => {
-  it('should contain use-agent, list-agents, and update-task with v1 metadata', () => {
+  it('should contain use-agent, list-agents, update-task, and ask-user with v1 metadata', () => {
     const tools = getAllInternalTools();
 
     expect(tools).toEqual(
@@ -51,9 +51,17 @@ describe('internal tool registry', () => {
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'update_task',
         }),
+        expect.objectContaining({
+          id: 'ask-user',
+          displayName: 'Ask user',
+          description:
+            'Ask the task creator one or more questions. Execution pauses until all pending questions are answered.',
+          accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
+          llmToolName: 'ask_user',
+        }),
       ]),
     );
-    expect(tools).toHaveLength(3);
+    expect(tools).toHaveLength(4);
   });
 
   it('should have unique registry ids', () => {
@@ -165,13 +173,18 @@ describe('filtering tools by agent type', () => {
   it('should return all v1 tools for personal agents', () => {
     const eligibleTools = filterToolsByAgentType({ agentType: 'personal' });
 
-    expect(eligibleTools.map((tool) => tool.id).sort()).toEqual(['list-agents', 'use-agent']);
+    expect(eligibleTools.map((tool) => tool.id).sort()).toEqual([
+      'ask-user',
+      'list-agents',
+      'use-agent',
+    ]);
   });
 
   it('should return all v1 tools for system agents', () => {
     const eligibleTools = filterToolsByAgentType({ agentType: 'system' });
 
     expect(eligibleTools.map((tool) => tool.id).sort()).toEqual([
+      'ask-user',
       'list-agents',
       'update-task',
       'use-agent',

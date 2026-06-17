@@ -27,6 +27,24 @@ export interface ProgressEvent {
   model: string | null;
 }
 
+export interface ProgressAnsweredQuestion {
+  questionId: string;
+  question: string;
+  answer: string;
+  askedAt: string;
+  answeredAt: string;
+}
+
+export type TimelineItemKind = 'progress-event' | 'question-asked' | 'answer-submitted';
+
+export interface TimelineItem {
+  id: string;
+  kind: TimelineItemKind;
+  timestamp: Date;
+  progressEvent?: ProgressEvent;
+  questionData?: ProgressAnsweredQuestion;
+}
+
 export interface TaskProgressData {
   id: string;
   taskId: string;
@@ -40,18 +58,19 @@ export interface TaskProgressData {
 export interface ExecutionProgressTrackerProps {
   taskId: string;
   userId?: string;
-  taskStatus?: 'created' | 'in-progress' | 'done' | 'failed' | 'paused';
+  taskStatus?: 'created' | 'in-progress' | 'waiting' | 'done' | 'failed' | 'paused';
+  answeredQuestions?: ProgressAnsweredQuestion[];
   onTaskCompleted?: (taskProgress: TaskProgressData) => void;
 }
 
 export interface ProgressListProps {
-  events: ProgressEvent[];
+  items: TimelineItem[];
   selectedEventId: string | null;
   onSelectEvent: (eventId: string) => void;
 }
 
 export interface ProgressItemProps {
-  event: ProgressEvent;
+  item: TimelineItem;
   isSelected: boolean;
   onSelect: () => void;
 }
@@ -69,5 +88,5 @@ export interface TokenUsageWidgetProps {
 
 export interface ProgressHeaderProps {
   taskProgress: TaskProgressData;
-  taskStatus?: 'created' | 'in-progress' | 'done' | 'failed' | 'paused';
+  taskStatus?: 'created' | 'in-progress' | 'waiting' | 'done' | 'failed' | 'paused';
 }

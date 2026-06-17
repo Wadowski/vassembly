@@ -38,6 +38,26 @@ describe('config', () => {
     expect(config.apps.docs.port).toBe(3001);
   });
 
+  it('returns e2e config when VASSEMBLY_E2E is true', async () => {
+    vi.stubEnv('VASSEMBLY_E2E', 'true');
+    vi.stubEnv('NODE_ENV', 'development');
+    const { config } = await import('./index.js');
+
+    expect(config.apps.web.port).toBe(3001);
+    expect(config.apps.docs.port).toBe(3002);
+    expect(config.services.api.port).toBe(5001);
+    expect(config.services.api.allowedOrigins).toEqual(['http://localhost:3001']);
+  });
+
+  it('prefers e2e config over production when VASSEMBLY_E2E is true', async () => {
+    vi.stubEnv('VASSEMBLY_E2E', 'true');
+    vi.stubEnv('NODE_ENV', 'production');
+    const { config } = await import('./index.js');
+
+    expect(config.apps.web.port).toBe(3001);
+    expect(config.services.api.port).toBe(5001);
+  });
+
   it('returns config with correct structure', async () => {
     vi.stubEnv('NODE_ENV', 'development');
     const { config } = await import('./index.js');

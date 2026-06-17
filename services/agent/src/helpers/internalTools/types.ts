@@ -5,11 +5,15 @@ export interface InternalToolBinding {
 
 export interface InternalToolContext {
   userId: string;
+  taskId: string;
+  invocationId: string;
   callerAgentType: 'personal' | 'system';
   callerAgentId: string;
   recursionDepth: number;
   rootInvokeId: string;
   parentAgentId?: string;
+  parentInvocationId?: string;
+  spawnBatchId?: string;
   abortSignal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
   recordAgentInvokeProgress?: RecordAgentInvokeProgress;

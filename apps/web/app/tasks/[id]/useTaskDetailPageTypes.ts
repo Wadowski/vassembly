@@ -1,4 +1,4 @@
-import type { TaskDto } from '@vassembly/ui-api-hooks';
+import type { TaskDto, TaskQuestionsDto } from '@vassembly/ui-api-hooks';
 
 export type TaskDetailPageView =
   | { phase: 'loading' }
@@ -10,6 +10,9 @@ export interface UseTaskDetailPageResult {
   loginRoute: string;
   view: TaskDetailPageView;
   refetchTask: () => Promise<void>;
+  taskQuestions: TaskQuestionsDto | undefined;
+  isTaskQuestionsLoading: boolean;
+  handleAnswerSubmitted: () => Promise<void>;
 }
 
 export interface BuildTaskDetailPageViewArgs {

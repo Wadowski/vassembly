@@ -1,15 +1,24 @@
 import developmentConfig from './development';
+import e2eConfig from './e2e';
 import productionConfig from './production';
 import { Environment } from './types';
 
 export { CacheBackend, Environment } from './types';
+export { E2E_API_PORT, E2E_DOCS_PORT, E2E_WEB_PORT } from './e2e';
 export type { CacheConfig, Config, RedisConfig } from './types';
-
-const ENVIRONMENT = (process.env.NODE_ENV as Environment) || Environment.Development;
 
 const CONFIG_MAP = {
   [Environment.Development]: developmentConfig,
   [Environment.Production]: productionConfig,
 };
 
-export const config = CONFIG_MAP[ENVIRONMENT] || developmentConfig;
+const resolveConfig = () => {
+  if (process.env.VASSEMBLY_E2E === 'true') {
+    return e2eConfig;
+  }
+
+  const environment = (process.env.NODE_ENV as Environment) || Environment.Development;
+  return CONFIG_MAP[environment] || developmentConfig;
+};
+
+export const config = resolveConfig();

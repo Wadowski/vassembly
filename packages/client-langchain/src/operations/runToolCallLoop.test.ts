@@ -84,4 +84,47 @@ describe('runToolCallLoop', () => {
       }),
     ).rejects.toThrow(ExecutionPausedError);
   });
+
+  it('should execute sibling tool calls in parallel within one iteration', async () => {
+    const toolInvokeOrder: string[] = [];
+    const firstToolInvoke = vi.fn(async () => {
+      toolInvokeOrder.push('first-start');
+      await new Promise((resolve) => {
+        setTimeout(resolve, 20);
+      });
+      toolInvokeOrder.push('first-end');
+      return 'first-result';
+    });
+    const secondToolInvoke = vi.fn(async () => {
+      toolInvokeOrder.push('second-start');
+      toolInvokeOrder.push('second-end');
+      return 'second-result';
+    });
+    const invoke = vi
+      .fn()
+      .mockResolvedValueOnce({
+        content: '',
+        tool_calls: [
+          { name: 'first', args: {}, id: 'call-1' },
+          { name: 'second', args: {}, id: 'call-2' },
+        ],
+      })
+      .mockResolvedValueOnce({
+        content: 'Done',
+        tool_calls: [],
+      });
+
+    await runToolCallLoop({
+      model: {
+        bindTools: () => createMockModel(invoke),
+      } as unknown as BaseChatModel,
+      tools: [createMockTool('first', firstToolInvoke), createMockTool('second', secondToolInvoke)],
+      messages: [new HumanMessage('Hello')],
+      maxIterations: 3,
+    });
+
+    expect(firstToolInvoke).toHaveBeenCalled();
+    expect(secondToolInvoke).toHaveBeenCalled();
+    expect(toolInvokeOrder.indexOf('second-start')).toBeLessThan(toolInvokeOrder.indexOf('first-end'));
+  });
 });

@@ -4,10 +4,30 @@ export { useResumeTask } from './http/useResumeTask';
 export { useRetryTask } from './http/useRetryTask';
 export { useTaskDetail } from './useTaskDetail';
 export { useUserTasks } from './useUserTasks';
+export {
+  GET_TASK_QUESTIONS_QUERY,
+  useTaskQuestions,
+  useSubmitAnswer,
+} from './questions';
+export {
+  isTaskDetailPollable,
+  TASK_QUESTIONS_POLL_INTERVAL_MS,
+} from './isTaskDetailPollable';
 export type { CreateTaskOutcome, UseCreateTaskResult } from './useCreateTask';
 export type { UsePauseTaskResult } from './http/usePauseTask';
 export type { UseResumeTaskResult } from './http/useResumeTask';
 export type { UseRetryTaskResult } from './http/useRetryTask';
+export type {
+  AnsweredQuestionDto,
+  PendingQuestionDto,
+  QuestionInputType,
+  SubmitAnswerBody,
+  SubmitAnswerParams,
+  TaskQuestionsDto,
+  UseSubmitAnswerResult,
+  UseTaskQuestionsParams,
+  UseTaskQuestionsResult,
+} from './questions';
 export type {
   CreateTaskBody,
   CreateTaskVariables,

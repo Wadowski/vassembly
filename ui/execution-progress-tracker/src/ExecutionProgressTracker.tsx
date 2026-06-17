@@ -6,15 +6,18 @@ import { ProgressHeader } from './_components/ProgressHeader';
 import { useProgressPolling } from './hooks/useProgressPolling';
 import { useModalState } from './hooks/useModalState';
 import { sortEventsByTimestamp } from './utils/sortEventsByTimestamp';
+import { mergeTimelineItems } from './utils/mergeTimelineItems';
 import type { ExecutionProgressTrackerProps, ProgressEvent } from './types';
 import styles from './ExecutionProgressTracker.module.scss';
 
 export const ExecutionProgressTracker: React.FC<ExecutionProgressTrackerProps> = ({
   taskId,
   taskStatus,
+  answeredQuestions,
   onTaskCompleted,
 }) => {
-  const isProgressable = taskStatus === TaskStatus.InProgress;
+  const isProgressable =
+    taskStatus === TaskStatus.InProgress || taskStatus === TaskStatus.Waiting;
   const { data, error, isLoading, refetch } = useProgressPolling({ taskId, enabled: isProgressable });
   const { isOpen, selectedEventId, openModal, closeModal } = useModalState();
 
@@ -65,14 +68,20 @@ export const ExecutionProgressTracker: React.FC<ExecutionProgressTrackerProps> =
   }
 
   const sortedEvents = sortEventsByTimestamp(data.events);
-  const selectedEvent = selectedEventId ? sortedEvents.find((e: ProgressEvent) => e.id === selectedEventId) : null;
+  const timelineItems = mergeTimelineItems({
+    events: sortedEvents,
+    answeredQuestions,
+  });
+  const selectedEvent = selectedEventId
+    ? sortedEvents.find((event: ProgressEvent) => event.id === selectedEventId)
+    : null;
 
   return (
     <div className={styles.executionProgressTracker} data-testid="execution-progress-tracker">
       <ProgressHeader taskProgress={data} taskStatus={taskStatus} />
 
       <ProgressList
-        events={sortedEvents}
+        items={timelineItems}
         selectedEventId={selectedEventId}
         onSelectEvent={openModal}
       />

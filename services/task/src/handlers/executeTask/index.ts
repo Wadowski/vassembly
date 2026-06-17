@@ -3,7 +3,8 @@ import { randomUUID } from 'node:crypto';
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import taskDomain, { TaskStatus } from '@vassembly/domain-task';
 import taskProgressDomain from '@vassembly/domain-task-progress';
-import { ExecutionPausedError } from '@vassembly/errors';
+import taskQuestionsDomain from '@vassembly/domain-task-questions';
+import { ExecutionPausedError, UserInputWaitingError } from '@vassembly/errors';
 import { runAgentInvokeWithTools } from '@vassembly/service-agent';
 
 import { executionRegistry } from '../../executionRegistry';
@@ -78,8 +79,16 @@ export const executeTask = async ({
     if (mode === TaskExecutionMode.Resume) {
       const progressResult = await taskProgressDomain.queries.getModelByTaskId({ taskId });
       const events = progressResult.data?.events ?? [];
-      message = buildResumeMessage({ description: task.description!, events });
+      const questionsResult = await taskQuestionsDomain.queries.getTaskQuestions({ taskId });
+      const answeredQuestions = questionsResult.data?.answeredQuestions ?? [];
+      message = buildResumeMessage({
+        description: task.description!,
+        events,
+        answeredQuestions,
+      });
     }
+
+    const rootInvocationId = randomUUID();
 
     const invokeResult = await runAgentInvokeWithTools({
       userId,
@@ -89,6 +98,8 @@ export const executeTask = async ({
       connectionOverride: { integrationCredentialId: credentialId },
       toolContext: {
         userId,
+        taskId,
+        invocationId: rootInvocationId,
         callerAgentId: task.agentAssignedId,
         callerAgentType: 'system',
         recursionDepth: 0,
@@ -117,6 +128,16 @@ export const executeTask = async ({
     if (error instanceof ExecutionPausedError) {
       logTaskTransition({
         event: 'task.execution.paused',
+        taskId,
+        userId,
+        durationMs: Date.now() - startedAt,
+      });
+      return;
+    }
+
+    if (error instanceof UserInputWaitingError) {
+      logTaskTransition({
+        event: 'task.execution.waiting',
         taskId,
         userId,
         durationMs: Date.now() - startedAt,

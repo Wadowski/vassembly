@@ -27,14 +27,17 @@ const getMonorepoRoot = () => path.resolve(__dirname, '../..');
 const getE2eEnvironment = () => {
   const fileEnv = {
     ...loadEnvFile(path.join(getMonorepoRoot(), '.env')),
-    ...loadEnvFile(path.join(getMonorepoRoot(), '.env.e2e.example')),
+    ...loadEnvFile(path.join(getMonorepoRoot(), '.env.e2e')),
   };
 
-  const readEnv = (key, fallback) => process.env[key] || fileEnv[key] || fallback;
+  const readEnv = (key, fallback) => fileEnv[key] ?? process.env[key] ?? fallback;
 
   return {
-    webBaseUrl: readEnv('E2E_WEB_BASE_URL', 'http://localhost:3000'),
-    apiBaseUrl: readEnv('E2E_API_BASE_URL', 'http://localhost:5000'),
+    webPort: Number(readEnv('WEB_PORT', '3001')),
+    apiPort: Number(readEnv('API_PORT', '5001')),
+    docsPort: Number(readEnv('DOCS_PORT', '3002')),
+    webBaseUrl: readEnv('E2E_WEB_BASE_URL', 'http://localhost:3001'),
+    apiBaseUrl: readEnv('E2E_API_BASE_URL', 'http://localhost:5001'),
     mongoUrl: readEnv('MONGODB_URL', 'mongodb://user:pass@localhost:27017/?directConnection=true'),
     mongoDatabase: readEnv('MONGODB_DATABASE', 'vassembly_e2e'),
     jwtSecret: readEnv('JWT_SECRET', 'dev-jwt-secret'),
@@ -66,6 +69,10 @@ const createE2ePlaywrightConfig = (options) => {
     reuseExistingServer: !process.env.CI || process.env.E2E_REUSE_SERVERS === 'true',
     timeout: 120_000,
     env: {
+      VASSEMBLY_E2E: 'true',
+      WEB_PORT: String(environment.webPort),
+      API_PORT: String(environment.apiPort),
+      DOCS_PORT: String(environment.docsPort),
       MONGODB_URL: environment.mongoUrl,
       MONGODB_DATABASE: environment.mongoDatabase,
       JWT_SECRET: environment.jwtSecret,

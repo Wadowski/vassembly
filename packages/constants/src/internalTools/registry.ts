@@ -24,6 +24,14 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'update_task',
   },
+  {
+    id: 'ask-user',
+    displayName: 'Ask user',
+    description:
+      'Ask the task creator one or more questions. Execution pauses until all pending questions are answered.',
+    accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
+    llmToolName: 'ask_user',
+  },
 ];
 
 export const INTERNAL_TOOL_IDS = INTERNAL_TOOLS.map((tool) => tool.id);

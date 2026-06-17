@@ -6,6 +6,7 @@ export const MongoDbConnection = ({
   url = config.mongoDb.url,
   dbName = config.mongoDb.database,
 } = {}) => {
+  console.log('url', url);
   const client = new MongoClient(url);
   const db = client.db(dbName);
 

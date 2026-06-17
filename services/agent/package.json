@@ -29,6 +29,7 @@
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
+    "@vassembly/domain-task-questions": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/validation": "workspace:*",

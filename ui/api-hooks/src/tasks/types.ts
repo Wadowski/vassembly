@@ -2,6 +2,7 @@ export enum TaskStatus {
   Created = 'created',
   InProgress = 'in-progress',
   Paused = 'paused',
+  Waiting = 'waiting',
   Done = 'done',
   Failed = 'failed',
 }

@@ -3,7 +3,12 @@ import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import systemAgentDomain, { SYSTEM_AGENT_ERROR_CODES } from '@vassembly/domain-system-agent';
 import userMcpConfigDomain from '@vassembly/domain-user-mcp-config';
 import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
-import { WrongParamError, NotFoundError, ExecutionPausedError } from '@vassembly/errors';
+import {
+  ExecutionPausedError,
+  NotFoundError,
+  UserInputWaitingError,
+  WrongParamError,
+} from '@vassembly/errors';
 
 import { resolveMcpSlugs } from '../resolveMcpSlugs';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
@@ -254,7 +259,11 @@ export const runAgentInvokeWithTools = async (
 
     return result;
   } catch (error: unknown) {
-    if (recordProgress && !(error instanceof ExecutionPausedError)) {
+    if (
+      recordProgress &&
+      !(error instanceof ExecutionPausedError) &&
+      !(error instanceof UserInputWaitingError)
+    ) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const errorType =
         error instanceof Error && 'code' in error
