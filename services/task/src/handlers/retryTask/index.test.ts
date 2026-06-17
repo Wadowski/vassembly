@@ -5,11 +5,13 @@ import { ConflictError, NotFoundError } from '@vassembly/errors';
 const {
   mockGetModelById,
   mockRetryTaskCommand,
+  mockResetTaskProgress,
   mockExecuteTask,
   mockLogger,
 } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
   mockRetryTaskCommand: vi.fn(),
+  mockResetTaskProgress: vi.fn(),
   mockExecuteTask: vi.fn(),
   mockLogger: vi.fn(),
 }));
@@ -25,6 +27,14 @@ vi.mock('../executeTask', () => ({
 
 vi.mock('@vassembly/logger', () => ({
   logger: mockLogger,
+}));
+
+vi.mock('@vassembly/domain-task-progress', () => ({
+  default: {
+    commands: {
+      resetTaskProgress: mockResetTaskProgress,
+    },
+  },
 }));
 
 vi.mock('@vassembly/domain-task', () => ({
@@ -78,6 +88,7 @@ describe('retryTask handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockExecuteTask.mockResolvedValue(undefined);
+    mockResetTaskProgress.mockResolvedValue(undefined);
   });
 
   it('should return in-progress task with cleared error fields when task is paused', async () => {
@@ -182,6 +193,7 @@ describe('retryTask handler', () => {
 
     await retryTask({ userId: 'user-1', taskId: 'task-1' });
 
+    expect(mockResetTaskProgress).toHaveBeenCalledWith({ taskId: 'task-1' });
     expect(mockExecuteTask).toHaveBeenCalledTimes(1);
     expect(mockExecuteTask).toHaveBeenCalledWith({
       taskId: 'task-1',

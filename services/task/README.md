@@ -29,6 +29,44 @@ const result = await taskService.createTask({
 
 Implementation: [`src/handlers/createTask/index.ts`](./src/handlers/createTask/index.ts).
 
+Fire-and-forgets `generateTaskTitle` and `executeTask` after create; neither is awaited. See [`generateTaskTitle`](#generatetasktitle-taskid-userid-promisevoid) and [`executeTask`](#executetask-taskid-userid-mode-promisevoid).
+
+### `generateTaskTitle({ taskId, userId }): Promise<void>`
+
+Asynchronously generates a short title (≤ 8 words) from the task description using the **Task title generator** system agent, then persists it via `@vassembly/domain-task` `updateTitle`.
+
+```typescript
+import taskService from '@vassembly/service-task';
+
+void taskService.generateTaskTitle({
+  taskId: 'task-456',
+  userId: 'user-123',
+});
+```
+
+**Purpose:** Populate `task.title` in the background after task creation without blocking the create response.
+
+**Invocation:** Fire-and-forget in `createTask`; never awaited. Same async pattern as `executeTask`.
+
+**Input** ([`src/handlers/generateTaskTitle/types.ts`](./src/handlers/generateTaskTitle/types.ts)):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `taskId` | `string` | Task to generate a title for |
+| `userId` | `string` | Task owner; used for credential lookup and logging |
+
+**Output:** `Promise<void>` — resolves when generation completes or is skipped; never throws.
+
+**Behavior:**
+
+- Skips when title is already set, description is empty, or the user has no AI integration credential
+- Invokes `SYSTEM_AGENT_NAME.TaskTitleGenerator` via `@vassembly/service-agent` `runAgentInvokeWithTools`
+- Normalizes LLM output (first line only, strips surrounding quotes and trailing punctuation, limits to 8 words)
+- Logs all events with `sessionId: 'TASK_TITLE_GENERATION'` (`task.title.started`, `task.title.completed`, `task.title.skipped`, `task.title.failed`)
+- Silent failure on any error (caught and logged; does not affect task execution)
+
+Implementation: [`src/handlers/generateTaskTitle/index.ts`](./src/handlers/generateTaskTitle/index.ts).
+
 ### `listUserTasks({ userId, page, size, search? }): Promise<ListUserTasksHandlerOutput>`
 
 Returns a paginated list of tasks for the authenticated user. Delegates filtering, pagination, and persistence to `@vassembly/domain-task`.
@@ -197,6 +235,7 @@ Handler tests mock the domain layer and validate orchestration behavior. See [`s
 
 ## Dependencies
 
+- **@vassembly/constants** — `SYSTEM_AGENT_NAME.TaskTitleGenerator` for title generation agent lookup
 - **@vassembly/domain-task** — task commands, model, and `toTaskResponse` mapper
 - **@vassembly/domain-task-progress** — progress event reads for resume checkpoint building
 - **@vassembly/domain-system-agent** — user AI credential preference lookup

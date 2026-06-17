@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { InternalError } from '@vassembly/errors';
+import { InternalError, ExecutionPausedError } from '@vassembly/errors';
 
 const { mockLoadMcpTools, mockClose } = vi.hoisted(() => {
   const mockClose = vi.fn();
@@ -52,7 +52,62 @@ describe('invokeWithChatModel', () => {
       errorMessage: 'Failed to invoke',
     });
 
-    expect(invoke).toHaveBeenCalledWith([new HumanMessage('Hello world')]);
+    expect(invoke).toHaveBeenCalledWith([new HumanMessage('Hello world')], undefined);
+  });
+
+  it('should pass signal to chat model invoke on no-tools path', async () => {
+    const controller = new AbortController();
+    const invoke = vi.fn().mockResolvedValue({ content: 'Response' });
+    const createChatModel = vi.fn().mockReturnValue({ invoke });
+
+    await invokeWithChatModel({
+      createChatModel,
+      invokeParams: {
+        model: 'test-model',
+        message: 'Hello world',
+        signal: controller.signal,
+      },
+      errorMessage: 'Failed to invoke',
+    });
+
+    expect(invoke).toHaveBeenCalledWith([new HumanMessage('Hello world')], {
+      signal: controller.signal,
+    });
+  });
+
+  it('should throw ExecutionPausedError when signal is aborted on no-tools path', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const invoke = vi.fn();
+
+    await expect(
+      invokeWithChatModel({
+        createChatModel: vi.fn().mockReturnValue({ invoke }),
+        invokeParams: {
+          model: 'test-model',
+          message: 'Hello',
+          signal: controller.signal,
+        },
+        errorMessage: 'Failed to invoke',
+      }),
+    ).rejects.toThrow(ExecutionPausedError);
+
+    expect(invoke).not.toHaveBeenCalled();
+  });
+
+  it('should throw ExecutionPausedError when invoke rejects with AbortError on no-tools path', async () => {
+    const abortError = new Error('Request aborted');
+    abortError.name = 'AbortError';
+
+    await expect(
+      invokeWithChatModel({
+        createChatModel: vi.fn().mockReturnValue({
+          invoke: vi.fn().mockRejectedValue(abortError),
+        }),
+        invokeParams: { model: 'test-model', message: 'Hello' },
+        errorMessage: 'Failed to invoke model',
+      }),
+    ).rejects.toThrow(ExecutionPausedError);
   });
 
   it('should include system message when provided', async () => {
@@ -69,10 +124,10 @@ describe('invokeWithChatModel', () => {
       errorMessage: 'Failed to invoke',
     });
 
-    expect(invoke).toHaveBeenCalledWith([
-      new SystemMessage('You are helpful.'),
-      new HumanMessage('Hello world'),
-    ]);
+    expect(invoke).toHaveBeenCalledWith(
+      [new SystemMessage('You are helpful.'), new HumanMessage('Hello world')],
+      undefined,
+    );
   });
 
   it('should load MCP tools and close client when mcpServerConfigs provided', async () => {

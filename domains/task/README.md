@@ -8,6 +8,7 @@ Domain package for user-owned tasks. Encapsulates task creation, validation, san
 - **List user tasks query** — paginated, searchable list scoped to a user
 - **Task model** — status lifecycle (`created`, `in-progress`, `paused`, `done`, `failed`)
 - **Pause / resume / retry commands** — cooperative execution control with atomic status guards
+- **Update title command** — internal title-only partial update for background title generation
 - **GraphQL schema** — `Task` and `TasksList` types for API gateway registration
 - **MongoDB persistence** — `tasks` collection with user-scoped index
 - **Future extensibility** — `agentAssignedId` and `type` reserved for agent assignment workflows
@@ -96,6 +97,34 @@ Transitions `paused` or `failed` → `in-progress`. Clears `errorMessage`, `erro
 await commands.retryTask({ taskId: 'task-123' });
 ```
 
+### `commands.updateTitle({ id, title })`
+
+Updates only the `title` field on an existing task. Internal command used by the task title generator background handler in `@vassembly/service-task`; not exposed via the API gateway.
+
+```typescript
+import { commands } from '@vassembly/domain-task';
+
+await commands.updateTitle({ id: 'task-123', title: 'Review quarterly report' });
+// Returns: { data: TaskModel }
+```
+
+**Purpose:** Persist a generated or corrected title without modifying other task fields.
+
+**Input** ([`src/commands/updateTitle/types.ts`](./src/commands/updateTitle/types.ts)):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | yes | Task ID (non-empty) |
+| `title` | `string` | yes | Title text; 1–120 characters after validation |
+
+**Output:** `{ data: TaskModel }` — updated task model.
+
+**Validation:** `title` must be 1–120 characters; empty `id` or `title` throws `ValidationError`.
+
+**Used by:** `generateTaskTitle` handler in `@vassembly/service-task`.
+
+Implementation: [`src/commands/updateTitle/index.ts`](./src/commands/updateTitle/index.ts).
+
 ### `queries.getModelById({ id })`
 
 Internal query returning raw `TaskModel` (used by `service-task` execution).
@@ -170,7 +199,7 @@ See [`src/clients/mongodb.ts`](./src/clients/mongodb.ts).
 
 | Error | When |
 |-------|------|
-| `ValidationError` | Create: empty, whitespace-only, control-only description, exceeds 5000 chars, or missing `userId` |
+| `ValidationError` | Create: empty, whitespace-only, control-only description, exceeds 5000 chars, or missing `userId`; updateTitle: empty `id`, empty `title`, or `title` exceeds 120 chars |
 | `WrongParamError` | List: invalid pagination input (negative `page`, `size` < 1, empty `userId`) |
 | `ConflictError` (`TASK_NOT_PAUSABLE`) | Pause: task is not `in-progress` |
 | `ConflictError` (`TASK_NOT_RESUMABLE`) | Resume: task is not `paused` |

@@ -8,6 +8,7 @@ import {
   E2E_DEFAULT_LAST_NAME,
 } from '../constants';
 import { requireWorkspaceModule } from '../utils/requireWorkspaceModule';
+import { ensureSeedInfrastructure } from './ensureSeedInfrastructure';
 import { applySeedContext } from './applySeedContext';
 import type { SeedUserParams, SeedUserResult } from './types';
 
@@ -17,6 +18,7 @@ export const seedUser = async ({
   context,
 }: SeedUserParams): Promise<SeedUserResult> => {
   applySeedContext({ context });
+  await ensureSeedInfrastructure();
 
   const userDomain = requireWorkspaceModule<typeof import('@vassembly/domain-user')>({
     moduleName: '@vassembly/domain-user',

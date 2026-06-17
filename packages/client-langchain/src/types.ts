@@ -18,6 +18,7 @@ export interface AiProviderInvokeParams {
   mcpServerConfigs?: McpServerConfig[];
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface AiProviderInvokeResult {

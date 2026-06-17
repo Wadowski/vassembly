@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
+import { INTENT_CATEGORY_SLUG } from '@vassembly/constants';
+
 import { TaskStatus, TaskType, type TaskModel } from './model';
 import { toTaskResponse } from './toTaskResponse';
 import type { TaskResponse } from './dto';
@@ -13,6 +15,7 @@ const buildTask = (partial: Partial<TaskModel> = {}): TaskModel =>
     status: TaskStatus.Created,
     agentAssignedId: null,
     title: null,
+    category: null,
     createdAt: new Date('2026-05-26T12:00:00.000Z'),
     updatedAt: new Date('2026-05-26T12:00:00.000Z'),
     ...partial,
@@ -33,6 +36,22 @@ describe('toTaskResponse', () => {
     });
 
     expect(response.title).toBeNull();
+  });
+
+  it('should include optional nullable category on TaskResponse', () => {
+    const response: TaskResponse = toTaskResponse({
+      task: buildTask({ category: INTENT_CATEGORY_SLUG.Task }),
+    });
+
+    expect(response.category).toBe(INTENT_CATEGORY_SLUG.Task);
+  });
+
+  it('should map category null to null in TaskResponse', () => {
+    const response = toTaskResponse({
+      task: buildTask({ category: null }),
+    });
+
+    expect(response.category).toBeNull();
   });
 
   it('should map failed task status to failed in TaskResponse', () => {

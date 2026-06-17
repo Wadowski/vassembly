@@ -1,9 +1,7 @@
-import type { Page } from '@playwright/test';
-import { expect } from '@playwright/test';
+import type { Page, Route } from '@playwright/test';
 import type { MockTaskProgress, MockProgressEvent } from './taskProgress';
 import {
   createMockTaskProgress,
-  createMockProgressEvent,
   createMockProgressEvents,
   createMockErrorResponse,
 } from './taskProgress';
@@ -32,7 +30,7 @@ export const mockGraphQLResponse = async (
     failureCode?: string;
   } = {}
 ): Promise<void> => {
-  const { delay = 0, shouldFail = false, failureCode = 'INTERNAL_SERVER_ERROR' } = options;
+  const { delay = 0, shouldFail = false } = options;
 
   await page.route('**/graphql', async (route) => {
     const request = route.request();
@@ -144,7 +142,7 @@ export const simulateAPIError = async (
 
   let failedRequests = 0;
 
-  const failureHandler = async (route: any) => {
+  const failureHandler = async (route: Route) => {
     const request = route.request();
     const postData = request.postDataJSON?.();
 
@@ -243,7 +241,15 @@ export const waitForPollingRecovery = async (
  * Integration fixture: Verify response shape matches expected contract
  * Validates GraphQL response structure and types
  */
-export const verifyTaskProgressResponseShape = (data: any): boolean => {
+export const verifyTaskProgressResponseShape = (data: {
+  taskProgress?: {
+    id?: string;
+    taskId?: string;
+    startedAt?: string;
+    completedAt?: string | null;
+    events?: Array<Record<string, unknown>>;
+  };
+}): boolean => {
   if (!data?.taskProgress) return false;
 
   const taskProgress = data.taskProgress;
@@ -261,7 +267,7 @@ export const verifyTaskProgressResponseShape = (data: any): boolean => {
 
   // Validate event shape
   const eventFieldsRequired = ['id', 'agentName', 'state', 'timestamp'];
-  const allEventsValid = taskProgress.events.every((event: any) =>
+  const allEventsValid = taskProgress.events.every((event) =>
     eventFieldsRequired.every((field) => field in event)
   );
 

@@ -34,6 +34,7 @@ jobs:
       MONGODB_URL: mongodb://user:pass@localhost:27017/?directConnection=true
       MONGODB_DATABASE: vassembly_e2e_web
       JWT_SECRET: dev-jwt-secret
+      ENCODER_SECRET: dev-encoder-secret
       E2E_WEB_BASE_URL: http://localhost:3000
       E2E_API_BASE_URL: http://localhost:5000
       NODE_ENV: development

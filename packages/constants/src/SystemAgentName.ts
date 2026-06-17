@@ -5,4 +5,5 @@ export enum SYSTEM_AGENT_NAME {
   TaskWorker = 'Task worker',
   ScheduledTaskWorker = 'Scheduled task worker',
   RoutineTaskWorker = 'Routine task worker',
+  TaskTitleGenerator = 'Task title generator',
 }

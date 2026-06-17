@@ -1,6 +1,6 @@
 ---
 name: architect
-model: composer-2.5[fast=false]
+model: claude-sonnet-4-6[]
 description: Conservative software architect. Transforms PRDs into implementation plans by maximizing code reuse and minimizing new logic. For product work, persists plans to docs/features/*/architecture.md; for technical tickets, returns the plan in the response only. Use proactively when analyzing requirements or planning new features to ensure architectural consistency and code reuse.
 ---
 

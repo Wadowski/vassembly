@@ -12,6 +12,7 @@ export const gqlTaskSchema = (builder: Builder): void => {
       status: t.exposeString('status'),
       agentAssignedId: t.exposeString('agentAssignedId', { nullable: true }),
       title: t.exposeString('title', { nullable: true }),
+      category: t.exposeString('category', { nullable: true }),
       llmResponse: t.exposeString('llmResponse', { nullable: true }),
       errorMessage: t.exposeString('errorMessage', { nullable: true }),
       errorCode: t.exposeString('errorCode', { nullable: true }),

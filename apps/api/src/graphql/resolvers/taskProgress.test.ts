@@ -47,6 +47,12 @@ type TaskProgressResolver = (
     state: string;
     timestamp: string;
     duration?: number;
+    tokenUsage?: { input: number; output: number; total: number };
+    errorDetails?: {
+      message: string;
+      type?: string;
+      stackTrace?: string;
+    };
   }>;
 }>;
 
@@ -157,7 +163,7 @@ describe('TaskProgress Resolver', () => {
         ...mockData.data,
         events: [
           {
-            ...mockData.data.events[0],
+            ...mockData.data.events[0]!,
             agentName: 'Agent 1',
           },
         ],
@@ -165,7 +171,7 @@ describe('TaskProgress Resolver', () => {
       expect(result.id).toBe('prog-123');
       expect(result.taskId).toBe('task-123');
       expect(result.events).toHaveLength(1);
-      expect(result.events[0].timestamp).toBe('2026-06-15T10:00:10Z');
+      expect(result.events[0]!.timestamp).toBe('2026-06-15T10:00:10Z');
     });
 
     it('should validate dates are ISO 8601 strings', async () => {
@@ -204,8 +210,9 @@ describe('TaskProgress Resolver', () => {
       // Validate ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ)
       const iso8601Regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
       expect(result.startedAt).toMatch(iso8601Regex);
-      expect(result.completedAt).toMatch(iso8601Regex);
-      expect(result.events[0].timestamp).toMatch(iso8601Regex);
+      expect(result.completedAt).toBeDefined();
+      expect(result.completedAt!).toMatch(iso8601Regex);
+      expect(result.events[0]!.timestamp).toMatch(iso8601Regex);
     });
 
     it('should handle events array with all required fields', async () => {
@@ -258,11 +265,11 @@ describe('TaskProgress Resolver', () => {
       );
 
       expect(result.events).toHaveLength(2);
-      expect(result.events[0]).toHaveProperty('id');
-      expect(result.events[0]).toHaveProperty('agentName');
-      expect(result.events[0]).toHaveProperty('state');
-      expect(result.events[0]).toHaveProperty('timestamp');
-      expect(result.events[0]).toHaveProperty('tokenUsage');
+      expect(result.events[0]!).toHaveProperty('id');
+      expect(result.events[0]!).toHaveProperty('agentName');
+      expect(result.events[0]!).toHaveProperty('state');
+      expect(result.events[0]!).toHaveProperty('timestamp');
+      expect(result.events[0]!).toHaveProperty('tokenUsage');
     });
 
     it('should throw UnauthorizedError when userId is missing', async () => {
@@ -377,7 +384,7 @@ describe('TaskProgress Resolver', () => {
         { authenticatedUserId: 'user-456' }
       );
 
-      expect(result.events[0].duration).toBeUndefined();
+      expect(result.events[0]!.duration).toBeUndefined();
     });
 
     it('should handle error details in events', async () => {
@@ -418,8 +425,8 @@ describe('TaskProgress Resolver', () => {
         { authenticatedUserId: 'user-456' }
       );
 
-      expect(result.events[0].errorDetails).toBeDefined();
-      expect(result.events[0].errorDetails?.message).toBe('LLM API timeout');
+      expect(result.events[0]!.errorDetails).toBeDefined();
+      expect(result.events[0]!.errorDetails?.message).toBe('LLM API timeout');
     });
   });
 });

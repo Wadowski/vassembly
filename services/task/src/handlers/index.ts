@@ -1,5 +1,7 @@
 export { createTask } from './createTask';
 export { executeTask, TaskExecutionMode } from './executeTask';
+export { generateTaskCategory } from './generateTaskCategory';
+export { generateTaskTitle } from './generateTaskTitle';
 export { getTask } from './getTask';
 export { listUserTasks } from './listUserTasks';
 export { pauseTask } from './pauseTask';
@@ -8,6 +10,8 @@ export { resumeTask } from './resumeTask';
 export { retryTask } from './retryTask';
 export type { CreateTaskHandlerInput, CreateTaskHandlerOutput } from './createTask/types';
 export type { ExecuteTaskParams } from './executeTask/types';
+export type { GenerateTaskCategoryHandlerInput } from './generateTaskCategory/types';
+export type { GenerateTaskTitleHandlerInput } from './generateTaskTitle/types';
 export type { GetTaskHandlerInput } from './getTask/types';
 export type { ListUserTasksHandlerInput, ListUserTasksHandlerOutput } from './listUserTasks/types';
 export type { PauseTaskHandlerInput, PauseTaskHandlerOutput } from './pauseTask/types';

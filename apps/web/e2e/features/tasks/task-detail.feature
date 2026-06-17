@@ -78,6 +78,6 @@ Feature: Task Detail Page
 
   Scenario: Polling stops on page unmount
     Given I navigate to an in-progress task detail page
-    And polling is active
+    And task detail polling is active
     When I navigate away from the detail page
     Then the polling subscription is cleaned up

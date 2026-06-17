@@ -25,6 +25,7 @@ export interface ModeledProviderInvokeParams {
   mcpServerConfigs?: AgentInvokeMcpServerConfig[];
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface ModeledProviderClient {
@@ -50,6 +51,7 @@ export interface InvokeSystemAgentParams {
   mcpServerConfigs?: AgentInvokeMcpServerConfig[];
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface InvokeSystemAgentResult {

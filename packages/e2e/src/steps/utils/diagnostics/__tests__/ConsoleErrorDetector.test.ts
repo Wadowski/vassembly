@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { Page, ConsoleMessage as PlaywrightConsoleMessage } from '@playwright/test';
 import { ConsoleErrorDetector } from '../ConsoleErrorDetector';
-import type { ConsoleMessage } from '../types';
 
 describe('ConsoleErrorDetector', () => {
   let detector: ConsoleErrorDetector;
@@ -18,7 +17,7 @@ describe('ConsoleErrorDetector', () => {
           consoleListeners.set('console', listener);
         }
         return mockPage as Page;
-      }),
+      }) as unknown as Page['on'],
     };
   });
 
@@ -43,14 +42,14 @@ describe('ConsoleErrorDetector', () => {
       detector.attachListener(mockPage as Page);
       const listener = consoleListeners.get('console')!;
 
-      const mockConsoleMsg: Partial<PlaywrightConsoleMessage> = {
+      const mockConsoleMsg = {
         type: () => 'log',
         text: () => 'Test log message',
         location: () => ({ url: 'http://localhost:3000/page' }),
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      listener(mockConsoleMsg as PlaywrightConsoleMessage);
+      listener(mockConsoleMsg);
 
       expect(detector.messages).toHaveLength(1);
       expect(detector.messages[0]).toEqual({
@@ -65,93 +64,93 @@ describe('ConsoleErrorDetector', () => {
       detector.attachListener(mockPage as Page);
       const listener = consoleListeners.get('console')!;
 
-      const mockConsoleMsg: Partial<PlaywrightConsoleMessage> = {
+      const mockConsoleMsg = {
         type: () => 'warn',
         text: () => 'Test warning',
         location: () => ({ url: 'http://localhost:3000' }),
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      listener(mockConsoleMsg as PlaywrightConsoleMessage);
+      listener(mockConsoleMsg);
 
-      expect(detector.messages[0].type).toBe('warn');
-      expect(detector.messages[0].text).toBe('Test warning');
+      expect(detector.messages[0]!.type).toBe('warn');
+      expect(detector.messages[0]!.text).toBe('Test warning');
     });
 
     it('should collect error messages', () => {
       detector.attachListener(mockPage as Page);
       const listener = consoleListeners.get('console')!;
 
-      const mockConsoleMsg: Partial<PlaywrightConsoleMessage> = {
+      const mockConsoleMsg = {
         type: () => 'error',
         text: () => 'Maximum update depth exceeded',
         location: () => ({ url: 'http://localhost:3000' }),
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      listener(mockConsoleMsg as PlaywrightConsoleMessage);
+      listener(mockConsoleMsg);
 
-      expect(detector.messages[0].type).toBe('error');
-      expect(detector.messages[0].text).toBe('Maximum update depth exceeded');
+      expect(detector.messages[0]!.type).toBe('error');
+      expect(detector.messages[0]!.text).toBe('Maximum update depth exceeded');
     });
 
     it('should collect debug messages', () => {
       detector.attachListener(mockPage as Page);
       const listener = consoleListeners.get('console')!;
 
-      const mockConsoleMsg: Partial<PlaywrightConsoleMessage> = {
+      const mockConsoleMsg = {
         type: () => 'debug',
         text: () => 'Debug info',
         location: () => ({ url: 'http://localhost:3000' }),
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      listener(mockConsoleMsg as PlaywrightConsoleMessage);
+      listener(mockConsoleMsg);
 
-      expect(detector.messages[0].type).toBe('debug');
+      expect(detector.messages[0]!.type).toBe('debug');
     });
 
     it('should handle messages without location', () => {
       detector.attachListener(mockPage as Page);
       const listener = consoleListeners.get('console')!;
 
-      const mockConsoleMsg: Partial<PlaywrightConsoleMessage> = {
+      const mockConsoleMsg = {
         type: () => 'log',
         text: () => 'No location message',
         location: () => undefined,
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      listener(mockConsoleMsg as PlaywrightConsoleMessage);
+      listener(mockConsoleMsg);
 
       expect(detector.messages).toHaveLength(1);
-      expect(detector.messages[0].location).toBeUndefined();
+      expect(detector.messages[0]!.location).toBeUndefined();
     });
 
     it('should collect multiple messages in order', () => {
       detector.attachListener(mockPage as Page);
       const listener = consoleListeners.get('console')!;
 
-      const msg1: Partial<PlaywrightConsoleMessage> = {
+      const msg1 = {
         type: () => 'log',
         text: () => 'First message',
         location: () => ({ url: 'http://localhost' }),
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      const msg2: Partial<PlaywrightConsoleMessage> = {
+      const msg2 = {
         type: () => 'error',
         text: () => 'Error message',
         location: () => ({ url: 'http://localhost' }),
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      listener(msg1 as PlaywrightConsoleMessage);
-      listener(msg2 as PlaywrightConsoleMessage);
+      listener(msg1);
+      listener(msg2);
 
       expect(detector.messages).toHaveLength(2);
-      expect(detector.messages[0].text).toBe('First message');
-      expect(detector.messages[1].text).toBe('Error message');
+      expect(detector.messages[0]!.text).toBe('First message');
+      expect(detector.messages[1]!.text).toBe('Error message');
     });
   });
 
@@ -188,7 +187,7 @@ describe('ConsoleErrorDetector', () => {
       ];
 
       messages.forEach((msg) => {
-        listener(msg as PlaywrightConsoleMessage);
+        listener(msg as unknown as PlaywrightConsoleMessage);
       });
     });
 
@@ -197,7 +196,7 @@ describe('ConsoleErrorDetector', () => {
       const matches = detector.getErrorsMatching(pattern);
 
       expect(matches).toHaveLength(1);
-      expect(matches[0].text).toBe('Maximum update depth exceeded in component');
+      expect(matches[0]!.text).toBe('Maximum update depth exceeded in component');
     });
 
     it('should return messages matching partial pattern', () => {
@@ -205,7 +204,7 @@ describe('ConsoleErrorDetector', () => {
       const matches = detector.getErrorsMatching(pattern);
 
       expect(matches).toHaveLength(1);
-      expect(matches[0].text).toContain('update depth');
+      expect(matches[0]!.text).toContain('update depth');
     });
 
     it('should match multiple patterns', () => {
@@ -226,7 +225,7 @@ describe('ConsoleErrorDetector', () => {
       const matches = detector.getErrorsMatching(pattern);
 
       expect(matches).toHaveLength(1);
-      expect(matches[0].text).toContain('Maximum update');
+      expect(matches[0]!.text).toContain('Maximum update');
     });
 
     it('should return empty array when no matches found', () => {
@@ -278,18 +277,18 @@ describe('ConsoleErrorDetector', () => {
       const listener = consoleListeners.get('console')!;
       const beforeTime = Date.now();
 
-      const mockConsoleMsg: Partial<PlaywrightConsoleMessage> = {
+      const mockConsoleMsg = {
         type: () => 'log',
         text: () => 'Timestamped message',
         location: () => ({ url: 'http://localhost' }),
         args: () => [],
-      };
+      } as unknown as PlaywrightConsoleMessage;
 
-      listener(mockConsoleMsg as PlaywrightConsoleMessage);
+      listener(mockConsoleMsg);
       const afterTime = Date.now();
 
-      expect(detector.messages[0].timestamp).toBeGreaterThanOrEqual(beforeTime);
-      expect(detector.messages[0].timestamp).toBeLessThanOrEqual(afterTime);
+      expect(detector.messages[0]!.timestamp).toBeGreaterThanOrEqual(beforeTime);
+      expect(detector.messages[0]!.timestamp).toBeLessThanOrEqual(afterTime);
     });
   });
 });

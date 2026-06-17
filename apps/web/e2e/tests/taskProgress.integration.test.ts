@@ -2,10 +2,8 @@ import { test, expect, Page } from '@playwright/test';
 import {
   setupTaskWithEvents,
   mockGraphQLResponse,
-  getPollingMetrics,
   simulateAPIError,
   waitForPollingRecovery,
-  waitForNewEventInPolling,
   verifyTaskProgressResponseShape,
   verifyEventChronologicalOrder,
   verifyNoDuplicateEvents,
@@ -149,7 +147,7 @@ test.describe('Task Progress Integration Tests', () => {
       if (data.completedAt) {
         expect(data.completedAt).toMatch(iso8601Regex);
       }
-      data.events.forEach((event: any) => {
+      data.events.forEach((event: { timestamp: string }) => {
         expect(event.timestamp).toMatch(iso8601Regex);
       });
     });
@@ -532,7 +530,7 @@ test.describe('Task Progress Integration Tests', () => {
     });
 
     test('should verify polling can recover from API error', async () => {
-      const taskProgress = await setupTaskWithEvents(2);
+      await setupTaskWithEvents(2);
 
       const recovery = await waitForPollingRecovery(page, {
         normalInterval: 1000,

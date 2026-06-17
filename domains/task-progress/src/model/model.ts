@@ -40,7 +40,7 @@ export class TaskProgressModel extends Model {
 
   userId?: string;
 
-  createdAt?: Date;
+  declare createdAt?: Date;
 
   startedAt?: Date;
 

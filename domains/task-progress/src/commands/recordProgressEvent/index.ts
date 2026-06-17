@@ -61,7 +61,7 @@ export const recordProgressEvent = async (
 
   const result = await collection.updateOne(
     { taskId: validated.taskId },
-    { $push: { events: newEvent } } as Parameters<typeof collection.updateOne>[1]
+    { $push: { events: newEvent } } as unknown as Parameters<typeof collection.updateOne>[1]
   );
 
   if (result.matchedCount === 0) {

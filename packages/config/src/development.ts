@@ -18,7 +18,7 @@ const config: Config = {
     }
   },
   encoder: {
-    secret: 'test-secret',
+    secret: process.env.ENCODER_SECRET || 'test-secret',
     saltRounds: 10,
     algorithm: 'aes-256-cbc',
   },

@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import type { BddWorld } from '../../../fixtures/types';
-import type { E2eEnvironment } from '../../../config/types';
+import type { BddWorld } from '../../../../fixtures/types';
+import type { E2eEnvironment } from '../../../../config/types';
 import { DiagnosticsReporter } from '../DiagnosticsReporter';
-import { ConsoleErrorDetector } from '../ConsoleErrorDetector';
-import { RequestLoopDetector } from '../RequestLoopDetector';
 
 describe('DiagnosticsReporter', () => {
   let world: BddWorld;

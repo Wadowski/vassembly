@@ -12,3 +12,5 @@ export { resumeTask } from './resumeTask';
 export type { ResumeTaskCommandInput, ResumeTaskCommandResult } from './resumeTask/types';
 export { retryTask } from './retryTask';
 export type { RetryTaskCommandInput, RetryTaskCommandResult } from './retryTask/types';
+export { updateTask } from './updateTask';
+export type { UpdateTaskCommandInput, UpdateTaskCommandResult } from './updateTask/types';

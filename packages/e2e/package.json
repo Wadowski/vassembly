@@ -34,7 +34,7 @@
     "@vassembly/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
-    "playwright-bdd": "^8.5.1",
+    "playwright-bdd": "^9.1.0",
     "typescript": "5.9.2",
     "vitest": "^2.0.0"
   }

@@ -52,6 +52,7 @@ export const useTaskInput = (): UseTaskInputResult => {
 
     if (outcome.ok) {
       clearInput();
+      router.push(`/tasks/${outcome.task.id}`);
       return { status: 'success' };
     }
 

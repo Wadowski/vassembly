@@ -20,7 +20,7 @@ const mockCollection = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  (mongoDb.db.collection as any).mockReturnValue(mockCollection);
+  (mongoDb.db.collection as ReturnType<typeof vi.fn>).mockReturnValue(mockCollection);
 });
 
 describe('finalizeTaskProgress', () => {
@@ -221,6 +221,8 @@ describe('finalizeTaskProgress', () => {
 
       expect(result.completedAt).toBeDefined();
       expect(result.completedAt instanceof Date).toBe(true);
+      expect(result.completedAt!.getTime()).toBeGreaterThanOrEqual(beforeCall.getTime());
+      expect(result.completedAt!.getTime()).toBeLessThanOrEqual(afterCall.getTime());
     });
 
     it('should handle empty events array', async () => {
@@ -244,7 +246,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       expect(result.totalDuration).toBe(0);
-      expect(result.totalTokens.total).toBe(0);
+      expect(result.totalTokens?.total).toBe(0);
     });
   });
 
@@ -260,7 +262,7 @@ describe('finalizeTaskProgress', () => {
     it('should reject missing taskId', async () => {
       await expect(
         finalizeTaskProgress({
-          taskId: undefined as any,
+          taskId: undefined as unknown as string,
         })
       ).rejects.toThrow();
     });

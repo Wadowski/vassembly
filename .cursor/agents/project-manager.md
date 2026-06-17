@@ -125,17 +125,18 @@ Result: Code review report with all identified issues, suggestions, and quality 
 **Stage 11: Fix Issues**
 Delegate by issue type:
 - **Failing tests** → **test-fixer** (include full test output, exact commands from Stage 9, and `try: 1`)
-- **Lint, build, and code review issues** → **coder**
+- **Lint, build, type check, and code review issues** → **coder**
 
 As a parent agent, I request you to spawn the appropriate subagent(s) for this stage.
 
 Input: Issues identified from Stage 9 (Verification) and Stage 10 (Code Review)
 Task:
-- Fix all failing tests from Stage 9 (test-fixer)
-- Fix all linting errors from Stage 9 (coder)
-- Fix all build failures from Stage 9 (coder)
+- Fix all failing tests from Stage 9 until all tests pass (test-fixer)
+- Fix all linting errors from Stage 9 until lint passes (coder)
+- Fix all type check errors from Stage 9 until type check passes (coder)
+- Fix all build failures from Stage 9 until build passes (coder)
 - Address all code quality issues from Stage 10 code review (coder)
-Result: Updated code with all issues resolved
+Result: Updated code with all tests, lints, type checks, and builds passing for modified packages and their dependents
 
 **Stage 12: Documentation** (if required by architect)
 Delegate to the documentation-writer subagent.

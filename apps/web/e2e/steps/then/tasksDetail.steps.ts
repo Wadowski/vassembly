@@ -15,6 +15,14 @@ Then('I see the task detail page for task-123', async ({ page }) => {
   await expect(page).toHaveURL(/\/tasks\/task-123$/);
 });
 
+Then('I am on the task detail page', async ({ page }) => {
+  if (!page) {
+    return;
+  }
+
+  await expect(page).toHaveURL(/\/tasks\/[a-f0-9]+$/);
+});
+
 Then('I see the title {string}', async ({ page }, title: string) => {
   if (!page) {
     return;

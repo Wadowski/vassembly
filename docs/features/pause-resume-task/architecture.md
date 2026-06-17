@@ -702,7 +702,13 @@ Add `ExecutionPausedError` to `@vassembly/errors` — extends `CommonError` with
 
 ### 8.4 LangChain native abort
 
-If the underlying model supports `{ signal }` on `invoke`, pass it. If not, cooperative checks between iterations are sufficient for v1 (PRD NFR-P1).
+`{ signal }` is passed to every LangChain `model.invoke(messages, { signal })` call in `invokeWithChatModel` (no-tools path) and `runToolCallLoop` (tool-loop path). When `executionRegistry.abort()` fires, the in-flight HTTP request is cancelled by the provider client; LangChain/provider errors named `AbortError` are mapped to `ExecutionPausedError` in `mapInvokeAbortError`.
+
+Cooperative checks (`assertNotAborted` with `signal` + `shouldAbort`) still run at loop iteration boundaries and **before each tool invocation**, so pause blocks new tool steps even when no LLM call is active.
+
+**MCP tool limitation:** abort checks run before `tool.invoke()`. An MCP tool already executing its own HTTP/SDK call is not cancelled mid-flight — pause takes effect before the next LLM iteration or tool step. Nested `useAgent` calls share the same `AbortSignal`, so their LLM requests are cancelled mid-request.
+
+**Partial output on abort:** LangChain may expose partial model output on abort in newer versions (`ModelAbortError.partialOutput`). Not consumed in v1 — orphaned `started` progress events remain as documented in §7.4.
 
 ---
 

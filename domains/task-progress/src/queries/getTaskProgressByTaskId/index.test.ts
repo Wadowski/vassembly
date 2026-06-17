@@ -19,7 +19,7 @@ const mockCollection = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  (mongoDb.db.collection as any).mockReturnValue(mockCollection);
+  (mongoDb.db.collection as ReturnType<typeof vi.fn>).mockReturnValue(mockCollection);
 });
 
 describe('getTaskProgressByTaskId', () => {
@@ -201,7 +201,7 @@ describe('getTaskProgressByTaskId', () => {
     it('should reject missing taskId', async () => {
       await expect(
         getTaskProgressByTaskId({
-          taskId: undefined as any,
+          taskId: undefined as unknown as string,
           userId: 'user-456',
         })
       ).rejects.toThrow();
@@ -211,7 +211,7 @@ describe('getTaskProgressByTaskId', () => {
       await expect(
         getTaskProgressByTaskId({
           taskId: 'task-123',
-          userId: undefined as any,
+          userId: undefined as unknown as string,
         })
       ).rejects.toThrow();
     });

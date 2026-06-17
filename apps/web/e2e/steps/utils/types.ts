@@ -13,6 +13,11 @@ export interface WebBddWorld extends BddWorld {
   secondPage?: import('@playwright/test').Page;
   pauseApiRequestCount?: number;
   progressEventCountAtPause?: number;
+  lastProgressEventTimestamp?: string | null;
+  lastProgressEventId?: string | null;
+  progressExecutionAttemptAtCheckpoint?: number;
+  stopTaskProgressPollingMonitor?: () => void;
+  stopBackgroundProgressWriter?: () => void;
   tabAPage?: import('@playwright/test').Page;
   tabBPage?: import('@playwright/test').Page;
 }

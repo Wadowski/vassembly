@@ -37,15 +37,6 @@ When('I click the back link', async ({ page }) => {
   await page.getByTestId('task-detail-back').click();
 });
 
-const isListUserTasksResponse = (response: import('@playwright/test').Response): boolean => {
-  const postData = response.request().postData();
-  return (
-    response.url().includes('/graphql') &&
-    (postData?.includes('ListUserTasks') === true || postData?.includes('userTasks') === true) &&
-    response.ok()
-  );
-};
-
 When('I create a task with description {string}', async ({ page }, description: string) => {
   if (!page) {
     return;
@@ -60,13 +51,13 @@ When('I create a task with description {string}', async ({ page }, description: 
     (response) => response.url().includes('/tasks') && response.request().method() === 'POST',
     { timeout: 20_000 },
   );
-  const listRefreshResponse = page.waitForResponse(isListUserTasksResponse, { timeout: 25_000 });
 
   await createTaskButton.click();
 
   const response = await createTaskResponse;
   expect(response.ok()).toBe(true);
-  await listRefreshResponse;
+
+  await page.waitForURL('/tasks/*', { timeout: 15_000 });
 });
 
 When('I navigate directly to {string}', async ({ page }, path: string) => {
@@ -157,7 +148,7 @@ When("I navigate to that task's detail page", async ({ page, world }) => {
   await page.goto(`/tasks/${webWorld.otherUserTaskId}`);
 });
 
-When('polling is active', async ({ page }) => {
+When('task detail polling is active', async ({ page }) => {
   if (!page) {
     return;
   }

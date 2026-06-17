@@ -17,6 +17,13 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
     llmToolName: 'list_agents',
   },
+  {
+    id: 'update-task',
+    displayName: 'Update task',
+    description: 'Persist title and/or category for a task by its ID',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'update_task',
+  },
 ];
 
 export const INTERNAL_TOOL_IDS = INTERNAL_TOOLS.map((tool) => tool.id);

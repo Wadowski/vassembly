@@ -8,7 +8,7 @@ import type { WebBddWorld } from '../utils/types';
 
 const { When } = createBdd(bddTest);
 
-When('I open the system agent create form', async ({ page, world }) => {
+When('I open the system agent create form', async ({ page }) => {
   if (!page) {
     return;
   }

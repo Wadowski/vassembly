@@ -1,4 +1,5 @@
 import taskDomain, { TaskStatus, toTaskResponse } from '@vassembly/domain-task';
+import taskProgressDomain from '@vassembly/domain-task-progress';
 import { ConflictError, NotFoundError } from '@vassembly/errors';
 import { logger } from '@vassembly/logger';
 
@@ -19,6 +20,15 @@ export const retryTask = async ({
 
   if (task.status !== TaskStatus.Paused && task.status !== TaskStatus.Failed) {
     throw new ConflictError('Task is not paused or failed', { code: 'TASK_NOT_RETRYABLE' });
+  }
+
+  try {
+    await taskProgressDomain.commands.resetTaskProgress({ taskId });
+  } catch (error: unknown) {
+    logger('task.retry.resetProgress.failed', {
+      meta: { sessionId: 'TASK_EXECUTION', taskId, userId },
+      data: { error: error instanceof Error ? error.message : String(error) },
+    });
   }
 
   const result = await taskDomain.commands.retryTask({ taskId });

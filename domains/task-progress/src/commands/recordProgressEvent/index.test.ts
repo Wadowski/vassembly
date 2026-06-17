@@ -20,7 +20,7 @@ const mockCollection = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  (mongoDb.db.collection as any).mockReturnValue(mockCollection);
+  (mongoDb.db.collection as ReturnType<typeof vi.fn>).mockReturnValue(mockCollection);
 });
 
 describe('recordProgressEvent', () => {
@@ -198,7 +198,8 @@ describe('recordProgressEvent', () => {
       });
 
       const callArgs = mockCollection.updateOne.mock.calls[0];
-      expect(callArgs[1]).toHaveProperty('$push');
+      expect(callArgs).toBeDefined();
+      expect(callArgs![1]).toHaveProperty('$push');
     });
 
     it('should handle multiple events with different states', async () => {
@@ -335,7 +336,7 @@ describe('recordProgressEvent', () => {
         recordProgressEvent({
           taskId: 'task-123',
           agentId: 'agent-123',
-          state: 'invalid-state' as any,
+          state: 'invalid-state' as unknown as ProgressEventState,
         })
       ).rejects.toThrow();
     });

@@ -22,15 +22,24 @@ const loadEnvFile = (filePath) => {
   return env;
 };
 
+const getMonorepoRoot = () => path.resolve(__dirname, '../..');
+
 const getE2eEnvironment = () => {
-  const e2eExampleEnv = loadEnvFile(path.join(process.cwd(), '.env.e2e.example'));
+  const fileEnv = {
+    ...loadEnvFile(path.join(getMonorepoRoot(), '.env')),
+    ...loadEnvFile(path.join(getMonorepoRoot(), '.env.e2e.example')),
+  };
+
+  const readEnv = (key, fallback) => process.env[key] || fileEnv[key] || fallback;
+
   return {
-    webBaseUrl: e2eExampleEnv.E2E_WEB_BASE_URL ?? 'http://localhost:3000',
-    apiBaseUrl: e2eExampleEnv.E2E_API_BASE_URL ?? 'http://localhost:5000',
-    mongoUrl: e2eExampleEnv.MONGODB_URL ?? 'mongodb://user:pass@localhost:27017/?directConnection=true',
-    mongoDatabase: e2eExampleEnv.MONGODB_DATABASE ?? 'vassembly_e2e',
-    jwtSecret: e2eExampleEnv.JWT_SECRET ?? 'dev-jwt-secret',
-    nodeEnv: e2eExampleEnv.NODE_ENV ?? 'development',
+    webBaseUrl: readEnv('E2E_WEB_BASE_URL', 'http://localhost:3000'),
+    apiBaseUrl: readEnv('E2E_API_BASE_URL', 'http://localhost:5000'),
+    mongoUrl: readEnv('MONGODB_URL', 'mongodb://user:pass@localhost:27017/?directConnection=true'),
+    mongoDatabase: readEnv('MONGODB_DATABASE', 'vassembly_e2e'),
+    jwtSecret: readEnv('JWT_SECRET', 'dev-jwt-secret'),
+    encoderSecret: readEnv('ENCODER_SECRET', 'dev-encoder-secret'),
+    nodeEnv: readEnv('NODE_ENV', 'development'),
   };
 };
 
@@ -60,6 +69,7 @@ const createE2ePlaywrightConfig = (options) => {
       MONGODB_URL: environment.mongoUrl,
       MONGODB_DATABASE: environment.mongoDatabase,
       JWT_SECRET: environment.jwtSecret,
+      ENCODER_SECRET: environment.encoderSecret,
       NODE_ENV: environment.nodeEnv,
     },
   }));

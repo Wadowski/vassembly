@@ -127,6 +127,7 @@ const invokePersonalAgent = async ({
     mcpServerConfigs,
     internalToolBindings: bindings,
     signal: toolContext.abortSignal,
+    shouldAbort: toolContext.shouldAbort,
   });
 
   return {
@@ -168,6 +169,7 @@ const invokeSystemAgent = async ({
     message,
     internalToolBindings: bindings,
     signal: toolContext.abortSignal,
+    shouldAbort: toolContext.shouldAbort,
   });
 
   return {

@@ -17,7 +17,7 @@ describe('RequestLoopDetector', () => {
           requestListeners.set('request', listener);
         }
         return mockPage as Page;
-      }),
+      }) as unknown as Page['on'],
     };
   });
 
@@ -77,8 +77,8 @@ describe('RequestLoopDetector', () => {
 
       listener(mockRequest);
 
-      expect(detector.requests[0].method).toBe('POST');
-      expect(detector.requests[0].body).toBe('{"name":"John"}');
+      expect(detector.requests[0]!.method).toBe('POST');
+      expect(detector.requests[0]!.body).toBe('{"name":"John"}');
     });
 
     it('should collect multiple requests in order', () => {
@@ -101,8 +101,8 @@ describe('RequestLoopDetector', () => {
       listener(request2);
 
       expect(detector.requests).toHaveLength(2);
-      expect(detector.requests[0].url).toBe('http://localhost/api/users');
-      expect(detector.requests[1].url).toBe('http://localhost/api/tasks');
+      expect(detector.requests[0]!.url).toBe('http://localhost/api/users');
+      expect(detector.requests[1]!.url).toBe('http://localhost/api/tasks');
     });
   });
 
@@ -364,7 +364,7 @@ describe('RequestLoopDetector', () => {
 
       // Verify violations are sorted by count (highest first)
       for (let i = 0; i < violations.length - 1; i++) {
-        expect(violations[i].count).toBeGreaterThanOrEqual(violations[i + 1].count);
+        expect(violations[i]!.count).toBeGreaterThanOrEqual(violations[i + 1]!.count);
       }
     });
 
@@ -389,8 +389,8 @@ describe('RequestLoopDetector', () => {
 
       const afterTime = Date.now();
 
-      expect(detector.requests[0].timestamp).toBeGreaterThanOrEqual(beforeTime);
-      expect(detector.requests[0].timestamp).toBeLessThanOrEqual(afterTime);
+      expect(detector.requests[0]!.timestamp).toBeGreaterThanOrEqual(beforeTime);
+      expect(detector.requests[0]!.timestamp).toBeLessThanOrEqual(afterTime);
     });
   });
 });

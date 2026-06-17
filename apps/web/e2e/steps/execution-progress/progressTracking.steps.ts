@@ -15,9 +15,6 @@ const PROGRESS_MODAL_TEST_ID = 'progress-detail-modal';
 const ERROR_BANNER_TEST_ID = 'progress-error-banner';
 const RETRY_BUTTON_TEST_ID = 'progress-retry-button';
 
-const POLLING_INTERVAL_MS = 1000;
-const RELATIVE_TIME_UPDATE_MS = 60_000;
-
 /**
  * GIVEN steps - Setup state
  */
@@ -509,14 +506,11 @@ Then('no events are lost or duplicated', async ({ page }) => {
   expect(eventIds.size).toBeGreaterThan(0);
 });
 
-Then('the data matches the database', async ({ page, world }) => {
+Then('the data matches the database', async ({ page }) => {
   if (!page) {
     return;
   }
 
-  const webWorld = world as WebBddWorld;
-  
-  // In a real scenario, this would query the database directly
   // For now, verify the data is consistent on page
   const items = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
   expect(items).toBeGreaterThan(0);

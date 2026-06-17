@@ -17,7 +17,7 @@ const mockCollection = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  (mongoDb.db.collection as any).mockReturnValue(mockCollection);
+  (mongoDb.db.collection as ReturnType<typeof vi.fn>).mockReturnValue(mockCollection);
 });
 
 describe('getModelByTaskId', () => {
@@ -76,7 +76,7 @@ describe('getModelByTaskId', () => {
     it('should reject missing taskId', async () => {
       await expect(
         getModelByTaskId({
-          taskId: undefined as any,
+          taskId: undefined as unknown as string,
         })
       ).rejects.toThrow();
     });

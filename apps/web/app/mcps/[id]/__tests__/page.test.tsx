@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UnauthorizedError } from '@vassembly/errors';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   CONFIGURATION_SAVED_MESSAGE,
@@ -145,6 +145,10 @@ describe('McpDetailPage', () => {
       show: mockShowSnackbar,
       dismiss: vi.fn(),
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('page load and display', () => {
@@ -417,6 +421,10 @@ describe('McpDetailPage', () => {
         expect(mockShowSnackbar).toHaveBeenCalledWith(
           expect.objectContaining({ message: CONFIGURATION_SAVED_MESSAGE }),
         );
+      });
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 2100);
       });
     });
 

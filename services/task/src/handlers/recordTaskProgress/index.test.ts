@@ -146,7 +146,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'started',
+        state: 'started' as ProgressEventModel['state'],
         timestamp: new Date(),
       };
 
@@ -174,7 +174,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'started',
+        state: 'started' as ProgressEventModel['state'],
         timestamp: new Date(),
       };
 
@@ -217,7 +217,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'started',
+        state: 'started' as ProgressEventModel['state'],
         timestamp: new Date(),
       };
 
@@ -268,7 +268,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'started',
+        state: 'started' as ProgressEventModel['state'],
         timestamp: new Date(),
       };
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -292,7 +292,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'started',
+        state: 'started' as ProgressEventModel['state'],
         timestamp: new Date(),
       };
 
@@ -326,7 +326,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'completed',
+        state: 'completed' as ProgressEventModel['state'],
         timestamp: now,
         duration: 5000,
         inputMessages: '{"prompt": "test"}',
@@ -357,7 +357,7 @@ describe('recordTaskProgress handler', () => {
       expect(mockRecordProgressEvent).toHaveBeenCalledWith({
         taskId: 'task123',
         agentId: 'agent-123',
-        state: 'completed',
+        state: 'completed' as ProgressEventModel['state'],
         timestamp: now,
         duration: 5000,
         inputMessages: '{"prompt": "test"}',
@@ -372,7 +372,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'failed',
+        state: 'failed' as ProgressEventModel['state'],
         timestamp: new Date(),
         duration: 1000,
         errorDetails: {
@@ -404,7 +404,7 @@ describe('recordTaskProgress handler', () => {
 
       expect(mockRecordProgressEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          state: 'failed',
+          state: 'failed' as ProgressEventModel['state'],
           errorDetails: {
             message: 'Connection timeout',
             type: 'TimeoutError',
@@ -419,7 +419,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'started',
+        state: 'started' as ProgressEventModel['state'],
         timestamp: expect.any(Date),
       };
 
@@ -453,7 +453,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event123',
         agentId: 'agent-123',
-        state: 'started',
+        state: 'started' as ProgressEventModel['state'],
         timestamp: customTimestamp,
       };
 
@@ -543,7 +543,7 @@ describe('recordTaskProgress handler', () => {
       const mockEvent: ProgressEventModel = {
         id: 'event-789',
         agentId: 'TestAgent',
-        state: 'completed',
+        state: 'completed' as ProgressEventModel['state'],
         timestamp: new Date(),
         duration: 2500,
         tokenUsage: { input: 50, output: 25, total: 75 },

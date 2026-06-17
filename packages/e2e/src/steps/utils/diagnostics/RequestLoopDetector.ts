@@ -39,12 +39,12 @@ export class RequestLoopDetector {
       this.requests.push({
         method,
         url,
-        body: postData,
+        body: postData ?? undefined,
         timestamp: Date.now(),
       });
 
       this.trackRequestCount(url);
-      this.parseGraphQLOperation(postData);
+      this.parseGraphQLOperation(postData ?? undefined);
     });
   }
 

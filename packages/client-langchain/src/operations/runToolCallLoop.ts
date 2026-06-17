@@ -2,8 +2,9 @@ import { ToolMessage } from '@langchain/core/messages';
 import type { BaseMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { DynamicStructuredTool } from '@langchain/core/tools';
-import { ExecutionPausedError } from '@vassembly/errors';
 
+import { assertNotAborted } from '../utils/assertNotAborted';
+import { invokeModelWithSignal } from '../utils/invokeModelWithSignal';
 import {
   extractTokenUsageFromMessage,
   mergeTokenUsage,
@@ -16,6 +17,7 @@ export interface RunToolCallLoopParams {
   messages: BaseMessage[];
   maxIterations: number;
   signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface RunToolCallLoopResult {
@@ -23,6 +25,22 @@ export interface RunToolCallLoopResult {
   executedToolNames: string[];
   usage?: NonNullable<AiProviderInvokeResult['usage']>;
 }
+
+const getToolCalls = (
+  response: BaseMessage,
+): Array<{ name: string; args: Record<string, unknown>; id?: string }> => {
+  if (!('tool_calls' in response)) {
+    return [];
+  }
+
+  const toolCalls = response.tool_calls;
+
+  if (!Array.isArray(toolCalls)) {
+    return [];
+  }
+
+  return toolCalls;
+};
 
 const serializeToolContent = (content: unknown): string => {
   if (typeof content === 'string') {
@@ -38,6 +56,7 @@ export const runToolCallLoop = async ({
   messages,
   maxIterations,
   signal,
+  shouldAbort,
 }: RunToolCallLoopParams): Promise<RunToolCallLoopResult> => {
   const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
   const modelWithTools =
@@ -53,13 +72,15 @@ export const runToolCallLoop = async ({
   };
 
   for (let iteration = 0; iteration < maxIterations; iteration += 1) {
-    if (signal?.aborted) {
-      throw new ExecutionPausedError();
-    }
+    await assertNotAborted({ signal, shouldAbort });
 
-    const response = await modelWithTools.invoke(currentMessages);
+    const response = await invokeModelWithSignal({
+      model: modelWithTools,
+      messages: currentMessages,
+      signal,
+    });
     usage = mergeTokenUsage(usage, extractTokenUsageFromMessage(response));
-    const toolCalls = response.tool_calls ?? [];
+    const toolCalls = getToolCalls(response);
 
     if (toolCalls.length === 0) {
       return { response, executedToolNames, usage };
@@ -68,6 +89,8 @@ export const runToolCallLoop = async ({
     currentMessages = [...currentMessages, response];
 
     for (const toolCall of toolCalls) {
+      await assertNotAborted({ signal, shouldAbort });
+
       const tool = toolsByName[toolCall.name];
       if (tool) {
         recordExecutedTool(toolCall.name);
@@ -90,7 +113,13 @@ export const runToolCallLoop = async ({
     }
   }
 
-  const response = await modelWithTools.invoke(currentMessages);
+  await assertNotAborted({ signal, shouldAbort });
+
+  const response = await invokeModelWithSignal({
+    model: modelWithTools,
+    messages: currentMessages,
+    signal,
+  });
   usage = mergeTokenUsage(usage, extractTokenUsageFromMessage(response));
   return { response, executedToolNames, usage };
 };

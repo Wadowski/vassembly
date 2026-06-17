@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { TaskStatus } from '@vassembly/ui-api-hooks/src/tasks/types';
 import { ProgressList } from './_components/ProgressList';
 import { ProgressDetailModal } from './_components/ProgressDetailModal';
 import { ProgressHeader } from './_components/ProgressHeader';
@@ -13,8 +14,15 @@ export const ExecutionProgressTracker: React.FC<ExecutionProgressTrackerProps> =
   taskStatus,
   onTaskCompleted,
 }) => {
-  const { data, error, isLoading, refetch } = useProgressPolling({ taskId, enabled: true });
+  const isProgressable = taskStatus === TaskStatus.InProgress;
+  const { data, error, isLoading, refetch } = useProgressPolling({ taskId, enabled: isProgressable });
   const { isOpen, selectedEventId, openModal, closeModal } = useModalState();
+
+  useEffect(() => {
+    if (isProgressable && !isLoading) {
+      void refetch();
+    }
+  }, [isProgressable, refetch, isLoading]);
 
   useEffect(() => {
     if (data?.completedAt) {

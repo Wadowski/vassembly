@@ -75,7 +75,7 @@ export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
         }
       : undefined,
   });
-  const { handleChange, values: formValues } = form;
+  const { handleChange, values: formValues, setValues } = form;
 
   const { mutate: update, isLoading: isUpdating } = useAiIntegrationUpdate();
   const { mutate: testConnection, isLoading: isTesting } = useTestConnection();
@@ -106,7 +106,7 @@ export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
         if (!cancelled) {
           setCredential(found);
           setLoadError(undefined);
-          form.setValues({
+          setValues({
             name: found.name,
             provider: found.provider,
             apiKey: '',
@@ -125,7 +125,7 @@ export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
     return (): void => {
       cancelled = true;
     };
-  }, [credentialId, http]);
+  }, [credentialId, http, setValues]);
 
   useEffect(() => {
     return (): void => {

@@ -1,3 +1,4 @@
+import type { INTENT_CATEGORY_SLUG } from '@vassembly/constants';
 import { Model } from '@vassembly/model';
 
 export enum TaskType {
@@ -25,6 +26,8 @@ export class TaskModel extends Model {
   agentAssignedId?: string | null;
 
   title?: string | null;
+
+  category?: INTENT_CATEGORY_SLUG | null;
 
   llmResponse?: string | null;
 

@@ -5,7 +5,9 @@ import { ExecutionPausedError, InternalError } from '@vassembly/errors';
 import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
 import { mapExecutedLlmToolNamesToIds } from '../internalTools/mapExecutedLlmToolNamesToIds';
 import { MCP_TOOL_MAX_ITERATIONS, loadMcpTools } from '../mcp';
+import { assertNotAborted } from '../utils/assertNotAborted';
 import { extractTokenUsageFromMessage } from '../utils/extractTokenUsageFromMessage';
+import { invokeModelWithSignal } from '../utils/invokeModelWithSignal';
 import { runToolCallLoop } from './runToolCallLoop';
 
 import type { AiProviderInvokeParams, AiProviderInvokeResult } from '../types';
@@ -63,7 +65,17 @@ const invokeModel = async ({
   const hasTools = mcpServerConfigs.length > 0 || internalToolBindings.length > 0;
 
   if (!hasTools) {
-    const result = await chatModel.invoke(messages);
+    await assertNotAborted({
+      signal: invokeParams.signal,
+      shouldAbort: invokeParams.shouldAbort,
+    });
+
+    const result = await invokeModelWithSignal({
+      model: chatModel,
+      messages,
+      signal: invokeParams.signal,
+    });
+
     return {
       message: extractMessageContent(result.content),
       usage: extractTokenUsageFromMessage(result),
@@ -106,6 +118,7 @@ const invokeModel = async ({
       messages,
       maxIterations: MCP_TOOL_MAX_ITERATIONS,
       signal: invokeParams.signal,
+      shouldAbort: invokeParams.shouldAbort,
     });
 
     return {

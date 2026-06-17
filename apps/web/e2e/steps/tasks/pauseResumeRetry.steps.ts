@@ -190,14 +190,6 @@ When('I pause the task in Tab A', async ({ world }) => {
   webWorld.lastResponse = await pauseResponse;
 });
 
-When('I wait {int} seconds', async ({ page }, seconds: number) => {
-  if (!page) {
-    return;
-  }
-
-  await page.waitForTimeout(seconds * 1_000);
-});
-
 When('PATCH {string} is called', async ({ api, world }, pathTemplate: string) => {
   const action = pathTemplate.includes('/pause')
     ? 'pause'

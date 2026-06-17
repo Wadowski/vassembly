@@ -13,6 +13,7 @@ const resolveInvokeParams = (
   mcpServerConfigs: params.mcpServerConfigs,
   internalToolBindings: params.internalToolBindings,
   signal: params.signal,
+  shouldAbort: params.shouldAbort,
 });
 
 export const invoke = async (params: InvokeAgentParams): Promise<InvokeAgentResult> => {

@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { ValidationError } from '@vassembly/errors';
-
 vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   mongoDb: {
     db: {
@@ -20,7 +18,7 @@ const mockCollection = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  (mongoDb.db.collection as any).mockReturnValue(mockCollection);
+  (mongoDb.db.collection as ReturnType<typeof vi.fn>).mockReturnValue(mockCollection);
 });
 
 describe('initializeTaskProgress', () => {
@@ -114,7 +112,7 @@ describe('initializeTaskProgress', () => {
     it('should reject missing taskId', async () => {
       await expect(
         initializeTaskProgress({
-          taskId: undefined as any,
+          taskId: undefined as unknown as string,
           userId: 'user-456',
         })
       ).rejects.toThrow();
@@ -124,7 +122,7 @@ describe('initializeTaskProgress', () => {
       await expect(
         initializeTaskProgress({
           taskId: 'task-123',
-          userId: undefined as any,
+          userId: undefined as unknown as string,
         })
       ).rejects.toThrow();
     });

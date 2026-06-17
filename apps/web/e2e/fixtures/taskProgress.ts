@@ -146,7 +146,6 @@ export const mockTaskProgressQuery = (taskProgress: MockTaskProgress) => ({
  */
 export const setupMockTaskProgressPolling = async (
   page: Page,
-  _taskProgress: MockTaskProgress
 ): Promise<void> => {
   await page.route('**/graphql', async (route) => {
     const request = route.request();

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@vassembly/client-mongodb": "workspace:*",
+    "@vassembly/constants": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/graphql": "workspace:*",

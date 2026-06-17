@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { POLLING_INTERVAL_MS } from '../constants/polling';
 import { TASK_PROGRESS_QUERY } from '../graphql/taskProgressQuery';
 import { normalizeTaskProgress } from '../utils/normalizeTaskProgress';
@@ -26,23 +26,33 @@ export const useProgressPolling = ({ taskId, enabled = true }: UseProgressPollin
   });
 
   const normalizedData = data?.taskProgress ? normalizeTaskProgress(data.taskProgress) : null;
+  const previousEnabledRef = useRef<boolean | undefined>(undefined);
 
   useEffect(() => {
+    const previousEnabled = previousEnabledRef.current;
+    previousEnabledRef.current = enabled;
+
     if (!enabled) {
-      stopPolling();
-      return;
+      return () => {
+        stopPolling();
+      };
     }
 
-    if (normalizedData?.completedAt) {
+    const isResuming = previousEnabled === false;
+
+    if (isResuming) {
+      void refetch();
+      startPolling(POLLING_INTERVAL_MS);
+    } else if (normalizedData?.completedAt) {
       stopPolling();
-    } else if (enabled) {
+    } else {
       startPolling(POLLING_INTERVAL_MS);
     }
 
     return () => {
       stopPolling();
     };
-  }, [enabled, normalizedData?.completedAt, stopPolling, startPolling]);
+  }, [enabled, normalizedData?.completedAt, stopPolling, startPolling, refetch]);
 
   return {
     data: normalizedData,

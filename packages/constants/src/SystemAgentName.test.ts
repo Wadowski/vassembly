@@ -11,6 +11,7 @@ describe('SYSTEM_AGENT_NAME', () => {
       'Task worker',
       'Scheduled task worker',
       'Routine task worker',
+      'Task title generator',
     ]);
   });
 });
