@@ -71,8 +71,10 @@ describe('useProgressPolling', () => {
     mockRefetch.mockResolvedValue({});
   });
 
-  it('should start polling on mount when enabled is true and completedAt is null', () => {
-    renderHook(() => useProgressPolling({ taskId: 'task-1', enabled: true }));
+  it('should start polling on mount when isPollingEnabled is true and completedAt is null', () => {
+    renderHook(() =>
+      useProgressPolling({ taskId: 'task-1', isPollingEnabled: true, isFetchEnabled: true }),
+    );
 
     expect(mockStartPolling).toHaveBeenCalledWith(POLLING_INTERVAL_MS);
   });
@@ -81,8 +83,9 @@ describe('useProgressPolling', () => {
     queryResult.data = createRawTaskProgress({ completedAt: null });
 
     const { rerender } = renderHook(
-      ({ enabled }) => useProgressPolling({ taskId: 'task-1', enabled }),
-      { initialProps: { enabled: true } },
+      ({ isPollingEnabled }) =>
+        useProgressPolling({ taskId: 'task-1', isPollingEnabled, isFetchEnabled: true }),
+      { initialProps: { isPollingEnabled: true } },
     );
 
     mockStopPolling.mockClear();
@@ -92,31 +95,33 @@ describe('useProgressPolling', () => {
       completedAt: '2026-06-15T11:00:00.000Z',
     });
 
-    rerender({ enabled: true });
+    rerender({ isPollingEnabled: true });
 
     expect(mockStopPolling).toHaveBeenCalled();
     expect(mockStartPolling).not.toHaveBeenCalled();
   });
 
-  it('should stop polling when enabled transitions from true to false', () => {
+  it('should stop polling when isPollingEnabled transitions from true to false', () => {
     const { rerender } = renderHook(
-      ({ enabled }) => useProgressPolling({ taskId: 'task-1', enabled }),
-      { initialProps: { enabled: true } },
+      ({ isPollingEnabled }) =>
+        useProgressPolling({ taskId: 'task-1', isPollingEnabled, isFetchEnabled: true }),
+      { initialProps: { isPollingEnabled: true } },
     );
 
     mockStopPolling.mockClear();
 
-    rerender({ enabled: false });
+    rerender({ isPollingEnabled: false });
 
     expect(mockStopPolling).toHaveBeenCalled();
   });
 
-  it('should restart polling and refetch when enabled transitions from false to true on resume', () => {
+  it('should restart polling and refetch when isPollingEnabled transitions from false to true on resume', () => {
     queryResult.data = createRawTaskProgress({ completedAt: null });
 
     const { rerender } = renderHook(
-      ({ enabled }) => useProgressPolling({ taskId: 'task-1', enabled }),
-      { initialProps: { enabled: false } },
+      ({ isPollingEnabled }) =>
+        useProgressPolling({ taskId: 'task-1', isPollingEnabled, isFetchEnabled: true }),
+      { initialProps: { isPollingEnabled: false } },
     );
 
     expect(mockStartPolling).not.toHaveBeenCalled();
@@ -125,20 +130,21 @@ describe('useProgressPolling', () => {
     mockStopPolling.mockClear();
     mockRefetch.mockClear();
 
-    rerender({ enabled: true });
+    rerender({ isPollingEnabled: true });
 
     expect(mockStartPolling).toHaveBeenCalledWith(POLLING_INTERVAL_MS);
     expect(mockRefetch).toHaveBeenCalled();
   });
 
-  it('should restart polling when enabled transitions from false to true even with stale completedAt on retry', () => {
+  it('should restart polling when isPollingEnabled transitions from false to true even with stale completedAt on retry', () => {
     queryResult.data = createRawTaskProgress({
       completedAt: '2026-06-15T09:00:00.000Z',
     });
 
     const { rerender } = renderHook(
-      ({ enabled }) => useProgressPolling({ taskId: 'task-1', enabled }),
-      { initialProps: { enabled: false } },
+      ({ isPollingEnabled }) =>
+        useProgressPolling({ taskId: 'task-1', isPollingEnabled, isFetchEnabled: true }),
+      { initialProps: { isPollingEnabled: false } },
     );
 
     expect(mockStartPolling).not.toHaveBeenCalled();
@@ -146,14 +152,14 @@ describe('useProgressPolling', () => {
     mockStartPolling.mockClear();
     mockStopPolling.mockClear();
 
-    rerender({ enabled: true });
+    rerender({ isPollingEnabled: true });
 
     expect(mockStartPolling).toHaveBeenCalledWith(POLLING_INTERVAL_MS);
   });
 
   it('should stop polling on unmount cleanup', () => {
     const { unmount } = renderHook(() =>
-      useProgressPolling({ taskId: 'task-1', enabled: true }),
+      useProgressPolling({ taskId: 'task-1', isPollingEnabled: true, isFetchEnabled: true }),
     );
 
     mockStopPolling.mockClear();
@@ -165,20 +171,21 @@ describe('useProgressPolling', () => {
 
   it('should handle rapid enable and disable transitions without leaking polling', () => {
     const { rerender } = renderHook(
-      ({ enabled }) => useProgressPolling({ taskId: 'task-1', enabled }),
-      { initialProps: { enabled: true } },
+      ({ isPollingEnabled }) =>
+        useProgressPolling({ taskId: 'task-1', isPollingEnabled, isFetchEnabled: true }),
+      { initialProps: { isPollingEnabled: true } },
     );
 
     act(() => {
-      rerender({ enabled: false });
+      rerender({ isPollingEnabled: false });
     });
 
     act(() => {
-      rerender({ enabled: true });
+      rerender({ isPollingEnabled: true });
     });
 
     act(() => {
-      rerender({ enabled: false });
+      rerender({ isPollingEnabled: false });
     });
 
     expect(mockStartPolling).toHaveBeenCalled();

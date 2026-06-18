@@ -41,22 +41,27 @@ export const useProgressPolling = ({
   useEffect(() => {
     const previousPollingEnabled = previousPollingEnabledRef.current;
     previousPollingEnabledRef.current = isPollingEnabled;
+    const isResuming = previousPollingEnabled === false && isPollingEnabled;
 
-    if (!isFetchEnabled || !isPollingEnabled || normalizedData?.completedAt) {
+    if (!isFetchEnabled || !isPollingEnabled) {
       stopPolling();
       return () => {
         stopPolling();
       };
     }
 
-    const isResuming = previousPollingEnabled === false;
+    if (normalizedData?.completedAt && !isResuming) {
+      stopPolling();
+      return () => {
+        stopPolling();
+      };
+    }
 
     if (isResuming) {
       void refetch();
-      startPolling(POLLING_INTERVAL_MS);
-    } else {
-      startPolling(POLLING_INTERVAL_MS);
     }
+
+    startPolling(POLLING_INTERVAL_MS);
 
     return () => {
       stopPolling();
