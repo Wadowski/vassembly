@@ -16,8 +16,7 @@ import { TaskExecutionMode } from './types';
 
 import type { ExecuteTaskParams } from './types';
 
-const MISSING_CREDENTIAL_MESSAGE =
-  'Configure a "preferred for system calls" AI credential in Settings.';
+const MISSING_CREDENTIAL_MESSAGE = 'Missing AI credential configuration';
 
 const INVALID_AGENT_ASSIGNED_MESSAGE = 'Task cannot be executed without an assigned agent.';
 

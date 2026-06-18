@@ -178,38 +178,25 @@ export const transitionTaskToWaitingWithQuestions = async ({
 };
 
 export const parsePendingQuestionTable = (
-  table: { rows: () => string[][] },
-): PendingQuestionSeedRow[] => {
-  const rows = table.rows();
-  const header = rows[0] ?? [];
-  const questionIndex = header.indexOf('question');
-  const inputTypeIndex = header.indexOf('inputType');
-  const optionsIndex = header.indexOf('options');
-
-  if (questionIndex === -1) {
-    throw new Error('Pending questions table must include a question column');
-  }
-
-  return rows.slice(1).map((row) => {
-    const question = row[questionIndex];
+  table: { hashes: () => Array<{ question?: string; inputType?: string; options?: string }> },
+): PendingQuestionSeedRow[] =>
+  table.hashes().map((row) => {
+    const question = row.question;
     if (!question) {
       throw new Error('Pending question row is missing question text');
     }
 
-    const inputType = inputTypeIndex >= 0 ? row[inputTypeIndex] : undefined;
-    const optionsRaw = optionsIndex >= 0 ? row[optionsIndex] : undefined;
     const options =
-      optionsRaw && optionsRaw.trim() !== ''
-        ? optionsRaw.split(',').map((option) => option.trim())
+      row.options && row.options.trim() !== ''
+        ? row.options.split(',').map((option) => option.trim())
         : undefined;
 
     return {
       question,
-      inputType: inputType && inputType.trim() !== '' ? inputType : undefined,
+      inputType: row.inputType && row.inputType.trim() !== '' ? row.inputType : undefined,
       options,
     };
   });
-};
 
 export const navigateToQuestionByText = async ({
   page,
@@ -220,17 +207,43 @@ export const navigateToQuestionByText = async ({
 }): Promise<void> => {
   const questionLocator = page.getByTestId(TASK_QUESTION_TEXT_TEST_ID);
   const nextButton = page.getByTestId(TASK_QUESTION_NEXT_TEST_ID);
+  const previousButton = page.getByTestId(TASK_QUESTION_PREVIOUS_TEST_ID);
+
+  const isOnTargetQuestion = async (): Promise<boolean> => {
+    const currentText = await questionLocator.textContent();
+    return currentText?.includes(questionText) ?? false;
+  };
+
+  if (await isOnTargetQuestion()) {
+    return;
+  }
+
   const totalQuestions = await page.getByTestId(TASK_QUESTION_PROGRESS_TEST_ID).textContent();
   const match = totalQuestions?.match(/of (\d+)/);
   const total = match ? Number.parseInt(match[1], 10) : 1;
 
   for (let attempt = 0; attempt < total; attempt += 1) {
-    const currentText = await questionLocator.textContent();
-    if (currentText?.includes(questionText)) {
+    if (await isOnTargetQuestion()) {
       return;
     }
 
+    if (!(await nextButton.isEnabled())) {
+      break;
+    }
+
     await nextButton.click();
+  }
+
+  for (let attempt = 0; attempt < total; attempt += 1) {
+    if (await isOnTargetQuestion()) {
+      return;
+    }
+
+    if (!(await previousButton.isEnabled())) {
+      break;
+    }
+
+    await previousButton.click();
   }
 
   throw new Error(`Could not navigate to question: ${questionText}`);

@@ -4,15 +4,23 @@ End-to-end tests for `@vassembly/web` using Playwright and Gherkin BDD (`playwri
 
 ## Prerequisites
 
-- MongoDB reachable (global setup starts docker-compose automatically if needed)
+- MongoDB and dev servers running (start from monorepo root: `pnpm dev:e2e`)
 - Dependencies installed from the monorepo root: `pnpm install`
 
 ## Run tests locally
 
-From `apps/web`:
+From monorepo root, start infrastructure first:
 
 ```bash
-pnpm test:e2e
+pnpm dev:e2e
+```
+
+Then run tests from `apps/web` or root:
+
+```bash
+pnpm test:e2e:web    # from root
+# or
+cd apps/web && pnpm test:e2e
 ```
 
 Other modes:
@@ -29,7 +37,7 @@ Override the web base URL:
 E2E_WEB_BASE_URL=http://localhost:3000 pnpm test:e2e
 ```
 
-Playwright starts `@vassembly/api` and `@vassembly/web` dev servers when they are not already running.
+Playwright only runs tests. Start MongoDB and application servers separately with `pnpm dev:e2e`.
 
 ## Feature file organization
 

@@ -61,6 +61,11 @@ Given('the current user has the admin role', async ({ page, seed, world }) => {
     return;
   }
 
+  await page.context().clearCookies();
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
   await signInSeededUser({ page, email: world.auth.email });
 });
 

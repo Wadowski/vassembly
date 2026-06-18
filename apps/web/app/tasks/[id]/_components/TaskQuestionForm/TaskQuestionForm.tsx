@@ -20,7 +20,7 @@ export const TaskQuestionForm = ({
   taskId,
   questions,
   onAnswerSubmitted,
-}: TaskQuestionFormProps): JSX.Element => {
+}: TaskQuestionFormProps): JSX.Element | null => {
   const {
     currentIndex,
     currentQuestion,
@@ -35,6 +35,10 @@ export const TaskQuestionForm = ({
     handleValueChange,
     handleSubmit,
   } = useTaskQuestionForm({ taskId, questions, onAnswerSubmitted });
+
+  if (currentQuestion === undefined) {
+    return null;
+  }
 
   const progressLabel = QUESTION_FORM_PROGRESS_LABEL.replace(
     '{current}',

@@ -18,6 +18,7 @@ export interface WebBddWorld extends BddWorld {
   progressExecutionAttemptAtCheckpoint?: number;
   stopTaskProgressPollingMonitor?: () => void;
   stopBackgroundProgressWriter?: () => void;
+  shouldResumeBackgroundProgressWriter?: boolean;
   tabAPage?: import('@playwright/test').Page;
   tabBPage?: import('@playwright/test').Page;
   pendingQuestionIds?: string[];

@@ -59,7 +59,7 @@ loadE2eEnvironmentSync();
 import { getE2eEnvironment } from '../../config/environment';
 import { seedDatabase } from '../../seed/seedDatabase';
 import { seedE2ESystemAgents } from '../../seed/seedE2ESystemAgents';
-import { isMongoReachable, startMongoDocker } from './mongoDocker';
+import { isMongoReachable } from './mongoDocker';
 
 const MONGO_STARTUP_RETRIES = 30;
 const MONGO_STARTUP_DELAY_MS = 1_000;
@@ -74,7 +74,9 @@ const waitForMongo = async (mongoUrl: string): Promise<void> => {
       setTimeout(resolve, MONGO_STARTUP_DELAY_MS);
     });
   }
-  throw new Error('MongoDB did not become reachable during E2E global setup');
+  throw new Error(
+    'MongoDB is not reachable. Start it with: pnpm dev:e2e:mongo'
+  );
 };
 
 const globalSetup = async (): Promise<void> => {
@@ -85,7 +87,6 @@ const globalSetup = async (): Promise<void> => {
 
   const isReady = await isMongoReachable({ mongoUrl: environment.mongoUrl });
   if (!isReady) {
-    await startMongoDocker();
     await waitForMongo(environment.mongoUrl);
   }
 

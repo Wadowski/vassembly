@@ -13,6 +13,7 @@ export const TASK_PROGRESS_QUERY = gql`
         output
         total
       }
+      executionAttempt
       events {
         id
         agentId

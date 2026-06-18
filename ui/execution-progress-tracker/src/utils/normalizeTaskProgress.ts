@@ -34,6 +34,7 @@ export interface RawTaskProgressData {
   completedAt?: string | null;
   totalDuration: number;
   totalTokens: RawTokenUsage;
+  executionAttempt?: number;
   events: RawProgressEvent[];
 }
 
@@ -53,6 +54,7 @@ export const normalizeTaskProgress = (raw: RawTaskProgressData): TaskProgressDat
   completedAt: raw.completedAt ? new Date(raw.completedAt) : null,
   totalDuration: raw.totalDuration,
   totalTokens: raw.totalTokens,
+  executionAttempt: raw.executionAttempt ?? 1,
   events: raw.events.map((event) => ({
     id: event.id,
     agentId: event.agentId ?? '',

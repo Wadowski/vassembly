@@ -5,6 +5,7 @@ import { createDeepSeekProvider } from "./providers/createDeepSeekProvider";
 import { createAnthropicProvider } from "./providers/createAnthropicProvider";
 import { createGeminiProvider } from "./providers/createGeminiProvider";
 import { createLmStudioProvider } from "./providers/createLmStudioProvider";
+import { createE2eStubProvider, E2E_STUB_API_KEY } from "./providers/createE2eStubProvider";
 import type { AiProviderClient, CreateProviderClientParams } from "./types";
 
 const PROVIDER_SLUGS = {
@@ -88,6 +89,10 @@ const PROVIDER_CLIENT_CREATORS: Record<
 export const createProviderClient = (
   input: CreateProviderClientParams,
 ): AiProviderClient => {
+  if (input.apiKey === E2E_STUB_API_KEY) {
+    return createE2eStubProvider();
+  }
+
   const creator = PROVIDER_CLIENT_CREATORS[input.provider];
 
   if (!creator) {

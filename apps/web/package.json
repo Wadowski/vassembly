@@ -9,9 +9,9 @@
     "lint": "eslint --max-warnings 0",
     "test": "vitest run",
     "bddgen": "NODE_OPTIONS='--require ./e2e/loadE2eEnv.cjs' node -r tsx/cjs node_modules/playwright-bdd/dist/cli/index.js",
-    "test:e2e": "pnpm run bddgen && playwright test",
-    "test:e2e:ui": "pnpm run bddgen && playwright test --ui",
-    "test:e2e:headed": "pnpm run bddgen && playwright test --headed",
+    "test:e2e": "NODE_OPTIONS='--max-old-space-size=8192' pnpm run bddgen && playwright test",
+    "test:e2e:ui": "NODE_OPTIONS='--max-old-space-size=8192' pnpm run bddgen && playwright test --ui",
+    "test:e2e:headed": "NODE_OPTIONS='--max-old-space-size=8192' pnpm run bddgen && playwright test --headed",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {

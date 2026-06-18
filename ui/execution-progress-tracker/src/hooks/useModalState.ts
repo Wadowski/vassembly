@@ -7,7 +7,7 @@ interface UseModalStateOptions {
 interface UseModalStateResult {
   isOpen: boolean;
   selectedEventId: string | null;
-  openModal: (eventId: string) => void;
+  openModal: (eventId: string, trigger?: HTMLButtonElement | null) => void;
   closeModal: () => void;
   triggerRef: RefObject<HTMLButtonElement | null>;
 }
@@ -17,7 +17,10 @@ export const useModalState = (options?: UseModalStateOptions): UseModalStateResu
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  const openModal = useCallback((eventId: string) => {
+  const openModal = useCallback((eventId: string, trigger?: HTMLButtonElement | null) => {
+    if (trigger) {
+      triggerRef.current = trigger;
+    }
     setSelectedEventId(eventId);
     setIsOpen(true);
   }, []);

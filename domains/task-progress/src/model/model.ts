@@ -40,8 +40,6 @@ export class TaskProgressModel extends Model {
 
   userId?: string;
 
-  declare createdAt?: Date;
-
   startedAt?: Date;
 
   completedAt?: Date | null;
@@ -51,4 +49,6 @@ export class TaskProgressModel extends Model {
   totalDuration?: number;
 
   totalTokens?: TokenUsage;
+
+  executionAttempt?: number;
 }

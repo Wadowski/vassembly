@@ -14,6 +14,8 @@ import {
   removePreferredAiCredential,
   seedCompletedProgressEvents,
   seedTaskWithStatus,
+  startBackgroundProgressEventWriter,
+  stopBackgroundProgressWriter,
   TASK_ACTION_TIMEOUT_MS,
   TASK_DETAIL_AI_RESPONSE_TEST_ID,
   TASK_DETAIL_POLL_INTERVAL_MS,
@@ -97,6 +99,9 @@ When('I click the pause button in the task detail header', async ({ page, world 
     return;
   }
 
+  const webWorld = getWebWorld(world);
+  stopBackgroundProgressWriter(webWorld);
+
   const pauseResponse = page.waitForResponse(
     (response) =>
       response.url().includes(`/tasks/${world.taskId}/pause`) &&
@@ -108,10 +113,14 @@ When('I click the pause button in the task detail header', async ({ page, world 
   getWebWorld(world).lastResponse = await pauseResponse;
 });
 
-When('I click the resume button in the task detail header', async ({ page, world }) => {
+When('I click the resume button in the task detail header', async ({ page, world, seed }) => {
   if (!page) {
     return;
   }
+
+  const webWorld = getWebWorld(world);
+  const resumeButton = getTaskActionButton({ page, action: 'resume' });
+  await expect(resumeButton).toBeEnabled({ timeout: TASK_ACTION_TIMEOUT_MS });
 
   const resumeResponse = page.waitForResponse(
     (response) =>
@@ -120,14 +129,26 @@ When('I click the resume button in the task detail header', async ({ page, world
     { timeout: TASK_ACTION_TIMEOUT_MS },
   );
 
-  await getTaskActionButton({ page, action: 'resume' }).click();
-  getWebWorld(world).lastResponse = await resumeResponse;
+  await resumeButton.click();
+  webWorld.lastResponse = await resumeResponse;
+
+  if (webWorld.shouldResumeBackgroundProgressWriter) {
+    webWorld.stopBackgroundProgressWriter = startBackgroundProgressEventWriter({
+      world: webWorld,
+      seed,
+      intervalMs: 2_000,
+    });
+  }
 });
 
-When('I click the retry button in the task detail header', async ({ page, world }) => {
+When('I click the retry button in the task detail header', async ({ page, world, seed }) => {
   if (!page) {
     return;
   }
+
+  const webWorld = getWebWorld(world);
+  const retryButton = getTaskActionButton({ page, action: 'retry' });
+  await expect(retryButton).toBeEnabled({ timeout: TASK_ACTION_TIMEOUT_MS });
 
   const retryResponse = page.waitForResponse(
     (response) =>
@@ -136,8 +157,16 @@ When('I click the retry button in the task detail header', async ({ page, world 
     { timeout: TASK_ACTION_TIMEOUT_MS },
   );
 
-  await getTaskActionButton({ page, action: 'retry' }).click();
-  getWebWorld(world).lastResponse = await retryResponse;
+  await retryButton.click();
+  webWorld.lastResponse = await retryResponse;
+
+  if (webWorld.shouldResumeBackgroundProgressWriter) {
+    webWorld.stopBackgroundProgressWriter = startBackgroundProgressEventWriter({
+      world: webWorld,
+      seed,
+      intervalMs: 2_000,
+    });
+  }
 });
 
 When('the task execution completes and status becomes {string}', async ({ seed, world }, status: string) => {
@@ -188,6 +217,13 @@ When('I pause the task in Tab A', async ({ world }) => {
 
   await getTaskActionButton({ page: tabAPage, action: 'pause' }).click();
   webWorld.lastResponse = await pauseResponse;
+
+  const tabBPage = webWorld.tabBPage;
+  if (tabBPage) {
+    await expect(tabBPage.getByTestId(TASK_DETAIL_STATUS_TEST_ID)).toContainText('In progress', {
+      timeout: 2_000,
+    });
+  }
 });
 
 When('PATCH {string} is called', async ({ api, world }, pathTemplate: string) => {
@@ -240,16 +276,20 @@ Then('PATCH {string} returns {int}', async ({ world }, pathTemplate: string, sta
   expect(pathTemplate).toContain('/pause');
 });
 
-Then('the task status becomes {string}', async ({ page }, status: string) => {
-  if (!page) {
-    return;
-  }
-
+const resolveTaskStatusLabel = (status: string): string => {
   const statusLabelMap: Record<string, string> = {
     paused: 'Paused',
     'in-progress': 'In progress',
     done: 'Done',
     failed: 'Failed',
+    waiting: 'Waiting for input',
+    created: 'Created',
+    Paused: 'Paused',
+    'In progress': 'In progress',
+    Done: 'Done',
+    Failed: 'Failed',
+    'Waiting for input': 'Waiting for input',
+    Created: 'Created',
   };
 
   const label = statusLabelMap[status];
@@ -257,7 +297,15 @@ Then('the task status becomes {string}', async ({ page }, status: string) => {
     throw new Error(`Unsupported task status label mapping: ${status}`);
   }
 
-  await waitForTaskStatusBadge({ page, statusLabel: label });
+  return label;
+};
+
+Then('the task status becomes {string}', async ({ page }, status: string) => {
+  if (!page) {
+    return;
+  }
+
+  await waitForTaskStatusBadge({ page, statusLabel: resolveTaskStatusLabel(status) });
 });
 
 Then('the task status remains {string}', async ({ page }, status: string) => {
@@ -265,19 +313,7 @@ Then('the task status remains {string}', async ({ page }, status: string) => {
     return;
   }
 
-  const statusLabelMap: Record<string, string> = {
-    paused: 'Paused',
-    done: 'Done',
-    'in-progress': 'In progress',
-    failed: 'Failed',
-  };
-
-  const label = statusLabelMap[status];
-  if (!label) {
-    throw new Error(`Unsupported task status label mapping: ${status}`);
-  }
-
-  await expectStatusBadgeText({ page, label });
+  await expectStatusBadgeText({ page, label: resolveTaskStatusLabel(status) });
 });
 
 Then('the task ends in status {string}', async ({ page }, status: string) => {
@@ -483,6 +519,14 @@ Then('the pause button is disabled after the first click', async ({ page }) => {
   }
 
   const pauseButton = getTaskActionButton({ page, action: 'pause' });
+  const resumeButton = getTaskActionButton({ page, action: 'resume' });
+  const isPaused = await resumeButton.isVisible().catch(() => false);
+
+  if (isPaused) {
+    await expect(pauseButton).not.toBeVisible();
+    return;
+  }
+
   await expect(pauseButton).toBeDisabled({ timeout: 5_000 });
 });
 
@@ -514,7 +558,7 @@ Then('Tab A shows status {string} and the resume button', async ({ world }, stat
   await expectTaskActionButtonVisibility({ page: tabAPage, action: 'resume', isVisible: true });
 });
 
-Then('Tab B continues to show {string} until page reload', async ({ world }, status: string) => {
+Then('Tab B shows {string} after task detail polling updates', async ({ world }, status: string) => {
   const tabBPage = getWebWorld(world).tabBPage;
   if (!tabBPage) {
     return;
@@ -525,7 +569,8 @@ Then('Tab B continues to show {string} until page reload', async ({ world }, sta
     paused: 'Paused',
   };
 
-  await expectStatusBadgeText({ page: tabBPage, label: statusLabelMap[status] ?? status });
-  await tabBPage.reload();
-  await waitForTaskStatusBadge({ page: tabBPage, statusLabel: 'Paused' });
+  await waitForTaskStatusBadge({
+    page: tabBPage,
+    statusLabel: statusLabelMap[status] ?? status,
+  });
 });

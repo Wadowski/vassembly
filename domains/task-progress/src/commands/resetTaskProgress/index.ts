@@ -31,6 +31,9 @@ export const resetTaskProgress = async (input: ResetTaskProgressInput): Promise<
         },
         updatedAt: new Date(),
       },
+      $inc: {
+        executionAttempt: 1,
+      },
     },
   );
 };

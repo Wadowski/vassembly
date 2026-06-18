@@ -53,6 +53,19 @@ export const ProgressHeader: React.FC<ProgressHeaderProps> = ({ taskProgress, ta
       <dl className={styles.metadataList}>
         <div className={styles.metadataRow}>
           <Text variant="body2" as="dt" className={styles.metadataLabel}>
+            Execution attempt
+          </Text>
+          <Text
+            variant="body2"
+            as="dd"
+            className={styles.metadataValue}
+            data-testid="progress-execution-attempt"
+          >
+            {taskProgress.executionAttempt}
+          </Text>
+        </div>
+        <div className={styles.metadataRow}>
+          <Text variant="body2" as="dt" className={styles.metadataLabel}>
             Started
           </Text>
           <Text variant="body2" as="dd" className={styles.metadataValue}>

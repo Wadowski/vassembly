@@ -22,6 +22,8 @@
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-mcp": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
+    "@vassembly/domain-task-progress": "workspace:*",
+    "@vassembly/domain-task-questions": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/domain-user-mcp-config": "workspace:*",
     "@vassembly/errors": "workspace:*",

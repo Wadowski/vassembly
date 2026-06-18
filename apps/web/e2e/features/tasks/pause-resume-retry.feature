@@ -130,7 +130,7 @@ Feature: Pause, Resume and Retry Task
     And I have the same task detail page open in two browser tabs
     When I pause the task in Tab A
     Then Tab A shows status "paused" and the resume button
-    And Tab B continues to show "in-progress" until page reload
+    And Tab B shows "paused" after task detail polling updates
 
   Scenario: Paused task stays paused indefinitely with no auto-expiry
     Given a task exists with status "paused"

@@ -63,36 +63,20 @@ const createE2ePlaywrightConfig = (options) => {
     steps: [bddTestPath, ...options.stepsDirs],
   });
 
-  const webServers = options.webServers?.map((server) => ({
-    command: `pnpm --filter ${server.package} dev`,
-    url: server.url,
-    reuseExistingServer: !process.env.CI || process.env.E2E_REUSE_SERVERS === 'true',
-    timeout: 120_000,
-    env: {
-      VASSEMBLY_E2E: 'true',
-      WEB_PORT: String(environment.webPort),
-      API_PORT: String(environment.apiPort),
-      DOCS_PORT: String(environment.docsPort),
-      MONGODB_URL: environment.mongoUrl,
-      MONGODB_DATABASE: environment.mongoDatabase,
-      JWT_SECRET: environment.jwtSecret,
-      ENCODER_SECRET: environment.encoderSecret,
-      NODE_ENV: environment.nodeEnv,
-    },
-  }));
-
   return defineConfig({
     testDir,
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 4 : undefined,
+    _workerRstEveryNTests: 10,
     reporter: 'list',
     use: {
       baseURL: options.baseURL ?? environment.webBaseUrl,
       trace: 'on-first-retry',
+      video: 'on-first-retry',
+      screenshot: 'only-on-failure',
     },
-    webServer: webServers,
     projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
     globalSetup: globalSetupPath,
     globalTeardown: globalTeardownPath,

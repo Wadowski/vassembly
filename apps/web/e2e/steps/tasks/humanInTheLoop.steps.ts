@@ -5,11 +5,11 @@ import { bddTest } from '@vassembly/e2e';
 
 import {
   countGraphqlTaskPollRequests,
-  countGraphqlTaskQuestionsPollRequests,
   TASK_ACTION_TIMEOUT_MS,
   TASK_DETAIL_POLL_INTERVAL_MS,
 } from '../utils/pauseResumeRetryHelpers';
 import {
+  countGraphqlTaskQuestionsPollRequests,
   expectTaskQuestionFormVisibility,
   expectWaitingNotification,
   navigateToQuestionByText,

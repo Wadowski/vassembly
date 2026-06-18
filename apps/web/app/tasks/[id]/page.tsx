@@ -49,7 +49,11 @@ export default function TaskDetailPage(): JSX.Element {
           <ExecutionProgressTracker
             taskId={view.task.id}
             taskStatus={view.task.status}
+            hasAssignedAgent={view.task.agentAssignedId !== null}
             answeredQuestions={taskQuestions?.answeredQuestions}
+            onTaskCompleted={() => {
+              void refetchTask();
+            }}
           />
         </article>
       </main>

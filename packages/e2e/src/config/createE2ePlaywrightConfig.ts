@@ -20,13 +20,6 @@ export const createE2ePlaywrightConfig = (options: E2eConfigOptions): Playwright
     steps: [bddTestPath, ...options.stepsDirs],
   });
 
-  const webServers = options.webServers?.map((server) => ({
-    command: `pnpm --filter ${server.package} dev`,
-    url: server.url,
-    reuseExistingServer: !process.env.CI || process.env.E2E_REUSE_SERVERS === 'true',
-    timeout: 120_000,
-  }));
-
   return defineConfig({
     testDir,
     fullyParallel: true,
@@ -38,7 +31,6 @@ export const createE2ePlaywrightConfig = (options: E2eConfigOptions): Playwright
       baseURL: options.baseURL ?? environment.webBaseUrl,
       trace: 'on-first-retry',
     },
-    webServer: webServers,
     projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
     globalSetup: globalSetupPath,
     globalTeardown: globalTeardownPath,

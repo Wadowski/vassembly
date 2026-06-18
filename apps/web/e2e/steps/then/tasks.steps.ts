@@ -42,11 +42,15 @@ Then('the list displays only tasks matching {string}', async ({ page }, query: s
     return;
   }
 
-  const items = page.getByTestId('task-description');
-  const count = await items.count();
-  for (let index = 0; index < count; index += 1) {
-    await expect(items.nth(index)).toContainText(new RegExp(query, 'i'));
-  }
+  const pattern = new RegExp(query, 'i');
+  await expect(async () => {
+    const items = page.getByTestId('task-description');
+    const count = await items.count();
+    expect(count).toBeGreaterThan(0);
+    for (let index = 0; index < count; index += 1) {
+      await expect(items.nth(index)).toContainText(pattern);
+    }
+  }).toPass({ timeout: 15_000 });
 });
 
 Then('I see only my own tasks', async ({ page }) => {

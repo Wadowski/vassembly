@@ -24,5 +24,6 @@ export interface TaskProgressResponse {
   completedAt: string | null;
   totalDuration: number;
   totalTokens: TokenUsage;
+  executionAttempt: number;
   events: ProgressEventResponse[];
 }

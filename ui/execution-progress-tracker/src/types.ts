@@ -52,6 +52,7 @@ export interface TaskProgressData {
   completedAt: Date | null;
   totalDuration: number;
   totalTokens: TokenUsage;
+  executionAttempt: number;
   events: ProgressEvent[];
 }
 
@@ -59,6 +60,7 @@ export interface ExecutionProgressTrackerProps {
   taskId: string;
   userId?: string;
   taskStatus?: 'created' | 'in-progress' | 'waiting' | 'done' | 'failed' | 'paused';
+  hasAssignedAgent?: boolean;
   answeredQuestions?: ProgressAnsweredQuestion[];
   onTaskCompleted?: (taskProgress: TaskProgressData) => void;
 }
@@ -66,13 +68,15 @@ export interface ExecutionProgressTrackerProps {
 export interface ProgressListProps {
   items: TimelineItem[];
   selectedEventId: string | null;
-  onSelectEvent: (eventId: string) => void;
+  onSelectEvent: (eventId: string, trigger?: HTMLButtonElement | null) => void;
+  isLoading?: boolean;
+  emptyMessage?: string;
 }
 
 export interface ProgressItemProps {
   item: TimelineItem;
   isSelected: boolean;
-  onSelect: () => void;
+  onSelect: (trigger?: HTMLButtonElement | null) => void;
 }
 
 export interface ProgressDetailModalProps {

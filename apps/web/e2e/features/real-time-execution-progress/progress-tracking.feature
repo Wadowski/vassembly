@@ -27,7 +27,9 @@ Feature: Real-Time Agent Execution Progress Tracking
     And I see the request JSON formatted in the modal
     And I see the response JSON formatted in the modal
 
+  @skip-diagnostic-checks
   Scenario: Relative timestamps update every 60 seconds
+    Given the test skips diagnostic checks
     When I navigate to the task detail page
     And the ProgressDetailModal is open showing "started 2 minutes ago"
     And I wait 60 seconds

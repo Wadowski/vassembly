@@ -1,9 +1,15 @@
 import { createBdd } from 'playwright-bdd';
-import { expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { bddTest } from '@vassembly/e2e';
 
 import { seedTaskForUser } from '../utils/seedTaskData';
+import {
+  finalizeTaskProgressForTask,
+  markTaskStatusInDatabase,
+  seedStartedProgressEvent,
+  seedTrackingProgressEvents,
+} from '../utils/pauseResumeRetryHelpers';
 import type { WebBddWorld } from '../utils/types';
 
 const { Given, When, Then } = createBdd(bddTest);
@@ -54,29 +60,24 @@ When('I navigate to the task detail page', async ({ page, world }) => {
   await page.waitForLoadState('networkidle');
 });
 
-When('the task execution begins and first agent starts', async ({ page }) => {
-  if (!page) {
-    return;
-  }
-
-  // Mock the GraphQL response to include a started event
-  // In real scenario, backend would record this, but for E2E we verify polling picks it up
-  await page.waitForTimeout(500); // Small delay to ensure polling interval
+When('the task execution begins and first agent starts', async ({ seed, world }) => {
+  const webWorld = world as WebBddWorld;
+  await seedStartedProgressEvent({ world: webWorld, seed });
 });
 
-When('the task has multiple progress events', async ({ page }) => {
+When('the task has multiple progress events', async ({ seed, page, world }) => {
+  const webWorld = world as WebBddWorld;
   if (!page) {
     return;
   }
 
-  // Wait for ProgressList to show multiple events
-  await page.waitForFunction(
-    async () => {
-      const items = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
-      return items >= 2;
-    },
-    { timeout: 10_000 }
-  );
+  await seedTrackingProgressEvents({ world: webWorld, seed, eventCount: 2 });
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+
+  await expect(page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`)).toHaveCount(2, {
+    timeout: 10_000,
+  });
 });
 
 When('I click on the first progress event', async ({ page }) => {
@@ -126,28 +127,33 @@ When('I verify polling is active with requests every 1 second', async ({ page, w
   }
 });
 
-When('the backend marks the task as completed', async ({ page }) => {
-  if (!page) {
-    return;
-  }
-
-  // Simulate backend task completion by waiting for polling to detect status change
-  await page.waitForTimeout(2_000);
+When('the backend marks the task as completed', async ({ seed, world }) => {
+  const webWorld = world as WebBddWorld;
+  await seedStartedProgressEvent({ world: webWorld, seed });
+  await finalizeTaskProgressForTask({ world: webWorld, seed });
+  await markTaskStatusInDatabase({
+    world: webWorld,
+    seed,
+    status: 'done',
+    llmResponse: 'E2E completed output',
+  });
 });
 
-When('the task has {int} recorded progress events', async ({ page }, count: number) => {
+When('the task has {int} recorded progress events', async ({ seed, page, world }, count: number) => {
+  const webWorld = world as WebBddWorld;
   if (!page) {
     return;
   }
 
-  // Wait for the expected number of events to appear
-  await page.waitForFunction(
-    async () => {
-      const items = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
-      return items >= count;
-    },
-    { timeout: 10_000 }
-  );
+  await seedTrackingProgressEvents({ world: webWorld, seed, eventCount: count });
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+
+  await expect
+    .poll(async () => page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count(), {
+      timeout: 10_000,
+    })
+    .toBeGreaterThanOrEqual(count);
 });
 
 When('I refresh the page', async ({ page }) => {
@@ -173,23 +179,40 @@ When('the GraphQL query fails with a 500 error', async ({ page }) => {
     return;
   }
 
-  // Simulate API error by waiting for error state to appear
-  // In real scenario, this would be handled by API intercept/mock
-  await page.waitForTimeout(1_000);
+  await page.route('**/graphql**', (route) => {
+    const postData = route.request().postData();
+    if (postData?.includes('taskProgress')) {
+      return route.fulfill({ status: 500, contentType: 'application/json', body: '{}' });
+    }
+    return route.continue();
+  });
+
+  await page.waitForTimeout(2_000);
 });
 
-When('the API recovers and responds successfully', async ({ page }) => {
+When('the API recovers and responds successfully', async ({ page, seed, world }) => {
+  const webWorld = world as WebBddWorld;
   if (!page) {
     return;
   }
 
-  // Simulate API recovery
-  await page.waitForTimeout(2_000);
+  await page.unroute('**/graphql**');
+  await seedStartedProgressEvent({ world: webWorld, seed });
+  await page.reload();
+  await page.waitForLoadState('networkidle');
 });
 
-When('I click on a progress event to open the modal', async ({ page }) => {
+When('I click on a progress event to open the modal', async ({ seed, page, world }) => {
+  const webWorld = world as WebBddWorld;
   if (!page) {
     return;
+  }
+
+  const itemCount = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
+  if (itemCount === 0) {
+    await seedTrackingProgressEvents({ world: webWorld, seed, eventCount: 2 });
+    await page.reload();
+    await page.waitForLoadState('networkidle');
   }
 
   const firstEvent = page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).first();
@@ -206,20 +229,27 @@ When('I press the Escape key', async ({ page }) => {
 
   await page.keyboard.press('Escape');
   
-  // Wait for modal to close
-  await page.waitForFunction(
-    async () => {
-      const modal = await page.locator(`[data-testid="${PROGRESS_MODAL_TEST_ID}"]`).isVisible();
-      return !modal;
-    },
-    { timeout: 3_000 }
-  );
+  await expect(page.locator(`[data-testid="${PROGRESS_MODAL_TEST_ID}"]`)).toBeHidden({
+    timeout: 3_000,
+  });
 });
 
-When('the ProgressDetailModal is open showing {string}', async ({ page }, relativeTime: string) => {
+When('the ProgressDetailModal is open showing {string}', async ({ seed, page, world }, relativeTime: string) => {
+  const webWorld = world as WebBddWorld;
   if (!page) {
     return;
   }
+
+  await seedStartedProgressEvent({
+    world: webWorld,
+    seed,
+    timestampOffsetMs: -2 * 60 * 1000,
+  });
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+
+  const firstEvent = page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).first();
+  await firstEvent.click();
 
   const modal = page.locator(`[data-testid="${PROGRESS_MODAL_TEST_ID}"]`);
   await expect(modal).toBeVisible();
@@ -230,6 +260,8 @@ When('I wait {int} seconds', async ({ page }, seconds: number) => {
   if (!page) {
     return;
   }
+
+  test.setTimeout(seconds * 1000 + 30_000);
 
   await page.waitForTimeout(seconds * 1000);
 });
@@ -259,15 +291,9 @@ Then('I see a {string} event for the agent in the ProgressList without page refr
     return;
   }
 
-  // Use waitForFunction to poll for the event without page reload
-  // This verifies the polling mechanism works
-  await page.waitForFunction(
-    async () => {
-      const events = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"][data-state="${state}"]`);
-      return (await events.count()) > 0;
-    },
-    { timeout: 10_000 }
-  );
+  await expect(
+    page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"][data-state="${state}"]`).first(),
+  ).toBeVisible({ timeout: 10_000 });
 });
 
 Then('the events are ordered by timestamp with oldest first', async ({ page }) => {
@@ -408,16 +434,13 @@ Then('the relative time text updates to show {string} without manual refresh', a
     return;
   }
 
-  const modal = page.locator(`[data-testid="${PROGRESS_MODAL_TEST_ID}"]`);
-  
-  // Verify the relative time text changed
   await page.waitForFunction(
-    async () => {
-      const timeElement = modal.locator('[data-testid="relative-time"]');
-      const text = await timeElement.textContent();
-      return text?.includes(expectedTime) || false;
+    (expectedTime) => {
+      const timeElement = document.querySelector('[data-testid="relative-time"]');
+      return timeElement?.textContent?.includes(expectedTime) ?? false;
     },
-    { timeout: 10_000 }
+    expectedTime,
+    { timeout: 10_000 },
   );
 });
 
@@ -435,14 +458,16 @@ Then('polling stops after the task completion status is received', async ({ page
     return;
   }
 
-  // Verify polling stopped by checking network activity or API state
+  await expect
+    .poll(async () => page.locator('[data-testid="progress-item"]').count(), { timeout: 20_000 })
+    .toBeGreaterThan(0);
+
   const initialRequestCount = (await page.locator('[data-testid="polling-request-count"]').textContent()) || '0';
-  
+
   await page.waitForTimeout(3_000);
-  
+
   const finalRequestCount = (await page.locator('[data-testid="polling-request-count"]').textContent()) || '0';
-  
-  // Request count should remain the same if polling stopped
+
   expect(finalRequestCount).toBe(initialRequestCount);
 });
 
@@ -451,18 +476,25 @@ Then('no new polling requests occur', async ({ page }) => {
     return;
   }
 
-  // Wait and verify no new GraphQL requests are made
+  await expect
+    .poll(async () => page.locator('[data-testid="progress-item"]').count(), { timeout: 20_000 })
+    .toBeGreaterThan(0);
+
+  await page.waitForTimeout(2_000);
+
   let requestCount = 0;
-  const listener = () => {
-    requestCount++;
+  const listener = (request: import('@playwright/test').Request) => {
+    const postData = request.postData();
+    if (request.url().includes('/graphql') && postData?.includes('taskProgress')) {
+      requestCount++;
+    }
   };
 
   page.on('request', listener);
   await page.waitForTimeout(2_000);
   page.off('request', listener);
 
-  // Should have minimal or no new requests
-  expect(requestCount).toBeLessThan(2);
+  expect(requestCount).toBe(0);
 });
 
 Then('the ProgressTracker hides or shows completion message', async ({ page }) => {
@@ -522,13 +554,8 @@ Then('an error banner or toast appears', async ({ page }) => {
   }
 
   const errorBanner = page.locator(`[data-testid="${ERROR_BANNER_TEST_ID}"]`);
-  
-  await page.waitForFunction(
-    async () => await errorBanner.isVisible(),
-    { timeout: 5_000 }
-  );
-  
-  await expect(errorBanner).toBeVisible();
+
+  await expect(errorBanner).toBeVisible({ timeout: 5_000 });
 });
 
 Then('a retry button is visible in the error UI', async ({ page }) => {
@@ -562,11 +589,8 @@ Then('the error banner dismisses automatically', async ({ page }) => {
   }
 
   const errorBanner = page.locator(`[data-testid="${ERROR_BANNER_TEST_ID}"]`);
-  
-  await page.waitForFunction(
-    async () => !(await errorBanner.isVisible()),
-    { timeout: 10_000 }
-  );
+
+  await expect(errorBanner).toBeHidden({ timeout: 10_000 });
 });
 
 Then('polling resumes normal updates', async ({ page }) => {
@@ -574,14 +598,9 @@ Then('polling resumes normal updates', async ({ page }) => {
     return;
   }
 
-  // Verify new events or updates appear
-  await page.waitForFunction(
-    async () => {
-      const items = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
-      return items > 0;
-    },
-    { timeout: 5_000 }
-  );
+  await expect(page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).first()).toBeVisible({
+    timeout: 5_000,
+  });
 });
 
 Then('new events appear in the ProgressList', async ({ page }) => {
@@ -613,11 +632,8 @@ Then('the modal closes with a smooth animation', async ({ page }) => {
   }
 
   const modal = page.locator(`[data-testid="${PROGRESS_MODAL_TEST_ID}"]`);
-  
-  await page.waitForFunction(
-    async () => !(await modal.isVisible()),
-    { timeout: 3_000 }
-  );
+
+  await expect(modal).toBeHidden({ timeout: 3_000 });
 });
 
 Then('the ProgressItem that was clicked regains focus', async ({ page }) => {

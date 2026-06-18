@@ -1415,6 +1415,12 @@ importers:
       '@vassembly/domain-task':
         specifier: workspace:*
         version: link:../../domains/task
+      '@vassembly/domain-task-progress':
+        specifier: workspace:*
+        version: link:../../domains/task-progress
+      '@vassembly/domain-task-questions':
+        specifier: workspace:*
+        version: link:../../domains/task-questions
       '@vassembly/domain-user':
         specifier: workspace:*
         version: link:../../domains/user

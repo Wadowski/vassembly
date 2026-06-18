@@ -12,3 +12,7 @@ export {
   teardownDatabase,
 } from './seed';
 export { requireWorkspaceModule } from './utils/requireWorkspaceModule';
+export {
+  closeBrowserContext,
+  closeE2eBrowserResources,
+} from './utils/closeE2eBrowserResources';

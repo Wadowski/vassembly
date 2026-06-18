@@ -12,6 +12,7 @@ export const gqlTaskProgressSchema = (builder: Builder): void => {
       completedAt: t.exposeString('completedAt', { nullable: true }),
       totalDuration: t.exposeInt('totalDuration'),
       totalTokens: t.expose('totalTokens', { type: 'TokenUsage' }),
+      executionAttempt: t.exposeInt('executionAttempt'),
       events: t.field({
         type: graphQLListType('ProgressEvent'),
         resolve: (parent) => parent.events ?? [],

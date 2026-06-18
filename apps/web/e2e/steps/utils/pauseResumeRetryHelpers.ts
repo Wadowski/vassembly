@@ -3,8 +3,42 @@ import type { Page } from '@playwright/test';
 import { getE2eEnvironment, requireWorkspaceModule } from '@vassembly/e2e';
 
 import { ensureAssistantSystemAgent, ensureTaskDomainIndexes } from './seedTask';
+import { seedConnectedAiCredentialForUser } from './seedConnectedAiCredential';
 import { seedTaskForUser } from './seedTaskData';
 import type { WebBddWorld } from './types';
+
+let taskProgressDomainInitPromise: Promise<void> | null = null;
+
+export const ensureTaskProgressDomainIndexes = async ({
+  context,
+}: {
+  context: import('@vassembly/e2e').SeedContext;
+}): Promise<void> => {
+  if (taskProgressDomainInitPromise === null) {
+    taskProgressDomainInitPromise = initializeTaskProgressDomain({ context });
+  }
+
+  await taskProgressDomainInitPromise;
+};
+
+const initializeTaskProgressDomain = async ({
+  context,
+}: {
+  context: import('@vassembly/e2e').SeedContext;
+}): Promise<void> => {
+  await ensureTaskDomainIndexes({ context });
+
+  const { init } = requireWorkspaceModule<typeof import('@vassembly/client-mongodb')>({
+    moduleName: '@vassembly/client-mongodb',
+  });
+  const taskProgressDomain = requireWorkspaceModule<typeof import('@vassembly/domain-task-progress')>({
+    moduleName: '@vassembly/domain-task-progress',
+  });
+
+  await init({
+    indexFunctions: [taskProgressDomain.default.mongodbIndexes],
+  });
+};
 
 export const TASK_PAUSE_BUTTON_TEST_ID = 'task-pause-button';
 export const TASK_RESUME_BUTTON_TEST_ID = 'task-resume-button';
@@ -63,7 +97,7 @@ export const seedCompletedProgressEvents = async ({
     throw new Error('taskId and logged-in user are required to seed progress events');
   }
 
-  await ensureTaskDomainIndexes({ context: seed });
+  await ensureTaskProgressDomainIndexes({ context: seed });
 
   const taskProgressDomain = requireWorkspaceModule<typeof import('@vassembly/domain-task-progress')>({
     moduleName: '@vassembly/domain-task-progress',
@@ -81,9 +115,78 @@ export const seedCompletedProgressEvents = async ({
       taskId: world.taskId,
       agentId: assistantId,
       state: ProgressEventState.Completed,
-      generatedResponse: `Completed step ${index + 1}`,
+      generatedResponse: JSON.stringify({ step: index + 1, status: 'completed' }),
+      inputMessages: JSON.stringify({ prompt: `Completed step ${index + 1}` }),
+      tokenUsage: {
+        input: 100 + index,
+        output: 50 + index,
+        total: 150 + index * 2,
+      },
     });
   }
+};
+
+export interface SeedStartedProgressEventParams {
+  world: WebBddWorld;
+  seed: import('@vassembly/e2e').SeedContext;
+  timestampOffsetMs?: number;
+}
+
+export const seedStartedProgressEvent = async ({
+  world,
+  seed,
+  timestampOffsetMs = 0,
+}: SeedStartedProgressEventParams): Promise<void> => {
+  if (!world.auth?.userId || !world.taskId) {
+    throw new Error('taskId and logged-in user are required to seed progress events');
+  }
+
+  await ensureTaskProgressDomainIndexes({ context: seed });
+
+  const taskProgressDomain = requireWorkspaceModule<typeof import('@vassembly/domain-task-progress')>({
+    moduleName: '@vassembly/domain-task-progress',
+  });
+  const { ProgressEventState } = taskProgressDomain;
+  const assistantId = await ensureAssistantSystemAgent({ context: seed });
+
+  await taskProgressDomain.default.commands.initializeTaskProgress({
+    taskId: world.taskId,
+    userId: world.auth.userId,
+  });
+
+  await taskProgressDomain.default.commands.recordProgressEvent({
+    taskId: world.taskId,
+    agentId: assistantId,
+    state: ProgressEventState.Started,
+    inputMessages: JSON.stringify({ prompt: 'E2E progress tracking started' }),
+    generatedResponse: JSON.stringify({ status: 'started' }),
+    tokenUsage: {
+      input: 80,
+      output: 40,
+      total: 120,
+    },
+    timestamp: new Date(Date.now() + timestampOffsetMs),
+  });
+};
+
+export interface SeedTrackingProgressEventsParams {
+  world: WebBddWorld;
+  seed: import('@vassembly/e2e').SeedContext;
+  eventCount?: number;
+}
+
+export const seedTrackingProgressEvents = async ({
+  world,
+  seed,
+  eventCount = 2,
+}: SeedTrackingProgressEventsParams): Promise<void> => {
+  await seedStartedProgressEvent({ world, seed });
+
+  if (eventCount <= 1) {
+    return;
+  }
+
+  await seedCompletedProgressEvents({ world, seed, eventCount: eventCount - 1 });
 };
 
 export const navigateToTaskDetailPage = async ({
@@ -224,19 +327,28 @@ export const removePreferredAiCredential = async ({
   const aiDomain = requireWorkspaceModule<typeof import('@vassembly/domain-ai-integration')>({
     moduleName: '@vassembly/domain-ai-integration',
   });
+  const systemAgentDomain = requireWorkspaceModule<typeof import('@vassembly/domain-system-agent')>({
+    moduleName: '@vassembly/domain-system-agent',
+  });
   const credentials = await aiDomain.default.queries.getListForUser({
     userId: world.auth.userId,
-    page: 1,
+    page: 0,
     size: 10,
     status: aiDomain.AI_INTEGRATION_LIST_ALL_STATUSES,
   });
-  const credentialId = credentials.items[0]?.id;
+  let credentialId = credentials.items[0]?.id;
 
   if (!credentialId) {
-    throw new Error('No AI credential found to remove for credential-change scenario');
+    credentialId = await seedConnectedAiCredentialForUser({
+      context: seed,
+      userId: world.auth.userId,
+    });
   }
 
   await aiDomain.default.commands.removeSoft({ id: credentialId, userId: world.auth.userId });
+  await systemAgentDomain.userSystemAgentPreferenceMongodbDao.collection.deleteOne({
+    userId: world.auth.userId,
+  });
   world.integrationCredentialId = credentialId;
 };
 
@@ -435,8 +547,10 @@ export const seedRunningTaskWithProgressEvents = async ({
 
 export const finalizeTaskProgressForTask = async ({
   world,
+  seed,
 }: {
   world: WebBddWorld;
+  seed?: import('@vassembly/e2e').SeedContext;
 }): Promise<void> => {
   if (!world.taskId) {
     throw new Error('taskId is required to finalize task progress');
@@ -445,6 +559,14 @@ export const finalizeTaskProgressForTask = async ({
   const taskProgressDomain = requireWorkspaceModule<typeof import('@vassembly/domain-task-progress')>({
     moduleName: '@vassembly/domain-task-progress',
   });
+
+  if (seed && world.auth?.userId) {
+    await ensureTaskProgressDomainIndexes({ context: seed });
+    await taskProgressDomain.default.commands.initializeTaskProgress({
+      taskId: world.taskId,
+      userId: world.auth.userId,
+    });
+  }
 
   await taskProgressDomain.default.commands.finalizeTaskProgress({ taskId: world.taskId });
 };
@@ -458,7 +580,7 @@ export const seedFailedTaskWithCompletedProgress = async ({
 }): Promise<void> => {
   await seedTaskWithStatus({ world, seed, status: 'failed' });
   await seedCompletedProgressEvents({ world, seed, eventCount: 2 });
-  await finalizeTaskProgressForTask({ world });
+  await finalizeTaskProgressForTask({ world, seed });
 };
 
 export const startBackgroundProgressEventWriter = ({

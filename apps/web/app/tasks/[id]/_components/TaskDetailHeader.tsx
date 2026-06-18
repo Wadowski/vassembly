@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { CommonError, ConflictError } from '@vassembly/errors';
 import {
   TaskStatus,
   usePauseTask,
@@ -10,6 +11,7 @@ import {
   useRetryTask,
 } from '@vassembly/ui-api-hooks';
 import { Button } from '@vassembly/ui-button';
+import { useSnackbar } from '@vassembly/ui-snackbar';
 import { Text } from '@vassembly/ui-text';
 import {
   ArrowLeftIcon,
@@ -23,16 +25,41 @@ import pageStyles from '../TaskDetailPage.module.scss';
 import { TaskStatusBadge } from './TaskStatusBadge';
 import type { TaskDetailHeaderProps } from './types';
 
+const getTaskActionErrorMessage = ({
+  error,
+  action,
+}: {
+  error: unknown;
+  action: 'pause' | 'resume' | 'retry';
+}): string => {
+  if (error instanceof ConflictError && action === 'pause') {
+    return 'This task can no longer be paused.';
+  }
+
+  if (error instanceof CommonError) {
+    if (action === 'pause' && /not in-progress|not pausable/i.test(error.message)) {
+      return 'This task can no longer be paused.';
+    }
+
+    return error.message;
+  }
+
+  return `Unable to ${action} task.`;
+};
+
 export const TaskDetailHeader = ({
   task,
   onTaskUpdated,
 }: TaskDetailHeaderProps): JSX.Element => {
   const router = useRouter();
+  const snackbar = useSnackbar();
   const { pauseTask, isLoading: isPausing } = usePauseTask();
   const { resumeTask, isLoading: isResuming } = useResumeTask();
   const { retryTask, isLoading: isRetrying } = useRetryTask();
   const pageTitle = task.title?.trim() ? task.title.trim() : TASK_DETAILS_PAGE_TITLE;
-  const isAnyActionLoading = isPausing || isResuming || isRetrying;
+  const [isPauseLocked, setIsPauseLocked] = useState(false);
+  const isPauseLockedRef = useRef(false);
+  const isAnyActionLoading = isPausing || isResuming || isRetrying || isPauseLocked;
   const isFailedOnly = task.status === TaskStatus.Failed;
 
   const handleBackClick = useCallback((): void => {
@@ -40,19 +67,54 @@ export const TaskDetailHeader = ({
   }, [router]);
 
   const handlePause = useCallback(async (): Promise<void> => {
-    await pauseTask({ id: task.id });
-    await onTaskUpdated();
-  }, [onTaskUpdated, pauseTask, task.id]);
+    if (isPauseLockedRef.current) {
+      return;
+    }
+
+    isPauseLockedRef.current = true;
+    setIsPauseLocked(true);
+
+    try {
+      await pauseTask({ id: task.id });
+      await onTaskUpdated();
+      isPauseLockedRef.current = false;
+      setIsPauseLocked(false);
+    } catch (error: unknown) {
+      isPauseLockedRef.current = false;
+      setIsPauseLocked(false);
+      snackbar.show({
+        variant: 'error',
+        message: getTaskActionErrorMessage({ error, action: 'pause' }),
+        duration: 5000,
+      });
+    }
+  }, [onTaskUpdated, pauseTask, snackbar, task.id]);
 
   const handleResume = useCallback(async (): Promise<void> => {
-    await resumeTask({ id: task.id });
-    await onTaskUpdated();
-  }, [onTaskUpdated, resumeTask, task.id]);
+    try {
+      await resumeTask({ id: task.id });
+      await onTaskUpdated();
+    } catch (error: unknown) {
+      snackbar.show({
+        variant: 'error',
+        message: getTaskActionErrorMessage({ error, action: 'resume' }),
+        duration: 5000,
+      });
+    }
+  }, [onTaskUpdated, resumeTask, snackbar, task.id]);
 
   const handleRetry = useCallback(async (): Promise<void> => {
-    await retryTask({ id: task.id });
-    await onTaskUpdated();
-  }, [onTaskUpdated, retryTask, task.id]);
+    try {
+      await retryTask({ id: task.id });
+      await onTaskUpdated();
+    } catch (error: unknown) {
+      snackbar.show({
+        variant: 'error',
+        message: getTaskActionErrorMessage({ error, action: 'retry' }),
+        duration: 5000,
+      });
+    }
+  }, [onTaskUpdated, retryTask, snackbar, task.id]);
 
   return (
     <header>

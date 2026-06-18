@@ -1,5 +1,9 @@
 @import '@vassembly/theme/src/tokens/index.scss';
 
+.glassmorphic {
+  backdrop-filter: blur(12px);
+}
+
 .modalStack {
   display: flex;
   flex-direction: column;

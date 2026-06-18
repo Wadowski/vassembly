@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useSubmitAnswer } from '@vassembly/ui-api-hooks';
 
@@ -19,6 +19,16 @@ export const useTaskQuestionForm = ({
   const { submitAnswer, isLoading: isSubmitting } = useSubmitAnswer();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [draftAnswers, setDraftAnswers] = useState<Record<string, QuestionAnswerValue>>({});
+
+  useEffect(() => {
+    setCurrentIndex((previousIndex) => {
+      if (questions.length === 0) {
+        return 0;
+      }
+
+      return Math.min(previousIndex, questions.length - 1);
+    });
+  }, [questions]);
 
   const currentQuestion = questions[currentIndex];
   const totalQuestions = questions.length;
@@ -97,10 +107,6 @@ export const useTaskQuestionForm = ({
     totalQuestions,
     currentValue,
   ]);
-
-  if (currentQuestion === undefined) {
-    throw new Error('TaskQuestionForm requires at least one pending question');
-  }
 
   return {
     currentIndex,

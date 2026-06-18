@@ -23,7 +23,7 @@ export interface UseTaskQuestionFormParams {
 
 export interface UseTaskQuestionFormResult {
   currentIndex: number;
-  currentQuestion: PendingQuestionDto;
+  currentQuestion: PendingQuestionDto | undefined;
   totalQuestions: number;
   canGoPrevious: boolean;
   canGoNext: boolean;

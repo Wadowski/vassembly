@@ -4,12 +4,14 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -- turbo run dev",
-    "dev:e2e": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -e .env -e .env.e2e -o -v VASSEMBLY_E2E=true -- turbo run dev",
+    "dev:e2e": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -e .env -e .env.e2e -o -v NODE_ENV=testing -v VASSEMBLY_E2E=true -- turbo run dev --filter=@vassembly/client-mongodb --filter=@vassembly/api --filter=@vassembly/web",
+    "dev:e2e:mongo": "dotenv -e .env -e .env.e2e -o -- pnpm --filter @vassembly/client-mongodb dev",
+    "dev:e2e:ci": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -e .env -e .env.e2e -o -v NODE_ENV=testing -v VASSEMBLY_E2E=true -- turbo run dev --filter=@vassembly/api --filter=@vassembly/web",
     "lint": "turbo run lint",
     "storybook": "cd ui/storybook && pnpm storybook",
     "test": "turbo run test",
-    "test:e2e": "turbo run test:e2e",
-    "test:e2e:web": "turbo run test:e2e --filter=@vassembly/web",
+    "test:e2e": "dotenv -e .env -e .env.e2e -o -- turbo run test:e2e",
+    "test:e2e:web": "dotenv -e .env -e .env.e2e -o -- turbo run test:e2e --filter=@vassembly/web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },

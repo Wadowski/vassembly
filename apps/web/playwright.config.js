@@ -23,17 +23,7 @@ module.exports = {
       'e2e/steps/execution-progress',
     ],
     baseURL: process.env.E2E_WEB_BASE_URL ?? 'http://localhost:3001',
-    webServers: [
-      {
-        package: '@vassembly/api',
-        url: 'http://localhost:5001/docs',
-      },
-      {
-        package: '@vassembly/web',
-        url: 'http://localhost:3001',
-      },
-    ],
   }),
   timeout: 60_000,
-  workers: 2,
+  workers: 4,
 };

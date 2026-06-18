@@ -1,0 +1,86 @@
+---
+description: E2E test standards for Playwright BDD and integration tests
+globs: **/e2e/**/*.{ts,feature},packages/e2e/**/*.ts
+alwaysApply: false
+---
+
+# E2E Test Standards
+
+## Framework & Setup
+
+- Use **Playwright** with **playwright-bdd** for Gherkin scenarios
+- BDD tests extend `bddTest` from `@vassembly/e2e`
+- Integration tests use `@playwright/test` directly when BDD is not appropriate
+- Place feature files in `apps/{app}/e2e/features/` and step definitions in `apps/{app}/e2e/steps/` or `packages/e2e/src/steps/`
+
+## Browser Resource Cleanup (Required)
+
+Every E2E test must close the page and browser context after it finishes.
+
+### BDD tests (`bddTest`)
+
+BDD tests get automatic cleanup via the shared `context` fixture in `packages/e2e/src/fixtures/bddTest.ts`. Do not add manual `afterEach` cleanup in step files.
+
+When a step opens additional pages in the same context (e.g. a second tab), they are closed when the context is torn down.
+
+### Integration / standalone Playwright tests
+
+When creating a browser context manually, always close page and context in `afterEach`:
+
+```typescript
+import { test, type BrowserContext, type Page } from '@playwright/test';
+import { closeE2eBrowserResources } from '@vassembly/e2e';
+
+test.describe('Feature', () => {
+  let page: Page;
+  let context: BrowserContext;
+
+  test.beforeEach(async ({ browser }) => {
+    context = await browser.newContext();
+    page = await context.newPage();
+  });
+
+  test.afterEach(async () => {
+    await closeE2eBrowserResources({ page, context });
+  });
+});
+```
+
+Do not use `browser.newPage()` without an explicit context — create the context first so it can be closed.
+
+### Manual cleanup pattern
+
+When not using the shared helpers, the required teardown order is:
+
+```typescript
+await page.close();
+await context.close();
+```
+
+Prefer `closeE2eBrowserResources` or `closeBrowserContext` from `@vassembly/e2e` instead of duplicating this logic.
+
+## Test Design Principles
+
+### Behavior-Driven, Black Box
+
+- Describe what the user experiences, not implementation details
+- Assert on visible UI text and URLs — not internal function calls
+
+### Reuse Before Create
+
+- Check `packages/e2e/src/steps/` and app-specific `e2e/steps/` before adding new step definitions
+- Use `createBdd(bddTest)` in step files
+
+### Step Definition Conventions
+
+- Guard `page` with early return when the step is UI-specific
+- Use Playwright locators by role/label (`getByRole`, `getByLabel`, `getByText`)
+- Keep step files under 100 lines; split by domain when needed
+
+## Running Tests
+
+```bash
+pnpm dev:e2e          # Start MongoDB + API + Web
+pnpm test:e2e:web     # Run Playwright tests
+cd apps/web && pnpm bddgen  # Regenerate specs after feature changes
+```

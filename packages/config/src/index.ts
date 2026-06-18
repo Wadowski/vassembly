@@ -10,6 +10,7 @@ export type { CacheConfig, Config, RedisConfig } from './types';
 const CONFIG_MAP = {
   [Environment.Development]: developmentConfig,
   [Environment.Production]: productionConfig,
+  [Environment.Testing]: e2eConfig,
 };
 
 const resolveConfig = () => {

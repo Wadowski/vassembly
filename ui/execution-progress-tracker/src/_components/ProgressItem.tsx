@@ -13,6 +13,8 @@ import {
 import type { ProgressItemProps } from '../types';
 import styles from './ProgressItem.module.scss';
 
+const toProgressItemState = (state: string): string => state.toLowerCase();
+
 export const ProgressItem = React.memo<ProgressItemProps>(({ item, isSelected, onSelect }) => {
   const rowClassName = isSelected
     ? `${styles.eventRow} ${styles.eventRowActive}`
@@ -53,15 +55,21 @@ export const ProgressItem = React.memo<ProgressItemProps>(({ item, isSelected, o
     return null;
   }
 
+  const progressState = toProgressItemState(event.state);
+
   return (
     <li className={rowClassName}>
       <span className={styles.eventNode} data-state={nodeState} aria-hidden />
       <button
         className={styles.eventContent}
-        onClick={onSelect}
+        onClick={(event) => onSelect(event.currentTarget)}
         type="button"
         aria-selected={isSelected}
         aria-label={`${author} - ${heading}`}
+        data-testid="progress-item"
+        data-state={progressState}
+        data-timestamp={item.timestamp.toISOString()}
+        data-event-id={item.id}
       >
         <Text variant="body2" className={styles.eventAuthor}>
           @{event.agentName}

@@ -45,6 +45,7 @@ export const initializeTaskProgress = async (
       output: 0,
       total: 0,
     },
+    executionAttempt: 1,
   };
 
   const { insertedId } = await collection.insertOne(newDoc);

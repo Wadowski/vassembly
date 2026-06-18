@@ -3,6 +3,7 @@ import type { APIRequestContext } from '@playwright/test';
 
 import { getE2eEnvironment } from '../config/environment';
 import { ConsoleErrorDetector, DiagnosticsReporter, RequestLoopDetector } from '../steps/utils/diagnostics';
+import { closeBrowserContext } from '../utils/closeE2eBrowserResources';
 import type { AuthContext, BddWorld, SeedContext } from './types';
 
 interface BddFixtures {
@@ -13,6 +14,10 @@ interface BddFixtures {
 }
 
 const bddTest = base.extend<BddFixtures>({
+  context: async ({ context }, use) => {
+    await use(context);
+    await closeBrowserContext({ context });
+  },
   world: async ({ page, request, baseURL }, use) => {
     const environment = getE2eEnvironment();
     const world: BddWorld = {

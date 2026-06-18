@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@vassembly/ui-button';
 import { Modal } from '@vassembly/ui-modal';
@@ -32,6 +32,22 @@ const hasIntegrationInfo = (event: ProgressEvent): boolean =>
   Boolean(event.integrationName || event.provider || event.model);
 
 export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen, event, onClose }) => {
+  const [, setRelativeTimeTick] = useState(0);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      setRelativeTimeTick((current) => current + 1);
+    }, 30_000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isOpen]);
+
   if (!event) {
     return null;
   }
@@ -39,15 +55,22 @@ export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen
   const modalTitle = `@${event.agentName}`;
   const showIntegrationSection = hasIntegrationInfo(event);
   const providerLabel = getProviderLabel({ provider: event.provider });
+  const stateLabel = getStateLabel(event.state).toLowerCase();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={modalTitle} size="md">
-      <div className={styles.modalStack}>
+      <div className={`${styles.modalStack} ${styles.glassmorphic}`} data-testid="progress-detail-modal">
+        <header data-testid="progress-modal-header">
+          <Text variant="body2" data-testid="agent-name">
+            @{event.agentName}
+          </Text>
+        </header>
+
         <div className={styles.summaryRow}>
           <Text variant="body2" className={styles.eventTitle}>
             {getProgressEventTitle(event)}
           </Text>
-          <Text variant="body2" className={styles.stateLabel} data-state={event.state}>
+          <Text variant="body2" className={styles.stateLabel} data-testid="status-badge" data-state={stateLabel}>
             {getStateLabel(event.state)}
           </Text>
         </div>
@@ -61,20 +84,28 @@ export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen
               <Text variant="body2" as="dt" className={styles.metadataLabel}>
                 Timestamp
               </Text>
-              <Text variant="body2" as="dd" className={styles.metadataValue}>
-                {formatRelativeTime(event.timestamp)}
+              <Text
+                variant="body2"
+                as="dd"
+                className={styles.metadataValue}
+                data-testid="relative-time"
+              >
+                started {formatRelativeTime(event.timestamp)}
               </Text>
             </div>
-            {event.duration !== null && (
-              <div className={styles.metadataRow}>
-                <Text variant="body2" as="dt" className={styles.metadataLabel}>
-                  Duration
-                </Text>
-                <Text variant="body2" as="dd" className={styles.metadataValue}>
-                  {formatDuration(event.duration)}
-                </Text>
-              </div>
-            )}
+            <div className={styles.metadataRow}>
+              <Text variant="body2" as="dt" className={styles.metadataLabel}>
+                Duration
+              </Text>
+              <Text
+                variant="body2"
+                as="dd"
+                className={styles.metadataValue}
+                data-testid="duration"
+              >
+                {formatDuration(event.duration ?? 0)}
+              </Text>
+            </div>
           </dl>
         </section>
 
@@ -147,20 +178,24 @@ export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen
         )}
 
         {event.inputMessages && (
-          <section className={styles.section}>
+          <section className={styles.section} data-testid="request-section">
             <Text variant="label" className={styles.sectionLabel}>
               Input
             </Text>
-            <pre className={styles.codeBlock}>{event.inputMessages}</pre>
+            <pre className={styles.codeBlock}>
+              <code>{event.inputMessages}</code>
+            </pre>
           </section>
         )}
 
         {event.generatedResponse && (
-          <section className={styles.section}>
+          <section className={styles.section} data-testid="response-section">
             <Text variant="label" className={styles.sectionLabel}>
               Response
             </Text>
-            <pre className={styles.codeBlock}>{event.generatedResponse}</pre>
+            <pre className={styles.codeBlock}>
+              <code>{event.generatedResponse}</code>
+            </pre>
           </section>
         )}
 

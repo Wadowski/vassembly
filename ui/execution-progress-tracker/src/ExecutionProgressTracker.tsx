@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { TaskStatus } from '@vassembly/ui-api-hooks/src/tasks/types';
 import { ProgressList } from './_components/ProgressList';
 import { ProgressDetailModal } from './_components/ProgressDetailModal';
@@ -7,67 +7,83 @@ import { useProgressPolling } from './hooks/useProgressPolling';
 import { useModalState } from './hooks/useModalState';
 import { sortEventsByTimestamp } from './utils/sortEventsByTimestamp';
 import { mergeTimelineItems } from './utils/mergeTimelineItems';
+import { isProgressNotFoundError } from './utils/isProgressNotFoundError';
 import type { ExecutionProgressTrackerProps, ProgressEvent } from './types';
 import styles from './ExecutionProgressTracker.module.scss';
+
+const isActiveProgressStatus = (
+  taskStatus: ExecutionProgressTrackerProps['taskStatus'],
+): boolean => taskStatus === TaskStatus.InProgress || taskStatus === TaskStatus.Waiting;
+
+const shouldFetchProgressForStatus = (
+  taskStatus: ExecutionProgressTrackerProps['taskStatus'],
+  hasAssignedAgent: boolean,
+): boolean => {
+  if (!hasAssignedAgent) {
+    return false;
+  }
+
+  return (
+    taskStatus === TaskStatus.InProgress ||
+    taskStatus === TaskStatus.Waiting ||
+    taskStatus === TaskStatus.Paused ||
+    taskStatus === TaskStatus.Done ||
+    taskStatus === TaskStatus.Failed
+  );
+};
 
 export const ExecutionProgressTracker: React.FC<ExecutionProgressTrackerProps> = ({
   taskId,
   taskStatus,
+  hasAssignedAgent = true,
   answeredQuestions,
   onTaskCompleted,
 }) => {
-  const isProgressable =
-    taskStatus === TaskStatus.InProgress || taskStatus === TaskStatus.Waiting;
-  const { data, error, isLoading, refetch } = useProgressPolling({ taskId, enabled: isProgressable });
+  const isFetchEnabled = shouldFetchProgressForStatus(taskStatus, hasAssignedAgent);
+  const isPollingEnabled = hasAssignedAgent && isActiveProgressStatus(taskStatus);
+  const { data, error, isLoading, pollRequestCount, refetch } = useProgressPolling({
+    taskId,
+    isPollingEnabled,
+    isFetchEnabled,
+  });
   const { isOpen, selectedEventId, openModal, closeModal } = useModalState();
+  const completedNotifiedRef = React.useRef(false);
 
-  useEffect(() => {
-    if (isProgressable && !isLoading) {
-      void refetch();
+  React.useEffect(() => {
+    if (!data?.completedAt || completedNotifiedRef.current) {
+      return;
     }
-  }, [isProgressable, refetch, isLoading]);
 
-  useEffect(() => {
-    if (data?.completedAt) {
-      onTaskCompleted?.(data);
-    }
-  }, [data?.completedAt, data, onTaskCompleted]);
+    completedNotifiedRef.current = true;
+    onTaskCompleted?.(data);
+  }, [data, onTaskCompleted]);
 
-  if (isLoading && !data) {
+  const hasProgressData = data !== null;
+  const isNotFound = error !== null && isProgressNotFoundError(error);
+  const hasBlockingError = error !== null && !isNotFound && !hasProgressData;
+
+  if (hasBlockingError) {
     return (
       <div className={styles.executionProgressTracker} data-testid="execution-progress-tracker">
-        <div className={styles.loadingState}>
-          <div className={styles.spinner} />
-          <p>Loading progress...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error && !data) {
-    return (
-      <div className={styles.executionProgressTracker} data-testid="execution-progress-tracker">
-        <div className={styles.errorState}>
+        <div className={styles.errorState} data-testid="progress-error-banner" role="alert">
           <p className={styles.errorMessage}>{error.message || 'Failed to load progress'}</p>
-          <button className={styles.retryButton} onClick={() => refetch()} type="button">
+          <button
+            className={styles.retryButton}
+            data-testid="progress-retry-button"
+            onClick={() => refetch()}
+            type="button"
+          >
             Retry
           </button>
         </div>
+        <span data-testid="polling-request-count" hidden>
+          {pollRequestCount}
+        </span>
       </div>
     );
   }
 
-  if (!data) {
-    return (
-      <div className={styles.executionProgressTracker} data-testid="execution-progress-tracker">
-        <div className={styles.emptyState}>
-          <p>No progress data available</p>
-        </div>
-      </div>
-    );
-  }
-
-  const sortedEvents = sortEventsByTimestamp(data.events);
+  const sortedEvents = hasProgressData ? sortEventsByTimestamp(data.events) : [];
   const timelineItems = mergeTimelineItems({
     events: sortedEvents,
     answeredQuestions,
@@ -75,15 +91,29 @@ export const ExecutionProgressTracker: React.FC<ExecutionProgressTrackerProps> =
   const selectedEvent = selectedEventId
     ? sortedEvents.find((event: ProgressEvent) => event.id === selectedEventId)
     : null;
+  const showInitialLoading = isLoading && !hasProgressData && !isNotFound;
+  const showCompletionMessage = taskStatus === TaskStatus.Done && hasProgressData;
 
   return (
     <div className={styles.executionProgressTracker} data-testid="execution-progress-tracker">
-      <ProgressHeader taskProgress={data} taskStatus={taskStatus} />
+      {showCompletionMessage ? (
+        <p data-testid="completion-message">Task execution completed</p>
+      ) : null}
+
+      {hasProgressData ? (
+        <ProgressHeader taskProgress={data} taskStatus={taskStatus} />
+      ) : null}
 
       <ProgressList
         items={timelineItems}
         selectedEventId={selectedEventId}
         onSelectEvent={openModal}
+        isLoading={showInitialLoading}
+        emptyMessage={
+          isFetchEnabled
+            ? 'No progress events yet. Waiting for execution to start...'
+            : 'No progress data available'
+        }
       />
 
       <ProgressDetailModal
@@ -91,6 +121,10 @@ export const ExecutionProgressTracker: React.FC<ExecutionProgressTrackerProps> =
         event={selectedEvent || null}
         onClose={closeModal}
       />
+
+      <span data-testid="polling-request-count" hidden>
+        {pollRequestCount}
+      </span>
     </div>
   );
 };

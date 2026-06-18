@@ -18,6 +18,9 @@ const E2E_ENV_KEYS = new Set([
   'WEB_PORT',
   'API_PORT',
   'DOCS_PORT',
+  'NEXT_PUBLIC_API_BASE_URL',
+  'E2E_API_BASE_URL',
+  'E2E_WEB_BASE_URL',
 ]);
 
 const parseEnvFile = (filePath) => {
@@ -73,3 +76,8 @@ process.env.E2E_WEB_BASE_URL =
   process.env.E2E_WEB_BASE_URL || mergedFileEnv.E2E_WEB_BASE_URL || DEFAULT_WEB_BASE_URL;
 process.env.E2E_API_BASE_URL =
   process.env.E2E_API_BASE_URL || mergedFileEnv.E2E_API_BASE_URL || DEFAULT_API_BASE_URL;
+process.env.NEXT_PUBLIC_API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  mergedFileEnv.NEXT_PUBLIC_API_BASE_URL ||
+  process.env.E2E_API_BASE_URL ||
+  DEFAULT_API_BASE_URL;

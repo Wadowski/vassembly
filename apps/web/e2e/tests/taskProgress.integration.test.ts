@@ -1,4 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, type BrowserContext, type Page } from '@playwright/test';
+import { closeE2eBrowserResources } from '@vassembly/e2e';
 import {
   setupTaskWithEvents,
   mockGraphQLResponse,
@@ -17,13 +18,15 @@ import {
 
 test.describe('Task Progress Integration Tests', () => {
   let page: Page;
+  let context: BrowserContext;
 
   test.beforeEach(async ({ browser }) => {
-    page = await browser.newPage();
+    context = await browser.newContext();
+    page = await context.newPage();
   });
 
   test.afterEach(async () => {
-    await page.close();
+    await closeE2eBrowserResources({ page, context });
   });
 
   test.describe('Scenario 1: GraphQL query returns correct TaskProgress shape', () => {

@@ -30,6 +30,7 @@ Given('a task is running and generating progress events', async ({ seed, world }
   const webWorld = getWebWorld(world);
   await seedRunningTaskWithProgressEvents({ world: webWorld, seed, eventCount: 2 });
   stopBackgroundProgressWriter(webWorld);
+  webWorld.shouldResumeBackgroundProgressWriter = true;
   webWorld.stopBackgroundProgressWriter = startBackgroundProgressEventWriter({
     world: webWorld,
     seed,
@@ -78,14 +79,13 @@ When('the task fails after progress is completed', async ({ page, seed, world })
   stopBackgroundProgressWriter(webWorld);
 
   if (page) {
-    webWorld.progressEventCountAtPause = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
     const lastItem = page.getByTestId(PROGRESS_ITEM_TEST_ID).last();
     webWorld.lastProgressEventId = (await lastItem.getAttribute('data-event-id')) ?? webWorld.lastProgressEventId;
     webWorld.progressExecutionAttemptAtCheckpoint =
       (await getCurrentProgressAttempt(page)) || webWorld.progressExecutionAttemptAtCheckpoint;
   }
 
-  await finalizeTaskProgressForTask({ world: webWorld });
+  await finalizeTaskProgressForTask({ world: webWorld, seed });
   await markTaskStatusInDatabase({
     world: webWorld,
     seed,
@@ -109,20 +109,32 @@ Then('progress events stop appearing', async ({ page, world }) => {
   }
 
   const webWorld = getWebWorld(world);
-  const progressCountBefore =
-    webWorld.progressEventCountAtPause ?? (await page.getByTestId(PROGRESS_ITEM_TEST_ID).count());
+  const stabilizationWindowMs = TASK_PROGRESS_POLL_INTERVAL_MS + 500;
 
-  webWorld.progressEventCountAtPause = progressCountBefore;
+  await expect(async () => {
+    const pollCountDuringPause = await countGraphqlTaskProgressPollRequests({
+      page,
+      durationMs: stabilizationWindowMs,
+      taskId: world.taskId,
+    });
+    expect(pollCountDuringPause).toBe(0);
+  }).toPass({ timeout: 10_000 });
 
-  const pollCountDuringPause = await countGraphqlTaskProgressPollRequests({
-    page,
-    durationMs: TASK_PROGRESS_POLL_INTERVAL_MS + 500,
-    taskId: world.taskId,
-  });
-  expect(pollCountDuringPause).toBe(0);
+  let stableProgressCount = 0;
+  await expect(async () => {
+    const countBefore = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
+    await page.waitForTimeout(stabilizationWindowMs);
+    const countAfter = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
+    expect(countAfter).toBe(countBefore);
+    stableProgressCount = countAfter;
+  }).toPass({ timeout: 10_000 });
 
-  const progressCountAfter = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
-  expect(progressCountAfter).toBe(progressCountBefore);
+  webWorld.progressEventCountAtPause = stableProgressCount;
+
+  await expect(async () => {
+    const progressCountAfter = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
+    expect(progressCountAfter).toBe(stableProgressCount);
+  }).toPass({ timeout: stabilizationWindowMs });
 });
 
 Then('progress events resume appearing', async ({ page, world }) => {

@@ -53,6 +53,7 @@ export const toTaskProgressResponse = ({
     completedAt: toNullableIsoString(taskProgress.completedAt),
     totalDuration: taskProgress.totalDuration!,
     totalTokens: taskProgress.totalTokens!,
+    executionAttempt: taskProgress.executionAttempt ?? 1,
     events: (taskProgress.events || []).map(toProgressEventResponse),
   };
 };

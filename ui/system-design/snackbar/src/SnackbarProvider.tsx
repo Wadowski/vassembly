@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { resolveClassName } from '@vassembly/ui-utils';
 import { Snackbar } from './Snackbar';
@@ -11,7 +11,7 @@ import type {
   SnackbarVariant,
 } from './types';
 
-export const SnackbarContext = React.createContext<SnackbarContextValue | undefined>(undefined);
+export const SnackbarContext = createContext<SnackbarContextValue | undefined>(undefined);
 SnackbarContext.displayName = 'SnackbarContext';
 
 const DEFAULT_POSITION: SnackbarPosition = 'bottom-center';
@@ -34,6 +34,7 @@ export const SnackbarProvider = ({
   maxVisible = DEFAULT_MAX_VISIBLE,
 }: SnackbarProviderProps) => {
   const [items, setItems] = useState<SnackbarItem[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
   const timeoutByIdRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const idCounterRef = useRef(0);
   const maxVisibleRef = useRef(maxVisible);
@@ -104,6 +105,10 @@ export const SnackbarProvider = ({
   );
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
     return () => {
       for (const timeoutId of timeoutByIdRef.current.values()) {
         clearTimeout(timeoutId);
@@ -122,12 +127,10 @@ export const SnackbarProvider = ({
 
   const positionClass = POSITION_CLASS_MAP[position];
 
-  const portalContainer = typeof document !== 'undefined' ? document.body : null;
-
   return (
     <SnackbarContext.Provider value={contextValue}>
       {children}
-      {portalContainer
+      {isMounted
         ? ReactDOM.createPortal(
             <div role="region" aria-label="Notifications" aria-live="polite" className={resolveClassName(styles.provider, positionClass)}>
               {items.map((item) => (
@@ -140,7 +143,7 @@ export const SnackbarProvider = ({
                 />
               ))}
             </div>,
-            portalContainer,
+            document.body,
           )
         : null}
     </SnackbarContext.Provider>
