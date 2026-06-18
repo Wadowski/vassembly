@@ -68,7 +68,7 @@ const createE2ePlaywrightConfig = (options) => {
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 4 : undefined,
+    workers: 4,
     _workerRstEveryNTests: 10,
     reporter: 'list',
     use: {
