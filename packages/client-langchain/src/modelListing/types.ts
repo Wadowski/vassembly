@@ -7,3 +7,7 @@ export interface ListOpenAiModelsParams {
 export interface ListGeminiModelsParams {
   apiKey: string;
 }
+
+export interface ListAnthropicModelsParams {
+  apiKey: string;
+}

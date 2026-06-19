@@ -29,6 +29,44 @@ const result = await taskService.createTask({
 
 Implementation: [`src/handlers/createTask/index.ts`](./src/handlers/createTask/index.ts).
 
+Fire-and-forgets `generateTaskTitle` and `executeTask` after create; neither is awaited. See [`generateTaskTitle`](#generatetasktitle-taskid-userid-promisevoid) and [`executeTask`](#executetask-taskid-userid-mode-promisevoid).
+
+### `generateTaskTitle({ taskId, userId }): Promise<void>`
+
+Asynchronously generates a short title (≤ 8 words) from the task description using the **Task title generator** system agent, then persists it via `@vassembly/domain-task` `updateTitle`.
+
+```typescript
+import taskService from '@vassembly/service-task';
+
+void taskService.generateTaskTitle({
+  taskId: 'task-456',
+  userId: 'user-123',
+});
+```
+
+**Purpose:** Populate `task.title` in the background after task creation without blocking the create response.
+
+**Invocation:** Fire-and-forget in `createTask`; never awaited. Same async pattern as `executeTask`.
+
+**Input** ([`src/handlers/generateTaskTitle/types.ts`](./src/handlers/generateTaskTitle/types.ts)):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `taskId` | `string` | Task to generate a title for |
+| `userId` | `string` | Task owner; used for credential lookup and logging |
+
+**Output:** `Promise<void>` — resolves when generation completes or is skipped; never throws.
+
+**Behavior:**
+
+- Skips when title is already set, description is empty, or the user has no AI integration credential
+- Invokes `SYSTEM_AGENT_NAME.TaskTitleGenerator` via `@vassembly/service-agent` `runAgentInvokeWithTools`
+- Normalizes LLM output (first line only, strips surrounding quotes and trailing punctuation, limits to 8 words)
+- Logs all events with `sessionId: 'TASK_TITLE_GENERATION'` (`task.title.started`, `task.title.completed`, `task.title.skipped`, `task.title.failed`)
+- Silent failure on any error (caught and logged; does not affect task execution)
+
+Implementation: [`src/handlers/generateTaskTitle/index.ts`](./src/handlers/generateTaskTitle/index.ts).
+
 ### `listUserTasks({ userId, page, size, search? }): Promise<ListUserTasksHandlerOutput>`
 
 Returns a paginated list of tasks for the authenticated user. Delegates filtering, pagination, and persistence to `@vassembly/domain-task`.
@@ -72,6 +110,102 @@ const result = await taskService.listUserTasks({
 
 Implementation: [`src/handlers/listUserTasks/index.ts`](./src/handlers/listUserTasks/index.ts).
 
+### `pauseTask({ userId, taskId }): Promise<{ task: TaskResponse }>`
+
+Pauses an in-progress task owned by the authenticated user. Signals cooperative abort via the in-process execution registry, then delegates to `@vassembly/domain-task` `pauseTask`. Idempotent when the task is already `paused`.
+
+```typescript
+import taskService from '@vassembly/service-task';
+
+const result = await taskService.pauseTask({
+  userId: 'user-123',
+  taskId: 'task-456',
+});
+// Returns: { task: TaskResponse }
+```
+
+**Errors:**
+
+| Error | When |
+|-------|------|
+| `NotFoundError` | Task not found or not owned by `userId` |
+| `ConflictError` (`TASK_NOT_PAUSABLE`) | Task is not `in-progress` |
+
+Implementation: [`src/handlers/pauseTask/index.ts`](./src/handlers/pauseTask/index.ts).
+
+### `resumeTask({ userId, taskId }): Promise<{ task: TaskResponse }>`
+
+Resumes a paused task. Updates status via the domain command, then re-fires `executeTask` in `resume` mode (fire-and-forget). Resume mode builds an augmented prompt from completed progress events as a checkpoint. Idempotent when the task is already `in-progress`.
+
+```typescript
+const result = await taskService.resumeTask({
+  userId: 'user-123',
+  taskId: 'task-456',
+});
+```
+
+**Errors:**
+
+| Error | When |
+|-------|------|
+| `NotFoundError` | Task not found or not owned by `userId` |
+| `ConflictError` (`TASK_NOT_RESUMABLE`) | Task is not `paused` |
+
+Implementation: [`src/handlers/resumeTask/index.ts`](./src/handlers/resumeTask/index.ts).
+
+### `retryTask({ userId, taskId }): Promise<{ task: TaskResponse }>`
+
+Retries a paused or failed task from scratch. Clears error fields via the domain command, then re-fires `executeTask` in `retry` mode (fire-and-forget).
+
+```typescript
+const result = await taskService.retryTask({
+  userId: 'user-123',
+  taskId: 'task-456',
+});
+```
+
+**Errors:**
+
+| Error | When |
+|-------|------|
+| `NotFoundError` | Task not found or not owned by `userId` |
+| `ConflictError` (`TASK_NOT_RETRYABLE`) | Task is neither `paused` nor `failed` |
+
+Implementation: [`src/handlers/retryTask/index.ts`](./src/handlers/retryTask/index.ts).
+
+### `executeTask({ taskId, userId, mode? }): Promise<void>`
+
+Runs async LLM task execution. Registers an `AbortSignal` in the execution registry, invokes the assigned agent via `@vassembly/service-agent`, and records progress events. Accepts an optional execution mode:
+
+| Mode | Value | Behavior |
+|------|-------|----------|
+| Fresh (default) | `'fresh'` | New execution; calls `markInProgress` |
+| Resume | `'resume'` | Continues from last completed progress event checkpoint |
+| Retry | `'retry'` | Re-runs from original description; error fields already cleared by handler |
+
+```typescript
+import taskService from '@vassembly/service-task';
+
+await taskService.executeTask({
+  taskId: 'task-456',
+  userId: 'user-123',
+  mode: taskService.TaskExecutionMode.Resume,
+});
+```
+
+Throws `ExecutionPausedError` when the LangChain tool loop is aborted due to pause. Implementation: [`src/handlers/executeTask/index.ts`](./src/handlers/executeTask/index.ts).
+
+### Internal: `executionRegistry`
+
+In-process `Map<taskId, AbortController>` singleton ([`src/executionRegistry/index.ts`](./src/executionRegistry/index.ts)). Not exported from the package entry point. Used by `pauseTask` (abort), `executeTask` (register/deregister signal), and cooperative cancellation in the agent tool loop.
+
+| Method | Purpose |
+|--------|---------|
+| `register({ taskId })` | Creates/replaces an `AbortController`; returns its signal |
+| `abort({ taskId })` | Aborts and removes the controller for a running task |
+| `deregister({ taskId })` | Removes the controller after execution completes |
+| `getSignal({ taskId })` | Returns the current signal, if any |
+
 ## Usage
 
 Default export exposes all handlers:
@@ -101,5 +235,11 @@ Handler tests mock the domain layer and validate orchestration behavior. See [`s
 
 ## Dependencies
 
+- **@vassembly/constants** — `SYSTEM_AGENT_NAME.TaskTitleGenerator` for title generation agent lookup
 - **@vassembly/domain-task** — task commands, model, and `toTaskResponse` mapper
-- **@vassembly/errors** — domain errors propagated to the API gateway
+- **@vassembly/domain-task-progress** — progress event reads for resume checkpoint building
+- **@vassembly/domain-system-agent** — user AI credential preference lookup
+- **@vassembly/domain-ai-integration** — provider client resolution (via service-agent)
+- **@vassembly/service-agent** — `runAgentInvokeWithTools` for LLM execution
+- **@vassembly/errors** — domain and execution errors propagated to the API gateway
+- **@vassembly/logger** — structured logging for unhandled execution failures

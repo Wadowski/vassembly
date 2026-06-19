@@ -1,5 +1,10 @@
-import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
+import { randomUUID } from 'node:crypto';
 
+import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
+import type { AnsweredQuestion } from '@vassembly/domain-task-questions';
+import { ExecutionPausedError, UserInputWaitingError } from '@vassembly/errors';
+
+import { invocationResumeRegistry } from '../../../invocationResumeRegistry';
 import {
   buildUseAgentNotFoundError,
   USE_AGENT_DEPTH_ERROR,
@@ -9,6 +14,7 @@ import { runAgentInvokeWithTools } from '../runAgentInvokeWithTools';
 import { resolveTarget } from './resolveTarget';
 
 import type { UseAgentParams } from './types';
+import type { ResolveTargetResult } from './types';
 
 const resolveAgentName = (args: Record<string, unknown>): string | undefined => {
   const name = args.name;
@@ -34,7 +40,76 @@ const resolveAgentPrompt = (args: Record<string, unknown>): string | undefined =
   return trimmed.length > 0 ? trimmed : undefined;
 };
 
+const formatAnswer = (answer: string | string[] | boolean): string => {
+  if (Array.isArray(answer)) {
+    return JSON.stringify(answer);
+  }
+
+  return String(answer);
+};
+
+export interface BuildChildResumeMessageParams {
+  agentPrompt: string;
+  answeredQuestions: AnsweredQuestion[];
+}
+
+export const buildChildResumeMessage = ({
+  agentPrompt,
+  answeredQuestions,
+}: BuildChildResumeMessageParams): string => {
+  const parts = [agentPrompt];
+
+  if (answeredQuestions.length > 0) {
+    parts.push('', '--- User responses received ---');
+    for (const qa of answeredQuestions) {
+      parts.push(`Question: "${qa.question}"`, `Answer: ${formatAnswer(qa.answer)}`, '');
+    }
+  }
+
+  parts.push('Continue from where execution left off. Do not repeat completed steps above.');
+  return parts.join('\n');
+};
+
+const runChildInvocation = async ({
+  context,
+  childInvocationId,
+  targetResult,
+  message,
+}: {
+  context: UseAgentParams['context'];
+  childInvocationId: string;
+  targetResult: Extract<ResolveTargetResult, { agentId: string }>;
+  message: string;
+}): Promise<string> => {
+  const nestedResult = await runAgentInvokeWithTools({
+    userId: context.userId,
+    agentType: targetResult.agentType,
+    agentId: targetResult.agentId,
+    message,
+    connectionOverride: targetResult.connectionOverride,
+    toolContext: {
+      ...context,
+      invocationId: childInvocationId,
+      parentInvocationId: context.invocationId,
+      recursionDepth: context.recursionDepth + 1,
+      parentAgentId: context.callerAgentId,
+      callerAgentId: targetResult.agentId,
+      callerAgentType: targetResult.agentType,
+    },
+  });
+
+  return nestedResult.message;
+};
+
 export const useAgent = async ({ args, context }: UseAgentParams): Promise<string> => {
+  if (context.abortSignal?.aborted) {
+    throw new ExecutionPausedError();
+  }
+
+  if (context.shouldAbort && (await context.shouldAbort())) {
+    throw new ExecutionPausedError();
+  }
+
   if (context.recursionDepth >= MAX_USE_AGENT_DEPTH) {
     return USE_AGENT_DEPTH_ERROR;
   }
@@ -56,19 +131,28 @@ export const useAgent = async ({ args, context }: UseAgentParams): Promise<strin
     return targetResult.error;
   }
 
-  const nestedResult = await runAgentInvokeWithTools({
-    userId: context.userId,
-    agentType: targetResult.agentType,
-    agentId: targetResult.agentId,
-    message: agentPrompt,
-    connectionOverride: targetResult.connectionOverride,
-    toolContext: {
-      ...context,
-      recursionDepth: context.recursionDepth + 1,
-      callerAgentId: targetResult.agentId,
-      callerAgentType: targetResult.agentType,
-    },
-  });
+  const childInvocationId = randomUUID();
 
-  return nestedResult.message;
+  const completeChild = async (message: string): Promise<string> =>
+    runChildInvocation({
+      context,
+      childInvocationId,
+      targetResult,
+      message,
+    });
+
+  try {
+    return await completeChild(agentPrompt);
+  } catch (error) {
+    if (error instanceof UserInputWaitingError) {
+      return invocationResumeRegistry.waitForCompletion({
+        taskId: context.taskId,
+        invocationId: childInvocationId,
+        resume: async ({ answeredQuestions }) =>
+          completeChild(buildChildResumeMessage({ agentPrompt, answeredQuestions })),
+      });
+    }
+
+    throw error;
+  }
 };

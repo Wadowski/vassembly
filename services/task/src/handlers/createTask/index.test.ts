@@ -2,14 +2,24 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ValidationError, WrongParamError } from '@vassembly/errors';
 
-const { mockCreate, mockGetActiveByName, mockExecuteTask } = vi.hoisted(() => ({
+const { mockCreate, mockGetActiveByName, mockExecuteTask, mockGenerateTaskTitle, mockGenerateTaskCategory } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
   mockGetActiveByName: vi.fn(),
   mockExecuteTask: vi.fn(),
+  mockGenerateTaskTitle: vi.fn(),
+  mockGenerateTaskCategory: vi.fn(),
 }));
 
 vi.mock('../executeTask', () => ({
   executeTask: mockExecuteTask,
+}));
+
+vi.mock('../generateTaskCategory', () => ({
+  generateTaskCategory: mockGenerateTaskCategory,
+}));
+
+vi.mock('../generateTaskTitle', () => ({
+  generateTaskTitle: mockGenerateTaskTitle,
 }));
 
 vi.mock('@vassembly/logger', () => ({
@@ -64,6 +74,8 @@ describe('createTask handler', () => {
       data: { id: ASSISTANT_AGENT_ID },
     });
     mockExecuteTask.mockResolvedValue(undefined);
+    mockGenerateTaskTitle.mockResolvedValue(undefined);
+    mockGenerateTaskCategory.mockResolvedValue(undefined);
   });
 
   it('should return TaskResponse with serialized id and ISO timestamps when create succeeds', async () => {

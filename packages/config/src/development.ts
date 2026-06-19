@@ -15,10 +15,10 @@ const config: Config = {
     },
     docs: {
       port: 3001,
-    }
+    },
   },
   encoder: {
-    secret: 'test-secret',
+    secret: process.env.ENCODER_SECRET || 'test-secret',
     saltRounds: 10,
     algorithm: 'aes-256-cbc',
   },
@@ -26,9 +26,6 @@ const config: Config = {
     backend: parseCacheBackend(process.env.CACHE_BACKEND),
     defaultTtlMs: Number(process.env.CACHE_DEFAULT_TTL_MS) || 300_000,
   },
-  // redis: {
-  //   url: process.env.REDIS_URL || 'redis://localhost:6379',
-  // },
   mongoDb: {
     url: process.env.MONGODB_URL || '',
     database: process.env.MONGODB_DATABASE || '',

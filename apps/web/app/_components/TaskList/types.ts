@@ -22,6 +22,6 @@ export interface TaskListItemProps {
 
 export type TaskStatusValue = TaskListItemDto['status'] | string;
 
-export type ColorValue = 'secondary' | 'info' | 'success' | 'error';
+export type ColorValue = 'secondary' | 'info' | 'success' | 'error' | 'warning';
 
 export type IconComponent = ComponentType<{ className?: string }>;

@@ -1,6 +1,9 @@
 import * as handlers from './handlers';
 
+export { invocationResumeRegistry } from './invocationResumeRegistry';
 export { runAgentInvokeWithTools } from './helpers/internalTools';
+
+export type { AgentInvokeProgressEventInput } from './helpers/internalTools';
 
 export default handlers;
 

@@ -3,6 +3,7 @@ import { initRedis } from "@vassembly/client-redis";
 import { createServer, routesWithPrefix } from "@vassembly/server";
 import { CacheBackend, config } from "@vassembly/config";
 import mcpDomain from "@vassembly/domain-mcp";
+import systemAgentDomain from "@vassembly/domain-system-agent";
 
 import { registerApiMongoIndexes } from "../bootstrap/mongoIndexes";
 import { routes as agentRoutesList } from "./agents";
@@ -42,6 +43,11 @@ const startApp = async () => {
 
   await mcpDomain.seedMcps();
   console.log("MCPs seeded successfully");
+
+  const systemAgentSeedResult = await systemAgentDomain.seedSystemAgents();
+  console.log(
+    `System agents seeded: ${systemAgentSeedResult.insertedCount} inserted, ${systemAgentSeedResult.skippedCount} skipped`,
+  );
 
   const fastify = await createServer({
     routes,

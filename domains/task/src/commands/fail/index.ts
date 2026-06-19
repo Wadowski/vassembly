@@ -1,9 +1,8 @@
-import { updateDbById } from '@vassembly/commands';
 import { ValidationError } from '@vassembly/errors';
 import { z } from 'zod';
 
-import { taskMongodbDao } from '../../clients';
-import { TaskModel, taskFactory, TaskStatus } from '../../model';
+import { TaskStatus } from '../../model';
+import { conditionalStatusUpdate } from '../shared/conditionalStatusUpdate';
 
 import type { FailTaskCommandInput, FailTaskCommandResult } from './types';
 
@@ -13,18 +12,7 @@ const FAIL_INPUT_SCHEMA = z.object({
   errorCode: z.string().min(1),
 });
 
-const FAIL_DB_SCHEMA = z.object({
-  status: z.literal(TaskStatus.Failed),
-  errorMessage: z.string().min(1),
-  errorCode: z.string().min(1),
-  failedAt: z.date(),
-});
-
-const persistFail = updateDbById<TaskModel>({
-  dao: taskMongodbDao,
-  factory: taskFactory,
-  validationSchema: FAIL_DB_SCHEMA,
-});
+const NON_FAILABLE_STATUSES = [TaskStatus.Waiting, TaskStatus.Done, TaskStatus.Failed] as const;
 
 export const fail = async ({
   taskId,
@@ -37,13 +25,18 @@ export const fail = async ({
     throw new ValidationError(parsed.error.message);
   }
 
-  return persistFail({
-    id: parsed.data.taskId,
-    data: {
+  return conditionalStatusUpdate({
+    taskId: parsed.data.taskId,
+    filter: {
+      status: { $nin: NON_FAILABLE_STATUSES },
+    },
+    update: {
       status: TaskStatus.Failed,
       errorMessage: parsed.data.errorMessage,
       errorCode: parsed.data.errorCode,
       failedAt: new Date(),
     },
+    conflictCode: 'TASK_NOT_FAILABLE',
+    conflictMessage: 'Task cannot be failed from its current status',
   });
 };

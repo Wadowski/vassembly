@@ -61,11 +61,11 @@ export const TaskListItem = ({ task, onClick }: TaskListItemProps): JSX.Element 
       tabIndex={0}
     >
       {task.title && (
-        <Text variant="body2" className={itemStyles.summary} data-testid="task-ai-summary">
+        <Text variant="body1" className={itemStyles.summary} data-testid="task-ai-summary">
           {task.title}
         </Text>
       )}
-      <Text variant="body1" className={descriptionClassName} data-testid="task-description">
+      <Text variant="body2" className={descriptionClassName} data-testid="task-description">
         {description}
       </Text>
       <span className={resolveClassName(statusStyles.statusBadge, statusClassName)}>

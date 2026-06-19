@@ -1,0 +1,28 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.multiselectFieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.multiselectLegend {
+  color: $color-text-secondary;
+  font-size: $font-size-body-sm;
+  margin-bottom: $spacing-2;
+}
+
+.multiselectOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.booleanGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+}

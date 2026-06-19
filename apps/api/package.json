@@ -35,6 +35,8 @@
     "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
+    "@vassembly/domain-task-progress": "workspace:*",
+    "@vassembly/domain-task-questions": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/domain-user-mcp-config": "workspace:*",
     "@vassembly/errors": "workspace:*",
@@ -44,6 +46,7 @@
     "@vassembly/service-agent": "workspace:*",
     "@vassembly/service-mcp": "workspace:*",
     "@vassembly/service-task": "workspace:*",
+    "@vassembly/service-task-questions": "workspace:*",
     "@vassembly/validation": "workspace:*",
     "zod": "^4.3.6"
   }

@@ -1,4 +1,6 @@
 import { listAgents } from './listAgents';
+import { askUser } from './askUser';
+import { updateTaskToolHandler } from './updateTask';
 import { useAgent } from './useAgent';
 
 import type { InternalToolContext, InternalToolHandlerMap } from './types';
@@ -11,5 +13,7 @@ export const createInternalToolHandlers = ({
   toolContext,
 }: CreateInternalToolHandlersParams): InternalToolHandlerMap => ({
   'list-agents': (args) => listAgents({ args, context: toolContext }),
+  'update-task': (args) => updateTaskToolHandler(args),
+  'ask-user': (args) => askUser({ args, context: toolContext }),
   'use-agent': (args) => useAgent({ args, context: toolContext }),
 });

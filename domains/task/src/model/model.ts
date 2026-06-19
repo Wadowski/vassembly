@@ -1,3 +1,4 @@
+import type { INTENT_CATEGORY_SLUG } from '@vassembly/constants';
 import { Model } from '@vassembly/model';
 
 export enum TaskType {
@@ -8,6 +9,8 @@ export enum TaskType {
 export enum TaskStatus {
   Created = 'created',
   InProgress = 'in-progress',
+  Paused = 'paused',
+  Waiting = 'waiting',
   Done = 'done',
   Failed = 'failed',
 }
@@ -25,6 +28,8 @@ export class TaskModel extends Model {
 
   title?: string | null;
 
+  category?: INTENT_CATEGORY_SLUG | null;
+
   llmResponse?: string | null;
 
   errorMessage?: string | null;
@@ -36,4 +41,6 @@ export class TaskModel extends Model {
   completedAt?: Date | null;
 
   failedAt?: Date | null;
+
+  pausedAt?: Date | null;
 }

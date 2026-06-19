@@ -1,0 +1,4 @@
+export const POLLING_INTERVAL_MS = 1000;
+export const POLLING_TIMEOUT_MS = 500;
+export const POLLING_MAX_WAIT_MS = 300000;
+export const POLLING_RETRY_DELAYS = [1000, 2000, 5000];

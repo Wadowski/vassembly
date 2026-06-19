@@ -1,0 +1,9 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.historyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}

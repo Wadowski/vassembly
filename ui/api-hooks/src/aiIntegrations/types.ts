@@ -1,4 +1,4 @@
-export type AiIntegrationProvider = 'gemini' | 'chatgpt' | 'lm_studio';
+export type AiIntegrationProvider = 'gemini' | 'chatgpt' | 'lm_studio' | 'deep_seek' | 'anthropic';
 
 export interface AiIntegrationCredentialDto {
   id: string;

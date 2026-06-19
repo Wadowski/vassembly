@@ -17,11 +17,18 @@ export interface AiProviderInvokeParams {
   systemMessage?: string;
   mcpServerConfigs?: McpServerConfig[];
   internalToolBindings?: InternalToolBinding[];
+  signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface AiProviderInvokeResult {
   message: string;
   model: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
   toolUsage?: {
     internalToolIdsUsed: string[];
     skippedInternalToolIds: string[];
@@ -54,4 +61,13 @@ export interface GeminiProviderParams {
 export interface LmStudioProviderParams {
   baseUrl: string;
   apiKey?: string | null;
+}
+
+export interface DeepSeekProviderParams {
+  apiKey: string;
+  baseUrl?: string | null;
+}
+
+export interface AnthropicProviderParams {
+  apiKey: string;
 }

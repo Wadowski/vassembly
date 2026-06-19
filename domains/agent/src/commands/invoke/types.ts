@@ -24,12 +24,18 @@ export interface ModeledProviderInvokeParams {
   systemMessage?: string;
   mcpServerConfigs?: AgentInvokeMcpServerConfig[];
   internalToolBindings?: InternalToolBinding[];
+  signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface ModeledProviderClient {
   invoke(
     params: ModeledProviderInvokeParams | string,
-  ): Promise<{ message: string; toolUsage?: ModeledProviderToolUsage }>;
+  ): Promise<{
+    message: string;
+    toolUsage?: ModeledProviderToolUsage;
+    usage?: { promptTokens: number; completionTokens: number; totalTokens?: number };
+  }>;
 }
 
 export interface InvokeAgentParams {
@@ -40,9 +46,12 @@ export interface InvokeAgentParams {
   systemMessage?: string;
   mcpServerConfigs?: AgentInvokeMcpServerConfig[];
   internalToolBindings?: InternalToolBinding[];
+  signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface InvokeAgentResult {
   message: string;
   toolUsage?: ModeledProviderToolUsage;
+  usage?: { promptTokens: number; completionTokens: number; totalTokens?: number };
 }

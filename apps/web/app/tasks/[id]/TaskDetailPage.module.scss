@@ -16,7 +16,7 @@
   flex-direction: column;
   gap: $spacing-8;
   width: 100%;
-  max-width: 42rem;
+  max-width: 64rem;
 }
 
 .sectionCard {
@@ -35,6 +35,21 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.utilityHeaderEnd {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: $spacing-3;
+  margin-left: auto;
+}
+
+.headerActionButtons {
+  display: inline-flex;
+  align-items: center;
   gap: $spacing-2;
 }
 
@@ -106,7 +121,7 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
-  max-width: 42rem;
+  max-width: 64rem;
 }
 
 .errorDetail {

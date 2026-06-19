@@ -24,11 +24,12 @@
 }
 
 .summary {
-  color: $color-text-secondary;
+  color: $color-text-primary;
+  font-weight: 600;
 }
 
 .description {
-  color: $color-text-primary;
+  color: $color-text-secondary;
 }
 
 .descriptionClamp {

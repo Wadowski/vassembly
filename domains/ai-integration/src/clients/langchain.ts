@@ -27,12 +27,22 @@ export interface ModeledProviderInvokeParams {
   systemMessage?: string;
   mcpServerConfigs?: AiProviderInvokeParams['mcpServerConfigs'];
   internalToolBindings?: InternalToolBinding[];
+  signal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
 }
 
 export interface ModeledProviderClient {
   invoke(
     params: ModeledProviderInvokeParams | string,
-  ): Promise<{ message: string; toolUsage?: ModeledProviderToolUsage }>;
+  ): Promise<{
+    message: string;
+    usage?: {
+      promptTokens: number;
+      completionTokens: number;
+      totalTokens: number;
+    };
+    toolUsage?: ModeledProviderToolUsage;
+  }>;
 }
 
 export const getModeledProviderClient = (
@@ -53,6 +63,8 @@ export const getModeledProviderClient = (
         systemMessage: messageOrParams.systemMessage,
         mcpServerConfigs: messageOrParams.mcpServerConfigs,
         internalToolBindings: messageOrParams.internalToolBindings,
+        signal: messageOrParams.signal,
+        shouldAbort: messageOrParams.shouldAbort,
       });
     },
   };

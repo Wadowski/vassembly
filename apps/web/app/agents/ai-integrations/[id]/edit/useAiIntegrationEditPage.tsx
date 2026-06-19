@@ -12,18 +12,12 @@ import {
   type AiIntegrationFormInput,
   type TestConnectionResult,
 } from '@vassembly/ui-api-hooks';
-
-import { useAiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Loader } from '@vassembly/ui-loader';
-import { Text } from '@vassembly/ui-text';
+import { useUserAuth } from '@vassembly/ui-user-auth';
 import { useSnackbar } from '@vassembly/ui-snackbar';
 
+import { useAiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
 import { getRequestErrorMessage } from '../../../getRequestErrorMessage';
 import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../aiIntegrationRoutes';
-import styles from '../../../_components/ai-integrations/_components/AiIntegrationsList/styles.module.scss';
-import { AiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
 
 const REDIRECT_AFTER_UPDATE_MS = 1500;
 
@@ -35,16 +29,37 @@ export type AiIntegrationEditPageView =
       credential: AiIntegrationCredentialDto;
     };
 
-export function AiIntegrationEditPageContent(): JSX.Element {
+export interface UseAiIntegrationEditPageResult {
+  view: AiIntegrationEditPageView;
+  form: ReturnType<typeof useAiIntegrationForm>;
+  credential: AiIntegrationCredentialDto | undefined;
+  credentialId: string;
+  router: ReturnType<typeof useRouter>;
+  isUpdating: boolean;
+  isTesting: boolean;
+  testResult: TestConnectionResult | undefined;
+  handleTest: () => Promise<void>;
+  handleSubmit: (event: FormEvent) => Promise<void>;
+  taskId: string | undefined;
+  setTaskId: (id: string | undefined) => void;
+  shouldShowProgress: boolean;
+  setShouldShowProgress: (show: boolean) => void;
+  userId: string;
+}
+
+export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
   const router = useRouter();
   const params = useParams();
   const http = useHttpClient();
   const snackbar = useSnackbar();
+  const { user } = useUserAuth();
   const credentialId = typeof params?.id === 'string' ? params.id : '';
 
   const [credential, setCredential] = useState<AiIntegrationCredentialDto | undefined>(undefined);
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
   const [testResult, setTestResult] = useState<TestConnectionResult | undefined>(undefined);
+  const [taskId, setTaskId] = useState<string | undefined>();
+  const [shouldShowProgress, setShouldShowProgress] = useState(false);
   const hasLoadedCredential = useRef(false);
 
   const form = useAiIntegrationForm({
@@ -60,6 +75,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
         }
       : undefined,
   });
+  const { handleChange, values: formValues, setValues } = form;
 
   const { mutate: update, isLoading: isUpdating } = useAiIntegrationUpdate();
   const { mutate: testConnection, isLoading: isTesting } = useTestConnection();
@@ -73,8 +89,8 @@ export function AiIntegrationEditPageContent(): JSX.Element {
       return;
     }
     setTestResult(undefined);
-    form.handleChange('model', '');
-  }, [credential, form, form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
+    handleChange('model', '');
+  }, [credential, formValues.provider, formValues.apiKey, formValues.baseUrl, formValues.organizationId, handleChange]);
 
   useEffect(() => {
     if (credentialId === '') {
@@ -90,7 +106,7 @@ export function AiIntegrationEditPageContent(): JSX.Element {
         if (!cancelled) {
           setCredential(found);
           setLoadError(undefined);
-          form.setValues({
+          setValues({
             name: found.name,
             provider: found.provider,
             apiKey: '',
@@ -109,7 +125,14 @@ export function AiIntegrationEditPageContent(): JSX.Element {
     return (): void => {
       cancelled = true;
     };
-  }, [credentialId, form, http]);
+  }, [credentialId, http, setValues]);
+
+  useEffect(() => {
+    return (): void => {
+      setShouldShowProgress(false);
+      setTaskId(undefined);
+    };
+  }, []);
 
   const handleTest = useCallback(async (): Promise<void> => {
     if (!form.validate()) {
@@ -193,51 +216,23 @@ export function AiIntegrationEditPageContent(): JSX.Element {
     return { phase: 'ready', credential };
   }, [credential, credentialId, loadError]);
 
-  if (view.phase === 'error') {
-    return (
-      <main className={styles.sectionCard}>
-        <Alert variant="error" message={view.message} />
-      </main>
-    );
-  }
+  const userId = user?.id ?? '';
 
-  if (view.phase === 'loading') {
-    return (
-      <main className={styles.sectionCard}>
-        <Loader ariaLabel="Loading integration" />
-      </main>
-    );
-  }
-
-  return (
-    <main className={styles.sectionCard}>
-      <Button
-        className={styles.backLink}
-        variant="text"
-        text="← Back to agents"
-        onClick={() => router.push(AI_INTEGRATIONS_LIST_ANCHOR)}
-      />
-      <Text variant="h1">Edit integration</Text>
-      {view.credential.apiKeyHint !== null && view.credential.apiKeyHint !== undefined ? (
-        <Text variant="body2">Current key hint: {view.credential.apiKeyHint}</Text>
-      ) : null}
-      <AiIntegrationForm
-        values={form.values}
-        errors={form.errors}
-        touched={form.touched}
-        isSubmitting={isUpdating || form.isSubmitting}
-        isTesting={isTesting}
-        testResult={testResult}
-        isEditing
-        onChange={form.handleChange}
-        onBlur={form.handleBlur}
-        onSubmit={(event) => {
-          void handleSubmit(event);
-        }}
-        onTest={() => {
-          void handleTest();
-        }}
-      />
-    </main>
-  );
+  return {
+    view,
+    form,
+    credential,
+    credentialId,
+    router,
+    isUpdating,
+    isTesting,
+    testResult,
+    handleTest,
+    handleSubmit,
+    taskId,
+    setTaskId,
+    shouldShowProgress,
+    setShouldShowProgress,
+    userId,
+  };
 }

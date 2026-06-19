@@ -5,11 +5,38 @@ export interface InternalToolBinding {
 
 export interface InternalToolContext {
   userId: string;
+  taskId: string;
+  invocationId: string;
   callerAgentType: 'personal' | 'system';
   callerAgentId: string;
   recursionDepth: number;
   rootInvokeId: string;
+  parentAgentId?: string;
+  parentInvocationId?: string;
+  spawnBatchId?: string;
+  abortSignal?: AbortSignal;
+  shouldAbort?: () => Promise<boolean>;
+  recordAgentInvokeProgress?: RecordAgentInvokeProgress;
 }
+
+export interface AgentInvokeProgressEventInput {
+  agentId: string;
+  parentAgentId?: string;
+  state: 'started' | 'completed' | 'failed' | 'waiting';
+  timestamp?: Date;
+  duration?: number;
+  inputMessages?: string;
+  generatedResponse?: string;
+  tokenUsage?: { input: number; output: number; total: number };
+  errorDetails?: { message: string; type?: string; stackTrace?: string };
+  integrationName?: string;
+  provider?: string;
+  model?: string;
+}
+
+export type RecordAgentInvokeProgress = (
+  input: AgentInvokeProgressEventInput,
+) => Promise<void>;
 
 export type InternalToolHandler = (args: Record<string, unknown>) => Promise<string>;
 

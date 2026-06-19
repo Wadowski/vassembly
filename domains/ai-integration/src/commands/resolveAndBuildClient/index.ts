@@ -75,11 +75,20 @@ export const resolveAndBuildClient = async (
 
   const apiKey = credential.encryptedApiKey && credential.encryptedApiKey.trim() ? decode(credential.encryptedApiKey) : undefined;
 
-  return getModeledProviderClient({
+  const client = getModeledProviderClient({
     provider: credential.provider!,
     apiKey,
     baseUrl: credential.baseUrl,
     organizationId: credential.organizationId,
     model: credential.model || '',
   });
+
+  return {
+    client,
+    integrationSnapshot: {
+      integrationName: credential.name ?? '',
+      provider: credential.provider!,
+      model: credential.model ?? '',
+    },
+  };
 };

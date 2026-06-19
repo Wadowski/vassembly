@@ -1,6 +1,6 @@
 ---
 name: tdd-unit-test-writer
-model: inherit
+model: composer-2.5[fast=false]
 description: TDD specialist for writing failing tests first. Creates comprehensive test suites from requirements before implementation. Use proactively when starting new features or functions with test-driven development.
 ---
 

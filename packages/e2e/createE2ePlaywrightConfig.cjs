@@ -22,15 +22,27 @@ const loadEnvFile = (filePath) => {
   return env;
 };
 
+const getMonorepoRoot = () => path.resolve(__dirname, '../..');
+
 const getE2eEnvironment = () => {
-  const e2eExampleEnv = loadEnvFile(path.join(process.cwd(), '.env.e2e.example'));
+  const fileEnv = {
+    ...loadEnvFile(path.join(getMonorepoRoot(), '.env')),
+    ...loadEnvFile(path.join(getMonorepoRoot(), '.env.e2e')),
+  };
+
+  const readEnv = (key, fallback) => fileEnv[key] ?? process.env[key] ?? fallback;
+
   return {
-    webBaseUrl: e2eExampleEnv.E2E_WEB_BASE_URL ?? 'http://localhost:3000',
-    apiBaseUrl: e2eExampleEnv.E2E_API_BASE_URL ?? 'http://localhost:5000',
-    mongoUrl: e2eExampleEnv.MONGODB_URL ?? 'mongodb://user:pass@localhost:27017/?directConnection=true',
-    mongoDatabase: e2eExampleEnv.MONGODB_DATABASE ?? 'vassembly_e2e',
-    jwtSecret: e2eExampleEnv.JWT_SECRET ?? 'dev-jwt-secret',
-    nodeEnv: e2eExampleEnv.NODE_ENV ?? 'development',
+    webPort: Number(readEnv('WEB_PORT', '3001')),
+    apiPort: Number(readEnv('API_PORT', '5001')),
+    docsPort: Number(readEnv('DOCS_PORT', '3002')),
+    webBaseUrl: readEnv('E2E_WEB_BASE_URL', 'http://localhost:3001'),
+    apiBaseUrl: readEnv('E2E_API_BASE_URL', 'http://localhost:5001'),
+    mongoUrl: readEnv('MONGODB_URL', 'mongodb://user:pass@localhost:27017/?directConnection=true'),
+    mongoDatabase: readEnv('MONGODB_DATABASE', 'vassembly_e2e'),
+    jwtSecret: readEnv('JWT_SECRET', 'dev-jwt-secret'),
+    encoderSecret: readEnv('ENCODER_SECRET', 'dev-encoder-secret'),
+    nodeEnv: readEnv('NODE_ENV', 'development'),
   };
 };
 
@@ -51,31 +63,20 @@ const createE2ePlaywrightConfig = (options) => {
     steps: [bddTestPath, ...options.stepsDirs],
   });
 
-  const webServers = options.webServers?.map((server) => ({
-    command: `pnpm --filter ${server.package} dev`,
-    url: server.url,
-    reuseExistingServer: !process.env.CI || process.env.E2E_REUSE_SERVERS === 'true',
-    timeout: 120_000,
-    env: {
-      MONGODB_URL: environment.mongoUrl,
-      MONGODB_DATABASE: environment.mongoDatabase,
-      JWT_SECRET: environment.jwtSecret,
-      NODE_ENV: environment.nodeEnv,
-    },
-  }));
-
   return defineConfig({
     testDir,
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 4 : undefined,
+    workers: 4,
+    _workerRstEveryNTests: 10,
     reporter: 'list',
     use: {
       baseURL: options.baseURL ?? environment.webBaseUrl,
       trace: 'on-first-retry',
+      video: 'on-first-retry',
+      screenshot: 'only-on-failure',
     },
-    webServer: webServers,
     projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
     globalSetup: globalSetupPath,
     globalTeardown: globalTeardownPath,

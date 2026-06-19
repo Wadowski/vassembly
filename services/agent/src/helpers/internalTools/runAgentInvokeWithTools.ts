@@ -3,15 +3,51 @@ import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import systemAgentDomain, { SYSTEM_AGENT_ERROR_CODES } from '@vassembly/domain-system-agent';
 import userMcpConfigDomain from '@vassembly/domain-user-mcp-config';
 import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
-import { WrongParamError, NotFoundError } from '@vassembly/errors';
+import {
+  ExecutionPausedError,
+  NotFoundError,
+  UserInputWaitingError,
+  WrongParamError,
+} from '@vassembly/errors';
 
 import { resolveMcpSlugs } from '../resolveMcpSlugs';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
+import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
 
+import type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from '@vassembly/domain-ai-integration';
 import type {
   RunAgentInvokeWithToolsParams,
   RunAgentInvokeWithToolsResult,
 } from './types';
+
+type ModeledProviderClient = ResolveAndBuildClientResult['client'];
+
+interface ResolveCredentialAndClientParams {
+  userId: string;
+  agentType: 'personal' | 'system';
+  agentId: string;
+  connectionOverride?: { integrationCredentialId: string };
+}
+
+interface ResolveCredentialAndClientResult {
+  client: ModeledProviderClient;
+  integrationSnapshot: AiIntegrationSnapshot;
+}
+
+interface InvokePersonalAgentParams {
+  userId: string;
+  agentId: string;
+  message: string;
+  client: ModeledProviderClient;
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'];
+}
+
+interface InvokeSystemAgentParams {
+  agentId: string;
+  message: string;
+  client: ModeledProviderClient;
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'];
+}
 
 const resolveMcpConfigs = async ({
   userId,
@@ -36,24 +72,48 @@ const resolveMcpConfigs = async ({
   };
 };
 
+const resolveCredentialAndClient = async ({
+  userId,
+  agentType,
+  agentId,
+  connectionOverride,
+}: ResolveCredentialAndClientParams): Promise<ResolveCredentialAndClientResult> => {
+  if (agentType === 'personal') {
+    const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
+    const credentialId = connectionOverride?.integrationCredentialId ?? agent.integrationCredentialId;
+
+    if (!credentialId) {
+      throw new WrongParamError('Agent has no AI integration configured');
+    }
+
+    return aiIntegrationDomain.commands.resolveAndBuildClient({
+      userId,
+      connectionOverride: { integrationCredentialId: credentialId },
+    });
+  }
+
+  const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
+
+  if (agent === null) {
+    throw new NotFoundError('This platform agent is no longer available.', {
+      code: SYSTEM_AGENT_ERROR_CODES.NOT_FOUND,
+    });
+  }
+
+  return aiIntegrationDomain.commands.resolveAndBuildClient({
+    userId,
+    connectionOverride,
+  });
+};
+
 const invokePersonalAgent = async ({
   userId,
   agentId,
   message,
-  connectionOverride,
+  client,
   toolContext,
-}: RunAgentInvokeWithToolsParams): Promise<RunAgentInvokeWithToolsResult> => {
+}: InvokePersonalAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
-  const credentialId = connectionOverride?.integrationCredentialId ?? agent.integrationCredentialId;
-
-  if (!credentialId) {
-    throw new WrongParamError('Agent has no AI integration configured');
-  }
-
-  const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
-    userId,
-    connectionOverride: { integrationCredentialId: credentialId },
-  });
 
   const mcpIds = agent.assignedMcpIds ?? [];
   const assignedToolIds = agent.assignedToolIds ?? [];
@@ -64,17 +124,20 @@ const invokePersonalAgent = async ({
   });
 
   const result = await agentDomain.commands.invoke({
-    modeledProviderClient,
+    modeledProviderClient: client,
     agentId,
     userId,
     message,
     systemMessage: agent.rule,
     mcpServerConfigs,
     internalToolBindings: bindings,
+    signal: toolContext.abortSignal,
+    shouldAbort: toolContext.shouldAbort,
   });
 
   return {
     message: result.message,
+    usage: result.usage,
     metadata: {
       mcpIdsUsed: mcpIds.filter((id) => !skippedMcpIds.includes(id)),
       skippedMcpIds,
@@ -86,12 +149,11 @@ const invokePersonalAgent = async ({
 };
 
 const invokeSystemAgent = async ({
-  userId,
   agentId,
   message,
-  connectionOverride,
+  client,
   toolContext,
-}: RunAgentInvokeWithToolsParams): Promise<RunAgentInvokeWithToolsResult> => {
+}: InvokeSystemAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
 
   if (agent === null) {
@@ -100,11 +162,6 @@ const invokeSystemAgent = async ({
     });
   }
 
-  const modeledProviderClient = await aiIntegrationDomain.commands.resolveAndBuildClient({
-    userId,
-    connectionOverride,
-  });
-
   const assignedToolIds = agent.assignedToolIds ?? [];
   const { bindings, skippedToolIds } = await loadAssignedInternalTools({
     assignedToolIds,
@@ -112,10 +169,12 @@ const invokeSystemAgent = async ({
   });
 
   const result = await systemAgentDomain.commands.invoke({
-    modeledProviderClient,
+    modeledProviderClient: client,
     systemAgentId: agentId,
     message,
     internalToolBindings: bindings,
+    signal: toolContext.abortSignal,
+    shouldAbort: toolContext.shouldAbort,
   });
 
   return {
@@ -133,12 +192,104 @@ const invokeSystemAgent = async ({
   };
 };
 
+const assertNotAborted = async (
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'],
+): Promise<void> => {
+  if (toolContext.abortSignal?.aborted) {
+    throw new ExecutionPausedError();
+  }
+
+  if (toolContext.shouldAbort && (await toolContext.shouldAbort())) {
+    throw new ExecutionPausedError();
+  }
+};
+
 export const runAgentInvokeWithTools = async (
   params: RunAgentInvokeWithToolsParams,
 ): Promise<RunAgentInvokeWithToolsResult> => {
-  if (params.agentType === 'personal') {
-    return invokePersonalAgent(params);
+  const { toolContext } = params;
+  const recordProgress = toolContext.recordAgentInvokeProgress;
+  const invokeStartTime = Date.now();
+
+  await assertNotAborted(toolContext);
+
+  const { client, integrationSnapshot } = await resolveCredentialAndClient({
+    userId: params.userId,
+    agentType: params.agentType,
+    agentId: params.agentId,
+    connectionOverride: params.connectionOverride,
+  });
+
+  if (recordProgress) {
+    await assertNotAborted(toolContext);
+    await recordProgress({
+      agentId: params.agentId,
+      parentAgentId: toolContext.parentAgentId,
+      state: 'started',
+      timestamp: new Date(),
+      inputMessages: params.message,
+      ...integrationSnapshot,
+    });
   }
 
-  return invokeSystemAgent(params);
+  try {
+    await assertNotAborted(toolContext);
+    const result =
+      params.agentType === 'personal'
+        ? await invokePersonalAgent({ ...params, client })
+        : await invokeSystemAgent({
+            agentId: params.agentId,
+            message: params.message,
+            client,
+            toolContext: params.toolContext,
+          });
+
+    if (recordProgress) {
+      await recordProgress({
+        agentId: params.agentId,
+        parentAgentId: toolContext.parentAgentId,
+        state: 'completed',
+        timestamp: new Date(),
+        duration: Date.now() - invokeStartTime,
+        generatedResponse: result.message,
+        tokenUsage: mapInvokeUsageToTokenUsage({ usage: result.usage }),
+        ...integrationSnapshot,
+      });
+    }
+
+    return result;
+  } catch (error: unknown) {
+    if (recordProgress && error instanceof UserInputWaitingError) {
+      await recordProgress({
+        agentId: params.agentId,
+        parentAgentId: toolContext.parentAgentId,
+        state: 'waiting',
+        timestamp: new Date(),
+        duration: Date.now() - invokeStartTime,
+        ...integrationSnapshot,
+      });
+    } else if (recordProgress && !(error instanceof ExecutionPausedError)) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorType =
+        error instanceof Error && 'code' in error
+          ? String((error as Error & { code?: string }).code)
+          : undefined;
+
+      await recordProgress({
+        agentId: params.agentId,
+        parentAgentId: toolContext.parentAgentId,
+        state: 'failed',
+        timestamp: new Date(),
+        duration: Date.now() - invokeStartTime,
+        errorDetails: {
+          message: errorMessage,
+          type: errorType,
+          stackTrace: error instanceof Error ? error.stack : undefined,
+        },
+        ...integrationSnapshot,
+      });
+    }
+
+    throw error;
+  }
 };

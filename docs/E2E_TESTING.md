@@ -11,24 +11,29 @@ This project uses Playwright BDD (Gherkin) for end-to-end testing.
    pnpm install
    ```
 
-2. **Start MongoDB:**
+2. **Start E2E infrastructure** in one terminal (MongoDB + API + Web with `.env.e2e`):
    ```bash
-   pnpm --filter @vassembly/client-mongodb dev
-   ```
-   Or rely on global setup (auto-starts in CI).
-
-3. **Set environment variables:**
-   ```bash
-   cp .env.e2e.example .env.local
-   # Update .env.local with your values if needed
+   pnpm dev:e2e
    ```
 
-4. **Run tests:**
+   Or start components separately:
    ```bash
-   pnpm test:e2e                 # Run all E2E tests
-   pnpm test:e2e:web             # Run web E2E only
-   pnpm test:e2e:api             # Run API E2E only
+   pnpm dev:e2e:mongo    # @vassembly/client-mongodb dev
+   pnpm dev:e2e:apps     # @vassembly/api and @vassembly/web dev
    ```
+
+3. **Run tests** in another terminal:
+   ```bash
+   pnpm test:e2e:web
+   ```
+
+Playwright only runs tests — it does not start MongoDB or application servers.
+
+### Environment
+
+E2E settings live in `.env.e2e` (ports, MongoDB, JWT). Root scripts load it via `dotenv -e .env -e .env.e2e`.
+
+Default local ports: Web `3001`, API `5001`, Docs `3002`.
 
 ### Running with Options
 
@@ -37,16 +42,16 @@ This project uses Playwright BDD (Gherkin) for end-to-end testing.
 cd apps/web && pnpm test:e2e:ui
 
 # Headed (browser visible)
-cd apps/api && pnpm bddgen && playwright test --headed
+cd apps/web && pnpm test:e2e:headed
 
 # Single feature
 cd apps/web && pnpm bddgen && playwright test features/auth/login.feature
 
 # By tag
-pnpm bddgen && playwright test --grep @smoke
+cd apps/web && pnpm bddgen && playwright test --grep @smoke
 
 # Debug mode with inspector
-cd apps/api && pnpm test:e2e:debug
+cd apps/web && pnpm bddgen && PWDEBUG=1 playwright test
 ```
 
 ## Writing Tests
@@ -120,6 +125,10 @@ Add `console.log` in steps or use Playwright's `page.pause()` to stop mid-test.
 
 ## CI/CD
 
-E2E tests run on every PR via GitHub Actions (`.github/workflows/ci.yml`, `e2e-web` job). Tests must pass before merge.
+E2E tests run on every PR via GitHub Actions (`.github/workflows/ci.yml`, `e2e-web` job):
+
+1. MongoDB runs as a GitHub Actions service container
+2. API and Web are started with `pnpm dev:e2e:apps` (same script as local, `.env.e2e` applied)
+3. Playwright runs tests only (`pnpm test:e2e:web`)
 
 Artifacts (screenshots, videos, traces) are uploaded on failure.

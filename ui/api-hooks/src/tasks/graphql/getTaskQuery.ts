@@ -14,6 +14,7 @@ export const GET_TASK_QUERY = `
       startedAt
       completedAt
       failedAt
+      pausedAt
       createdAt
       updatedAt
     }

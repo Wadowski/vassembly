@@ -26,6 +26,12 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       error: undefined,
       fetch: mockFetch,
     })),
+    useTaskQuestions: vi.fn(() => ({
+      data: undefined,
+      isLoading: false,
+      error: undefined,
+      refetch: vi.fn(),
+    })),
   };
 });
 
@@ -43,6 +49,7 @@ const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
   startedAt: partial.startedAt ?? '2026-03-12T15:46:00.000Z',
   completedAt: partial.completedAt ?? null,
   failedAt: partial.failedAt ?? null,
+  pausedAt: partial.pausedAt ?? null,
   createdAt: partial.createdAt ?? '2026-03-12T15:45:00.000Z',
   updatedAt: partial.updatedAt ?? '2026-03-12T16:10:00.000Z',
 });
@@ -213,6 +220,30 @@ describe('useTaskDetailPage', () => {
     }
 
     expect(result.current.view.message).toBe(TASK_LOAD_ERROR_FALLBACK);
+  });
+
+  it('should poll task every 3 seconds while status is waiting', async () => {
+    vi.useFakeTimers();
+
+    try {
+      const waitingTask = buildTask({ status: TaskStatus.Waiting });
+      const inProgressTask = buildTask({ status: TaskStatus.InProgress });
+      mockFetch.mockResolvedValueOnce(waitingTask).mockResolvedValue(inProgressTask);
+
+      renderHook(() => useTaskDetailPage());
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(3000);
+      });
+
+      expect(mockFetch.mock.calls.length).toBeGreaterThanOrEqual(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should poll task every 3 seconds while status is in-progress', async () => {

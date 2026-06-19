@@ -1,5 +1,7 @@
 export { createProviderClient } from "./createProviderClient";
 export { createChatGptProvider } from "./providers/createChatGptProvider";
+export { createDeepSeekProvider } from "./providers/createDeepSeekProvider";
+export { createAnthropicProvider } from "./providers/createAnthropicProvider";
 export { createGeminiProvider } from "./providers/createGeminiProvider";
 export { createLmStudioProvider } from "./providers/createLmStudioProvider";
 
@@ -8,8 +10,10 @@ export type {
   AiProviderInvokeParams,
   AiProviderInvokeResult,
   AiProviderTestResult,
+  AnthropicProviderParams,
   ChatGptProviderParams,
   CreateProviderClientParams,
+  DeepSeekProviderParams,
   GeminiProviderParams,
   LmStudioProviderParams,
 } from "./types";

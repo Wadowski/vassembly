@@ -1,6 +1,6 @@
 ---
 name: tester
-model: inherit
+model: composer-2.5[fast=false]
 description: Quality verification specialist. Runs tests, lints, and builds only for modified packages and their dependents to ensure code quality before review.
 ---
 

@@ -31,12 +31,16 @@ jobs:
     name: Web E2E
     runs-on: ubuntu-latest
     env:
-      MONGODB_URL: mongodb://user:pass@localhost:27017/?directConnection=true
       MONGODB_DATABASE: vassembly_e2e_web
+      MONGODB_URL: mongodb://user:pass@localhost:27017/?directConnection=true
       JWT_SECRET: dev-jwt-secret
-      E2E_WEB_BASE_URL: http://localhost:3000
-      E2E_API_BASE_URL: http://localhost:5000
-      NODE_ENV: development
+      WEB_PORT: 3001
+      API_PORT: 5001
+      E2E_WEB_BASE_URL: http://localhost:3001
+      E2E_API_BASE_URL: http://localhost:5001
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:5001
+      NODE_ENV: e2e
+      VASSEMBLY_E2E: true
       CI: true
     services:
       mongodb:
@@ -63,42 +67,25 @@ jobs:
           cache: pnpm
       - run: pnpm install
       - run: pnpm --filter @vassembly/web exec playwright install --with-deps chromium
-      - name: Start API and Web servers
+      - name: Start E2E servers
         run: |
-          pnpm --filter @vassembly/api dev > api.log 2>&1 &
-          echo $! > api.pid
-          pnpm --filter @vassembly/web dev > web.log 2>&1 &
-          echo $! > web.pid
+          pnpm dev:e2e:ci > servers.log 2>&1 &
+          echo $! > servers.pid
 
           for attempt in $(seq 1 60); do
-            if curl -sf http://localhost:5000/docs > /dev/null; then
-              echo "API is ready"
+            if curl -sf http://localhost:5001/docs > /dev/null && curl -sf http://localhost:3001 > /dev/null; then
+              echo "E2E servers are ready"
               break
             fi
             if [ "$attempt" -eq 60 ]; then
-              echo "API failed to start"
-              cat api.log
-              exit 1
-            fi
-            sleep 2
-          done
-
-          for attempt in $(seq 1 60); do
-            if curl -sf http://localhost:3000 > /dev/null; then
-              echo "Web is ready"
-              break
-            fi
-            if [ "$attempt" -eq 60 ]; then
-              echo "Web failed to start"
-              cat web.log
+              echo "E2E servers failed to start"
+              cat servers.log
               exit 1
             fi
             sleep 2
           done
       - name: Run E2E Web Tests
         run: pnpm test:e2e:web
-        env:
-          E2E_REUSE_SERVERS: 'true'
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -106,5 +93,4 @@ jobs:
           path: |
             apps/web/playwright-report/
             apps/web/test-results/
-            api.log
-            web.log
+            servers.log

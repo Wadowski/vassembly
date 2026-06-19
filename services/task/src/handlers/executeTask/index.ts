@@ -1,21 +1,34 @@
 import { randomUUID } from 'node:crypto';
 
 import systemAgentDomain from '@vassembly/domain-system-agent';
-import taskDomain from '@vassembly/domain-task';
+import taskDomain, { TaskStatus } from '@vassembly/domain-task';
+import taskProgressDomain from '@vassembly/domain-task-progress';
+import taskQuestionsDomain from '@vassembly/domain-task-questions';
+import { ExecutionPausedError, UserInputWaitingError } from '@vassembly/errors';
 import { runAgentInvokeWithTools } from '@vassembly/service-agent';
 
+import { executionRegistry } from '../../executionRegistry';
+import { buildResumeMessage } from './buildResumeMessage';
+import { createRecordAgentInvokeProgress } from './createRecordAgentInvokeProgress';
 import { logTaskTransition } from './logTaskTransition';
 import { mapExecutionError } from './mapExecutionError';
+import { TaskExecutionMode } from './types';
 
 import type { ExecuteTaskParams } from './types';
 
-const MISSING_CREDENTIAL_MESSAGE =
-  'Configure a "preferred for system calls" AI credential in Settings.';
+const MISSING_CREDENTIAL_MESSAGE = 'Missing AI credential configuration';
 
 const INVALID_AGENT_ASSIGNED_MESSAGE = 'Task cannot be executed without an assigned agent.';
 
-export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promise<void> => {
+export { TaskExecutionMode } from './types';
+
+export const executeTask = async ({
+  taskId,
+  userId,
+  mode = TaskExecutionMode.Fresh,
+}: ExecuteTaskParams): Promise<void> => {
   const startedAt = Date.now();
+  const abortSignal = executionRegistry.register({ taskId });
 
   try {
     const taskResult = await taskDomain.queries.getModelById({ id: taskId });
@@ -37,7 +50,9 @@ export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promis
       return;
     }
 
-    await taskDomain.commands.markInProgress({ taskId });
+    if (mode === TaskExecutionMode.Fresh) {
+      await taskDomain.commands.markInProgress({ taskId });
+    }
 
     const preference = await systemAgentDomain.queries.getPreferenceByUserId({ userId });
     const credentialId = preference.data?.integrationCredentialId;
@@ -58,20 +73,46 @@ export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promis
       return;
     }
 
+    let message = task.description!;
+
+    if (mode === TaskExecutionMode.Resume) {
+      const progressResult = await taskProgressDomain.queries.getModelByTaskId({ taskId });
+      const events = progressResult.data?.events ?? [];
+      const questionsResult = await taskQuestionsDomain.queries.getTaskQuestions({ taskId });
+      const answeredQuestions = questionsResult.data?.answeredQuestions ?? [];
+      message = buildResumeMessage({
+        description: task.description!,
+        events,
+        answeredQuestions,
+      });
+    }
+
+    const rootInvocationId = randomUUID();
+
     const invokeResult = await runAgentInvokeWithTools({
       userId,
       agentType: 'system',
       agentId: task.agentAssignedId,
-      message: task.description!,
+      message,
       connectionOverride: { integrationCredentialId: credentialId },
       toolContext: {
         userId,
+        taskId,
+        invocationId: rootInvocationId,
         callerAgentId: task.agentAssignedId,
         callerAgentType: 'system',
         recursionDepth: 0,
         rootInvokeId: randomUUID(),
+        abortSignal,
+        shouldAbort: async (): Promise<boolean> => {
+          const currentTask = await taskDomain.queries.getModelById({ id: taskId });
+          return currentTask.data?.status === TaskStatus.Paused;
+        },
+        recordAgentInvokeProgress: createRecordAgentInvokeProgress({ taskId, userId }),
       },
     });
+
+    await taskProgressDomain.commands.finalizeTaskProgress({ taskId });
 
     await taskDomain.commands.complete({ taskId, llmResponse: invokeResult.message });
     logTaskTransition({
@@ -83,7 +124,39 @@ export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promis
       model: invokeResult.metadata?.model,
     });
   } catch (error) {
+    if (error instanceof ExecutionPausedError) {
+      logTaskTransition({
+        event: 'task.execution.paused',
+        taskId,
+        userId,
+        durationMs: Date.now() - startedAt,
+      });
+      return;
+    }
+
+    if (error instanceof UserInputWaitingError) {
+      logTaskTransition({
+        event: 'task.execution.waiting',
+        taskId,
+        userId,
+        durationMs: Date.now() - startedAt,
+      });
+      return;
+    }
+
     const mapped = mapExecutionError(error);
+
+    const currentTask = await taskDomain.queries.getModelById({ id: taskId });
+    if (currentTask.data?.status === TaskStatus.Waiting) {
+      return;
+    }
+
+    try {
+      await taskProgressDomain.commands.finalizeTaskProgress({ taskId });
+    } catch {
+      // Silently fail if progress recording fails during error handling
+    }
+
     await taskDomain.commands.fail({ taskId, ...mapped });
     logTaskTransition({
       event: 'task.status.failed',
@@ -92,5 +165,7 @@ export const executeTask = async ({ taskId, userId }: ExecuteTaskParams): Promis
       errorCode: mapped.errorCode,
       durationMs: Date.now() - startedAt,
     });
+  } finally {
+    executionRegistry.deregister({ taskId });
   }
 };

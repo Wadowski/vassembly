@@ -4,7 +4,7 @@
   "envMode": "loose",
   "globalDependencies": [
     ".env",
-    ".env.e2e.example",
+    ".env.e2e",
     "**/vitest.config.ts",
     "**/playwright.config.ts"
   ],
@@ -42,8 +42,12 @@
       "env": [
         "MONGODB_URL",
         "MONGODB_DATABASE",
-        "JWT_SECRET",
-        "E2E_WEB_BASE_URL",
+    "JWT_SECRET",
+    "VASSEMBLY_E2E",
+    "WEB_PORT",
+    "API_PORT",
+    "DOCS_PORT",
+    "E2E_WEB_BASE_URL",
         "E2E_API_BASE_URL",
         "NODE_ENV"
       ]

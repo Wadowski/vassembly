@@ -1,0 +1,54 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.progressHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.progressHeaderTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-2;
+  flex-wrap: wrap;
+}
+
+.sectionLabel {
+  color: $color-primary;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-tracked;
+}
+
+.statusLabel {
+  color: $color-text-secondary;
+}
+
+.metadataList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  margin: 0;
+}
+
+.metadataRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+
+  @media #{$media-tablet} {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: $spacing-4;
+    align-items: center;
+  }
+}
+
+.metadataLabel {
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.metadataValue {
+  margin: 0;
+}

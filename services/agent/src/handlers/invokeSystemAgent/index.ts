@@ -35,6 +35,8 @@ export const invokeSystemAgent = async (
     connectionOverride: connectionOverrideParam,
     toolContext: {
       userId,
+      taskId: '',
+      invocationId: randomUUID(),
       callerAgentId: systemAgentId,
       callerAgentType: 'system',
       recursionDepth: 0,

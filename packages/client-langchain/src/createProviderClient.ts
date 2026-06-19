@@ -1,14 +1,19 @@
 import { WrongParamError } from "@vassembly/errors";
 
 import { createChatGptProvider } from "./providers/createChatGptProvider";
+import { createDeepSeekProvider } from "./providers/createDeepSeekProvider";
+import { createAnthropicProvider } from "./providers/createAnthropicProvider";
 import { createGeminiProvider } from "./providers/createGeminiProvider";
 import { createLmStudioProvider } from "./providers/createLmStudioProvider";
+import { createE2eStubProvider, E2E_STUB_API_KEY } from "./providers/createE2eStubProvider";
 import type { AiProviderClient, CreateProviderClientParams } from "./types";
 
 const PROVIDER_SLUGS = {
   Gemini: "gemini",
   ChatGpt: "chatgpt",
   LmStudio: "lm_studio",
+  DeepSeek: "deep_seek",
+  Anthropic: "anthropic",
 } as const;
 
 const createGeminiClient = (
@@ -47,6 +52,29 @@ const createLmStudioClient = (
   });
 };
 
+const createDeepSeekClient = (
+  input: CreateProviderClientParams,
+): AiProviderClient => {
+  if (!input.apiKey) {
+    throw new WrongParamError("API key is required for Deep Seek");
+  }
+
+  return createDeepSeekProvider({
+    apiKey: input.apiKey,
+    baseUrl: input.baseUrl ?? undefined,
+  });
+};
+
+const createAnthropicClient = (
+  input: CreateProviderClientParams,
+): AiProviderClient => {
+  if (!input.apiKey) {
+    throw new WrongParamError("API key is required for Anthropic");
+  }
+
+  return createAnthropicProvider({ apiKey: input.apiKey });
+};
+
 const PROVIDER_CLIENT_CREATORS: Record<
   string,
   (input: CreateProviderClientParams) => AiProviderClient
@@ -54,11 +82,17 @@ const PROVIDER_CLIENT_CREATORS: Record<
   [PROVIDER_SLUGS.Gemini]: createGeminiClient,
   [PROVIDER_SLUGS.ChatGpt]: createChatGptClient,
   [PROVIDER_SLUGS.LmStudio]: createLmStudioClient,
+  [PROVIDER_SLUGS.DeepSeek]: createDeepSeekClient,
+  [PROVIDER_SLUGS.Anthropic]: createAnthropicClient,
 };
 
 export const createProviderClient = (
   input: CreateProviderClientParams,
 ): AiProviderClient => {
+  if (input.apiKey === E2E_STUB_API_KEY) {
+    return createE2eStubProvider();
+  }
+
   const creator = PROVIDER_CLIENT_CREATORS[input.provider];
 
   if (!creator) {

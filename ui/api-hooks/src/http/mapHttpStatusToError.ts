@@ -1,4 +1,5 @@
 import {
+  ConflictError,
   CommonError,
   ErrorTypes,
   ForbiddenError,
@@ -14,6 +15,7 @@ const statusToError: Record<number, (message: string) => CommonError> = {
   401: (message) => new UnauthorizedError(message),
   403: (message) => new ForbiddenError(message),
   404: (message) => new NotFoundError(message),
+  409: (message) => new ConflictError(message),
   429: (message) => new TooManyRequestsError(message),
 };
 

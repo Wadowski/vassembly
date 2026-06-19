@@ -176,7 +176,8 @@ When('the server fails on configuration save', async ({ page }) => {
   });
 });
 
-Then('I see the configuration form for {string}', async ({ page }) => {
+Then('I see the configuration form for {string}', async ({ page }, mcpName: string) => {
+  void mcpName;
   if (!page) {
     return;
   }
@@ -221,7 +222,8 @@ Then('I am redirected to the login page', async ({ page }) => {
   await expect(page.getByLabel(/Email/i)).toBeVisible({ timeout: 5000 });
 });
 
-Then('the form shows error for {string} field', async ({ page }) => {
+Then('the form shows error for {string} field', async ({ page }, fieldName: string) => {
+  void fieldName;
   if (!page) {
     return;
   }

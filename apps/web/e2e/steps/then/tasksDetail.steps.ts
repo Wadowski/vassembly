@@ -15,6 +15,14 @@ Then('I see the task detail page for task-123', async ({ page }) => {
   await expect(page).toHaveURL(/\/tasks\/task-123$/);
 });
 
+Then('I am on the task detail page', async ({ page }) => {
+  if (!page) {
+    return;
+  }
+
+  await expect(page).toHaveURL(/\/tasks\/[a-f0-9]+$/);
+});
+
 Then('I see the title {string}', async ({ page }, title: string) => {
   if (!page) {
     return;
@@ -91,12 +99,12 @@ Then('I see a loading skeleton', async ({ page }) => {
   await expect(page.getByTestId('task-detail-skeleton')).toBeVisible();
 });
 
-Then('I see {string} in the activity timeline', async ({ page }, text: string) => {
+Then('I see {string} in the execution progress tracker', async ({ page }, text: string) => {
   if (!page) {
     return;
   }
 
-  await expect(page.getByTestId('task-detail-timeline')).toContainText(text);
+  await expect(page.getByTestId('execution-progress-tracker')).toContainText(text);
 });
 
 Then('then I see an error message', async ({ page }) => {

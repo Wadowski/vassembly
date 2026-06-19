@@ -8,7 +8,7 @@ export default [
     ignores: [".features-gen/**"],
   },
   {
-    files: ["playwright.config.js", "vitest.config.ts"],
+    files: ["playwright.config.js", "e2e/loadE2eEnv.cjs", "vitest.config.ts"],
     languageOptions: {
       globals: {
         ...globals.node,

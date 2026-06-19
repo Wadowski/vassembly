@@ -40,6 +40,12 @@ const CREATE_SCHEMA = z
     if (data.provider === AiIntegrationProvider.LmStudio && !data.baseUrl?.trim()) {
       ctx.addIssue({ code: 'custom', message: 'baseUrl is required for lm_studio', path: ['baseUrl'] });
     }
+    if (data.provider === AiIntegrationProvider.DeepSeek && !data.encryptedApiKey?.trim()) {
+      ctx.addIssue({ code: 'custom', message: 'apiKey is required for deep_seek', path: ['encryptedApiKey'] });
+    }
+    if (data.provider === AiIntegrationProvider.Anthropic && !data.encryptedApiKey?.trim()) {
+      ctx.addIssue({ code: 'custom', message: 'apiKey is required for anthropic', path: ['encryptedApiKey'] });
+    }
   });
 
 const createDbCredential = createDb<AiIntegrationCredentialModel>({

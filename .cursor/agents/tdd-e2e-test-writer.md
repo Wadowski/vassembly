@@ -1,6 +1,6 @@
 ---
 name: tdd-e2e-test-writer
-model: inherit
+model: composer-2.5[fast=false]
 description: TDD specialist for writing failing E2E tests from PRD Gherkin scenarios. Translates PRD use cases and edge cases into Playwright BDD feature files before implementation. Use proactively when starting user-facing features with test-driven development.
 ---
 
@@ -129,6 +129,25 @@ Then('I see the expected outcome', async ({ page }) => {
 - Keep files under 100 lines; split by domain when needed
 - No comments unless explaining non-obvious business logic
 
+### Browser Resource Cleanup
+
+Every E2E test must close the page and browser context when it finishes.
+
+- **BDD tests** — automatic via the `context` fixture in `packages/e2e/src/fixtures/bddTest.ts`; do not add per-step or per-scenario cleanup
+- **Integration tests** — create an explicit `BrowserContext`, then call `closeE2eBrowserResources({ page, context })` in `afterEach`
+- **Extra pages** (e.g. second tab via `context.newPage()`) — closed with the context; no separate teardown in steps unless the page uses a different context
+
+```typescript
+// Integration test pattern
+import { closeE2eBrowserResources } from '@vassembly/e2e';
+
+test.afterEach(async () => {
+  await closeE2eBrowserResources({ page, context });
+});
+```
+
+Do not use `browser.newPage()` without creating a context that you close manually.
+
 ### Missing Steps
 
 When a scenario needs a step that does not exist yet and cannot be implemented without the feature:
@@ -176,5 +195,6 @@ When complete, you will have:
 3. **Reuse existing steps** — consistency across the suite matters more than custom phrasing
 4. **Preserve PRD copy** — assertion text must match specified labels, errors, and success messages
 5. **Follow project conventions** — match existing feature files, tags, and step patterns
+6. **Browser cleanup is automatic for BDD** — `bddTest` closes all pages and the context after each scenario; integration tests must use `closeE2eBrowserResources` in `afterEach` (see `.cursor/rules/e2e-test-standards.mdc`)
 
 The implementation developer will read your feature files and understand exactly what user-visible behavior needs to be built.

@@ -25,6 +25,7 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
   const router = useRouter();
   const snackbar = useSnackbar();
   const form = useAiIntegrationForm({ mode: 'create' });
+  const { handleChange, values: formValues } = form;
   const { mutate: create, isLoading: isCreating } = useAiIntegrationCreate();
   const { mutate: testConnection, isLoading: isTesting } = useTestConnection();
   const [testResult, setTestResult] = useState<TestConnectionResult | undefined>(undefined);
@@ -36,8 +37,8 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
       return;
     }
     setTestResult(undefined);
-    form.handleChange('model', '');
-  }, [form, form.values.provider, form.values.apiKey, form.values.baseUrl, form.values.organizationId]);
+    handleChange('model', '');
+  }, [formValues.provider, formValues.apiKey, formValues.baseUrl, formValues.organizationId, handleChange]);
 
   const handleTest = useCallback(async (): Promise<void> => {
     if (!form.validate()) {

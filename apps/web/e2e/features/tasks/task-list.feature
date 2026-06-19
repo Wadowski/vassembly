@@ -43,10 +43,10 @@ Feature: Task List Homepage
     When I navigate to "/"
     Then I see "What's next?"
 
-  Scenario: New task appears in list after creation
+  Scenario: New task creation redirects to task detail page
     When I navigate to "/"
     When I create a task with description "New task via form"
-    Then the task "New task via form" appears in the list
+    Then I am on the task detail page
 
   Scenario: Cross-user isolation - user cannot see other user's tasks
     Given another user "other@example.com" exists with tasks

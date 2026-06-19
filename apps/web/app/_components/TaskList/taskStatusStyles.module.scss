@@ -16,6 +16,10 @@
   color: $color-error;
 }
 
+.statusWarning {
+  color: $color-warning;
+}
+
 .statusBadge {
   display: inline-flex;
   align-items: center;

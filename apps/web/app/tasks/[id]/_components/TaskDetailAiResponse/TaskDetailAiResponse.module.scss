@@ -9,7 +9,6 @@
   @extend .sectionLabel;
 }
 
-.responseBody {
-  white-space: pre-wrap;
-  line-height: $line-height-relaxed;
+.pausedMessage {
+  color: $color-text-secondary;
 }

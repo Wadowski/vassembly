@@ -1,14 +1,14 @@
+import { AI_INTEGRATION_PROVIDER_LABELS } from '@vassembly/constants';
+
 export const PROVIDER_OPTIONS = [
   { id: 'gemini', label: 'Google Gemini' },
   { id: 'chatgpt', label: 'OpenAI ChatGPT' },
   { id: 'lm_studio', label: 'LM Studio (Local)' },
+  { id: 'deep_seek', label: 'Deep Seek' },
+  { id: 'anthropic', label: 'Anthropic' },
 ] as const;
 
-export const PROVIDER_LABELS: Record<string, string> = {
-  gemini: 'Google Gemini',
-  chatgpt: 'OpenAI ChatGPT',
-  lm_studio: 'LM Studio (Local)',
-};
+export const PROVIDER_LABELS = AI_INTEGRATION_PROVIDER_LABELS;
 
 export const STATUS_OPTIONS = [
   { id: 'active', label: 'Active' },

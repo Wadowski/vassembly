@@ -42,7 +42,6 @@ export function IntegrationCredentialPicker({
         options={options}
         value={value ?? ''}
         isDisabled={isDisabled || isLoading}
-        isFullWidth
         onValueChange={(nextValue) => onChange(nextValue === '' ? null : nextValue)}
       />
       {errorMessage !== undefined ? (

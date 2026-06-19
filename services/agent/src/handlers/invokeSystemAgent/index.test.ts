@@ -66,6 +66,15 @@ const MODELED_CLIENT = {
   invoke: vi.fn(),
 };
 
+const RESOLVE_RESULT = {
+  client: MODELED_CLIENT,
+  integrationSnapshot: {
+    integrationName: 'My OpenAI',
+    provider: 'chatgpt',
+    model: 'gpt-4o',
+  },
+};
+
 describe('invokeSystemAgent handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -84,7 +93,7 @@ describe('invokeSystemAgent handler', () => {
         integrationCredentialId: 'cred-default',
       },
     });
-    mockResolveAndBuildClient.mockResolvedValue(MODELED_CLIENT);
+    mockResolveAndBuildClient.mockResolvedValue(RESOLVE_RESULT);
     mockInvoke.mockResolvedValue({
       message: 'Here is a summary.',
       usage: { promptTokens: 120, completionTokens: 80, totalTokens: 200 },

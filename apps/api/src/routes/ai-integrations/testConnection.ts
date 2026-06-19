@@ -47,6 +47,14 @@ export const aiIntegrationTestConnectionBodySchema = z
     if (hasProvider && data.provider === AiIntegrationProvider.LmStudio && !data.baseUrl?.trim()) {
       ctx.addIssue({ code: 'custom', message: 'baseUrl is required for lm_studio', path: ['baseUrl'] });
     }
+
+    if (hasProvider && data.provider === AiIntegrationProvider.DeepSeek && !data.apiKey?.trim()) {
+      ctx.addIssue({ code: 'custom', message: 'apiKey is required for deep_seek', path: ['apiKey'] });
+    }
+
+    if (hasProvider && data.provider === AiIntegrationProvider.Anthropic && !data.apiKey?.trim()) {
+      ctx.addIssue({ code: 'custom', message: 'apiKey is required for anthropic', path: ['apiKey'] });
+    }
   });
 
 export const testConnectionResponseSchema = z.object({

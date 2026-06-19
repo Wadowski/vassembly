@@ -2,11 +2,8 @@ import { createBdd } from 'playwright-bdd';
 
 import { bddTest } from '@vassembly/e2e';
 
-import {
-  ensureAssistantSystemAgent,
-  seedAiCredentialForUser,
-  upsertSystemAgentPreference,
-} from '../utils/seedTask';
+import { ensureAssistantSystemAgent, upsertSystemAgentPreference } from '../utils/seedTask';
+import { seedConnectedAiCredentialForUser } from '../utils/seedConnectedAiCredential';
 import { seedTaskForUser } from '../utils/seedTaskData';
 import { refreshHomeTaskListIfNeeded } from '../utils/refreshHomeTaskList';
 import type { WebBddWorld } from '../utils/types';
@@ -19,7 +16,10 @@ Given('a system agent preference is configured', async ({ seed, world }) => {
     throw new Error('User must be logged in before configuring system agent preference');
   }
 
-  const credentialId = await seedAiCredentialForUser({ context: seed, userId: webWorld.auth.userId });
+  const credentialId = await seedConnectedAiCredentialForUser({
+    context: seed,
+    userId: webWorld.auth.userId,
+  });
   await upsertSystemAgentPreference({
     context: seed,
     userId: webWorld.auth.userId,
@@ -72,8 +72,8 @@ Given('the user has tasks with titles:', async ({ seed, world }, table) => {
   }
 
   const rows = table.rows();
-  for (let rowIndex = 1; rowIndex < rows.length; rowIndex += 1) {
-    const title = rows[rowIndex]?.[0];
+  for (const row of rows) {
+    const title = row[0];
     if (!title) {
       continue;
     }

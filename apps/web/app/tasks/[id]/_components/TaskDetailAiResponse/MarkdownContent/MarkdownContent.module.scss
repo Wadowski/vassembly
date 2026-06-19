@@ -1,0 +1,123 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.markdownContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  line-height: $line-height-relaxed;
+  color: $color-text-primary;
+  word-break: break-word;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  p,
+  ul,
+  ol,
+  blockquote,
+  pre {
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    font-weight: $font-weight-semibold;
+    line-height: $line-height-tight;
+  }
+
+  h1 {
+    font-size: $font-size-heading-md;
+  }
+
+  h2 {
+    font-size: $font-size-heading-sm;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: $font-size-title-md;
+  }
+
+  ul,
+  ol {
+    padding-left: $spacing-5;
+  }
+
+  li + li {
+    margin-top: $spacing-1;
+  }
+
+  blockquote {
+    padding-left: $spacing-3;
+    border-left: 3px solid $color-outline-variant;
+    color: $color-text-secondary;
+  }
+
+  a {
+    color: $color-primary;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: $color-primary-700;
+    }
+  }
+
+  code {
+    font-family: $font-family-mono;
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    border-radius: $border-radius-sm;
+    background-color: rgba($color-outline-variant, 0.2);
+  }
+
+  pre {
+    overflow-x: auto;
+    padding: $spacing-3;
+    border-radius: $border-radius-md;
+    background-color: rgba($color-outline-variant, 0.15);
+    border: 1px solid $color-outline-variant;
+
+    code {
+      padding: 0;
+      background: transparent;
+      font-size: $font-size-body-sm;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-body-sm;
+  }
+
+  th,
+  td {
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid $color-outline-variant;
+    text-align: left;
+  }
+
+  th {
+    font-weight: $font-weight-semibold;
+    background-color: rgba($color-outline-variant, 0.1);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid $color-outline-variant;
+    margin: $spacing-2 0;
+  }
+}

@@ -1,0 +1,37 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.eventList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.progressListEmpty {
+  padding: $spacing-4 0;
+  text-align: left;
+  color: $color-text-secondary;
+}
+
+.progressListEmpty p {
+  margin: 0;
+  font-size: $font-size-body-sm;
+}
+
+.loadingSpinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid $color-outline-variant;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: $spacing-3;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

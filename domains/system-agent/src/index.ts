@@ -2,6 +2,7 @@ import * as commands from './commands';
 import * as queries from './queries';
 
 import { mongodbIndexes } from './clients';
+import { loadSystemAgents } from './seed/loadSystemAgents';
 
 import {
   AgentCategory,
@@ -35,10 +36,11 @@ const systemAgentDomain = {
   commands,
   queries,
   mongodbIndexes,
+  seedSystemAgents: loadSystemAgents,
   gqlSchema: gqlSystemAgentSchema,
 };
 
-export { commands, queries, mongodbIndexes, gqlSystemAgentSchema as gqlSchema };
+export { commands, queries, mongodbIndexes, gqlSystemAgentSchema as gqlSchema, loadSystemAgents as seedSystemAgents };
 
 export {
   AgentCategory,

@@ -1,4 +1,5 @@
 import type { APIRequestContext, APIResponse, Page } from '@playwright/test';
+import type { DiagnosticsState } from '../steps/utils/diagnostics/types';
 
 export interface AuthContext {
   userId: string;
@@ -16,6 +17,8 @@ export interface BddWorld {
   agentId?: string;
   taskId?: string;
   storedFields?: Record<string, string>;
+  diagnostics?: DiagnosticsState;
+  skipDiagnosticAssertions?: boolean;
 }
 
 export interface SeedContext {

@@ -6,7 +6,7 @@ import type {
   GraphQLAiIntegrationsListData,
 } from '../types';
 
-const PROVIDERS: AiIntegrationProvider[] = ['gemini', 'chatgpt', 'lm_studio'];
+const PROVIDERS: AiIntegrationProvider[] = ['gemini', 'chatgpt', 'lm_studio', 'deep_seek', 'anthropic'];
 
 const toProvider = (value: string | null | undefined): AiIntegrationProvider => {
   if (value && PROVIDERS.includes(value as AiIntegrationProvider)) {

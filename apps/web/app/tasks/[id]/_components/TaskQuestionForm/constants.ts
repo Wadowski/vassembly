@@ -1,0 +1,11 @@
+export const QUESTION_FORM_TITLE = 'Assistant needs your input';
+export const QUESTION_FORM_NAVIGATION_LABEL = 'Question navigation';
+export const QUESTION_FORM_PREVIOUS_LABEL = 'Previous';
+export const QUESTION_FORM_NEXT_LABEL = 'Next';
+export const QUESTION_FORM_SUBMIT_LABEL = 'Submit answer';
+export const QUESTION_FORM_PROGRESS_LABEL = 'Question {current} of {total}';
+export const BOOLEAN_YES_LABEL = 'Yes';
+export const BOOLEAN_NO_LABEL = 'No';
+export const TEXT_ANSWER_PLACEHOLDER = 'Type your answer';
+export const SELECT_PLACEHOLDER = 'Select an option';
+export const MULTISELECT_LABEL = 'Select all that apply';

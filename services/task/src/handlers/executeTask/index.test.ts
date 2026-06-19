@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { NotFoundError, TimeoutError, ValidationError } from '@vassembly/errors';
+import { NotFoundError, TimeoutError, UserInputWaitingError, ValidationError } from '@vassembly/errors';
 
 const {
   mockGetModelById,
@@ -8,7 +8,10 @@ const {
   mockComplete,
   mockFail,
   mockGetPreferenceByUserId,
+  mockGetTaskQuestions,
+  mockGetModelByTaskId,
   mockRunAgentInvokeWithTools,
+  mockFinalizeTaskProgress,
   mockLogger,
 } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
@@ -16,7 +19,10 @@ const {
   mockComplete: vi.fn(),
   mockFail: vi.fn(),
   mockGetPreferenceByUserId: vi.fn(),
+  mockGetTaskQuestions: vi.fn(),
+  mockGetModelByTaskId: vi.fn(),
   mockRunAgentInvokeWithTools: vi.fn(),
+  mockFinalizeTaskProgress: vi.fn(),
   mockLogger: vi.fn(),
 }));
 
@@ -27,14 +33,29 @@ vi.mock('@vassembly/domain-task', () => ({
   },
   TaskStatus: {
     InProgress: 'in-progress',
+    Paused: 'paused',
+    Waiting: 'waiting',
     Done: 'done',
     Failed: 'failed',
+  },
+}));
+
+vi.mock('@vassembly/domain-task-questions', () => ({
+  default: {
+    queries: { getTaskQuestions: mockGetTaskQuestions },
   },
 }));
 
 vi.mock('@vassembly/domain-system-agent', () => ({
   default: {
     queries: { getPreferenceByUserId: mockGetPreferenceByUserId },
+  },
+}));
+
+vi.mock('@vassembly/domain-task-progress', () => ({
+  default: {
+    commands: { finalizeTaskProgress: mockFinalizeTaskProgress },
+    queries: { getModelByTaskId: mockGetModelByTaskId },
   },
 }));
 
@@ -78,6 +99,9 @@ describe('executeTask handler', () => {
     });
     mockComplete.mockResolvedValue({ data: {} });
     mockFail.mockResolvedValue({ data: {} });
+    mockFinalizeTaskProgress.mockResolvedValue({ completedAt: new Date() });
+    mockGetTaskQuestions.mockResolvedValue({ data: { answeredQuestions: [] } });
+    mockGetModelByTaskId.mockResolvedValue({ data: { events: [] } });
   });
 
   it('should complete task when credential exists and LLM invoke succeeds', async () => {
@@ -92,12 +116,16 @@ describe('executeTask handler', () => {
         connectionOverride: { integrationCredentialId: 'cred-1' },
         toolContext: expect.objectContaining({
           userId: 'user-1',
+          taskId: 'task-1',
+          invocationId: expect.any(String),
           callerAgentId: 'agent-1',
           callerAgentType: 'system',
           recursionDepth: 0,
+          recordAgentInvokeProgress: expect.any(Function),
         }),
       }),
     );
+    expect(mockFinalizeTaskProgress).toHaveBeenCalledWith({ taskId: 'task-1' });
     expect(mockComplete).toHaveBeenCalledWith({
       taskId: 'task-1',
       llmResponse: 'LLM result',
@@ -155,6 +183,32 @@ describe('executeTask handler', () => {
     expect(mockFail).toHaveBeenCalledWith(
       expect.objectContaining({ errorCode: 'PROVIDER_TIMEOUT' }),
     );
+  });
+
+  it('should log waiting transition when invoke throws UserInputWaitingError', async () => {
+    mockRunAgentInvokeWithTools.mockRejectedValue(new UserInputWaitingError());
+
+    await executeTask({ taskId: 'task-1', userId: 'user-1' });
+
+    expect(mockComplete).not.toHaveBeenCalled();
+    expect(mockFail).not.toHaveBeenCalled();
+    expect(mockLogger).toHaveBeenCalledWith(
+      'task.execution.waiting',
+      expect.objectContaining({
+        meta: expect.objectContaining({ taskId: 'task-1', userId: 'user-1' }),
+      }),
+    );
+  });
+
+  it('should not fail task when task is waiting after a generic execution error', async () => {
+    mockRunAgentInvokeWithTools.mockRejectedValue(new Error('wrapped execution error'));
+    mockGetModelById
+      .mockResolvedValueOnce({ data: BASE_TASK })
+      .mockResolvedValue({ data: { ...BASE_TASK, status: 'waiting' } });
+
+    await executeTask({ taskId: 'task-1', userId: 'user-1' });
+
+    expect(mockFail).not.toHaveBeenCalled();
   });
 
   it('should fail task with INVALID_AGENT_ASSIGNED when task has no agentAssignedId', async () => {

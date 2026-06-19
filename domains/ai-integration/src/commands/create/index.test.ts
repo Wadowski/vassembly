@@ -103,4 +103,26 @@ describe('create ai integration command', () => {
       }),
     ).rejects.toThrow(WrongParamError);
   });
+
+  it('should reject create when deep_seek provider is missing apiKey', async () => {
+    await expect(
+      create({
+        userId: 'user-1',
+        name: 'Deep Seek',
+        provider: 'deep_seek',
+        model: 'deepseek-chat',
+      }),
+    ).rejects.toThrow(WrongParamError);
+  });
+
+  it('should reject create when anthropic provider is missing apiKey', async () => {
+    await expect(
+      create({
+        userId: 'user-1',
+        name: 'Anthropic',
+        provider: 'anthropic',
+        model: 'claude-sonnet-4-20250514',
+      }),
+    ).rejects.toThrow(WrongParamError);
+  });
 });

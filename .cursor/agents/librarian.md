@@ -1,6 +1,6 @@
 ---
 name: librarian
-model: inherit
+model: composer-2.5[fast=false]
 description: Monorepo catalog specialist. Maps packages, domains, services, apps, and UI libraries to their locations, responsibilities, and consumers. Given a feature or capability, finds existing packages that might satisfy it; given a package name or path, explains purpose and where it is used. Use when discovering reuse, onboarding, or tracing dependencies across the workspace.
 ---
 

@@ -1,5 +1,12 @@
 export { AUTH_TOKEN_ROLE } from './authTokenRole';
 export { SYSTEM_AGENT_NAME } from './SystemAgentName';
+export {
+  getIntentCategoryBySlug,
+  getIntentCategorySlugs,
+  INTENT_CATEGORIES,
+  INTENT_CATEGORY_SLUG,
+} from './intentCategories';
+export type { IntentCategoryDefinition } from './intentCategories';
 export { COUNTRIES } from './countries';
 export { CUSTOM_HEADERS } from './customHeaders';
 export {
@@ -13,3 +20,4 @@ export {
   MAX_USE_AGENT_DEPTH,
 } from './internalTools';
 export type { InternalToolDefinition } from './internalTools';
+export { AI_INTEGRATION_PROVIDER_LABELS } from './aiIntegrationProviderLabels';

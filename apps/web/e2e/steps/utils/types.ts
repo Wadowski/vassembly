@@ -2,6 +2,7 @@ import type { BddWorld, SeedContext } from '@vassembly/e2e';
 
 export interface WebBddWorld extends BddWorld {
   agentId?: string;
+  systemAgentId?: string;
   integrationCredentialId?: string;
   mcpId?: string;
   taskId?: string;
@@ -9,6 +10,20 @@ export interface WebBddWorld extends BddWorld {
   otherUserTaskId?: string;
   showDeletedFilter?: boolean;
   pollingRequestCount?: number;
+  secondPage?: import('@playwright/test').Page;
+  pauseApiRequestCount?: number;
+  progressEventCountAtPause?: number;
+  lastProgressEventTimestamp?: string | null;
+  lastProgressEventId?: string | null;
+  progressExecutionAttemptAtCheckpoint?: number;
+  stopTaskProgressPollingMonitor?: () => void;
+  stopBackgroundProgressWriter?: () => void;
+  shouldResumeBackgroundProgressWriter?: boolean;
+  tabAPage?: import('@playwright/test').Page;
+  tabBPage?: import('@playwright/test').Page;
+  pendingQuestionIds?: string[];
+  questionsByText?: Record<string, string>;
+  lastSubmittedQuestionId?: string;
 }
 
 export interface SeedMcpParams {

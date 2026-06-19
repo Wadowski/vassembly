@@ -1,10 +1,13 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { InternalError } from '@vassembly/errors';
+import { ExecutionPausedError, InternalError, UserInputWaitingError } from '@vassembly/errors';
 
 import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
 import { mapExecutedLlmToolNamesToIds } from '../internalTools/mapExecutedLlmToolNamesToIds';
 import { MCP_TOOL_MAX_ITERATIONS, loadMcpTools } from '../mcp';
+import { assertNotAborted } from '../utils/assertNotAborted';
+import { extractTokenUsageFromMessage } from '../utils/extractTokenUsageFromMessage';
+import { invokeModelWithSignal } from '../utils/invokeModelWithSignal';
 import { runToolCallLoop } from './runToolCallLoop';
 
 import type { AiProviderInvokeParams, AiProviderInvokeResult } from '../types';
@@ -44,6 +47,7 @@ const buildHandlerMap = (
 
 interface InvokeModelResult {
   message: string;
+  usage?: AiProviderInvokeResult['usage'];
   toolUsage?: AiProviderInvokeResult['toolUsage'];
 }
 
@@ -61,9 +65,20 @@ const invokeModel = async ({
   const hasTools = mcpServerConfigs.length > 0 || internalToolBindings.length > 0;
 
   if (!hasTools) {
-    const result = await chatModel.invoke(messages);
+    await assertNotAborted({
+      signal: invokeParams.signal,
+      shouldAbort: invokeParams.shouldAbort,
+    });
+
+    const result = await invokeModelWithSignal({
+      model: chatModel,
+      messages,
+      signal: invokeParams.signal,
+    });
+
     return {
       message: extractMessageContent(result.content),
+      usage: extractTokenUsageFromMessage(result),
     };
   }
 
@@ -97,15 +112,18 @@ const invokeModel = async ({
   }
 
   try {
-    const { response, executedToolNames } = await runToolCallLoop({
+    const { response, executedToolNames, usage } = await runToolCallLoop({
       model: chatModel,
       tools: mergedTools,
       messages,
       maxIterations: MCP_TOOL_MAX_ITERATIONS,
+      signal: invokeParams.signal,
+      shouldAbort: invokeParams.shouldAbort,
     });
 
     return {
       message: extractMessageContent(response.content),
+      usage,
       toolUsage: {
         internalToolIdsUsed: mapExecutedLlmToolNamesToIds(executedToolNames),
         skippedInternalToolIds: skippedToolIds,
@@ -123,14 +141,23 @@ export const invokeWithChatModel = async ({
   errorMessage,
 }: InvokeWithChatModelParams): Promise<AiProviderInvokeResult> => {
   try {
-    const { message, toolUsage } = await invokeModel({ createChatModel, invokeParams });
+    const { message, usage, toolUsage } = await invokeModel({ createChatModel, invokeParams });
 
     return {
       message,
       model: invokeParams.model,
+      usage,
       toolUsage,
     };
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof ExecutionPausedError) {
+      throw error;
+    }
+
+    if (error instanceof UserInputWaitingError) {
+      throw error;
+    }
+
     console.error(`${CONSOLE_LOG_PREFIX} invoke failed`, error);
     throw new InternalError(errorMessage, error);
   }
