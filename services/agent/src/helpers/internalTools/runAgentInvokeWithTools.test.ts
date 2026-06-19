@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { WrongParamError } from '@vassembly/errors';
+import { WrongParamError, UserInputWaitingError } from '@vassembly/errors';
 
 const {
   mockGetById,
@@ -301,6 +301,41 @@ describe('runAgentInvokeWithTools', () => {
         errorDetails: expect.objectContaining({
           message: 'Provider invoke failed',
         }),
+      }),
+    );
+  });
+
+  it('should record waiting progress event when invoke throws UserInputWaitingError', async () => {
+    const recordProgress = vi.fn().mockResolvedValue(undefined);
+    mockInvoke.mockRejectedValue(new UserInputWaitingError());
+
+    await expect(
+      runAgentInvokeWithTools({
+        userId: 'user-1',
+        agentType: 'personal',
+        agentId: 'agent-1',
+        message: 'Hello',
+        toolContext: {
+          ...TOOL_CONTEXT,
+          recordAgentInvokeProgress: recordProgress,
+        },
+      }),
+    ).rejects.toThrow(UserInputWaitingError);
+
+    expect(recordProgress).toHaveBeenCalledTimes(2);
+    expect(recordProgress).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        state: 'started',
+      }),
+    );
+    expect(recordProgress).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        state: 'waiting',
+        integrationName: 'My OpenAI',
+        provider: 'chatgpt',
+        model: 'gpt-4o',
       }),
     );
   });

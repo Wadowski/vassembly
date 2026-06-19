@@ -14,7 +14,7 @@ import {
 import { useSnackbar } from '@vassembly/ui-snackbar';
 
 import { getRequestErrorMessage } from '../../agents/getRequestErrorMessage';
-import { TASK_LOAD_ERROR_FALLBACK, TASK_WAITING_NOTIFICATION_MESSAGE } from './constants';
+import { TASK_ANSWER_SUBMIT_ERROR_MESSAGE, TASK_LOAD_ERROR_FALLBACK, TASK_WAITING_NOTIFICATION_MESSAGE } from './constants';
 import {
   buildDocumentTitle,
   buildTaskDetailPageView,
@@ -35,7 +35,6 @@ export const useTaskDetailPage = (): UseTaskDetailPageResult => {
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
   const [loadVersion, setLoadVersion] = useState(0);
   const previousTaskStatusRef = useRef<TaskStatus | undefined>(undefined);
-  const previousPendingQuestionCountRef = useRef(0);
 
   const loginRoute =
     taskIdParam === ''
@@ -116,25 +115,6 @@ export const useTaskDetailPage = (): UseTaskDetailPageResult => {
   });
 
   useEffect(() => {
-    if (taskQuestions === undefined) {
-      return;
-    }
-
-    const pendingCount = taskQuestions.pendingQuestions.length;
-    const hadPendingQuestions = previousPendingQuestionCountRef.current > 0;
-
-    if (pendingCount > 0 && !hadPendingQuestions) {
-      snackbar.show({
-        variant: 'info',
-        message: TASK_WAITING_NOTIFICATION_MESSAGE,
-        duration: 5000,
-      });
-    }
-
-    previousPendingQuestionCountRef.current = pendingCount;
-  }, [snackbar, taskQuestions]);
-
-  useEffect(() => {
     if (task === undefined) {
       previousTaskStatusRef.current = undefined;
       return;
@@ -159,6 +139,14 @@ export const useTaskDetailPage = (): UseTaskDetailPageResult => {
   const handleAnswerSubmitted = useCallback(async (): Promise<void> => {
     await Promise.all([refetchTask(), refetchTaskQuestions()]);
   }, [refetchTask, refetchTaskQuestions]);
+
+  const handleSubmitError = useCallback((): void => {
+    snackbar.show({
+      variant: 'error',
+      message: TASK_ANSWER_SUBMIT_ERROR_MESSAGE,
+      duration: 5000,
+    });
+  }, [snackbar]);
 
   useEffect(() => {
     if (task === undefined) {
@@ -192,5 +180,6 @@ export const useTaskDetailPage = (): UseTaskDetailPageResult => {
     taskQuestions,
     isTaskQuestionsLoading,
     handleAnswerSubmitted,
+    handleSubmitError,
   };
 };

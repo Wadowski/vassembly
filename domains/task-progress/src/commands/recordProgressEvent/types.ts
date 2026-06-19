@@ -3,7 +3,7 @@ import type { ErrorDetails, TokenUsage } from '../../model';
 export interface RecordProgressEventInput {
   taskId: string;
   agentId: string;
-  state: 'started' | 'completed' | 'failed';
+  state: 'started' | 'completed' | 'failed' | 'waiting';
   timestamp?: Date;
   duration?: number;
   inputMessages?: string;

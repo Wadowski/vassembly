@@ -25,6 +25,10 @@ const getStateLabel = (state: string): string => {
     return 'Started';
   }
 
+  if (state === 'WAITING') {
+    return 'Waiting for input';
+  }
+
   return state;
 };
 

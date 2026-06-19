@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -- turbo run dev",
+    "dev": "NODE_OPTIONS='--max-old-space-size=2048' dotenv -- turbo run dev",
     "dev:e2e": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -e .env -e .env.e2e -o -v NODE_ENV=testing -v VASSEMBLY_E2E=true -- turbo run dev --filter=@vassembly/client-mongodb --filter=@vassembly/api --filter=@vassembly/web",
     "dev:e2e:mongo": "dotenv -e .env -e .env.e2e -o -- pnpm --filter @vassembly/client-mongodb dev",
     "dev:e2e:ci": "NODE_OPTIONS='--max-old-space-size=1024' dotenv -e .env -e .env.e2e -o -v NODE_ENV=testing -v VASSEMBLY_E2E=true -- turbo run dev --filter=@vassembly/api --filter=@vassembly/web",

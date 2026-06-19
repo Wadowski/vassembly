@@ -42,6 +42,7 @@ const PROGRESS_EVENT_STATE_MAP: Record<string, ProgressEvent['state']> = {
   started: 'STARTED',
   completed: 'COMPLETED',
   failed: 'FAILED',
+  waiting: 'WAITING',
 };
 
 const normalizeProgressEventState = (state: string): ProgressEvent['state'] =>

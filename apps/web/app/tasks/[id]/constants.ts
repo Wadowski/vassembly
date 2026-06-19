@@ -10,3 +10,5 @@ export const TASK_EXECUTION_SETTINGS_PATH = '/agents#ai-integrations';
 export const TASK_MISSING_CREDENTIAL_ERROR_CODE = 'MISSING_CREDENTIAL';
 export const TASK_WAITING_NOTIFICATION_MESSAGE =
   'The assistant needs your input to continue.';
+export const TASK_ANSWER_SUBMIT_ERROR_MESSAGE =
+  'Could not submit your answer. Please try again.';

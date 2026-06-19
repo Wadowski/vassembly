@@ -22,7 +22,7 @@ export interface InternalToolContext {
 export interface AgentInvokeProgressEventInput {
   agentId: string;
   parentAgentId?: string;
-  state: 'started' | 'completed' | 'failed';
+  state: 'started' | 'completed' | 'failed' | 'waiting';
   timestamp?: Date;
   duration?: number;
   inputMessages?: string;

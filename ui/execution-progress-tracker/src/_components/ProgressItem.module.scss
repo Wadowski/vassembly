@@ -42,6 +42,10 @@
     background-color: $color-error;
   }
 
+  &[data-state='WAITING'] {
+    background-color: $color-warning;
+  }
+
   &[data-state='QUESTION_ASKED'] {
     background-color: $color-warning;
   }

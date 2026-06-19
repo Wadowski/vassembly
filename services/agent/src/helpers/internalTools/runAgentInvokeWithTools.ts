@@ -259,11 +259,16 @@ export const runAgentInvokeWithTools = async (
 
     return result;
   } catch (error: unknown) {
-    if (
-      recordProgress &&
-      !(error instanceof ExecutionPausedError) &&
-      !(error instanceof UserInputWaitingError)
-    ) {
+    if (recordProgress && error instanceof UserInputWaitingError) {
+      await recordProgress({
+        agentId: params.agentId,
+        parentAgentId: toolContext.parentAgentId,
+        state: 'waiting',
+        timestamp: new Date(),
+        duration: Date.now() - invokeStartTime,
+        ...integrationSnapshot,
+      });
+    } else if (recordProgress && !(error instanceof ExecutionPausedError)) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const errorType =
         error instanceof Error && 'code' in error

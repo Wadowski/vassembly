@@ -200,6 +200,17 @@ describe('executeTask handler', () => {
     );
   });
 
+  it('should not fail task when task is waiting after a generic execution error', async () => {
+    mockRunAgentInvokeWithTools.mockRejectedValue(new Error('wrapped execution error'));
+    mockGetModelById
+      .mockResolvedValueOnce({ data: BASE_TASK })
+      .mockResolvedValue({ data: { ...BASE_TASK, status: 'waiting' } });
+
+    await executeTask({ taskId: 'task-1', userId: 'user-1' });
+
+    expect(mockFail).not.toHaveBeenCalled();
+  });
+
   it('should fail task with INVALID_AGENT_ASSIGNED when task has no agentAssignedId', async () => {
     mockGetModelById.mockResolvedValue({
       data: { ...BASE_TASK, agentAssignedId: null },

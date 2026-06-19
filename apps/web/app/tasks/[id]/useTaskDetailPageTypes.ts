@@ -13,6 +13,7 @@ export interface UseTaskDetailPageResult {
   taskQuestions: TaskQuestionsDto | undefined;
   isTaskQuestionsLoading: boolean;
   handleAnswerSubmitted: () => Promise<void>;
+  handleSubmitError: () => void;
 }
 
 export interface BuildTaskDetailPageViewArgs {

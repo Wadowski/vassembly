@@ -1,6 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { ExecutionPausedError, InternalError } from '@vassembly/errors';
+import { ExecutionPausedError, InternalError, UserInputWaitingError } from '@vassembly/errors';
 
 import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
 import { mapExecutedLlmToolNamesToIds } from '../internalTools/mapExecutedLlmToolNamesToIds';
@@ -151,6 +151,10 @@ export const invokeWithChatModel = async ({
     };
   } catch (error: unknown) {
     if (error instanceof ExecutionPausedError) {
+      throw error;
+    }
+
+    if (error instanceof UserInputWaitingError) {
       throw error;
     }
 

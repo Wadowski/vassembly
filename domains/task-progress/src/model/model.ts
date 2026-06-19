@@ -4,6 +4,7 @@ export enum ProgressEventState {
   Started = 'started',
   Completed = 'completed',
   Failed = 'failed',
+  Waiting = 'waiting',
 }
 
 export interface TokenUsage {

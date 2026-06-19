@@ -12,7 +12,7 @@ const TASK_ID_SCHEMA = z.object({
 
 export interface ConditionalStatusUpdateParams {
   taskId: string;
-  filter: Partial<TaskModel>;
+  filter: Record<string, unknown>;
   update: Partial<TaskModel>;
   conflictCode: string;
   conflictMessage: string;

@@ -16,7 +16,7 @@ export const getTimelineItemAuthor = (item: TimelineItem): string => {
 
 export const getTimelineItemNodeState = (
   item: TimelineItem,
-): 'STARTED' | 'COMPLETED' | 'FAILED' | 'QUESTION_ASKED' | 'ANSWER_SUBMITTED' => {
+): 'STARTED' | 'COMPLETED' | 'FAILED' | 'WAITING' | 'QUESTION_ASKED' | 'ANSWER_SUBMITTED' => {
   if (item.kind === 'question-asked') {
     return 'QUESTION_ASKED';
   }

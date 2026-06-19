@@ -20,6 +20,7 @@ export const TaskQuestionForm = ({
   taskId,
   questions,
   onAnswerSubmitted,
+  onSubmitError,
 }: TaskQuestionFormProps): JSX.Element | null => {
   const {
     currentIndex,
@@ -28,13 +29,13 @@ export const TaskQuestionForm = ({
     canGoPrevious,
     canGoNext,
     isSubmitDisabled,
-    isSubmitting,
+    isProcessing,
     currentValue,
     handlePrevious,
     handleNext,
     handleValueChange,
     handleSubmit,
-  } = useTaskQuestionForm({ taskId, questions, onAnswerSubmitted });
+  } = useTaskQuestionForm({ taskId, questions, onAnswerSubmitted, onSubmitError });
 
   if (currentQuestion === undefined) {
     return null;
@@ -64,7 +65,7 @@ export const TaskQuestionForm = ({
         question={currentQuestion}
         value={currentValue}
         onChange={handleValueChange}
-        isDisabled={isSubmitting}
+        isDisabled={isProcessing}
       />
       <div className={styles.actions} role="group" aria-label={QUESTION_FORM_NAVIGATION_LABEL}>
         <div className={styles.navigationButtons}>
@@ -73,7 +74,7 @@ export const TaskQuestionForm = ({
             color="secondary"
             text={QUESTION_FORM_PREVIOUS_LABEL}
             onClick={handlePrevious}
-            isDisabled={!canGoPrevious || isSubmitting}
+            isDisabled={!canGoPrevious || isProcessing}
             data-testid="task-question-previous"
           />
           <Button
@@ -81,7 +82,7 @@ export const TaskQuestionForm = ({
             color="secondary"
             text={QUESTION_FORM_NEXT_LABEL}
             onClick={handleNext}
-            isDisabled={!canGoNext || isSubmitting}
+            isDisabled={!canGoNext || isProcessing}
             data-testid="task-question-next"
           />
         </div>
@@ -91,7 +92,7 @@ export const TaskQuestionForm = ({
           text={QUESTION_FORM_SUBMIT_LABEL}
           onClick={handleSubmit}
           isDisabled={isSubmitDisabled}
-          isLoading={isSubmitting}
+          isLoading={isProcessing}
           data-testid="task-question-submit"
         />
       </div>

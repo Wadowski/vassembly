@@ -15,7 +15,7 @@ export interface ProgressEvent {
   agentId: string;
   agentName: string;
   parentAgentId: string | null;
-  state: 'STARTED' | 'COMPLETED' | 'FAILED';
+  state: 'STARTED' | 'COMPLETED' | 'FAILED' | 'WAITING';
   timestamp: Date;
   duration: number | null;
   inputMessages: string | null;

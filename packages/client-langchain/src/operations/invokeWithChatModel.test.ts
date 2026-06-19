@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { InternalError, ExecutionPausedError } from '@vassembly/errors';
+import { InternalError, ExecutionPausedError, UserInputWaitingError } from '@vassembly/errors';
 
 const { mockLoadMcpTools, mockClose } = vi.hoisted(() => {
   const mockClose = vi.fn();
@@ -174,5 +174,19 @@ describe('invokeWithChatModel', () => {
         errorMessage: 'Failed to invoke model',
       }),
     ).rejects.toThrow(InternalError);
+  });
+
+  it('should propagate UserInputWaitingError without wrapping as InternalError', async () => {
+    const waitingError = new UserInputWaitingError();
+
+    await expect(
+      invokeWithChatModel({
+        createChatModel: vi.fn().mockReturnValue({
+          invoke: vi.fn().mockRejectedValue(waitingError),
+        }),
+        invokeParams: { model: 'test-model', message: 'Hello' },
+        errorMessage: 'Failed to invoke model',
+      }),
+    ).rejects.toBe(waitingError);
   });
 });

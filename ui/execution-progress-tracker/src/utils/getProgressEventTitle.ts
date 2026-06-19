@@ -25,5 +25,9 @@ export const getProgressEventTitle = (
     return 'Failed';
   }
 
+  if (event.state === 'WAITING') {
+    return 'Waiting for input';
+  }
+
   return event.state;
 };

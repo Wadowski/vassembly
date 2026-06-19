@@ -146,6 +146,11 @@ export const executeTask = async ({
 
     const mapped = mapExecutionError(error);
 
+    const currentTask = await taskDomain.queries.getModelById({ id: taskId });
+    if (currentTask.data?.status === TaskStatus.Waiting) {
+      return;
+    }
+
     try {
       await taskProgressDomain.commands.finalizeTaskProgress({ taskId });
     } catch {

@@ -20,6 +20,7 @@ export default function TaskDetailPage(): JSX.Element {
     refetchTask,
     taskQuestions,
     handleAnswerSubmitted,
+    handleSubmitError,
   } = useTaskDetailPage();
 
   const body =
@@ -37,14 +38,15 @@ export default function TaskDetailPage(): JSX.Element {
             taskId={view.task.id}
             questions={taskQuestions.pendingQuestions}
             onAnswerSubmitted={handleAnswerSubmitted}
+            onSubmitError={handleSubmitError}
           />
         ) : null}
         <article className={styles.contentColumn}>
+          <TaskDetailAiResponse task={view.task} />
           <TaskDetailDescription description={view.task.description} />
           {taskQuestions !== undefined && taskQuestions.answeredQuestions.length > 0 ? (
             <TaskQuestionsHistory questions={taskQuestions.answeredQuestions} />
           ) : null}
-          <TaskDetailAiResponse task={view.task} />
           <TaskDetailExecutionError task={view.task} />
           <ExecutionProgressTracker
             taskId={view.task.id}

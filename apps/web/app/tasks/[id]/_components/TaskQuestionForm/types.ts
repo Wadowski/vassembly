@@ -4,6 +4,7 @@ export interface TaskQuestionFormProps {
   taskId: string;
   questions: PendingQuestionDto[];
   onAnswerSubmitted: () => void | Promise<void>;
+  onSubmitError: () => void;
 }
 
 export type QuestionAnswerValue = string | string[] | boolean | undefined;
@@ -19,6 +20,7 @@ export interface UseTaskQuestionFormParams {
   taskId: string;
   questions: PendingQuestionDto[];
   onAnswerSubmitted: () => void | Promise<void>;
+  onSubmitError: () => void;
 }
 
 export interface UseTaskQuestionFormResult {
@@ -28,7 +30,7 @@ export interface UseTaskQuestionFormResult {
   canGoPrevious: boolean;
   canGoNext: boolean;
   isSubmitDisabled: boolean;
-  isSubmitting: boolean;
+  isProcessing: boolean;
   currentValue: QuestionAnswerValue;
   handlePrevious: () => void;
   handleNext: () => void;
