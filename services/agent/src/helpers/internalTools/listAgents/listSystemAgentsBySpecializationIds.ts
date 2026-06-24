@@ -35,7 +35,10 @@ export const listSystemAgentsBySpecializationIds = async ({
         continue;
       }
 
-      agentsById.set(agent.id, mapSystemAgentRow(agent));
+      agentsById.set(
+        agent.id,
+        mapSystemAgentRow({ name: agent.name, description: agent.description }),
+      );
     }
   }
 

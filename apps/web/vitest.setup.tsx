@@ -3,6 +3,8 @@ import '@testing-library/jest-dom/vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { expect, vi } from 'vitest';
 
+import { createSpecializationHooksMock } from './test/specializationHooksMock';
+
 expect.extend(matchers);
 
 const testApiHooksStubs = vi.hoisted(() => {
@@ -142,6 +144,7 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       isLoading: false,
       error: undefined,
     })),
+    ...createSpecializationHooksMock(),
   };
 });
 

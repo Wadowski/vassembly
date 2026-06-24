@@ -94,16 +94,16 @@ describe('loadSystemAgents seed loader', () => {
     });
 
     it('should sync existing seed agents when seed definition changes', async () => {
-      mockFindToArray.mockResolvedValue([
-        {
-          _id: 'assistant-id',
-          name: 'Assistant',
-          rule: 'Old rule',
-          description: 'Main assistant',
-          category: 'utility',
-          assignedToolIds: ['use-agent', 'list-agents'],
-        },
-      ]);
+      mockFindToArray.mockResolvedValue(
+        VALID_SEED_ENTRIES.map((entry) => ({
+          _id: `${entry.name}-id`,
+          name: entry.name,
+          rule: entry.name === 'Assistant' ? 'Old rule' : entry.rule,
+          description: entry.description,
+          category: entry.category,
+          assignedToolIds: entry.assignedToolIds,
+        })),
+      );
 
       const result = await loadSystemAgents();
 

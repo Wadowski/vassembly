@@ -1,9 +1,11 @@
 import type { CommonError } from '@vassembly/errors';
 
+import type { SystemAgentStatus } from '../systemAgents/types';
+
 export interface SpecializationAgentItem {
   id: string;
   name: string;
-  status: string;
+  status: SystemAgentStatus;
 }
 
 export interface SpecializationMcpItem {

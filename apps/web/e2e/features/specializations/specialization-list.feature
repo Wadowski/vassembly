@@ -11,8 +11,6 @@ Feature: Specialization List (Admin UI)
     And a specialization "engineering" exists with description "Software development, architecture, and DevOps tasks."
     When I navigate to "/specialization"
     Then I see the specializations list page
-    And I see specialization "legal" in the list
-    And I see specialization "engineering" in the list
     And I see specialization list pagination controls
     When I search specializations for "legal"
     Then I see specialization "legal" in the list

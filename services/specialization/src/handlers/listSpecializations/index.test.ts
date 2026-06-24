@@ -6,8 +6,10 @@ import type { SpecializationResponse } from '@vassembly/domain-specialization';
 
 import type { ListSpecializationsResult } from './types';
 
-const { mockGetList } = vi.hoisted(() => ({
+const { mockGetList, mockGetBySpecializationId, mockGetMcpList } = vi.hoisted(() => ({
   mockGetList: vi.fn(),
+  mockGetBySpecializationId: vi.fn(),
+  mockGetMcpList: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-specialization', () => ({
@@ -15,6 +17,25 @@ vi.mock('@vassembly/domain-specialization', () => ({
     commands: {},
     queries: {
       getList: mockGetList,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-system-agent', () => ({
+  default: {
+    commands: {},
+    queries: {
+      getBySpecializationId: mockGetBySpecializationId,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-mcp', () => ({
+  MAX_PAGE_SIZE: 50,
+  default: {
+    commands: {},
+    queries: {
+      getList: mockGetMcpList,
     },
   },
 }));
@@ -45,6 +66,15 @@ const buildDomainResult = (
 describe('listSpecializations handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetBySpecializationId.mockResolvedValue({
+      items: [{ id: 'agent-1' }],
+    });
+    mockGetMcpList.mockResolvedValue({
+      items: [{ id: 'mcp-1' }],
+      total: 1,
+      page: 0,
+      size: 50,
+    });
   });
 
   it('should return paginated specializations when page and size are provided', async () => {
@@ -64,6 +94,11 @@ describe('listSpecializations handler', () => {
 
     expect(result.total).toBe(42);
     expect(result.items).toHaveLength(2);
+    expect(result.items[0]).toEqual({
+      ...buildSpecializationItem(),
+      agentIds: ['agent-1'],
+      mcpIds: ['mcp-1'],
+    });
     expect(result.page).toBe(0);
     expect(result.size).toBe(20);
   });
@@ -81,7 +116,13 @@ describe('listSpecializations handler', () => {
 
     const result = await listSpecializations({ page: 0, size: 20, search: 'finance' });
 
-    expect(result.items).toEqual([financeItem]);
+    expect(result.items).toEqual([
+      {
+        ...financeItem,
+        agentIds: ['agent-1'],
+        mcpIds: ['mcp-1'],
+      },
+    ]);
     expect(result.total).toBe(1);
   });
 

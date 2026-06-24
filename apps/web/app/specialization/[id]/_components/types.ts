@@ -1,10 +1,14 @@
-import type { SpecializationDetailItem, SpecializationMcpItem } from '@vassembly/ui-api-hooks';
+import type {
+  SpecializationDetailItem,
+  SpecializationMcpItem,
+  SystemAgentStatus,
+} from '@vassembly/ui-api-hooks';
 import type { CommonError } from '@vassembly/errors';
 
 export interface SpecializationAgentItem {
   id: string;
   name: string;
-  status: string;
+  status: SystemAgentStatus;
 }
 
 export interface UseSpecializationDetailResult {

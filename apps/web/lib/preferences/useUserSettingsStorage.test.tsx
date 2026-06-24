@@ -23,17 +23,24 @@ const memoryBackedStore = new Map<string, string>();
 describe('useUserSettingsStorage', () => {
   beforeEach(() => {
     memoryBackedStore.clear();
-    vi.spyOn(Storage.prototype, 'getItem').mockImplementation((keyName: string) => {
-      return memoryBackedStore.get(keyName) ?? null;
-    });
-    vi.spyOn(Storage.prototype, 'setItem').mockImplementation((keyName: string, value: string) => {
-      memoryBackedStore.set(keyName, String(value));
-    });
-    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation((keyName: string) => {
-      memoryBackedStore.delete(keyName);
-    });
-    vi.spyOn(Storage.prototype, 'clear').mockImplementation(() => {
-      memoryBackedStore.clear();
+    const localStorageMock = {
+      getItem: vi.fn((keyName: string) => memoryBackedStore.get(keyName) ?? null),
+      setItem: vi.fn((keyName: string, value: string) => {
+        memoryBackedStore.set(keyName, String(value));
+      }),
+      removeItem: vi.fn((keyName: string) => {
+        memoryBackedStore.delete(keyName);
+      }),
+      clear: vi.fn(() => {
+        memoryBackedStore.clear();
+      }),
+      key: vi.fn(),
+      length: 0,
+    };
+
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      value: localStorageMock,
     });
   });
 

@@ -63,7 +63,7 @@ export const SpecializationDetailPage = (): JSX.Element | null => {
   return (
     <main
       className={styles.page}
-      data-testid="specialization-detail-layout"
+      data-testid="specialization-detail-page"
       data-layout={isMobile ? 'mobile' : 'desktop'}
     >
       <SpecializationDetailHeader specialization={detail.specialization} />

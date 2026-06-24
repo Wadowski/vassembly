@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { UnauthorizedError } from '@vassembly/errors';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { createSpecializationHooksMock } from '../../../../test/specializationHooksMock';
+
 import {
   CONFIGURATION_SAVED_MESSAGE,
   CONNECTION_VERIFIED_MESSAGE,
@@ -84,6 +86,7 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       vi.fn().mockResolvedValue(undefined),
       { loading: false, error: null },
     ] as const),
+    ...createSpecializationHooksMock(),
   };
 });
 
