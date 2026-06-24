@@ -26,6 +26,7 @@ const CREATE_DB_SCHEMA = z.object({
   createdByAdminId: z.string().min(1),
   updatedByAdminId: z.string().min(1),
   assignedToolIds: assignedToolIdsCreateSchema,
+  specializationId: z.string().min(1).max(100).nullable().optional(),
   removedAt: z.null().default(null),
 });
 
@@ -52,6 +53,9 @@ export const create = async (
     createdByAdminId: validated.createdByAdminId,
     updatedByAdminId,
     assignedToolIds: validated.assignedToolIds,
+    ...(validated.specializationId !== undefined
+      ? { specializationId: validated.specializationId }
+      : {}),
     removedAt: null,
   });
 

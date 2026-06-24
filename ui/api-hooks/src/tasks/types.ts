@@ -29,6 +29,7 @@ export interface TaskResponse {
   pausedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  specializationIds?: string[] | null;
 }
 
 export interface CreateTaskBody {
@@ -56,6 +57,7 @@ export interface TaskDto {
   pausedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  specializationIds?: string[] | null;
 }
 
 export interface UserTasksListResponse {
@@ -88,6 +90,7 @@ export interface GraphQLTaskRow {
   pausedAt?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
+  specializationIds?: string[] | null;
 }
 
 export interface GraphQLUserTasksListData {

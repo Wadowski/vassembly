@@ -1,5 +1,7 @@
 import { listAgents } from './listAgents';
 import { askUser } from './askUser';
+import { classifySpecializationToolHandler } from './classifySpecialization';
+import { createSpecializationToolHandler } from './createSpecialization';
 import { updateTaskToolHandler } from './updateTask';
 import { useAgent } from './useAgent';
 
@@ -16,4 +18,6 @@ export const createInternalToolHandlers = ({
   'update-task': (args) => updateTaskToolHandler(args),
   'ask-user': (args) => askUser({ args, context: toolContext }),
   'use-agent': (args) => useAgent({ args, context: toolContext }),
+  'classify-specialization': (args) => classifySpecializationToolHandler(args, toolContext),
+  'create-specialization': (args) => createSpecializationToolHandler(args, toolContext),
 });

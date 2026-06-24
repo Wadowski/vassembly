@@ -9,4 +9,6 @@ export interface RegisterInput {
 
 export interface RegisterOutput {
   user: UserPublicResponse;
+  authToken: string;
+  refreshToken: string;
 }

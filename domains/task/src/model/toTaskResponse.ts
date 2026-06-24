@@ -25,6 +25,7 @@ export const toTaskResponse = ({ task }: ToTaskResponseParams): TaskResponse => 
     agentAssignedId: task.agentAssignedId ?? null,
     title: task.title ?? null,
     category: task.category ?? null,
+    specializationIds: task.specializationIds ?? null,
     llmResponse: task.llmResponse ?? null,
     errorMessage: task.errorMessage ?? null,
     errorCode: task.errorCode ?? null,

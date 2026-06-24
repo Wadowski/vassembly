@@ -20,7 +20,7 @@ jobs:
           version: 9.0.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install
       - run: pnpm lint
@@ -28,8 +28,12 @@ jobs:
       - run: pnpm test
 
   e2e-web:
-    name: Web E2E
+    name: Web E2E (${{ matrix.shard }}/2)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     env:
       MONGODB_DATABASE: vassembly_e2e_web
       MONGODB_URL: mongodb://user:pass@localhost:27017/?directConnection=true
@@ -41,6 +45,7 @@ jobs:
       NEXT_PUBLIC_API_BASE_URL: http://localhost:5001
       NODE_ENV: e2e
       VASSEMBLY_E2E: true
+      E2E_ENABLE_DIAGNOSTICS: false
       CI: true
     services:
       mongodb:
@@ -63,10 +68,23 @@ jobs:
           version: 9.0.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: pnpm
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
       - run: pnpm install
-      - run: pnpm --filter @vassembly/web exec playwright install --with-deps chromium
+      - name: Install Playwright Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter @vassembly/web exec playwright install --with-deps chromium
+      - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter @vassembly/web exec playwright install-deps chromium
       - name: Start E2E servers
         run: |
           pnpm dev:e2e:ci > servers.log 2>&1 &
@@ -85,11 +103,11 @@ jobs:
             sleep 2
           done
       - name: Run E2E Web Tests
-        run: pnpm test:e2e:web
+        run: pnpm test:e2e:web:ci -- --shard=${{ matrix.shard }}/2
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report-web
+          name: playwright-report-web-shard-${{ matrix.shard }}
           path: |
             apps/web/playwright-report/
             apps/web/test-results/

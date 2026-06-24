@@ -48,6 +48,7 @@ export type {
   McpWithAgentsAgent,
   UseMcpWithAgentsResult,
 } from './mcps';
+export * from './specializations';
 export * from './tasks';
 export {
   INTERNAL_TOOLS_QUERY,

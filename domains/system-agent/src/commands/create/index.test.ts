@@ -43,6 +43,8 @@ const BASE_INPUT = {
   updatedByAdminId: 'admin-1',
 };
 
+const SPECIALIZATION_ID = '507f1f77bcf86cd799439099';
+
 describe('create system agent command', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -255,6 +257,39 @@ describe('create system agent command', () => {
       create({
         ...BASE_INPUT,
         assignedToolIds: ['nonexistent-tool'],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should persist specializationId when provided', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'system-agent-specialization',
+        ...BASE_INPUT,
+        specializationId: SPECIALIZATION_ID,
+        status: 'active',
+        removedAt: null,
+        createdAt: new Date('2026-01-05T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-05T00:00:00.000Z'),
+      },
+    });
+
+    const result = await create({
+      ...BASE_INPUT,
+      specializationId: SPECIALIZATION_ID,
+    });
+
+    expect(result.data.specializationId).toBe(SPECIALIZATION_ID);
+    expect(mockPersist).toHaveBeenCalledWith(
+      expect.objectContaining({ specializationId: SPECIALIZATION_ID }),
+    );
+  });
+
+  it('should reject create when specializationId exceeds maximum length', async () => {
+    await expect(
+      create({
+        ...BASE_INPUT,
+        specializationId: 's'.repeat(101),
       }),
     ).rejects.toThrow(ValidationError);
   });

@@ -59,6 +59,10 @@ vi.mock('@vassembly/domain-task-progress', () => ({
   },
 }));
 
+vi.mock('./runTaskSpecializationClassification', () => ({
+  runTaskSpecializationClassification: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('@vassembly/service-agent', () => ({
   runAgentInvokeWithTools: mockRunAgentInvokeWithTools,
 }));
@@ -107,6 +111,7 @@ describe('executeTask handler', () => {
   it('should complete task when credential exists and LLM invoke succeeds', async () => {
     await executeTask({ taskId: 'task-1', userId: 'user-1' });
 
+    expect(mockGetModelById).toHaveBeenCalledTimes(2);
     expect(mockRunAgentInvokeWithTools).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: 'user-1',
@@ -121,6 +126,7 @@ describe('executeTask handler', () => {
           callerAgentId: 'agent-1',
           callerAgentType: 'system',
           recursionDepth: 0,
+          specializationIds: null,
           recordAgentInvokeProgress: expect.any(Function),
         }),
       }),
@@ -135,6 +141,22 @@ describe('executeTask handler', () => {
       'task.status.done',
       expect.objectContaining({
         meta: expect.objectContaining({ taskId: 'task-1', userId: 'user-1' }),
+      }),
+    );
+  });
+
+  it('should pass specializationIds from refreshed task in tool context', async () => {
+    mockGetModelById
+      .mockResolvedValueOnce({ data: BASE_TASK })
+      .mockResolvedValueOnce({ data: { ...BASE_TASK, specializationIds: ['spec-1', 'spec-2'] } });
+
+    await executeTask({ taskId: 'task-1', userId: 'user-1' });
+
+    expect(mockRunAgentInvokeWithTools).toHaveBeenCalledWith(
+      expect.objectContaining({
+        toolContext: expect.objectContaining({
+          specializationIds: ['spec-1', 'spec-2'],
+        }),
       }),
     );
   });

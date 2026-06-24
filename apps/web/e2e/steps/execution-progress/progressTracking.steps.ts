@@ -5,17 +5,21 @@ import { bddTest } from '@vassembly/e2e';
 
 import { seedTaskForUser } from '../utils/seedTaskData';
 import {
+  countGraphqlTaskProgressPollRequests,
   finalizeTaskProgressForTask,
   markTaskStatusInDatabase,
   seedStartedProgressEvent,
   seedTrackingProgressEvents,
 } from '../utils/pauseResumeRetryHelpers';
+import {
+  navigateToTaskDetailPage,
+  PROGRESS_LIST_TEST_ID,
+  reloadTaskDetailPage,
+} from '../utils/taskDetailPage';
 import type { WebBddWorld } from '../utils/types';
 
 const { Given, When, Then } = createBdd(bddTest);
 
-// Test IDs for progress tracking elements
-const PROGRESS_LIST_TEST_ID = 'progress-list';
 const PROGRESS_ITEM_TEST_ID = 'progress-item';
 const PROGRESS_MODAL_TEST_ID = 'progress-detail-modal';
 const ERROR_BANNER_TEST_ID = 'progress-error-banner';
@@ -56,8 +60,7 @@ When('I navigate to the task detail page', async ({ page, world }) => {
     throw new Error('taskId is required to navigate to task detail page');
   }
 
-  await page.goto(`/tasks/${webWorld.taskId}`);
-  await page.waitForLoadState('networkidle');
+  await navigateToTaskDetailPage({ page, taskId: webWorld.taskId });
 });
 
 When('the task execution begins and first agent starts', async ({ seed, world }) => {
@@ -72,8 +75,7 @@ When('the task has multiple progress events', async ({ seed, page, world }) => {
   }
 
   await seedTrackingProgressEvents({ world: webWorld, seed, eventCount: 2 });
-  await page.reload();
-  await page.waitForLoadState('networkidle');
+  await reloadTaskDetailPage({ page });
 
   await expect(page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`)).toHaveCount(2, {
     timeout: 10_000,
@@ -98,33 +100,14 @@ When('I verify polling is active with requests every 1 second', async ({ page, w
     return;
   }
 
-  // Monitor network for GraphQL requests
-  const requests = [];
-  page.on('request', (request) => {
-    if (request.url().includes('/graphql') || request.url().includes('progress')) {
-      requests.push(Date.now());
-    }
+  const pollCount = await countGraphqlTaskProgressPollRequests({
+    page,
+    durationMs: 3_000,
+    taskId: webWorld.taskId,
   });
 
-  webWorld.pollingRequestCount = requests.length;
-
-  // Wait a bit to observe polling pattern
-  await page.waitForTimeout(3_000);
-
-  // Verify polling is active (at least 2 requests in ~3 seconds with ~1s interval)
-  if (requests.length > 0) {
-    const intervals = [];
-    for (let i = 1; i < requests.length; i++) {
-      intervals.push(requests[i] - requests[i - 1]);
-    }
-    
-    const avgInterval = intervals.length > 0 ? intervals.reduce((a, b) => a + b) / intervals.length : 0;
-    
-    // Allow 500-1500ms interval (accounts for network variance)
-    if (avgInterval > 500 && avgInterval < 1500) {
-      webWorld.pollingRequestCount = requests.length;
-    }
-  }
+  expect(pollCount).toBeGreaterThanOrEqual(2);
+  webWorld.pollingRequestCount = pollCount;
 });
 
 When('the backend marks the task as completed', async ({ seed, world }) => {
@@ -146,8 +129,7 @@ When('the task has {int} recorded progress events', async ({ seed, page, world }
   }
 
   await seedTrackingProgressEvents({ world: webWorld, seed, eventCount: count });
-  await page.reload();
-  await page.waitForLoadState('networkidle');
+  await reloadTaskDetailPage({ page });
 
   await expect
     .poll(async () => page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count(), {
@@ -161,8 +143,7 @@ When('I refresh the page', async ({ page }) => {
     return;
   }
 
-  await page.reload();
-  await page.waitForLoadState('networkidle');
+  await reloadTaskDetailPage({ page });
 });
 
 When('polling is active', async ({ page }) => {
@@ -187,7 +168,9 @@ When('the GraphQL query fails with a 500 error', async ({ page }) => {
     return route.continue();
   });
 
-  await page.waitForTimeout(2_000);
+  await expect(page.locator(`[data-testid="${ERROR_BANNER_TEST_ID}"]`)).toBeVisible({
+    timeout: 10_000,
+  });
 });
 
 When('the API recovers and responds successfully', async ({ page, seed, world }) => {
@@ -198,8 +181,7 @@ When('the API recovers and responds successfully', async ({ page, seed, world })
 
   await page.unroute('**/graphql**');
   await seedStartedProgressEvent({ world: webWorld, seed });
-  await page.reload();
-  await page.waitForLoadState('networkidle');
+  await reloadTaskDetailPage({ page });
 });
 
 When('I click on a progress event to open the modal', async ({ seed, page, world }) => {
@@ -211,8 +193,7 @@ When('I click on a progress event to open the modal', async ({ seed, page, world
   const itemCount = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
   if (itemCount === 0) {
     await seedTrackingProgressEvents({ world: webWorld, seed, eventCount: 2 });
-    await page.reload();
-    await page.waitForLoadState('networkidle');
+    await reloadTaskDetailPage({ page });
   }
 
   const firstEvent = page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).first();
@@ -245,8 +226,7 @@ When('the ProgressDetailModal is open showing {string}', async ({ seed, page, wo
     seed,
     timestampOffsetMs: -2 * 60 * 1000,
   });
-  await page.reload();
-  await page.waitForLoadState('networkidle');
+  await reloadTaskDetailPage({ page });
 
   const firstEvent = page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).first();
   await firstEvent.click();
@@ -453,7 +433,8 @@ Then('the modal remains open', async ({ page }) => {
   await expect(modal).toBeVisible();
 });
 
-Then('polling stops after the task completion status is received', async ({ page }) => {
+Then('polling stops after the task completion status is received', async ({ page, world }) => {
+  const webWorld = world as WebBddWorld;
   if (!page) {
     return;
   }
@@ -462,16 +443,18 @@ Then('polling stops after the task completion status is received', async ({ page
     .poll(async () => page.locator('[data-testid="progress-item"]').count(), { timeout: 20_000 })
     .toBeGreaterThan(0);
 
-  const initialRequestCount = (await page.locator('[data-testid="polling-request-count"]').textContent()) || '0';
-
-  await page.waitForTimeout(3_000);
-
-  const finalRequestCount = (await page.locator('[data-testid="polling-request-count"]').textContent()) || '0';
-
-  expect(finalRequestCount).toBe(initialRequestCount);
+  await expect(async () => {
+    const pollCount = await countGraphqlTaskProgressPollRequests({
+      page,
+      durationMs: 2_000,
+      taskId: webWorld.taskId,
+    });
+    expect(pollCount).toBe(0);
+  }).toPass({ timeout: 10_000 });
 });
 
-Then('no new polling requests occur', async ({ page }) => {
+Then('no new polling requests occur', async ({ page, world }) => {
+  const webWorld = world as WebBddWorld;
   if (!page) {
     return;
   }
@@ -480,21 +463,13 @@ Then('no new polling requests occur', async ({ page }) => {
     .poll(async () => page.locator('[data-testid="progress-item"]').count(), { timeout: 20_000 })
     .toBeGreaterThan(0);
 
-  await page.waitForTimeout(2_000);
+  const pollCount = await countGraphqlTaskProgressPollRequests({
+    page,
+    durationMs: 2_000,
+    taskId: webWorld.taskId,
+  });
 
-  let requestCount = 0;
-  const listener = (request: import('@playwright/test').Request) => {
-    const postData = request.postData();
-    if (request.url().includes('/graphql') && postData?.includes('taskProgress')) {
-      requestCount++;
-    }
-  };
-
-  page.on('request', listener);
-  await page.waitForTimeout(2_000);
-  page.off('request', listener);
-
-  expect(requestCount).toBe(0);
+  expect(pollCount).toBe(0);
 });
 
 Then('the ProgressTracker hides or shows completion message', async ({ page }) => {
@@ -515,8 +490,11 @@ Then('all {int} progress events are displayed in the ProgressList', async ({ pag
     return;
   }
 
-  const items = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
-  expect(items).toBe(count);
+  await expect
+    .poll(async () => page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count(), {
+      timeout: 15_000,
+    })
+    .toBe(count);
 });
 
 Then('no events are lost or duplicated', async ({ page }) => {
@@ -573,14 +551,8 @@ Then('polling continues in the background with exponential backoff', async ({ pa
     return;
   }
 
-  // Wait and verify that polling is still occurring (even with backoff)
-  await page.waitForTimeout(2_000);
-  
   const errorBanner = page.locator(`[data-testid="${ERROR_BANNER_TEST_ID}"]`);
-  const isStillVisible = await errorBanner.isVisible().catch(() => false);
-  
-  // Error banner should still be visible if API hasn't recovered
-  expect(isStillVisible).toBeTruthy();
+  await expect(errorBanner).toBeVisible({ timeout: 5_000 });
 });
 
 Then('the error banner dismisses automatically', async ({ page }) => {

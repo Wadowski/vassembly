@@ -120,20 +120,18 @@ Then('progress events stop appearing', async ({ page, world }) => {
     expect(pollCountDuringPause).toBe(0);
   }).toPass({ timeout: 10_000 });
 
-  let stableProgressCount = 0;
-  await expect(async () => {
-    const countBefore = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
-    await page.waitForTimeout(stabilizationWindowMs);
-    const countAfter = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
-    expect(countAfter).toBe(countBefore);
-    stableProgressCount = countAfter;
-  }).toPass({ timeout: 10_000 });
+  const countBefore = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
+  await expect
+    .poll(async () => page.getByTestId(PROGRESS_ITEM_TEST_ID).count(), {
+      timeout: stabilizationWindowMs,
+    })
+    .toBe(countBefore);
 
-  webWorld.progressEventCountAtPause = stableProgressCount;
+  webWorld.progressEventCountAtPause = countBefore;
 
   await expect(async () => {
     const progressCountAfter = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
-    expect(progressCountAfter).toBe(stableProgressCount);
+    expect(progressCountAfter).toBe(countBefore);
   }).toPass({ timeout: stabilizationWindowMs });
 });
 

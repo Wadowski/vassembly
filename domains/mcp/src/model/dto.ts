@@ -12,6 +12,7 @@ export interface McpListItemResponse {
   configurationStatus?: string | null;
   configSchema?: McpConfigSchema | null;
   agentUsageCount?: number;
+  specializationIds?: string[];
   createdAt: string;
   updatedAt: string;
 }

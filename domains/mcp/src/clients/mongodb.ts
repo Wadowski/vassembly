@@ -18,4 +18,5 @@ export const mongodbIndexes = async (): Promise<void> => {
   await collection.createIndex({ name: 1 }, { unique: true });
   await collection.createIndex({ tags: 1 });
   await collection.createIndex({ name: 'text', description: 'text' });
+  await collection.createIndex({ specializationIds: 1 }, { sparse: true });
 };

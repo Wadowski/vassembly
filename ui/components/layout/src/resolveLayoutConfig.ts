@@ -27,9 +27,11 @@ export function resolveLayoutConfig(
   };
   const isAuthenticated =
     params.drawer?.isAuthenticated ?? base.drawer.isAuthenticated;
+  const userRole = params.drawer?.userRole ?? base.drawer.userRole;
+  const isAdmin = userRole?.trim().toLowerCase() === 'admin';
   const drawerSections =
     params.variant === 'main'
-      ? buildMainDrawerSections({ isAuthenticated })
+      ? buildMainDrawerSections({ isAuthenticated, isAdmin })
       : base.drawer.sections;
   const drawer: LayoutDrawerPreset = {
     ...base.drawer,

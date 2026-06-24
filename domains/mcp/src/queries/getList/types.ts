@@ -5,6 +5,7 @@ export interface GetListParams {
   size?: number;
   search?: string;
   tags?: string[];
+  specializationId?: string;
 }
 
 export interface GetListResult {
@@ -17,4 +18,5 @@ export interface GetListResult {
 export interface BuildListFilterParams {
   search?: string;
   tags?: string[];
+  specializationId?: string;
 }

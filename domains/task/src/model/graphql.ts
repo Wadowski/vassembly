@@ -13,6 +13,11 @@ export const gqlTaskSchema = (builder: Builder): void => {
       agentAssignedId: t.exposeString('agentAssignedId', { nullable: true }),
       title: t.exposeString('title', { nullable: true }),
       category: t.exposeString('category', { nullable: true }),
+      specializationIds: t.field({
+        type: graphQLListType('String'),
+        nullable: true,
+        resolve: (parent: { specializationIds?: string[] | null }) => parent.specializationIds ?? null,
+      }),
       llmResponse: t.exposeString('llmResponse', { nullable: true }),
       errorMessage: t.exposeString('errorMessage', { nullable: true }),
       errorCode: t.exposeString('errorCode', { nullable: true }),

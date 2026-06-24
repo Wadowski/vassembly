@@ -21,6 +21,7 @@
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/domain-specialization": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
     "@vassembly/domain-task-progress": "workspace:*",
     "@vassembly/domain-task-questions": "workspace:*",

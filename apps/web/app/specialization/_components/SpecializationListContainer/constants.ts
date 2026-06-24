@@ -1,0 +1,5 @@
+export const SPECIALIZATION_LIST_PAGE_SIZE = 20;
+
+export const SEARCH_DEBOUNCE_MS = 300;
+
+export const DESCRIPTION_PREVIEW_MAX_LENGTH = 80;

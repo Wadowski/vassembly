@@ -11,6 +11,7 @@ export interface TaskResponse {
   agentAssignedId: string | null;
   title: string | null;
   category: INTENT_CATEGORY_SLUG | null;
+  specializationIds: string[] | null;
   llmResponse: string | null;
   errorMessage: string | null;
   errorCode: string | null;

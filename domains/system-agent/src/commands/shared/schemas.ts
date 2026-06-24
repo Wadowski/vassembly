@@ -43,6 +43,7 @@ export const CREATE_SYSTEM_AGENT_SCHEMA = z.object({
   createdByAdminId: z.string().min(1),
   updatedByAdminId: z.string().min(1).optional(),
   assignedToolIds: assignedToolIdsCreateSchema,
+  specializationId: z.string().min(1).max(100).nullable().optional(),
 });
 
 export const UPDATE_SYSTEM_AGENT_DATA_SCHEMA = z

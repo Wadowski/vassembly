@@ -4,7 +4,7 @@ import { createBdd } from 'playwright-bdd';
 
 import { bddTest, seedUser } from '@vassembly/e2e';
 
-import { E2E_USER_PASSWORD, signInSeededUser } from '../utils/auth';
+import { E2E_USER_PASSWORD, clearBrowserSession, signInSeededUser } from '../utils/auth';
 import { promoteUserToAdmin } from '../utils/promoteUserToAdmin';
 
 const { Given, When } = createBdd(bddTest);
@@ -19,6 +19,10 @@ Given('I am logged in', async ({ page, seed, world }) => {
 
   if (!page) {
     return;
+  }
+
+  if (world.auth) {
+    await clearBrowserSession({ page });
   }
 
   await signInSeededUser({ page, email: user.email });

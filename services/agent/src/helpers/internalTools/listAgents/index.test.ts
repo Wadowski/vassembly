@@ -1,41 +1,46 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { AgentCategory, AgentStatus } from '@vassembly/domain-agent';
-
-const { mockGetListForUser, mockGetAdminList } = vi.hoisted(() => ({
+const {
+  mockGetListForUser,
+  mockGetAdminList,
+  mockGetBySpecializationId,
+  AgentCategory,
+  AgentStatus,
+} = vi.hoisted(() => ({
   mockGetListForUser: vi.fn(),
   mockGetAdminList: vi.fn(),
+  mockGetBySpecializationId: vi.fn(),
+  AgentCategory: {
+    Utility: 'utility',
+  },
+  AgentStatus: {
+    Active: 'active',
+  },
 }));
 
-vi.mock('@vassembly/domain-agent', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vassembly/domain-agent')>();
-
-  return {
-    ...actual,
-    default: {
-      commands: actual.default.commands,
-      queries: {
-        ...actual.default.queries,
-        getListForUser: mockGetListForUser,
-      },
+vi.mock('@vassembly/domain-agent', () => ({
+  AgentCategory,
+  AgentStatus,
+  default: {
+    commands: {},
+    queries: {
+      getListForUser: mockGetListForUser,
     },
-  };
-});
+  },
+}));
 
-vi.mock('@vassembly/domain-system-agent', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vassembly/domain-system-agent')>();
-
-  return {
-    ...actual,
-    default: {
-      commands: actual.default.commands,
-      queries: {
-        ...actual.default.queries,
-        getAdminList: mockGetAdminList,
-      },
+vi.mock('@vassembly/domain-system-agent', () => ({
+  AgentStatus: {
+    Active: 'active',
+  },
+  default: {
+    commands: {},
+    queries: {
+      getAdminList: mockGetAdminList,
+      getBySpecializationId: mockGetBySpecializationId,
     },
-  };
-});
+  },
+}));
 
 import { listAgents } from './index';
 
@@ -82,6 +87,7 @@ describe('listAgents internal tool handler', () => {
       page: 0,
       size: 50,
     });
+    mockGetBySpecializationId.mockResolvedValue({ items: [] });
   });
 
   it('should return only active personal agents when caller is personal', async () => {
@@ -171,5 +177,118 @@ describe('listAgents internal tool handler', () => {
 
     expect(agents.some((agent) => agent.name === 'Attacker Agent')).toBe(false);
     expect(agents.some((agent) => agent.name === 'Trusted Agent')).toBe(true);
+  });
+
+  it('should return specialization agents from context specializationIds for system callers', async () => {
+    mockGetBySpecializationId.mockImplementation(async ({ specializationId }: { specializationId: string }) => {
+      if (specializationId === 'spec-legal') {
+        return {
+          items: [
+            {
+              id: 'agent-researcher',
+              name: 'Legal researcher',
+              description: 'Legal research',
+            },
+            {
+              id: 'agent-worker',
+              name: 'Legal worker',
+              description: 'Legal execution',
+            },
+          ],
+        };
+      }
+
+      return {
+        items: [
+          {
+            id: 'agent-finance-researcher',
+            name: 'Finance researcher',
+            description: 'Finance research',
+          },
+        ],
+      };
+    });
+
+    const result = await listAgents({
+      args: {},
+      context: {
+        ...BASE_CONTEXT,
+        callerAgentType: 'system',
+        specializationIds: ['spec-legal', 'spec-finance'],
+      },
+    });
+
+    const agents = JSON.parse(result) as Array<{ name: string; agentType: string }>;
+
+    expect(agents).toEqual([
+      {
+        name: 'Finance researcher',
+        description: 'Finance research',
+        category: null,
+        agentType: 'system',
+      },
+      {
+        name: 'Legal researcher',
+        description: 'Legal research',
+        category: null,
+        agentType: 'system',
+      },
+      {
+        name: 'Legal worker',
+        description: 'Legal execution',
+        category: null,
+        agentType: 'system',
+      },
+    ]);
+    expect(mockGetAdminList).not.toHaveBeenCalled();
+    expect(mockGetListForUser).not.toHaveBeenCalled();
+  });
+
+  it('should filter specialization agents by role when role arg is provided', async () => {
+    mockGetBySpecializationId.mockResolvedValue({
+      items: [
+        { id: 'agent-researcher', name: 'Legal researcher', description: 'Research' },
+        { id: 'agent-worker', name: 'Legal worker', description: 'Work' },
+        { id: 'agent-validator', name: 'Legal validator', description: 'Validate' },
+      ],
+    });
+
+    const result = await listAgents({
+      args: { role: 'researcher' },
+      context: {
+        ...BASE_CONTEXT,
+        callerAgentType: 'system',
+        specializationIds: ['spec-legal'],
+      },
+    });
+
+    const agents = JSON.parse(result) as Array<{ name: string }>;
+
+    expect(agents).toEqual([
+      {
+        name: 'Legal researcher',
+        description: 'Research',
+        category: null,
+        agentType: 'system',
+      },
+    ]);
+  });
+
+  it('should prefer specializationIds from args over context', async () => {
+    mockGetBySpecializationId.mockResolvedValue({
+      items: [{ id: 'agent-1', name: 'Finance researcher', description: 'Finance' }],
+    });
+
+    await listAgents({
+      args: { specializationIds: ['spec-finance'] },
+      context: {
+        ...BASE_CONTEXT,
+        callerAgentType: 'system',
+        specializationIds: ['spec-legal'],
+      },
+    });
+
+    expect(mockGetBySpecializationId).toHaveBeenCalledWith({ specializationId: 'spec-finance' });
+    expect(mockGetBySpecializationId).not.toHaveBeenCalledWith({ specializationId: 'spec-legal' });
   });
 });

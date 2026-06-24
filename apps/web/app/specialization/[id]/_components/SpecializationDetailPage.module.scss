@@ -1,0 +1,27 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  padding: $spacing-6;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-6;
+}
+
+.errorBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-3;
+}
+
+@media #{$media-mobile-only} {
+  .panels {
+    grid-template-columns: 1fr;
+  }
+}

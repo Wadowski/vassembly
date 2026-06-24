@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const AUTH_PAGES = ['/login', '/register', '/forgot-password', '/reset-password'];
-const AUTH_TOKEN_KEY = 'authToken';
+const AUTH_TOKEN_KEY = 'auth-token';
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

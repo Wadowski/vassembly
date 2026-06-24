@@ -6,4 +6,7 @@ export enum SYSTEM_AGENT_NAME {
   ScheduledTaskWorker = 'Scheduled task worker',
   RoutineTaskWorker = 'Routine task worker',
   TaskTitleGenerator = 'Task title generator',
+  SpecializationClassifier = 'Specialization classifier',
+  McpSpecializationClassifier = 'MCP specialization classifier',
+  SpecializationAgentDescriptionGenerator = 'Specialization agent description generator',
 }

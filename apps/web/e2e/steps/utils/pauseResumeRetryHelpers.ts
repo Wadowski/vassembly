@@ -5,6 +5,9 @@ import { getE2eEnvironment, requireWorkspaceModule } from '@vassembly/e2e';
 import { ensureAssistantSystemAgent, ensureTaskDomainIndexes } from './seedTask';
 import { seedConnectedAiCredentialForUser } from './seedConnectedAiCredential';
 import { seedTaskForUser } from './seedTaskData';
+import {
+  navigateToTaskDetailPage as openTaskDetailPage,
+} from './taskDetailPage';
 import type { WebBddWorld } from './types';
 
 let taskProgressDomainInitPromise: Promise<void> | null = null;
@@ -200,8 +203,7 @@ export const navigateToTaskDetailPage = async ({
     throw new Error('taskId is required to open the task detail page');
   }
 
-  await page.goto(`/tasks/${world.taskId}`);
-  await page.waitForLoadState('domcontentloaded');
+  await openTaskDetailPage({ page, taskId: world.taskId });
 };
 
 export const getTaskActionButton = ({
@@ -262,7 +264,17 @@ export const waitForTaskStatusBadge = async ({
 };
 
 export const waitForTaskGraphqlPoll = async ({ page }: { page: Page }): Promise<void> => {
-  await page.waitForTimeout(TASK_DETAIL_POLL_INTERVAL_MS + 500);
+  await page.waitForResponse(
+    (response) => {
+      if (!response.url().includes('/graphql')) {
+        return false;
+      }
+
+      const postData = response.request().postData();
+      return Boolean(postData?.includes('task('));
+    },
+    { timeout: TASK_DETAIL_POLL_INTERVAL_MS + 2_000 },
+  );
 };
 
 export const countGraphqlTaskPollRequests = async ({

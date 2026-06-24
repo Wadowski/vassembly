@@ -12,10 +12,11 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockFindToArray, mockCreateMany, mockReadSystemAgentSeedFile } = vi.hoisted(() => ({
+const { mockFindToArray, mockCreateMany, mockReadSystemAgentSeedFile, mockUpdateOne } = vi.hoisted(() => ({
   mockFindToArray: vi.fn(),
   mockCreateMany: vi.fn(),
   mockReadSystemAgentSeedFile: vi.fn(),
+  mockUpdateOne: vi.fn(),
 }));
 
 vi.mock('../clients', () => ({
@@ -26,6 +27,7 @@ vi.mock('../clients', () => ({
           toArray: mockFindToArray,
         })),
       })),
+      updateOne: mockUpdateOne,
     },
     createMany: mockCreateMany,
   },
@@ -45,6 +47,7 @@ describe('loadSystemAgents seed loader', () => {
     mockReadSystemAgentSeedFile.mockResolvedValue(VALID_SEED_JSON);
     mockFindToArray.mockResolvedValue([]);
     mockCreateMany.mockResolvedValue({ insertedCount: VALID_SEED_ENTRIES.length });
+    mockUpdateOne.mockResolvedValue({ modifiedCount: 1 });
   });
 
   describe('JSON parsing', () => {
@@ -87,17 +90,47 @@ describe('loadSystemAgents seed loader', () => {
 
       expect(result.insertedCount).toBe(2);
       expect(result.skippedCount).toBe(0);
+      expect(result.updatedCount).toBe(0);
     });
 
-    it('should skip existing agents on second load', async () => {
+    it('should sync existing seed agents when seed definition changes', async () => {
+      mockFindToArray.mockResolvedValue(
+        VALID_SEED_ENTRIES.map((entry) => ({
+          _id: `${entry.name}-id`,
+          name: entry.name,
+          rule: entry.name === 'Assistant' ? 'Old rule' : entry.rule,
+          description: entry.description,
+          category: entry.category,
+          assignedToolIds: entry.assignedToolIds,
+        })),
+      );
+
+      const result = await loadSystemAgents();
+
+      expect(result.insertedCount).toBe(0);
+      expect(result.updatedCount).toBe(1);
+      expect(mockUpdateOne).toHaveBeenCalledTimes(1);
+    });
+
+    it('should skip existing agents on second load when seed is unchanged', async () => {
       mockFindToArray
         .mockResolvedValueOnce([])
-        .mockResolvedValueOnce(VALID_SEED_ENTRIES.map((entry) => ({ name: entry.name })));
+        .mockResolvedValueOnce(
+          VALID_SEED_ENTRIES.map((entry) => ({
+            _id: `${entry.name}-id`,
+            name: entry.name,
+            rule: entry.rule,
+            description: entry.description,
+            category: entry.category,
+            assignedToolIds: entry.assignedToolIds,
+          })),
+        );
 
       await loadSystemAgents();
       const secondResult = await loadSystemAgents();
 
       expect(secondResult.insertedCount).toBe(0);
+      expect(secondResult.updatedCount).toBe(0);
       expect(secondResult.skippedCount).toBe(VALID_SEED_ENTRIES.length);
     });
   });
@@ -110,6 +143,7 @@ describe('loadSystemAgents seed loader', () => {
       await expect(loadSystemAgents()).resolves.toEqual({
         insertedCount: 0,
         skippedCount: 0,
+        updatedCount: 0,
       });
       expect(consoleErrorSpy).toHaveBeenCalled();
 
@@ -122,6 +156,7 @@ describe('loadSystemAgents seed loader', () => {
       await expect(loadSystemAgents()).resolves.toEqual({
         insertedCount: 0,
         skippedCount: 0,
+        updatedCount: 0,
       });
     });
   });

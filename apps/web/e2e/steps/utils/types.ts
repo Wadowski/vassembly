@@ -3,6 +3,8 @@ import type { BddWorld, SeedContext } from '@vassembly/e2e';
 export interface WebBddWorld extends BddWorld {
   agentId?: string;
   systemAgentId?: string;
+  specializationId?: string;
+  specializationIds?: Record<string, string>;
   integrationCredentialId?: string;
   mcpId?: string;
   taskId?: string;
@@ -12,6 +14,7 @@ export interface WebBddWorld extends BddWorld {
   pollingRequestCount?: number;
   secondPage?: import('@playwright/test').Page;
   pauseApiRequestCount?: number;
+  wasPauseButtonDisabledAfterFirstClick?: boolean;
   progressEventCountAtPause?: number;
   lastProgressEventTimestamp?: string | null;
   lastProgressEventId?: string | null;

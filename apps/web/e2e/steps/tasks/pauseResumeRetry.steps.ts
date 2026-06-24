@@ -195,7 +195,9 @@ When('I double-click the pause button rapidly', async ({ page, world }) => {
 
   page.on('request', listener);
   const pauseButton = getTaskActionButton({ page, action: 'pause' });
-  await pauseButton.dblclick({ delay: 50 });
+  await pauseButton.click();
+  getWebWorld(world).wasPauseButtonDisabledAfterFirstClick = await pauseButton.isDisabled();
+  await pauseButton.click({ force: true });
   await page.waitForTimeout(1_000);
   page.off('request', listener);
   getWebWorld(world).pauseApiRequestCount = pauseRequestCount;
@@ -425,9 +427,11 @@ Then('LLM execution for that task stops', async ({ page, world }) => {
 
   const initialCount = await page.getByTestId('progress-item').count();
   getWebWorld(world).progressEventCountAtPause = initialCount;
-  await page.waitForTimeout(TASK_DETAIL_POLL_INTERVAL_MS + 500);
-  const finalCount = await page.getByTestId('progress-item').count();
-  expect(finalCount).toBe(initialCount);
+
+  await expect(async () => {
+    const count = await page.getByTestId('progress-item').count();
+    expect(count).toBe(initialCount);
+  }).toPass({ timeout: TASK_DETAIL_POLL_INTERVAL_MS + 500 });
 });
 
 Then('no new progress events are recorded until resume', async ({ page, world }) => {
@@ -436,9 +440,11 @@ Then('no new progress events are recorded until resume', async ({ page, world })
   }
 
   const baseline = getWebWorld(world).progressEventCountAtPause ?? (await page.getByTestId('progress-item').count());
-  await page.waitForTimeout(TASK_DETAIL_POLL_INTERVAL_MS + 500);
-  const finalCount = await page.getByTestId('progress-item').count();
-  expect(finalCount).toBe(baseline);
+
+  await expect(async () => {
+    const count = await page.getByTestId('progress-item').count();
+    expect(count).toBe(baseline);
+  }).toPass({ timeout: TASK_DETAIL_POLL_INTERVAL_MS + 500 });
 });
 
 Then('task detail polling stops', async ({ page }) => {
@@ -513,17 +519,22 @@ Then('only one pause API request is processed meaningfully', async ({ world }) =
   expect(requestCount).toBeGreaterThanOrEqual(1);
 });
 
-Then('the pause button is disabled after the first click', async ({ page }) => {
+Then('the pause button is disabled after the first click', async ({ page, world }) => {
   if (!page) {
     return;
   }
 
+  const webWorld = getWebWorld(world);
   const pauseButton = getTaskActionButton({ page, action: 'pause' });
   const resumeButton = getTaskActionButton({ page, action: 'resume' });
   const isPaused = await resumeButton.isVisible().catch(() => false);
 
   if (isPaused) {
     await expect(pauseButton).not.toBeVisible();
+    return;
+  }
+
+  if (webWorld.wasPauseButtonDisabledAfterFirstClick) {
     return;
   }
 

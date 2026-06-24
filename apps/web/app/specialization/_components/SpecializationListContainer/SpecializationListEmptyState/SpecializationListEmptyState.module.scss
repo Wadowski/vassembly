@@ -1,0 +1,18 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-3;
+  padding: $spacing-8 $spacing-4;
+  text-align: center;
+  color: $color-text-secondary;
+}
+
+.icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: $color-text-secondary;
+}

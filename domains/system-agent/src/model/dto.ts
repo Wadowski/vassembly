@@ -13,6 +13,8 @@ export interface SystemAgentAdminResponse {
   updatedAt: string;
   removedAt: string | null;
   assignedToolIds: string[];
+
+  specializationId?: string | null;
 }
 
 export interface SystemAgentPreferenceResponse {

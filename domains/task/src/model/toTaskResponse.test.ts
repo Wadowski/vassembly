@@ -54,6 +54,22 @@ describe('toTaskResponse', () => {
     expect(response.category).toBeNull();
   });
 
+  it('should include optional nullable specializationIds on TaskResponse', () => {
+    const response: TaskResponse = toTaskResponse({
+      task: buildTask({ specializationIds: ['spec-1', 'spec-2'] }),
+    });
+
+    expect(response.specializationIds).toEqual(['spec-1', 'spec-2']);
+  });
+
+  it('should map specializationIds null to null in TaskResponse', () => {
+    const response = toTaskResponse({
+      task: buildTask({ specializationIds: null }),
+    });
+
+    expect(response.specializationIds).toBeNull();
+  });
+
   it('should map failed task status to failed in TaskResponse', () => {
     const response = toTaskResponse({
       task: buildTask({ status: TaskStatus.Failed }),
