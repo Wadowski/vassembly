@@ -23,5 +23,12 @@ export const resolveWorldPath = ({ path, world }: ResolveWorldPathParams): strin
     resolved = resolved.replace(/{taskId}/g, taskId);
   }
 
+  if (resolved.includes('{specializationId}')) {
+    if (!world.specializationId) {
+      throw new Error('specializationId is required but not set on world.');
+    }
+    resolved = resolved.replace(/{specializationId}/g, world.specializationId);
+  }
+
   return resolved;
 };

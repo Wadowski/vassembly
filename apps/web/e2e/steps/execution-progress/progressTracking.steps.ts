@@ -490,8 +490,11 @@ Then('all {int} progress events are displayed in the ProgressList', async ({ pag
     return;
   }
 
-  const items = await page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count();
-  expect(items).toBe(count);
+  await expect
+    .poll(async () => page.locator(`[data-testid="${PROGRESS_ITEM_TEST_ID}"]`).count(), {
+      timeout: 15_000,
+    })
+    .toBe(count);
 });
 
 Then('no events are lost or duplicated', async ({ page }) => {

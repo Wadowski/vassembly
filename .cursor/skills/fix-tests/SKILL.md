@@ -1,11 +1,13 @@
 ---
 name: fix-tests
-description: Runs monorepo quality checks, applies fixes for failures, and re-runs checks to verify. Use when fixing failing build, lint, types, unit tests, or e2e tests.
+description: Runs monorepo quality checks, applies fixes for failures, and re-runs the full check suite to verify. Use when fixing failing build, lint, types, unit tests, or e2e tests.
 ---
 
 # Fix Tests
 
-one attempt: **run checks → fix → verify**. Retries are handled by the parent agent, not this skill.
+one attempt: **run checks → fix → verify (full suite)**. Retries are handled by the parent agent, not this skill.
+
+Initial runs may use a narrowed scope for faster diagnosis. **Final verification always runs every check** (`build`, `lint`, `types`, `unit`, `e2e`) across the whole monorepo — fixes in one area can regress others.
 
 ## Environment
 
@@ -23,7 +25,7 @@ scope: all | packages: <pkg1,pkg2> | test: <pkg> <path>
 <error output from a prior run, if available>
 ```
 
-Parse `scope` into script flags:
+Parse `scope` into script flags (initial run only — step 5 always uses full monorepo, no flags):
 
 | Value | Flags |
 |-------|-------|
@@ -93,13 +95,15 @@ Run `nvm use` from repo root.
 
 ### 1. Run initial checks
 
+Scope flags from input apply **only here** — not to final verification (step 5).
+
 If error output is **not** provided in input, run the failing checks via `run-check.sh` / `run-checks.sh` with parsed scope flags.
 
 When multiple checks include `e2e`, use `run-checks.sh` only — it runs non-e2e checks first, then `e2e` alone. Never run `e2e` in the same shell parallel to other checks.
 
 If error output **is** provided, use it as initial evidence (skip re-run).
 
-If all checks are already green, report PASS and stop.
+If all initially requested checks are already green, continue to step 5 for full-suite verification before reporting PASS.
 
 ### 2. Collect evidence
 
@@ -120,22 +124,34 @@ Cluster by root cause (same import, type pattern, lint rule, broken helper), not
 
 Follow workspace rules. Never use `any`, `@ts-ignore`, or `eslint-disable` unless unavoidable — document why.
 
-### 5. Verify
+### 5. Verify (full suite)
 
-Re-run the failing checks via `run-check.sh` / `run-checks.sh` with the same scope flags. E2e server start/stop is handled by the scripts.
+**Always** run every check with **no** scope flags — regardless of input `failing checks` or `scope`:
+
+```bash
+.cursor/skills/fix-tests/scripts/run-checks.sh build,lint,types,unit,e2e
+```
+
+Do not pass `--filter` or `--test`. E2e server start/stop is handled by the scripts.
+
+A fix scoped to one package or test can break build, lint, types, unit, or e2e elsewhere. Narrow scope is for diagnosis only; this step is the regression gate.
 
 ### 6. Report result
 
-**PASS** — all failing checks are green:
+**PASS** — full suite from step 5 is green:
 
 ```text
-✅ Checks passing.
+✅ All checks passing.
 
-Verified:
-- <check>: ✅
+Verified (full suite):
+- build: ✅
+- lint: ✅
+- types: ✅
+- unit: ✅
+- e2e: ✅
 ```
 
-**FAIL** — one or more checks still failing:
+**FAIL** — one or more checks from the full suite still failing:
 
 ```text
 ❌ Checks still failing.
@@ -158,8 +174,10 @@ Include full verification output so the parent agent can spawn the next attempt.
 - ✅ Run `e2e` only via scripts; never alongside other checks (use `run-checks.sh` for mixed runs)
 - ✅ Read `apps/web/test-results/` for e2e failures
 - ✅ Group before fixing
+- ✅ Final verification always runs `build,lint,types,unit,e2e` with no scope flags
 - ✅ One attempt only — do not retry
 - ❌ No ad-hoc check commands
 - ❌ No parallel or interleaved e2e runs with build, lint, types, or unit
 - ❌ No `any` / `@ts-ignore` / `eslint-disable` shortcuts
+- ❌ No narrowed scope on final verification — always full suite
 - ❌ No skipping checks to claim false green

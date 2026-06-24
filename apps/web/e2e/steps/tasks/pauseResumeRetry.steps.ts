@@ -195,7 +195,9 @@ When('I double-click the pause button rapidly', async ({ page, world }) => {
 
   page.on('request', listener);
   const pauseButton = getTaskActionButton({ page, action: 'pause' });
-  await pauseButton.dblclick({ delay: 50 });
+  await pauseButton.click();
+  getWebWorld(world).wasPauseButtonDisabledAfterFirstClick = await pauseButton.isDisabled();
+  await pauseButton.click({ force: true });
   await page.waitForTimeout(1_000);
   page.off('request', listener);
   getWebWorld(world).pauseApiRequestCount = pauseRequestCount;
@@ -517,17 +519,22 @@ Then('only one pause API request is processed meaningfully', async ({ world }) =
   expect(requestCount).toBeGreaterThanOrEqual(1);
 });
 
-Then('the pause button is disabled after the first click', async ({ page }) => {
+Then('the pause button is disabled after the first click', async ({ page, world }) => {
   if (!page) {
     return;
   }
 
+  const webWorld = getWebWorld(world);
   const pauseButton = getTaskActionButton({ page, action: 'pause' });
   const resumeButton = getTaskActionButton({ page, action: 'resume' });
   const isPaused = await resumeButton.isVisible().catch(() => false);
 
   if (isPaused) {
     await expect(pauseButton).not.toBeVisible();
+    return;
+  }
+
+  if (webWorld.wasPauseButtonDisabledAfterFirstClick) {
     return;
   }
 

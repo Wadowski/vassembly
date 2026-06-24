@@ -15,6 +15,7 @@ export interface BddWorld {
   auth?: AuthContext | null;
   resetToken?: string;
   agentId?: string;
+  specializationId?: string;
   taskId?: string;
   storedFields?: Record<string, string>;
   diagnostics?: DiagnosticsState;

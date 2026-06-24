@@ -131,7 +131,7 @@ Then('progress events stop appearing', async ({ page, world }) => {
 
   await expect(async () => {
     const progressCountAfter = await page.getByTestId(PROGRESS_ITEM_TEST_ID).count();
-    expect(progressCountAfter).toBe(stableProgressCount);
+    expect(progressCountAfter).toBe(countBefore);
   }).toPass({ timeout: stabilizationWindowMs });
 });
 

@@ -48,6 +48,16 @@ Then('I see specialization list pagination controls', async ({ page }) => {
   });
 });
 
+Then('I see the linked agents section', async ({ page }) => {
+  if (!page) {
+    return;
+  }
+
+  await expect(page.getByRole('region', { name: 'Linked Agents' })).toBeVisible({
+    timeout: DETAIL_READY_TIMEOUT_MS,
+  });
+});
+
 Then('I see the specialization detail page', async ({ page }) => {
   if (!page) {
     return;
@@ -77,6 +87,15 @@ Then('I see linked agent {string}', async ({ page }, agentName: string) => {
   await expect(agentsPanel.getByText(agentName, { exact: true })).toBeVisible({
     timeout: DETAIL_READY_TIMEOUT_MS,
   });
+});
+
+Then('I do not see linked agent {string}', async ({ page }, agentName: string) => {
+  if (!page) {
+    return;
+  }
+
+  const agentsPanel = page.getByRole('region', { name: 'Linked Agents' });
+  await expect(agentsPanel.getByText(agentName, { exact: true })).not.toBeVisible();
 });
 
 Then('I see MCP {string} mapped to the specialization', async ({ page }, mcpName: string) => {

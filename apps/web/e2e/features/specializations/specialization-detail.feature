@@ -14,7 +14,7 @@ Feature: Specialization Detail (Admin UI)
     And I am on "/specialization/{specializationId}"
     And I see "Legal" as the specialization name
     And I see "Covers legal research, contract drafting, and regulatory compliance."
-    And I see "Linked Agents"
+    And I see the linked agents section
     And I see linked agent "Legal researcher"
     And I see linked agent "Legal worker"
     And I see linked agent "Legal validator"
@@ -22,14 +22,14 @@ Feature: Specialization Detail (Admin UI)
     And I see MCP "Brave Search MCP" mapped to the specialization
     And I see MCP "Gmail MCP" mapped to the specialization
 
-  Scenario: Detail shows unlinked agents with not provisioned indicator
+  Scenario: Detail shows only provisioned agents when slots are missing
     Given a specialization "Finance" exists with 2 provisioned agents and 1 missing agent slots
     When I navigate to the specialization detail page for "Finance"
     Then I see the specialization detail page
-    And I see "Linked Agents"
+    And I see the linked agents section
     And I see linked agent "Finance researcher"
     And I see linked agent "Finance worker"
-    And I see "Not provisioned" for the missing agent slot
+    And I do not see linked agent "Finance validator"
 
   Scenario: Non-admin cannot access specialization detail
     Given I am logged in

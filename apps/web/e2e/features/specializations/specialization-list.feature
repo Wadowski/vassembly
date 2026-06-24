@@ -17,6 +17,7 @@ Feature: Specialization List (Admin UI)
     And I do not see specialization "engineering" in the list
 
   Scenario: Empty catalog shows empty state message
+    Given the specialization catalog is empty
     When I navigate to "/specialization"
     Then I see the specializations list page
     And I see "No specializations have been created yet. They are generated automatically as users submit tasks."

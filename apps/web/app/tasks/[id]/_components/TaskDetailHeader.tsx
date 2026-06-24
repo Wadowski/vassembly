@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
 import { CommonError, ConflictError } from '@vassembly/errors';
@@ -62,6 +63,13 @@ export const TaskDetailHeader = ({
   const isAnyActionLoading = isPausing || isResuming || isRetrying || isPauseLocked;
   const isFailedOnly = task.status === TaskStatus.Failed;
 
+  useEffect(() => {
+    if (task.status !== TaskStatus.InProgress) {
+      isPauseLockedRef.current = false;
+      setIsPauseLocked(false);
+    }
+  }, [task.status]);
+
   const handleBackClick = useCallback((): void => {
     router.push('/');
   }, [router]);
@@ -72,13 +80,13 @@ export const TaskDetailHeader = ({
     }
 
     isPauseLockedRef.current = true;
-    setIsPauseLocked(true);
+    flushSync(() => {
+      setIsPauseLocked(true);
+    });
 
     try {
       await pauseTask({ id: task.id });
       await onTaskUpdated();
-      isPauseLockedRef.current = false;
-      setIsPauseLocked(false);
     } catch (error: unknown) {
       isPauseLockedRef.current = false;
       setIsPauseLocked(false);

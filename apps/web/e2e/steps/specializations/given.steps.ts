@@ -97,3 +97,32 @@ Given(
 Given('{int} specializations exist for list pagination', async ({ seed }, count: number) => {
   await seedManySpecializations({ context: seed, count });
 });
+
+Given('the specialization catalog is empty', async ({ page }) => {
+  if (!page) {
+    return;
+  }
+
+  await page.route('**/graphql**', async (route) => {
+    const postData = route.request().postData();
+
+    if (postData?.includes('ListSpecializations')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            specializations: {
+              items: [],
+              total: 0,
+              page: 0,
+              size: 20,
+            },
+          },
+        }),
+      });
+    }
+
+    return route.continue();
+  });
+});

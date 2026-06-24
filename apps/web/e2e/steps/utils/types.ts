@@ -14,6 +14,7 @@ export interface WebBddWorld extends BddWorld {
   pollingRequestCount?: number;
   secondPage?: import('@playwright/test').Page;
   pauseApiRequestCount?: number;
+  wasPauseButtonDisabledAfterFirstClick?: boolean;
   progressEventCountAtPause?: number;
   lastProgressEventTimestamp?: string | null;
   lastProgressEventId?: string | null;

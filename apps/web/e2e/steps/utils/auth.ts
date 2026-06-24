@@ -13,6 +13,20 @@ const hasStoredAuthTokens = (): boolean => {
   return authToken !== null && refreshToken !== null;
 };
 
+export const clearBrowserSession = async ({
+  page,
+}: {
+  page: NonNullable<import('@playwright/test').Page>;
+}): Promise<void> => {
+  await page.goto('/login');
+  await page.context().clearCookies();
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+};
+
 export const signInSeededUser = async ({
   page,
   email,
