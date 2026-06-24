@@ -4,6 +4,10 @@ import { createBdd } from 'playwright-bdd';
 import { bddTest } from '@vassembly/e2e';
 
 import type { WebBddWorld } from '../utils/types';
+import {
+  countGraphqlTaskPollRequests,
+  TASK_DETAIL_POLL_INTERVAL_MS,
+} from '../utils/pauseResumeRetryHelpers';
 
 const { Then } = createBdd(bddTest);
 
@@ -45,7 +49,12 @@ Then('the task detail polls for updates every 3 seconds', async ({ page }) => {
     return;
   }
 
-  await page.waitForTimeout(3_500);
+  const pollCount = await countGraphqlTaskPollRequests({
+    page,
+    durationMs: TASK_DETAIL_POLL_INTERVAL_MS + 500,
+  });
+
+  expect(pollCount).toBeGreaterThanOrEqual(1);
   await expect(page.getByTestId('task-detail-status')).toBeVisible();
 });
 

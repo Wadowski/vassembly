@@ -7,6 +7,14 @@ description: Runs monorepo quality checks, applies fixes for failures, and re-ru
 
 one attempt: **run checks → fix → verify**. Retries are handled by the parent agent, not this skill.
 
+## Environment
+
+From repo root, as the prerequisities, before any script or `pnpm` command:
+
+```bash
+nvm use
+```
+
 ## Input contract
 
 ```text
@@ -47,7 +55,11 @@ Run from repo root. Paths relative to `.cursor/skills/fix-tests/scripts/`.
 | `lint` | `pnpm turbo run lint` |
 | `types` | `pnpm turbo run check-types` |
 | `unit` | `pnpm turbo run test` |
-| `e2e` | `pnpm test:e2e:web` (auto-starts dev server) |
+| `e2e` | `pnpm test:e2e:web` (starts dev server before run, stops after) |
+
+`run-check.sh e2e` always stops any prior skill-started server, starts a fresh one, runs tests, then stops the server again.
+
+`run-checks.sh` runs all non-e2e checks first, then `e2e` last and alone — e2e never runs alongside other checks.
 
 Examples:
 
@@ -63,7 +75,7 @@ Examples:
 
 ### e2e-dev-server.sh
 
-Playwright at `apps/web/playwright.config.js` does **not** start a web server. `run-check.sh e2e` calls `ensure` automatically.
+Playwright at `apps/web/playwright.config.js` does **not** start a web server. `run-check.sh e2e` manages the lifecycle automatically: stop → start → run tests → stop.
 
 ```bash
 .cursor/skills/fix-tests/scripts/e2e-dev-server.sh status
@@ -71,13 +83,19 @@ Playwright at `apps/web/playwright.config.js` does **not** start a web server. `
 .cursor/skills/fix-tests/scripts/e2e-dev-server.sh stop
 ```
 
-Call `stop` at the end of this invocation if e2e checks ran and scripts started the server.
+Do not start or stop the e2e server manually when using `run-check.sh` / `run-checks.sh`.
 
 ## Workflow (single attempt)
+
+### 0. Use correct Node version
+
+Run `nvm use` from repo root.
 
 ### 1. Run initial checks
 
 If error output is **not** provided in input, run the failing checks via `run-check.sh` / `run-checks.sh` with parsed scope flags.
+
+When multiple checks include `e2e`, use `run-checks.sh` only — it runs non-e2e checks first, then `e2e` alone. Never run `e2e` in the same shell parallel to other checks.
 
 If error output **is** provided, use it as initial evidence (skip re-run).
 
@@ -104,9 +122,7 @@ Follow workspace rules. Never use `any`, `@ts-ignore`, or `eslint-disable` unles
 
 ### 5. Verify
 
-Re-run the failing checks via `run-check.sh` / `run-checks.sh` with the same scope flags.
-
-If e2e ran, call `e2e-dev-server.sh stop` when done.
+Re-run the failing checks via `run-check.sh` / `run-checks.sh` with the same scope flags. E2e server start/stop is handled by the scripts.
 
 ### 6. Report result
 
@@ -137,10 +153,13 @@ Include full verification output so the parent agent can spawn the next attempt.
 
 ## Constraints
 
+- ✅ Run `nvm use` before any check run
 - ✅ Use scripts for every check run
+- ✅ Run `e2e` only via scripts; never alongside other checks (use `run-checks.sh` for mixed runs)
 - ✅ Read `apps/web/test-results/` for e2e failures
 - ✅ Group before fixing
 - ✅ One attempt only — do not retry
 - ❌ No ad-hoc check commands
+- ❌ No parallel or interleaved e2e runs with build, lint, types, or unit
 - ❌ No `any` / `@ts-ignore` / `eslint-disable` shortcuts
 - ❌ No skipping checks to claim false green

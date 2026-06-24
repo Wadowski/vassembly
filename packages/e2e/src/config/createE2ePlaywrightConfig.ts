@@ -8,12 +8,29 @@ import { getE2eEnvironment } from './environment';
 import type { E2eConfigOptions } from './types';
 import { getE2ePackageRoot } from '../steps/utils/packageRoot';
 
+const getChromiumProjectUse = (): PlaywrightTestConfig['projects'] => {
+  const isCi = Boolean(process.env.CI);
+
+  return [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        ...(isCi
+          ? { launchOptions: { args: ['--disable-dev-shm-usage', '--disable-gpu'] } }
+          : {}),
+      },
+    },
+  ];
+};
+
 export const createE2ePlaywrightConfig = (options: E2eConfigOptions): PlaywrightTestConfig => {
   const packageRoot = getE2ePackageRoot();
   const environment = getE2eEnvironment();
   const bddTestPath = path.join(packageRoot, 'src/fixtures/bddTest.ts');
   const globalSetupPath = path.join(packageRoot, 'src/steps/utils/globalSetup.ts');
   const globalTeardownPath = path.join(packageRoot, 'src/steps/utils/globalTeardown.ts');
+  const isCi = Boolean(process.env.CI);
 
   const testDir = defineBddConfig({
     features: [options.featuresDir],
@@ -23,15 +40,17 @@ export const createE2ePlaywrightConfig = (options: E2eConfigOptions): Playwright
   return defineConfig({
     testDir,
     fullyParallel: true,
-    forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 1 : undefined,
+    forbidOnly: isCi,
+    retries: isCi ? 1 : 0,
+    workers: isCi ? 2 : undefined,
     reporter: 'list',
     use: {
       baseURL: options.baseURL ?? environment.webBaseUrl,
-      trace: 'on-first-retry',
+      trace: isCi ? 'retain-on-failure' : 'on-first-retry',
+      video: isCi ? 'off' : 'on-first-retry',
+      screenshot: 'only-on-failure',
     },
-    projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+    projects: getChromiumProjectUse(),
     globalSetup: globalSetupPath,
     globalTeardown: globalTeardownPath,
   });

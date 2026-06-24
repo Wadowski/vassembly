@@ -75,15 +75,26 @@ case "$CHECK" in
     fi
     ;;
   e2e)
+    "$SCRIPT_DIR/e2e-dev-server.sh" stop
     "$SCRIPT_DIR/e2e-dev-server.sh" ensure
+
+    e2e_exit=0
+    set +e
     if [[ -n "$TEST_PATH" ]]; then
       dotenv -e .env -e .env.e2e -o -- pnpm --filter @vassembly/web test:e2e -- "$TEST_PATH"
+      e2e_exit=$?
     elif [[ ${#FILTERS[@]} -gt 0 ]]; then
       # shellcheck disable=SC2046
       dotenv -e .env -e .env.e2e -o -- pnpm turbo run test:e2e $(build_filter_args)
+      e2e_exit=$?
     else
       pnpm test:e2e:web
+      e2e_exit=$?
     fi
+    set -e
+
+    "$SCRIPT_DIR/e2e-dev-server.sh" stop
+    exit "$e2e_exit"
     ;;
   *)
     echo "Unknown check: $CHECK (expected build, lint, types, unit, or e2e)" >&2

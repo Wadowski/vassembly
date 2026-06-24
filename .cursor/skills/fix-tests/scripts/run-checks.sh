@@ -14,20 +14,45 @@ shift
 
 IFS=',' read -r -a CHECKS <<<"$CHECKS_CSV"
 
-FAILED=0
+NON_E2E_CHECKS=()
+HAS_E2E=0
+
 for check in "${CHECKS[@]}"; do
   check="$(echo "$check" | xargs)"
   if [[ -z "$check" ]]; then
     continue
   fi
-  echo "=== Running $check ==="
-  if ! "$SCRIPT_DIR/run-check.sh" "$check" "$@"; then
-    FAILED=1
-    echo "=== $check FAILED ===" >&2
+  if [[ "$check" == "e2e" ]]; then
+    HAS_E2E=1
   else
-    echo "=== $check PASSED ==="
+    NON_E2E_CHECKS+=("$check")
   fi
 done
+
+run_check() {
+  local check="$1"
+  echo "=== Running $check ==="
+  if ! "$SCRIPT_DIR/run-check.sh" "$check" "$@"; then
+    echo "=== $check FAILED ===" >&2
+    return 1
+  fi
+  echo "=== $check PASSED ==="
+  return 0
+}
+
+FAILED=0
+
+for check in "${NON_E2E_CHECKS[@]}"; do
+  if ! run_check "$check" "$@"; then
+    FAILED=1
+  fi
+done
+
+if [[ "$HAS_E2E" -eq 1 ]]; then
+  if ! run_check e2e "$@"; then
+    FAILED=1
+  fi
+fi
 
 if [[ "$FAILED" -ne 0 ]]; then
   exit 1

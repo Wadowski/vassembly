@@ -52,6 +52,23 @@
         "NODE_ENV"
       ]
     },
+    "test:e2e:ci": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": [
+        "MONGODB_URL",
+        "MONGODB_DATABASE",
+        "JWT_SECRET",
+        "VASSEMBLY_E2E",
+        "WEB_PORT",
+        "API_PORT",
+        "DOCS_PORT",
+        "E2E_WEB_BASE_URL",
+        "E2E_API_BASE_URL",
+        "NODE_ENV",
+        "E2E_ENABLE_DIAGNOSTICS"
+      ]
+    },
     "check-types": {
       "dependsOn": ["^check-types"]
     },

@@ -425,9 +425,11 @@ Then('LLM execution for that task stops', async ({ page, world }) => {
 
   const initialCount = await page.getByTestId('progress-item').count();
   getWebWorld(world).progressEventCountAtPause = initialCount;
-  await page.waitForTimeout(TASK_DETAIL_POLL_INTERVAL_MS + 500);
-  const finalCount = await page.getByTestId('progress-item').count();
-  expect(finalCount).toBe(initialCount);
+
+  await expect(async () => {
+    const count = await page.getByTestId('progress-item').count();
+    expect(count).toBe(initialCount);
+  }).toPass({ timeout: TASK_DETAIL_POLL_INTERVAL_MS + 500 });
 });
 
 Then('no new progress events are recorded until resume', async ({ page, world }) => {
@@ -436,9 +438,11 @@ Then('no new progress events are recorded until resume', async ({ page, world })
   }
 
   const baseline = getWebWorld(world).progressEventCountAtPause ?? (await page.getByTestId('progress-item').count());
-  await page.waitForTimeout(TASK_DETAIL_POLL_INTERVAL_MS + 500);
-  const finalCount = await page.getByTestId('progress-item').count();
-  expect(finalCount).toBe(baseline);
+
+  await expect(async () => {
+    const count = await page.getByTestId('progress-item').count();
+    expect(count).toBe(baseline);
+  }).toPass({ timeout: TASK_DETAIL_POLL_INTERVAL_MS + 500 });
 });
 
 Then('task detail polling stops', async ({ page }) => {

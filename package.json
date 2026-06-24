@@ -12,6 +12,7 @@
     "test": "turbo run test",
     "test:e2e": "dotenv -e .env -e .env.e2e -o -- turbo run test:e2e",
     "test:e2e:web": "dotenv -e .env -e .env.e2e -o -- turbo run test:e2e --filter=@vassembly/web",
+    "test:e2e:web:ci": "dotenv -e .env -e .env.e2e -o -- turbo run test:e2e:ci --filter=@vassembly/web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "clean-install": "rm -rf node_modules && rm -rf **/**/node_modules && rm -rf **/**/.turbo && pnpm install --force"
