@@ -22,6 +22,8 @@ export const userPublicResponseSchema = z.object({
 
 export const registerResponseSchema = z.object({
   user: userPublicResponseSchema,
+  authToken: z.string(),
+  refreshToken: z.string(),
 });
 
 export const registerRoute = defineRoute({
