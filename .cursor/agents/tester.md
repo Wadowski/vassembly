@@ -81,13 +81,14 @@ After completing verification:
 
 ## Delegating test failures
 
-When handing off to **test-fixer**, the prompt must start with:
+When handing off to **test-fixer**, include:
 
 ```text
-try: 1
+failing checks: <comma-separated categories: build, lint, types, unit, e2e>
+scope: all | packages: <pkg1,pkg2> | test: <pkg> <path>
 ```
 
-Then include exact failing commands, full error output, and relevant file paths. The test-fixer owns retries (up to 5 test runs) — do not fix tests yourself.
+Then include full error output and relevant file paths. The test-fixer spawns subagents (max 5) that each follow the **fix-tests** skill for one attempt — do not fix tests yourself.
 - ❌ Do NOT write tests or implementation
 - ❌ Do NOT skip packages in the dependency tree
 - ❌ Do NOT approve if any checks fail
