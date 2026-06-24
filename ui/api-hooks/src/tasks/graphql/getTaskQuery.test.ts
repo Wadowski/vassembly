@@ -10,6 +10,7 @@ const TASK_FIELDS = [
   'status',
   'agentAssignedId',
   'title',
+  'specializationIds',
   'llmResponse',
   'errorMessage',
   'errorCode',

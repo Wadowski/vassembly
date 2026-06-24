@@ -40,5 +40,6 @@ export const toSystemAgentResponse = ({
     updatedAt: toIsoString({ value: systemAgent.updatedAt!, fieldName: 'updatedAt' }),
     removedAt: toNullableIsoString(systemAgent.removedAt),
     assignedToolIds: systemAgent.assignedToolIds ?? [],
+    specializationId: systemAgent.specializationId ?? null,
   };
 };

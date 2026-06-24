@@ -12,6 +12,7 @@ import { buildResumeMessage } from './buildResumeMessage';
 import { createRecordAgentInvokeProgress } from './createRecordAgentInvokeProgress';
 import { logTaskTransition } from './logTaskTransition';
 import { mapExecutionError } from './mapExecutionError';
+import { runTaskSpecializationClassification } from './runTaskSpecializationClassification';
 import { TaskExecutionMode } from './types';
 
 import type { ExecuteTaskParams } from './types';
@@ -89,6 +90,21 @@ export const executeTask = async ({
 
     const rootInvocationId = randomUUID();
 
+    try {
+      await runTaskSpecializationClassification({
+        taskId,
+        userId,
+        description: task.description!,
+        existingSpecializationIds: task.specializationIds ?? null,
+        abortSignal,
+      });
+    } catch (error) {
+      console.error('task.specialization.classification.failed', error);
+    }
+
+    const taskAfterClassification = await taskDomain.queries.getModelById({ id: taskId });
+    const specializationIds = taskAfterClassification.data?.specializationIds ?? null;
+
     const invokeResult = await runAgentInvokeWithTools({
       userId,
       agentType: 'system',
@@ -103,6 +119,7 @@ export const executeTask = async ({
         callerAgentType: 'system',
         recursionDepth: 0,
         rootInvokeId: randomUUID(),
+        specializationIds,
         abortSignal,
         shouldAbort: async (): Promise<boolean> => {
           const currentTask = await taskDomain.queries.getModelById({ id: taskId });

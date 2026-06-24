@@ -17,6 +17,7 @@ import { registerTaskQuestionsResolvers } from './resolvers/taskQuestions';
 import { registerUserResolvers } from './resolvers/user';
 import { registerSystemAgentResolvers } from './resolvers/systemAgent';
 import { registerMcpResolvers, gqlMcpSchema } from './resolvers/mcp';
+import { registerSpecializationResolvers } from './resolvers/specialization';
 import {
   gqlInternalToolSchema,
   registerInternalToolResolvers,
@@ -41,6 +42,7 @@ registerTaskResolvers(builder);
 registerTaskProgressResolvers(builder);
 registerTaskQuestionsResolvers(builder);
 registerMcpResolvers(builder);
+registerSpecializationResolvers(builder);
 registerInternalToolResolvers(builder);
 
 const { schema, path } = buildGraphQLConfig({

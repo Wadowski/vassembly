@@ -1,0 +1,19 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  background: $color-surface-container-low;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

@@ -9,6 +9,8 @@ export interface CreateSystemAgentParams {
   createdByAdminId: string;
   updatedByAdminId?: string;
   assignedToolIds?: string[];
+
+  specializationId?: string | null;
 }
 
 export interface CreateSystemAgentResult {

@@ -1,6 +1,10 @@
 import agentDomain, { AgentStatus } from '@vassembly/domain-agent';
 import systemAgentDomain, { AgentStatus as SystemAgentStatus } from '@vassembly/domain-system-agent';
 
+import { listSystemAgentsBySpecializationIds } from './listSystemAgentsBySpecializationIds';
+import { filterAgentsByRole, resolveAgentRoleFromArgs } from './filterAgentsByRole';
+import { resolveSpecializationIds } from './resolveSpecializationIds';
+
 import type { ListAgentRow, ListAgentsParams } from './types';
 
 const LIST_PAGE = 0;
@@ -27,7 +31,17 @@ const mapSystemAgentRow = (agent: {
   agentType: 'system',
 });
 
-export const listAgents = async ({ context }: ListAgentsParams): Promise<string> => {
+export const listAgents = async ({ args, context }: ListAgentsParams): Promise<string> => {
+  const specializationIds = resolveSpecializationIds({ args, context });
+
+  if (specializationIds !== undefined && context.callerAgentType === 'system') {
+    const specializationAgents = await listSystemAgentsBySpecializationIds({ specializationIds });
+    const role = resolveAgentRoleFromArgs(args);
+    const filteredAgents = filterAgentsByRole({ agents: specializationAgents, role });
+
+    return JSON.stringify(filteredAgents);
+  }
+
   const personalResult = await agentDomain.queries.getListForUser({
     userId: context.userId,
     page: LIST_PAGE,

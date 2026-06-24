@@ -40,7 +40,8 @@ describe('internal tool registry', () => {
         expect.objectContaining({
           id: 'list-agents',
           displayName: 'List agents',
-          description: 'List agents visible to caller',
+          description:
+            'List agents visible to caller. Optionally filter by specializationIds to return agents linked to those specializations.',
           accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
           llmToolName: 'list_agents',
         }),
@@ -59,9 +60,25 @@ describe('internal tool registry', () => {
           accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
           llmToolName: 'ask_user',
         }),
+        expect.objectContaining({
+          id: 'classify-specialization',
+          displayName: 'Classify specialization',
+          description:
+            'Classify a task description into 1–3 specialization domains. Returns existing IDs or a signal to create a new specialization.',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'classify_specialization',
+        }),
+        expect.objectContaining({
+          id: 'create-specialization',
+          displayName: 'Create specialization',
+          description:
+            'Provision a new specialization domain: creates the entity, provisions researcher/worker/validator agents, and maps relevant MCPs.',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'create_specialization',
+        }),
       ]),
     );
-    expect(tools).toHaveLength(4);
+    expect(tools).toHaveLength(6);
   });
 
   it('should have unique registry ids', () => {
@@ -185,6 +202,8 @@ describe('filtering tools by agent type', () => {
 
     expect(eligibleTools.map((tool) => tool.id).sort()).toEqual([
       'ask-user',
+      'classify-specialization',
+      'create-specialization',
       'list-agents',
       'update-task',
       'use-agent',

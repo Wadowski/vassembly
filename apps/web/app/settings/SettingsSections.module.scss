@@ -16,7 +16,7 @@
   gap: $spacing-6;
 
   @media #{$media-desktop} {
-    grid-template-columns: minmax(12rem, 16rem) minmax(0, 52rem);
+    grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
     align-items: start;
   }
 }

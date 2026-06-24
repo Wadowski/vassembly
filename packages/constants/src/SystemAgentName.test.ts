@@ -12,6 +12,9 @@ describe('SYSTEM_AGENT_NAME', () => {
       'Scheduled task worker',
       'Routine task worker',
       'Task title generator',
+      'Specialization classifier',
+      'MCP specialization classifier',
+      'Specialization agent description generator',
     ]);
   });
 });

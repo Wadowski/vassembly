@@ -30,6 +30,8 @@ export class TaskModel extends Model {
 
   category?: INTENT_CATEGORY_SLUG | null;
 
+  specializationIds?: string[] | null;
+
   llmResponse?: string | null;
 
   errorMessage?: string | null;

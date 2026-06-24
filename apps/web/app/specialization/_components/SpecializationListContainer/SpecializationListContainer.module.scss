@@ -1,0 +1,49 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.catalogSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.catalogHeading {
+  color: $color-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.errorBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-3;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: $spacing-4;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.countText {
+  color: $color-text-secondary;
+}
+
+@media #{$media-mobile-only} {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

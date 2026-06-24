@@ -16,6 +16,11 @@ export const gqlMcpSchema = (builder: Builder): void => {
       repositoryUrl: t.exposeString('repositoryUrl', { nullable: true }),
       configurationStatus: t.exposeString('configurationStatus', { nullable: true }),
       agentUsageCount: t.exposeInt('agentUsageCount', { nullable: true }),
+      specializationIds: t.field({
+        type: graphQLListType('String'),
+        nullable: true,
+        resolve: (parent: { specializationIds?: string[] }) => parent.specializationIds ?? null,
+      }),
       configSchema: t.field({
         type: graphQLType('ConfigSchema'),
         nullable: true,

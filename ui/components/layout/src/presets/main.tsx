@@ -5,6 +5,7 @@ import {
   SocialFacebookColorIcon,
   SocialInstagramColorIcon,
   SocialTwitterColorIcon,
+  TagsIcon,
   TeamMeetingChatIcon,
 } from '@vassembly/ui-icons';
 import type { LayoutPreset } from '../types';
@@ -39,12 +40,22 @@ const WORKSPACE_AUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [
 ];
 const WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS: ReadonlyArray<NavLinkItem> = [];
 
+const SPECIALIZATIONS_NAV_ITEM: NavLinkItem = {
+  kind: 'link',
+  id: 'specializations',
+  label: 'Specializations',
+  href: '/specialization',
+  icon: TagsIcon,
+};
+
 export interface BuildMainDrawerSectionsParams {
   isAuthenticated: boolean;
+  isAdmin?: boolean;
 }
 
 export const buildMainDrawerSections = ({
   isAuthenticated,
+  isAdmin = false,
 }: BuildMainDrawerSectionsParams): ReadonlyArray<NavSection> => [
   {
     id: 'workspace',
@@ -52,6 +63,7 @@ export const buildMainDrawerSections = ({
     items: [
       ...WORKSPACE_PUBLIC_NAV_ITEMS,
       ...(isAuthenticated ? WORKSPACE_AUTHENTICATED_NAV_ITEMS : WORKSPACE_NOTAUTHENTICATED_NAV_ITEMS),
+      ...(isAuthenticated && isAdmin ? [SPECIALIZATIONS_NAV_ITEM] : []),
     ],
   },
 ];

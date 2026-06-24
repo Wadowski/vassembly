@@ -12,4 +12,5 @@ export class McpModel extends Model {
   repositoryUrl?: string | null;
   configurationStatus?: string | null;
   configSchema?: McpConfigSchema | null;
+  specializationIds?: string[];
 }

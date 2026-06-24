@@ -107,7 +107,50 @@ describe('updateTask task command', () => {
     expect(result.data?.category).toBeNull();
   });
 
-  it('should throw ValidationError when neither title nor category is provided', async () => {
+  it('should return model with specializationIds set when updating specializationIds only', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'task-1',
+        specializationIds: ['spec-1'],
+      },
+    });
+
+    const result = await updateTask({ id: 'task-1', specializationIds: ['spec-1'] });
+
+    expect(mockPersist).toHaveBeenCalledWith({
+      id: 'task-1',
+      data: { specializationIds: ['spec-1'] },
+    });
+    expect(result.data?.specializationIds).toEqual(['spec-1']);
+  });
+
+  it('should return model with specializationIds cleared when specializationIds is null', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'task-1',
+        specializationIds: null,
+      },
+    });
+
+    const result = await updateTask({ id: 'task-1', specializationIds: null });
+
+    expect(mockPersist).toHaveBeenCalledWith({
+      id: 'task-1',
+      data: { specializationIds: null },
+    });
+    expect(result.data?.specializationIds).toBeNull();
+  });
+
+  it('should throw ValidationError when specializationIds exceeds max 3', async () => {
+    await expect(
+      updateTask({
+        id: 'task-1',
+        specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'],
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should throw ValidationError when neither title, category, nor specializationIds is provided', async () => {
     await expect(updateTask({ id: 'task-1' })).rejects.toThrow(ValidationError);
   });
 

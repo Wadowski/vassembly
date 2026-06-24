@@ -7,7 +7,11 @@ import { resolvePagination } from '../shared/pagination';
 
 import type { BuildListFilterParams, GetListParams, GetListResult } from './types';
 
-const buildFilter = ({ search, tags }: BuildListFilterParams): Record<string, unknown> => {
+const buildFilter = ({
+  search,
+  tags,
+  specializationId,
+}: BuildListFilterParams): Record<string, unknown> => {
   const conditions: Record<string, unknown>[] = [];
 
   const searchFilter = buildNameDescriptionSearchFilter({ search });
@@ -18,6 +22,10 @@ const buildFilter = ({ search, tags }: BuildListFilterParams): Record<string, un
   const tagsFilter = buildTagsFilter({ tags });
   if (tagsFilter !== undefined) {
     conditions.push(tagsFilter);
+  }
+
+  if (specializationId !== undefined) {
+    conditions.push({ specializationIds: specializationId });
   }
 
   if (conditions.length === 0) {
@@ -35,6 +43,7 @@ export const getList = async (input: GetListParams): Promise<GetListResult> => {
   const filter = buildFilter({
     search: input.search,
     tags: input.tags,
+    specializationId: input.specializationId,
   });
 
   const [rows, total] = await Promise.all([

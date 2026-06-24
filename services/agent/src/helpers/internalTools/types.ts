@@ -11,6 +11,7 @@ export interface InternalToolContext {
   callerAgentId: string;
   recursionDepth: number;
   rootInvokeId: string;
+  specializationIds?: string[] | null;
   parentAgentId?: string;
   parentInvocationId?: string;
   spawnBatchId?: string;

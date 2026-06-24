@@ -1,6 +1,9 @@
 'use client';
 
 import { ExecutionProgressTracker } from '@vassembly/ui-execution-progress-tracker';
+import { useUserAuth } from '@vassembly/ui-user-auth';
+
+import { LinkedSpecializations } from '../../_components/LinkedSpecializations/LinkedSpecializations';
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
 import { TaskDetailAiResponse } from './_components/TaskDetailAiResponse/TaskDetailAiResponse';
 import { TaskDetailDescription } from './_components/TaskDetailDescription';
@@ -14,6 +17,8 @@ import { TaskDetailSkeleton } from './TaskDetailSkeleton';
 import { useTaskDetailPage } from './useTaskDetailPage';
 
 export default function TaskDetailPage(): JSX.Element {
+  const { role } = useUserAuth();
+  const isAdmin = role.trim().toLowerCase() === 'admin';
   const {
     loginRoute,
     view,
@@ -42,6 +47,10 @@ export default function TaskDetailPage(): JSX.Element {
           />
         ) : null}
         <article className={styles.contentColumn}>
+          <LinkedSpecializations
+            specializationIds={view.task.specializationIds ?? []}
+            isAdmin={isAdmin}
+          />
           <TaskDetailAiResponse task={view.task} />
           <TaskDetailDescription description={view.task.description} />
           {taskQuestions !== undefined && taskQuestions.answeredQuestions.length > 0 ? (

@@ -1,0 +1,17 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.pageStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.subtitle {
+  color: $color-text-secondary;
+}

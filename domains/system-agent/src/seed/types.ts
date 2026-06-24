@@ -11,4 +11,5 @@ export interface SystemAgentSeedEntry {
 export interface LoadSystemAgentsResult {
   insertedCount: number;
   skippedCount: number;
+  updatedCount: number;
 }

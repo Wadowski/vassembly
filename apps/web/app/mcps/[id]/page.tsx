@@ -6,7 +6,9 @@ import { useParams, useRouter } from 'next/navigation';
 
 import { UnauthorizedError } from '@vassembly/errors';
 import { useMcp, useMcpConfiguration } from '@vassembly/ui-api-hooks';
+import { useUserAuth } from '@vassembly/ui-user-auth';
 
+import { LinkedSpecializations } from '../../_components/LinkedSpecializations/LinkedSpecializations';
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
 
 import { EmptySchemaMessage } from './_components/EmptySchemaMessage';
@@ -24,6 +26,8 @@ import { useIsMobileLayout } from './_components/useIsMobileLayout';
 export default function McpDetailPage(): JSX.Element {
   const params = useParams();
   const router = useRouter();
+  const { role } = useUserAuth();
+  const isAdmin = role.trim().toLowerCase() === 'admin';
   const mcpId = typeof params?.id === 'string' ? params.id : '';
   const isMobile = useIsMobileLayout();
 
@@ -65,6 +69,10 @@ export default function McpDetailPage(): JSX.Element {
         data-layout={isMobile ? 'mobile' : 'desktop'}
       >
         <McpDetailHeader mcp={mcp} configuration={configuration} />
+        <LinkedSpecializations
+          specializationIds={mcp.specializationIds ?? []}
+          isAdmin={isAdmin}
+        />
         {hasSchema ? (
           <McpConfigForm mcp={mcp} savedConfiguration={configuration} />
         ) : (

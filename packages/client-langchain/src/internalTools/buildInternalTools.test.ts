@@ -73,4 +73,29 @@ describe('buildInternalTools', () => {
 
     expect(toolNames).toEqual(['list_agents', 'use_agent']);
   });
+
+  it('should bind system-only tools when schema and handler exist', () => {
+    const handlers = createHandlers({
+      'update-task': async () => 'updated',
+      'classify-specialization': async () => '{"type":"skipped"}',
+      'create-specialization': async () => '{"specializationId":"id","isNew":true}',
+    });
+
+    const result = buildInternalTools({
+      toolIds: ['update-task', 'classify-specialization', 'create-specialization'],
+      handlers,
+    });
+
+    expect(result.boundToolIds).toEqual([
+      'update-task',
+      'classify-specialization',
+      'create-specialization',
+    ]);
+    expect(result.skippedToolIds).toEqual([]);
+    expect(result.tools.map((tool) => tool.name).sort()).toEqual([
+      'classify_specialization',
+      'create_specialization',
+      'update_task',
+    ]);
+  });
 });

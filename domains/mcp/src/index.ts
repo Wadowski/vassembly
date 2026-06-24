@@ -1,3 +1,4 @@
+import * as commands from './commands';
 import * as queries from './queries';
 
 import { mongodbIndexes } from './clients';
@@ -5,13 +6,14 @@ import { gqlMcpSchema } from './model';
 import { loadMcps } from './seed/loadMcps';
 
 export const mcpDomain = {
+  commands,
   queries,
   mongodbIndexes,
   seedMcps: loadMcps,
   gqlSchema: gqlMcpSchema,
 };
 
-export { queries, mongodbIndexes, gqlMcpSchema as gqlSchema, loadMcps as seedMcps };
+export { commands, queries, mongodbIndexes, gqlMcpSchema as gqlSchema, loadMcps as seedMcps };
 
 export { McpModel, mcpFactory, toMcpResponse } from './model';
 export type { McpListItemResponse } from './model';

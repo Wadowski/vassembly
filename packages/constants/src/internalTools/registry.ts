@@ -13,7 +13,8 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
   {
     id: 'list-agents',
     displayName: 'List agents',
-    description: 'List agents visible to caller',
+    description:
+      'List agents visible to caller. Optionally filter by specializationIds to return agents linked to those specializations.',
     accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
     llmToolName: 'list_agents',
   },
@@ -31,6 +32,22 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
       'Ask the task creator one or more questions. Execution pauses until all pending questions are answered.',
     accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
     llmToolName: 'ask_user',
+  },
+  {
+    id: 'classify-specialization',
+    displayName: 'Classify specialization',
+    description:
+      'Classify a task description into 1–3 specialization domains. Returns existing IDs or a signal to create a new specialization.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'classify_specialization',
+  },
+  {
+    id: 'create-specialization',
+    displayName: 'Create specialization',
+    description:
+      'Provision a new specialization domain: creates the entity, provisions researcher/worker/validator agents, and maps relevant MCPs.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'create_specialization',
   },
 ];
 

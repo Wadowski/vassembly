@@ -39,6 +39,7 @@ export const mongodbSystemAgentIndexes = async (): Promise<void> => {
     },
   );
   await collection.createIndex({ name: 'text', description: 'text' });
+  await collection.createIndex({ specializationId: 1 }, { sparse: true });
 };
 
 export const mongodbPreferenceIndexes = async (): Promise<void> => {

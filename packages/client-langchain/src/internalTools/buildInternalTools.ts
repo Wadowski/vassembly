@@ -3,7 +3,10 @@ import { getInternalToolById } from '@vassembly/constants';
 import type { ZodObject, ZodRawShape } from 'zod';
 
 import { askUserSchema } from './schemas/askUserSchema';
+import { classifySpecializationSchema } from './schemas/classifySpecializationSchema';
+import { createSpecializationSchema } from './schemas/createSpecializationSchema';
 import { listAgentsSchema } from './schemas/listAgentsSchema';
+import { updateTaskSchema } from './schemas/updateTaskSchema';
 import { useAgentSchema } from './schemas/useAgentSchema';
 
 import type { BuildInternalToolsParams, BuildInternalToolsResult } from './types';
@@ -12,6 +15,9 @@ const INTERNAL_TOOL_SCHEMAS: Record<string, ZodObject<ZodRawShape>> = {
   'ask-user': askUserSchema,
   'use-agent': useAgentSchema,
   'list-agents': listAgentsSchema,
+  'update-task': updateTaskSchema,
+  'classify-specialization': classifySpecializationSchema,
+  'create-specialization': createSpecializationSchema,
 };
 
 export const buildInternalTools = ({

@@ -45,6 +45,7 @@ export interface McpWithConfigurationStatus {
   repositoryUrl?: string;
   configurationStatus: McpConfigurationStatus;
   agentUsageCount?: number;
+  specializationIds?: string[];
   createdAt: string;
   updatedAt: string;
 }

@@ -1,0 +1,32 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.backLink {
+  color: $color-primary;
+  text-decoration: none;
+  align-self: flex-start;
+  padding: $spacing-1 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+}
+
+.description {
+  color: $color-text-secondary;
+}
+
+.created {
+  color: $color-text-secondary;
+}
