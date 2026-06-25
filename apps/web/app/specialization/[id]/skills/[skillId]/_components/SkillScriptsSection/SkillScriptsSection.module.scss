@@ -1,0 +1,23 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) 1fr;
+  gap: $spacing-4;
+}
+
+.emptyMessage {
+  color: $color-text-secondary;
+}
+
+@media #{$media-mobile-only} {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

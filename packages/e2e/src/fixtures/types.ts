@@ -16,6 +16,7 @@ export interface BddWorld {
   resetToken?: string;
   agentId?: string;
   specializationId?: string;
+  skillId?: string;
   taskId?: string;
   storedFields?: Record<string, string>;
   diagnostics?: DiagnosticsState;

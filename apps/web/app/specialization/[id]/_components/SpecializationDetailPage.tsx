@@ -12,6 +12,7 @@ import { SpecializationAgentsPanel } from './SpecializationAgentsPanel/Specializ
 import { SpecializationDetailHeader } from './SpecializationDetailHeader/SpecializationDetailHeader';
 import { SpecializationDetailSkeleton } from './SpecializationDetailSkeleton/SpecializationDetailSkeleton';
 import { SpecializationMcpsPanel } from './SpecializationMcpsPanel/SpecializationMcpsPanel';
+import { SpecializationSkillsPanel } from './SpecializationSkillsPanel/SpecializationSkillsPanel';
 import { SpecializationNotFoundMessage } from './SpecializationNotFoundMessage/SpecializationNotFoundMessage';
 import { DETAIL_ERROR_MESSAGE } from './constants';
 import styles from './SpecializationDetailPage.module.scss';
@@ -68,8 +69,13 @@ export const SpecializationDetailPage = (): JSX.Element | null => {
     >
       <SpecializationDetailHeader specialization={detail.specialization} />
       <div className={styles.panels}>
-        <SpecializationAgentsPanel agents={detail.agents} />
-        <SpecializationMcpsPanel mcps={detail.mcps} />
+        <div className={styles.topRow}>
+          <SpecializationAgentsPanel specializationId={specializationId} />
+          <SpecializationMcpsPanel specializationId={specializationId} />
+        </div>
+        <div className={styles.skillsRow}>
+          <SpecializationSkillsPanel specializationId={specializationId} />
+        </div>
       </div>
     </main>
   );

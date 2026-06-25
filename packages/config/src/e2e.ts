@@ -1,4 +1,4 @@
-import { CacheBackend, type Config } from './types';
+import { CacheBackend, Environment, type Config } from './types';
 
 export const E2E_WEB_PORT = 3001;
 export const E2E_API_PORT = 5001;
@@ -17,6 +17,7 @@ const docsPort = Number(process.env.DOCS_PORT) || E2E_DOCS_PORT;
 const webOrigin = `http://localhost:${webPort}`;
 
 const config: Config = {
+  environment: Environment.Testing,
   apps: {
     web: {
       port: webPort,
@@ -54,6 +55,12 @@ const config: Config = {
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'dev-jwt-secret',
+  },
+  skills: {
+    scriptStorage: {
+      bucketName: process.env.SKILL_SCRIPT_STORAGE_BUCKET || '',
+      localRootPath: process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH || './.data/skill-scripts',
+    },
   },
   services: {
     api: {

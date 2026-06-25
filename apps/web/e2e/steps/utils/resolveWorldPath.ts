@@ -37,5 +37,12 @@ export const resolveWorldPath = ({ path, world }: ResolveWorldPathParams): strin
     resolved = resolved.replace(/{specializationId}/g, world.specializationId);
   }
 
+  if (resolved.includes('{skillId}')) {
+    if (!world.skillId) {
+      throw new Error('skillId is required but not set on world.');
+    }
+    resolved = resolved.replace(/{skillId}/g, world.skillId);
+  }
+
   return resolved;
 };

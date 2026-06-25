@@ -18,6 +18,7 @@ export interface UseMcpsArgs {
   size?: number;
   search?: string;
   tags?: string[];
+  specializationId?: string;
 }
 
 export interface UseMcpCatalogResult {

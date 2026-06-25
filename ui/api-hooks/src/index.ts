@@ -49,6 +49,22 @@ export type {
   UseMcpWithAgentsResult,
 } from './mcps';
 export * from './specializations';
+export {
+  GET_SKILL_QUERY,
+  LIST_SKILLS_BY_SPECIALIZATION_QUERY,
+  useSkill,
+  useSkillsBySpecialization,
+} from './skills';
+export type {
+  SkillItem,
+  SkillListItem,
+  SkillScriptItem,
+  SkillScriptLanguage,
+  UseSkillArgs,
+  UseSkillResult,
+  UseSkillsBySpecializationArgs,
+  UseSkillsBySpecializationResult,
+} from './skills';
 export * from './tasks';
 export {
   INTERNAL_TOOLS_QUERY,

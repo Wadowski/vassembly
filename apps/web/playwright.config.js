@@ -22,6 +22,7 @@ module.exports = {
       'e2e/steps/tasks',
       'e2e/steps/execution-progress',
       'e2e/steps/specializations',
+      'e2e/steps/skills',
     ],
     baseURL: process.env.E2E_WEB_BASE_URL ?? 'http://localhost:3001',
   }),

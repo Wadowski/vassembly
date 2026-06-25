@@ -1,0 +1,26 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.backLink {
+  color: $color-primary;
+  text-decoration: none;
+  font-size: $font-size-body2;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.description {
+  color: $color-text-secondary;
+}

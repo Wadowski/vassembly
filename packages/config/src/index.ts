@@ -5,7 +5,7 @@ import { Environment } from './types';
 
 export { CacheBackend, Environment } from './types';
 export { E2E_API_PORT, E2E_DOCS_PORT, E2E_WEB_PORT } from './e2e';
-export type { CacheConfig, Config, RedisConfig } from './types';
+export type { CacheConfig, Config, RedisConfig, SkillScriptStorageConfig, SkillsConfig } from './types';
 
 const CONFIG_MAP = {
   [Environment.Development]: developmentConfig,

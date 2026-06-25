@@ -5,6 +5,8 @@ export interface WebBddWorld extends BddWorld {
   systemAgentId?: string;
   specializationId?: string;
   specializationIds?: Record<string, string>;
+  skillId?: string;
+  skillIds?: Record<string, string>;
   integrationCredentialId?: string;
   mcpId?: string;
   taskId?: string;

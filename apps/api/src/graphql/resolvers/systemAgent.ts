@@ -13,6 +13,13 @@ interface SystemAgentsListResolverArgs {
   status?: string | null;
 }
 
+interface AgentsBySpecializationResolverArgs {
+  specializationId: string;
+  page?: number | null;
+  size?: number | null;
+  search?: string | null;
+}
+
 interface ApiGraphQLContext {
   authenticatedUserId?: string;
 }
@@ -50,6 +57,41 @@ export const registerSystemAgentResolvers = (builder: Builder): void => {
             size: args.size ?? 10,
             search: args.search ?? undefined,
             status: args.status as AgentStatus | undefined,
+          });
+
+          return {
+            items: result.items,
+            total: result.total,
+            page: result.page,
+            size: result.size,
+          };
+        },
+      }),
+
+      agentsBySpecialization: t.field({
+        type: 'SystemAgentsList',
+        args: {
+          specializationId: t.arg.string({ required: true }),
+          page: t.arg.int({ required: false, defaultValue: 0 }),
+          size: t.arg.int({ required: false, defaultValue: 10 }),
+          search: t.arg.string({ required: false }),
+        },
+        resolve: async (
+          _root: unknown,
+          args: AgentsBySpecializationResolverArgs,
+          context: ApiGraphQLContext,
+        ) => {
+          const userId = context.authenticatedUserId;
+          if (userId === undefined) {
+            throw new UnauthorizedError('Authentication required');
+          }
+
+          const result = await systemAgentService.listAgentsBySpecialization({
+            adminUserId: userId,
+            specializationId: args.specializationId,
+            page: args.page ?? 0,
+            size: args.size ?? 10,
+            search: args.search ?? undefined,
           });
 
           return {

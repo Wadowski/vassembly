@@ -18,7 +18,17 @@ export interface RedisConfig {
   url: string;
 }
 
+export interface SkillScriptStorageConfig {
+  bucketName: string;
+  localRootPath?: string;
+}
+
+export interface SkillsConfig {
+  scriptStorage: SkillScriptStorageConfig;
+}
+
 export interface Config {
+  environment: Environment;
   apps: {
     web: WebConfig;
     docs: WebConfig;
@@ -30,6 +40,7 @@ export interface Config {
   deepSeekAi: DeepSeekAiConfig;
   encoder: EncoderConfig;
   jwt: JwtConfig;
+  skills: SkillsConfig;
   services: {
     api: ServiceConfig;
   };

@@ -26,9 +26,34 @@ export interface SpecializationListItem {
   updatedAt: string;
 }
 
-export interface SpecializationDetailItem extends SpecializationListItem {
-  agents?: SpecializationAgentItem[];
-  mcps?: SpecializationMcpItem[];
+export interface SpecializationDetailItem extends SpecializationListItem {}
+
+export interface AgentsBySpecializationItem {
+  id: string;
+  name: string;
+  description?: string | null;
+  status: SystemAgentStatus;
+}
+
+export interface AgentsBySpecializationResponse {
+  items: AgentsBySpecializationItem[];
+  total: number;
+  page: number;
+  size: number;
+}
+
+export interface UseAgentsBySpecializationArgs {
+  specializationId: string;
+  page?: number;
+  size?: number;
+  search?: string;
+}
+
+export interface UseAgentsBySpecializationResult {
+  data?: AgentsBySpecializationResponse;
+  loading: boolean;
+  error?: Error;
+  execute: (args: UseAgentsBySpecializationArgs) => Promise<void>;
 }
 
 export interface SpecializationsListResponse {

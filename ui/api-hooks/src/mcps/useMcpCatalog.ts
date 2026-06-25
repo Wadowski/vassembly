@@ -76,6 +76,7 @@ export function useMcpCatalog(): UseMcpCatalogResult {
         size: args.size ?? DEFAULT_SIZE,
         search: args.search,
         tags: args.tags,
+        specializationId: args.specializationId,
       });
     },
     [execute],

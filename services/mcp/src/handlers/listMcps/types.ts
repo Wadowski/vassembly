@@ -5,6 +5,7 @@ export interface ListMcpsInput {
   size?: number;
   search?: string;
   tags?: string[];
+  specializationId?: string;
 }
 
 export interface ListMcpsResult {

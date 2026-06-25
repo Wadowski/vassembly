@@ -1,4 +1,4 @@
-import { CacheBackend, type Config } from './types';
+import { CacheBackend, Environment, type Config } from './types';
 
 const parseCacheBackend = (value: string | undefined): CacheBackend => {
   if (value === CacheBackend.Redis) {
@@ -8,6 +8,7 @@ const parseCacheBackend = (value: string | undefined): CacheBackend => {
 };
 
 const config: Config = {
+  environment: Environment.Production,
   apps: {
     web: {
       port: 3000,
@@ -48,6 +49,12 @@ const config: Config = {
   },
   jwt: {
     secret: process.env.JWT_SECRET || '',
+  },
+  skills: {
+    scriptStorage: {
+      bucketName: process.env.SKILL_SCRIPT_STORAGE_BUCKET || '',
+      localRootPath: process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH,
+    },
   },
   services: {
     api: {
