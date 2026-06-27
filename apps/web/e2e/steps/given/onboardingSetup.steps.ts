@@ -116,10 +116,14 @@ Given('a user registered and received a verification email', async ({ page, seed
   webWorld.verificationToken = plaintextToken;
 });
 
-Given('the returnUrl was captured before the redirect to {string}', async ({ world }) => {
-  const webWorld = world as WebBddWorld;
-  webWorld.capturedReturnUrl = '/agents';
-});
+Given(
+  'the returnUrl was captured before the redirect to {string}',
+  async ({ world }, redirectPath: string) => {
+    void redirectPath;
+    const webWorld = world as WebBddWorld;
+    webWorld.capturedReturnUrl = '/agents';
+  },
+);
 
 Given('a visitor completes registration', async ({ world }) => {
   const email = `e2e-onboarding-register-${randomUUID()}@vassembly.test`;

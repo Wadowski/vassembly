@@ -11,6 +11,7 @@
   "globalEnv": [
     "CI",
     "AUTH_PASSWORD_RESET_WEB_URL",
+    "EMAIL_VERIFICATION_WEB_URL",
     "CACHE_BACKEND",
     "CACHE_DEFAULT_TTL_MS",
     "REDIS_URL",
