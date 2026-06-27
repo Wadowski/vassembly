@@ -10,6 +10,8 @@ import { createSpecializationSchema } from './schemas/createSpecializationSchema
 import { listAgentsSchema } from './schemas/listAgentsSchema';
 import { updateTaskSchema } from './schemas/updateTaskSchema';
 import { useAgentSchema } from './schemas/useAgentSchema';
+import { webPageContentSchema } from './schemas/webPageContentSchema';
+import { webSearchSchema } from './schemas/webSearchSchema';
 
 import type { BuildInternalToolsParams, BuildInternalToolsResult } from './types';
 
@@ -22,6 +24,8 @@ const INTERNAL_TOOL_SCHEMAS: Record<string, ZodObject<ZodRawShape>> = {
   'specialization-create': createSpecializationSchema,
   'skill-create': createSkillSchema,
   'skill-resolve': resolveSkillSchema,
+  'web-search': webSearchSchema,
+  'web-page-content': webPageContentSchema,
 };
 
 export const buildInternalTools = ({

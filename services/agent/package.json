@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@vassembly/client-encoder": "workspace:*",
+    "@vassembly/client-web": "workspace:*",
     "@vassembly/constants": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",

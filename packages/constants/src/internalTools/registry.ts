@@ -91,6 +91,21 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'resolve_skill',
   }),
+  defineInternalTool({
+    domain: 'web',
+    action: 'search',
+    description: 'Search the web and return a list of results (title, URL, and snippet)',
+    accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
+    llmToolName: 'web_search',
+  }),
+  defineInternalTool({
+    domain: 'web',
+    action: 'page-content',
+    description:
+      'Fetch a web page and return its main text content, plus links to any images and videos found',
+    accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
+    llmToolName: 'web_page_content',
+  }),
 ];
 
 export const INTERNAL_TOOL_IDS = INTERNAL_TOOLS.map((tool) => tool.id);

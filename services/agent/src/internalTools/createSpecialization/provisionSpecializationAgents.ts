@@ -4,6 +4,7 @@ import systemAgentDomain from '@vassembly/domain-system-agent';
 import {
   SPECIALIZATION_AGENT_ROLES,
   SPECIALIZATION_AGENT_RULES,
+  SPECIALIZATION_AGENT_TOOL_IDS,
   SPECIALIZATION_PROVISIONING_ADMIN_ID,
 } from './constants';
 import { logSpecializationEvent } from './logSpecializationEvent';
@@ -80,7 +81,7 @@ export const provisionSpecializationAgents = async ({
         rule: SPECIALIZATION_AGENT_RULES[role],
         category: AgentCategory.Utility,
         specializationId,
-        assignedToolIds: [],
+        assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
         createdByAdminId: SPECIALIZATION_PROVISIONING_ADMIN_ID,
         updatedByAdminId: SPECIALIZATION_PROVISIONING_ADMIN_ID,
       });

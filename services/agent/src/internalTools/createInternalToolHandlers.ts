@@ -6,6 +6,8 @@ import { createSpecializationToolHandler } from './createSpecialization';
 import { resolveSkillToolHandler } from './resolveSkill';
 import { updateTaskToolHandler } from './updateTask';
 import { useAgent } from './useAgent';
+import { webPageContent } from './webPageContent';
+import { webSearch } from './webSearch';
 
 import type { InternalToolContext, InternalToolHandlerMap } from './types';
 
@@ -24,4 +26,6 @@ export const createInternalToolHandlers = ({
   'specialization-create': (args) => createSpecializationToolHandler(args, toolContext),
   'skill-create': (args) => createSkillToolHandler(args),
   'skill-resolve': (args) => resolveSkillToolHandler(args, toolContext),
+  'web-search': (args) => webSearch({ args }),
+  'web-page-content': (args) => webPageContent({ args }),
 });

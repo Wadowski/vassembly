@@ -107,6 +107,7 @@ describe('createSpecialization internal tool handler', () => {
         name: 'Legal researcher',
         category: AgentCategory.Utility,
         specializationId: 'spec-1',
+        assignedToolIds: ['web-search', 'web-page-content'],
       }),
     );
     expect(mockMapMcpsToSpecialization).toHaveBeenCalledWith(

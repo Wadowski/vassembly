@@ -92,9 +92,24 @@ describe('internal tool registry', () => {
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'resolve_skill',
         }),
+        expect.objectContaining({
+          id: 'web-search',
+          displayName: 'web - search',
+          description: 'Search the web and return a list of results (title, URL, and snippet)',
+          accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
+          llmToolName: 'web_search',
+        }),
+        expect.objectContaining({
+          id: 'web-page-content',
+          displayName: 'web - page-content',
+          description:
+            'Fetch a web page and return its main text content, plus links to any images and videos found',
+          accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
+          llmToolName: 'web_page_content',
+        }),
       ]),
     );
-    expect(tools).toHaveLength(8);
+    expect(tools).toHaveLength(10);
   });
 
   it('should have unique registry ids', () => {
@@ -210,6 +225,8 @@ describe('filtering tools by agent type', () => {
       'agent-list',
       'agent-use',
       'user-ask',
+      'web-page-content',
+      'web-search',
     ]);
   });
 
@@ -225,6 +242,8 @@ describe('filtering tools by agent type', () => {
       'specialization-create',
       'task-update',
       'user-ask',
+      'web-page-content',
+      'web-search',
     ]);
   });
 });
