@@ -1,0 +1,15 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.viewer {
+  min-height: 320px;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+}
+
+.errorBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-3;
+  padding: $spacing-4;
+}

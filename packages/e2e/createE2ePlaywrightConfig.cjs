@@ -83,7 +83,7 @@ const createE2ePlaywrightConfig = (options) => {
     fullyParallel: true,
     forbidOnly: isCi,
     retries: isCi ? 1 : 0,
-    workers: isCi ? 2 : undefined,
+    workers: 2,
     reporter: 'list',
     use: {
       baseURL: options.baseURL ?? environment.webBaseUrl,

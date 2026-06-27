@@ -15,6 +15,7 @@ describe('SYSTEM_AGENT_NAME', () => {
       'Specialization classifier',
       'MCP specialization classifier',
       'Specialization agent description generator',
+      'Skill resolver',
     ]);
   });
 });

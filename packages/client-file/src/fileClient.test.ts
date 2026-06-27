@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { FileClient } from "./fileClient";
-import { InternalError } from "@vassembly/errors";
+import { NotFoundError } from "@vassembly/errors";
 import { promises as fs } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
@@ -29,7 +29,8 @@ describe("FileClient", () => {
       expect(fileClient).toBeDefined();
       expect(fileClient.read).toBeDefined();
       expect(fileClient.write).toBeDefined();
-      expect(client.remove).toBeDefined();
+      expect(fileClient.remove).toBeDefined();
+      expect(fileClient.removeIfExists).toBeDefined();
     });
 
     it("should create a file client with default basePath", () => {
@@ -57,10 +58,10 @@ describe("FileClient", () => {
       expect(result).toBe(content);
     });
 
-    it("should throw InternalError when file does not exist", async () => {
+    it("should throw NotFoundError when file does not exist", async () => {
       await expect(
         client.read({ filePath: "nonexistent.txt" })
-      ).rejects.toThrow(InternalError);
+      ).rejects.toThrow(NotFoundError);
     });
 
     it("should read nested file paths", async () => {
@@ -160,10 +161,27 @@ describe("FileClient", () => {
       ).rejects.toThrow();
     });
 
-    it("should throw InternalError when file does not exist", async () => {
+    it("should throw NotFoundError when file does not exist", async () => {
       await expect(
         client.remove({ filePath: "nonexistent.txt" })
-      ).rejects.toThrow(InternalError);
+      ).rejects.toThrow(NotFoundError);
+    });
+  });
+
+  describe("removeIfExists", () => {
+    it("should remove file when it exists", async () => {
+      const fileName = "to-delete-if-exists.txt";
+      await fs.writeFile(join(testDir, fileName), "content");
+
+      await client.removeIfExists({ filePath: fileName });
+
+      await expect(fs.access(join(testDir, fileName))).rejects.toThrow();
+    });
+
+    it("should not throw when file does not exist", async () => {
+      await expect(
+        client.removeIfExists({ filePath: "nonexistent.txt" }),
+      ).resolves.toBeUndefined();
     });
   });
 });

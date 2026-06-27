@@ -1,0 +1,89 @@
+---
+description: Classic software design patterns (GoF) — when and how to apply them in TypeScript. Required reading for architect, coder, and code-reviewer agents. Catalog: https://refactoring.guru/design-patterns/catalog
+alwaysApply: false
+---
+
+# Software Design Patterns
+
+Apply software design patterns from the [Refactoring Guru catalog](https://refactoring.guru/design-patterns/catalog) wherever they genuinely improve flexibility, reuse, or clarity. Do **not** force a pattern when plain functions or existing project conventions are simpler.
+
+**Principle**: Prefer the simplest solution. When two approaches are equally clear, choose the one that matches an established pattern and existing code in the same package.
+
+## Creational Patterns
+
+| Pattern | Use when | In this codebase |
+|---------|----------|------------------|
+| **Factory Method** | Subclasses or modules decide which concrete type to create | `model/factories.ts` — `factory()`, `translationFactory()` for domain models |
+| **Abstract Factory** | Families of related objects must be created together without naming concrete classes | Client setup that returns a coordinated set of DAOs/adapters for one backend |
+| **Builder** | Object has many optional parts or step-by-step assembly | Complex DTOs, query filters, or config objects with fluent/step builders |
+| **Prototype** | Clone an existing instance instead of reconstructing from scratch | Copying model state, duplicating entities with overrides |
+| **Singleton** | Exactly one shared instance is required | Shared connection pools in `clients/` — avoid elsewhere; prefer explicit dependency injection |
+
+## Structural Patterns
+
+| Pattern | Use when | In this codebase |
+|---------|----------|------------------|
+| **Adapter** | Third-party or legacy API does not match the interface you need | `packages/client-*` wrapping external services; thin wrappers in `clients/` |
+| **Bridge** | Abstraction and implementation should vary independently | Separate interface (e.g. storage port) from concrete client implementation |
+| **Composite** | Treat individual objects and groups uniformly | Tree menus, nested permissions, grouped UI sections |
+| **Decorator** | Add behavior to objects without subclassing | Wrapping handlers/clients with logging, retry, or metrics layers |
+| **Facade** | Simplify a complex subsystem behind one entry point | Service `handlers/` orchestrating multiple domain commands/queries |
+| **Flyweight** | Many objects share intrinsic state to save memory | Cached immutable lookup tables, shared constant maps |
+| **Proxy** | Control access to another object (lazy load, cache, permission) | Lazy client initialization, cached query wrappers |
+
+## Behavioral Patterns
+
+| Pattern | Use when | In this codebase |
+|---------|----------|------------------|
+| **Chain of Responsibility** | Several handlers may process a request; sender should not know which | Middleware pipelines, validation chains, ordered error normalizers |
+| **Command** | Encapsulate a request as an object; support undo, queue, or log | `domains/*/commands/` — each write operation is a command module |
+| **Iterator** | Traverse a collection without exposing its structure | Custom iterables, paginated result walkers |
+| **Mediator** | Many objects talk through a central coordinator to reduce coupling | Orchestration in service handlers instead of domains calling each other |
+| **Memento** | Capture and restore object state without breaking encapsulation | Draft/autosave snapshots, undo stacks |
+| **Observer** | One-to-many notification when state changes | Event emitters, React context/subscriptions, cache invalidation hooks |
+| **State** | Object behavior changes with internal state | Entity lifecycle (`active` / `archived`), workflow status machines — prefer explicit state objects or maps over giant `if/else` |
+| **Strategy** | Swap algorithms at runtime | **Prefer map objects over `switch`** (see `code-rules-general.mdc`); inject strategy functions for pluggable behavior |
+| **Template Method** | Subclasses override steps of an algorithm, not the whole flow | Shared base flow with overridable hooks in abstract helpers |
+| **Visitor** | Add operations to object structures without modifying their classes | Traversing ASTs, form trees, or nested config with type-specific handlers |
+
+## Decision Guide
+
+Before adding new logic, ask:
+
+1. **Is there already a pattern in this package?** Match it (e.g. new domain write → new `commands/<name>/` folder).
+2. **Would a pattern remove duplication or branching?** Consider Strategy, State, Command, or Factory.
+3. **Is integration messy?** Consider Adapter or Facade — not inline conversion in callers.
+4. **Is behavior optional or layered?** Consider Decorator or Chain of Responsibility.
+5. **Would the pattern add indirection without benefit?** Skip it — YAGNI applies.
+
+## Anti-patterns to Avoid
+
+- **Pattern for pattern's sake** — extra interfaces, abstract classes, or registries with only one implementation
+- **Switch explosion** — replace with Strategy (map object) or State when branches grow
+- **God object** — split with Facade + focused Command/Query modules
+- **Leaky Singleton** — global mutable state; pass dependencies explicitly
+- **Anemic domain** — logic scattered in callers instead of Command, State, or domain methods
+
+## For Plans (architect)
+
+In **Analysis** and **Implementation Steps**, name applicable patterns from the catalog (e.g. "Command for `archiveSkill`", "Strategy for provider-specific formatting", "Adapter via existing `client-mongodb`"). Explain why the pattern fits and point to similar existing code.
+
+## For Implementation (coder)
+
+- Implement the pattern the architect named, or choose one from the catalog when no architect spec exists
+- Follow existing embodiments in the same package before inventing a new structure
+- Keep patterns idiomatic TypeScript: functions, types, and modules — not Java-style class hierarchies unless the codebase already uses them
+
+## For Review (code-reviewer)
+
+On every changed file, check whether a catalog pattern **should** apply but does not:
+
+- Long `switch` / `if-else` chains → **Strategy** or **State**
+- Duplicated object construction → **Factory** or **Builder**
+- Caller knows too much about a subsystem → **Facade**
+- Direct third-party types leaking upward → **Adapter**
+- Write operation as a loose function with no encapsulation → **Command** (domain `commands/`)
+- Optional cross-cutting behavior copy-pasted → **Decorator** or **Chain of Responsibility**
+- Entity behavior varies by status field → **State**
+
+Report missed patterns as **Suggestions** (or **Warnings** when the absence causes clear duplication, coupling, or maintainability pain). Include pattern name, location, and a concrete refactor direction.

@@ -1,5 +1,5 @@
-import type { SpecializationAgentItem } from '../../types';
+import type { AgentsBySpecializationItem } from '@vassembly/ui-api-hooks';
 
 export interface SpecializationAgentItemProps {
-  agent: SpecializationAgentItem;
+  agent: AgentsBySpecializationItem;
 }

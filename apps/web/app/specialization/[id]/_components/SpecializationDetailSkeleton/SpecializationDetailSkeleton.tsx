@@ -10,7 +10,10 @@ export const SpecializationDetailSkeleton = (): JSX.Element => {
       <Skeleton width="240px" height="32px" />
       <Skeleton width="100%" height="120px" />
       <div className={styles.panels}>
-        <Skeleton width="100%" height="280px" />
+        <div className={styles.topRow}>
+          <Skeleton width="100%" height="280px" />
+          <Skeleton width="100%" height="280px" />
+        </div>
         <Skeleton width="100%" height="280px" />
       </div>
     </main>

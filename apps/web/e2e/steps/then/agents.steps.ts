@@ -26,14 +26,6 @@ Then('I see the agents list page', async ({ page }) => {
   await waitForAgentListReady({ page });
 });
 
-Then('I see a {string} button', async ({ page }, buttonText: string) => {
-  if (!page) {
-    return;
-  }
-
-  await expect(page.getByRole('button', { name: new RegExp(buttonText, 'i') }).first()).toBeVisible();
-});
-
 Then('I see agent {string} in the list', async ({ page }, agentName: string) => {
   if (!page) {
     return;

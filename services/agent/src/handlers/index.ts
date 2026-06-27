@@ -10,6 +10,12 @@ export type { GetSystemAgentParams, GetSystemAgentResult } from './getSystemAgen
 export { listSystemAgents } from './listSystemAgents';
 export type { ListSystemAgentsParams, ListSystemAgentsResult } from './listSystemAgents/types';
 
+export { listAgentsBySpecialization } from './listAgentsBySpecialization';
+export type {
+  ListAgentsBySpecializationParams,
+  ListAgentsBySpecializationResult,
+} from './listAgentsBySpecialization/types';
+
 export { archiveSystemAgent } from './archiveSystemAgent';
 export type { ArchiveSystemAgentParams, ArchiveSystemAgentResult } from './archiveSystemAgent/types';
 

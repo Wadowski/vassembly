@@ -34,6 +34,7 @@ export const invoke = async (
     systemMessage: buildSystemAgentSystemMessage({
       name: agentResult.data.name!,
       rule: agentResult.data.rule,
+      skillsCatalogSection: params.skillsCatalogSection,
     }),
     mcpServerConfigs: params.mcpServerConfigs,
     internalToolBindings: params.internalToolBindings,

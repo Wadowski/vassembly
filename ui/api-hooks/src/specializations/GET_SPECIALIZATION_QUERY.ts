@@ -8,18 +8,6 @@ export const GET_SPECIALIZATION_QUERY = gql`
       description
       agentIds
       mcpIds
-      agents {
-        id
-        name
-        status
-      }
-      mcps {
-        id
-        name
-        slug
-        iconPath
-        description
-      }
       createdAt
       updatedAt
     }

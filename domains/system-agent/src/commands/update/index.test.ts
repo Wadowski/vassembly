@@ -160,7 +160,7 @@ describe('update system agent command', () => {
       data: {
         id: AGENT_ID,
         name: 'Onboarding Helper',
-        assignedToolIds: ['use-agent', 'list-agents'],
+        assignedToolIds: ['agent-use', 'agent-list'],
         category: 'onboarding',
         description: 'Desc',
         rule: 'Rule',
@@ -176,10 +176,10 @@ describe('update system agent command', () => {
     const result = await update({
       id: AGENT_ID,
       updatedByAdminId: 'admin-2',
-      data: { assignedToolIds: ['use-agent', 'list-agents'] },
+      data: { assignedToolIds: ['agent-use', 'agent-list'] },
     });
 
-    expect(result.data.assignedToolIds).toEqual(['use-agent', 'list-agents']);
+    expect(result.data.assignedToolIds).toEqual(['agent-use', 'agent-list']);
   });
 
   it('should accept clearing assignedToolIds to empty array on update', async () => {
@@ -214,7 +214,7 @@ describe('update system agent command', () => {
       update({
         id: AGENT_ID,
         updatedByAdminId: 'admin-1',
-        data: { assignedToolIds: ['use-agent', 'list-agents', 'extra-tool'] },
+        data: { assignedToolIds: ['agent-use', 'agent-list', 'extra-tool'] },
       }),
     ).rejects.toThrow(ValidationError);
   });
@@ -224,7 +224,7 @@ describe('update system agent command', () => {
       update({
         id: AGENT_ID,
         updatedByAdminId: 'admin-1',
-        data: { assignedToolIds: ['list-agents', 'list-agents'] },
+        data: { assignedToolIds: ['agent-list', 'agent-list'] },
       }),
     ).rejects.toThrow(ValidationError);
   });

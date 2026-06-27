@@ -41,8 +41,6 @@ export const useSpecialization = ({
         ...specialization,
         agentIds: specialization.agentIds ?? undefined,
         mcpIds: specialization.mcpIds ?? undefined,
-        agents: specialization.agents ?? undefined,
-        mcps: specialization.mcps ?? undefined,
       },
     };
   }, [data]);

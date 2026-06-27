@@ -2,13 +2,8 @@
 
 import Link from 'next/link';
 
-import { Tag } from '@vassembly/ui-tag';
 import { Text } from '@vassembly/ui-text';
 
-import {
-  getSystemAgentStatusLabel,
-  getSystemAgentStatusVariant,
-} from '../../../../../agents/_components/PlatformAgentsSection/tags';
 import { systemAgentEditPath } from '../../../../../agents/systemAgentRoutes';
 
 import styles from './SpecializationAgentItem.module.scss';
@@ -17,18 +12,24 @@ import type { SpecializationAgentItemProps } from './types';
 export const SpecializationAgentItem = ({
   agent,
 }: SpecializationAgentItemProps): JSX.Element => {
+  const description = agent.description ?? '';
+
   return (
     <Link
       href={systemAgentEditPath(agent.id)}
-      className={styles.item}
+      className={styles.row}
       aria-label={`View ${agent.name}`}
     >
-      <Text variant="body1" className={styles.agentName}>
-        {agent.name}
-      </Text>
-      <Tag size="small" variant={getSystemAgentStatusVariant(agent.status)}>
-        {getSystemAgentStatusLabel(agent.status)}
-      </Tag>
+      <div className={styles.content}>
+        <Text variant="body1" className={styles.name}>
+          {agent.name}
+        </Text>
+        {description !== '' ? (
+          <Text variant="body2" className={styles.description}>
+            {description}
+          </Text>
+        ) : null}
+      </div>
     </Link>
   );
 };

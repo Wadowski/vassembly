@@ -52,6 +52,7 @@ export interface InvokeSystemAgentParams {
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
+  skillsCatalogSection?: string;
 }
 
 export interface InvokeSystemAgentResult {

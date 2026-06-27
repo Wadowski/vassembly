@@ -6,8 +6,15 @@ export const LIST_MCPS_QUERY = gql`
     $size: Int
     $search: String
     $tags: [String!]
+    $specializationId: String
   ) {
-    mcps(page: $page, size: $size, search: $search, tags: $tags) {
+    mcps(
+      page: $page
+      size: $size
+      search: $search
+      tags: $tags
+      specializationId: $specializationId
+    ) {
       items {
         id
         name

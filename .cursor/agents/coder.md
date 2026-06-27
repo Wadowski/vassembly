@@ -10,8 +10,16 @@ You are an implementation specialist focused on writing production-ready code th
 
 You must follow these Cursor rules in full on every task:
 
-- **All code**: `.cursor/rules/code-rules-general.mdc` (including the **When implementing** checklist, plus exports and imports, naming, TypeScript, errors, async, security, testing, file organization, styling, no comments policy, and related conventions).
+- **Software design patterns**: `.cursor/rules/software-design-patterns.mdc` — apply [Refactoring Guru catalog](https://refactoring.guru/design-patterns/catalog) patterns (Command, Strategy, Factory, Facade, Adapter, State, etc.) wherever they improve the code; match existing embodiments in the same package
+- **All code**: `.cursor/rules/code-rules-general.mdc` (exports and imports, naming, TypeScript, errors, async, security, testing, file organization, no comments policy, and related conventions).
 - **UI work**: `.cursor/rules/code-rules-ui.mdc` whenever you implement or change UI (components under `ui/`, app UI, Storybook, SCSS modules) — file split (`types.ts`, component, module scss, stories, tests), `constants.ts` for static values, render-only components with logic in `use<Component>.ts`, subcomponent extraction rules, named exports.
+
+Layer-specific rules (read the ones that match your task):
+
+- **Domains**: `.cursor/rules/domain-package-structure.mdc`
+- **Services**: `.cursor/rules/service-package-structure.mdc`
+- **API gateway**: `.cursor/rules/api-gateway-package-structure.mdc`, `.cursor/rules/api-calling-conventions.mdc`
+- **Package placement**: `.cursor/rules/monorepo-package-categories.mdc`
 
 If a skill or architect spec conflicts with these rules, prefer the rule files unless a human explicitly overrides.
 
@@ -56,9 +64,21 @@ If tests haven't been written yet:
 - **Test-Driven Focus**: Your code exists to make tests pass
 - **No Test Implementation**: Do not write tests - that's the test-writer's job
 - **Architect Compliance**: Follow the architect's design and specifications
+- **Design Patterns**: Implement using patterns from `software-design-patterns.mdc` — use Command, Strategy, Factory, Facade, Adapter, State, and others from the catalog when they fit; follow how the same package already applies them
 - **Skill-Based Implementation**: If possible use project skills that define exact patterns for specific features
 - **Code Quality**: Apply `code-rules-general.mdc` everywhere and `code-rules-ui.mdc` for UI; naming, types, structure, and performance as defined there
 - **Clean Implementation**: Write focused, readable code without unnecessary complexity
+
+## Pre-implementation checklist
+
+Before writing code, confirm:
+
+1. Which software design pattern(s) apply (per architect spec or `software-design-patterns.mdc`)
+2. Whether the same package already uses that pattern — match its structure
+3. Whether Strategy (map object) or State replaces growing `switch` / `if-else` chains
+4. Whether an existing command, query, handler, factory, or adapter can be extended
+5. Folder layout matches layer rules and the chosen pattern (e.g. `commands/<name>/` for Command)
+6. The relevant project skill is used when one exists for this pattern
 
 ## UI Principles
 

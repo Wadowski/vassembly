@@ -21,6 +21,12 @@ export type { AssertUniqueActiveNameParams } from './assertUniqueActiveName/type
 export { getActiveByName } from './getActiveByName/index';
 export type { GetActiveByNameParams, GetActiveByNameResult } from './getActiveByName/types';
 
+export { getListBySpecializationId } from './getListBySpecializationId/index';
+export type {
+  GetListBySpecializationIdParams,
+  GetListBySpecializationIdResult,
+} from './getListBySpecializationId/types';
+
 export { getBySpecializationId } from './getBySpecializationId/index';
 export type {
   GetBySpecializationIdParams,

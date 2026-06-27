@@ -15,19 +15,14 @@ vi.mock('@vassembly/domain-user', () => ({
   },
 }));
 
-vi.mock('@vassembly/domain-system-agent', async () => {
-  const domain = await import('../../../../../domains/system-agent/src/index.js');
-
-  return {
-    ...domain,
-    default: {
-      commands: {},
-      queries: {
-        getPreferenceByUserId: mockGetPreferenceByUserId,
-      },
+vi.mock('@vassembly/domain-system-agent', () => ({
+  default: {
+    commands: {},
+    queries: {
+      getPreferenceByUserId: mockGetPreferenceByUserId,
     },
-  };
-});
+  },
+}));
 
 import { getUserConnectionPreference } from './index';
 

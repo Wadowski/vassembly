@@ -12,9 +12,17 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-3;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
+  overflow: hidden;
 }
 
 .emptyMessage {
   color: $color-text-secondary;
+}
+
+.errorBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
 }

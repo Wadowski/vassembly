@@ -4,6 +4,8 @@ import type { ZodObject, ZodRawShape } from 'zod';
 
 import { askUserSchema } from './schemas/askUserSchema';
 import { classifySpecializationSchema } from './schemas/classifySpecializationSchema';
+import { createSkillSchema } from './schemas/createSkillSchema';
+import { resolveSkillSchema } from './schemas/resolveSkillSchema';
 import { createSpecializationSchema } from './schemas/createSpecializationSchema';
 import { listAgentsSchema } from './schemas/listAgentsSchema';
 import { updateTaskSchema } from './schemas/updateTaskSchema';
@@ -12,12 +14,14 @@ import { useAgentSchema } from './schemas/useAgentSchema';
 import type { BuildInternalToolsParams, BuildInternalToolsResult } from './types';
 
 const INTERNAL_TOOL_SCHEMAS: Record<string, ZodObject<ZodRawShape>> = {
-  'ask-user': askUserSchema,
-  'use-agent': useAgentSchema,
-  'list-agents': listAgentsSchema,
-  'update-task': updateTaskSchema,
-  'classify-specialization': classifySpecializationSchema,
-  'create-specialization': createSpecializationSchema,
+  'user-ask': askUserSchema,
+  'agent-use': useAgentSchema,
+  'agent-list': listAgentsSchema,
+  'task-update': updateTaskSchema,
+  'specialization-classify': classifySpecializationSchema,
+  'specialization-create': createSpecializationSchema,
+  'skill-create': createSkillSchema,
+  'skill-resolve': resolveSkillSchema,
 };
 
 export const buildInternalTools = ({

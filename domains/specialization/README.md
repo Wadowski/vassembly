@@ -2,7 +2,7 @@
 
 Backend foundation for the specialization catalog — domain tags with name and description, used by the classifier flow and admin read UI.
 
-**Consumers:** `@vassembly/service-specialization` (reads), `services/agent` internal tools (`classify-specialization`, `create-specialization`), `apps/api` GraphQL gateway.
+**Consumers:** `@vassembly/service-specialization` (reads), `services/agent` internal tools (`specialization-classify`, `specialization-create`), `apps/api` GraphQL gateway.
 
 **Architecture:** See [Specialization — Architecture](../../docs/features/specialization/architecture.md).
 

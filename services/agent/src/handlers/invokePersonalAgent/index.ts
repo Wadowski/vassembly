@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { runAgentInvokeWithTools } from '../../helpers/internalTools/runAgentInvokeWithTools';
+import { runAgentInvokeWithTools } from '../../internalTools/runAgentInvokeWithTools';
 
 import type { InvokePersonalAgentParams, InvokePersonalAgentResult } from './types';
 

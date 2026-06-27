@@ -11,6 +11,7 @@ import { routes as aiIntegrationRoutesList } from "./ai-integrations";
 import { routes as authRoutesList } from "./auth";
 import { mcpConfigurationRoutes } from "./mcps";
 import { routes as systemAgentsRoutesList } from "./system-agents";
+import { routes as skillRoutesList } from "./skills";
 import { routes as taskRoutesList } from "./tasks";
 import { routes as userRoutesList } from "./user";
 import { graphqlConfig } from "../graphql";
@@ -20,6 +21,7 @@ const userRoutes = routesWithPrefix("/user", userRoutesList);
 const agentRoutes = routesWithPrefix("/agents", agentRoutesList);
 const aiIntegrationRoutes = routesWithPrefix("/ai-integrations", aiIntegrationRoutesList);
 const systemAgentsRoutes = routesWithPrefix("/system-agents", systemAgentsRoutesList);
+const skillRoutes = routesWithPrefix("/skills", skillRoutesList);
 const taskRoutes = routesWithPrefix("/tasks", taskRoutesList);
 const mcpRoutes = routesWithPrefix("/mcps", mcpConfigurationRoutes);
 
@@ -29,6 +31,7 @@ const routes = [
   ...agentRoutes,
   ...aiIntegrationRoutes,
   ...systemAgentsRoutes,
+  ...skillRoutes,
   ...taskRoutes,
   ...mcpRoutes,
 ];

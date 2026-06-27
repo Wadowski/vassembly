@@ -1,0 +1,35 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-6;
+  border-radius: $border-radius-lg;
+  background: $color-surface-container-low;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-4;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+}
+
+.emptyMessage {
+  color: $color-text-secondary;
+}
+
+.errorBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}

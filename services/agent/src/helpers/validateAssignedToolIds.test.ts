@@ -33,7 +33,7 @@ describe('validateAssignedToolIds', () => {
   it('should complete when assignedToolIds are valid registry ids for a personal agent', async () => {
     await expect(
       validateAssignedToolIds({
-        assignedToolIds: ['use-agent', 'list-agents'],
+        assignedToolIds: ['agent-use', 'agent-list'],
         agentType: 'personal',
       }),
     ).resolves.toBeUndefined();
@@ -42,7 +42,7 @@ describe('validateAssignedToolIds', () => {
   it('should complete when assignedToolIds are valid registry ids for a system agent', async () => {
     await expect(
       validateAssignedToolIds({
-        assignedToolIds: ['use-agent', 'list-agents'],
+        assignedToolIds: ['agent-use', 'agent-list'],
         agentType: 'system',
       }),
     ).resolves.toBeUndefined();
@@ -93,7 +93,7 @@ describe('validateAssignedToolIds', () => {
   it('should throw WrongParamError when assignedToolIds contains duplicates', async () => {
     await expect(
       validateAssignedToolIds({
-        assignedToolIds: ['use-agent', 'use-agent'],
+        assignedToolIds: ['agent-use', 'agent-use'],
         agentType: 'personal',
       }),
     ).rejects.toThrow(WrongParamError);

@@ -1,0 +1,44 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-5;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-3;
+}
+
+.scriptsSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.scriptCard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
+}
+
+.scriptHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-3;
+}
+
+.scriptFields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.errorMessage {
+  color: $color-error;
+}

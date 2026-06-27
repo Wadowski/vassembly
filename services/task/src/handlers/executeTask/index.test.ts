@@ -96,7 +96,7 @@ describe('executeTask handler', () => {
         model: 'gpt-4',
         mcpIdsUsed: [],
         skippedMcpIds: [],
-        internalToolIdsUsed: ['list-agents'],
+        internalToolIdsUsed: ['agent-list'],
         skippedInternalToolIds: [],
         maxUseAgentDepth: 2,
       },

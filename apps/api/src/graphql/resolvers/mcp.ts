@@ -10,6 +10,7 @@ interface McpsListResolverArgs {
   size?: number | null;
   search?: string | null;
   tags?: string[] | null;
+  specializationId?: string | null;
 }
 
 interface McpConfigurationResolverArgs {
@@ -42,6 +43,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
           size: t.arg.int({ required: false, defaultValue: 20 }),
           search: t.arg.string({ required: false }),
           tags: t.arg.stringList({ required: false }),
+          specializationId: t.arg.string({ required: false }),
         },
         resolve: async (
           _root: unknown,
@@ -59,6 +61,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
               size: args.size ?? 20,
               search: args.search ?? undefined,
               tags: args.tags ?? undefined,
+              specializationId: args.specializationId ?? undefined,
             },
             { authenticatedUserId: userId },
           );

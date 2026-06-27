@@ -8,43 +8,43 @@ import type { InternalToolHandler } from './types';
 const createHandlers = (
   overrides: Partial<Record<string, InternalToolHandler>> = {},
 ): Record<string, InternalToolHandler> => ({
-  'use-agent': async () => 'use-agent-result',
-  'list-agents': async () => 'list-agents-result',
+  'agent-use': async () => 'agent-use-result',
+  'agent-list': async () => 'agent-list-result',
   ...overrides,
 });
 
 describe('buildInternalTools', () => {
   it('should create DynamicStructuredTool instances for assigned registry ids', () => {
     const result = buildInternalTools({
-      toolIds: ['use-agent', 'list-agents'],
+      toolIds: ['agent-use', 'agent-list'],
       handlers: createHandlers(),
     });
 
     expect(result.tools).toHaveLength(2);
     expect(result.tools.every((tool) => tool instanceof DynamicStructuredTool)).toBe(true);
-    expect(result.boundToolIds).toEqual(['use-agent', 'list-agents']);
+    expect(result.boundToolIds).toEqual(['agent-use', 'agent-list']);
     expect(result.skippedToolIds).toEqual([]);
   });
 
   it('should skip unknown tool ids', () => {
     const result = buildInternalTools({
-      toolIds: ['use-agent', 'removed-tool', 'list-agents', 'not-in-registry'],
+      toolIds: ['agent-use', 'removed-tool', 'agent-list', 'not-in-registry'],
       handlers: createHandlers(),
     });
 
-    expect(result.boundToolIds).toEqual(['use-agent', 'list-agents']);
+    expect(result.boundToolIds).toEqual(['agent-use', 'agent-list']);
     expect(result.skippedToolIds).toEqual(['removed-tool', 'not-in-registry']);
     expect(result.tools).toHaveLength(2);
   });
 
   it('should merge injected handlers so tool invocation returns handler output', async () => {
     const handlers = createHandlers({
-      'use-agent': async () => 'delegated-response',
-      'list-agents': async () => JSON.stringify([{ name: 'Support', agentType: 'personal' }]),
+      'agent-use': async () => 'delegated-response',
+      'agent-list': async () => JSON.stringify([{ name: 'Support', agentType: 'personal' }]),
     });
 
     const result = buildInternalTools({
-      toolIds: ['use-agent', 'list-agents'],
+      toolIds: ['agent-use', 'agent-list'],
       handlers,
     });
 
@@ -65,7 +65,7 @@ describe('buildInternalTools', () => {
 
   it('should name tools using llmToolName from the registry', () => {
     const result = buildInternalTools({
-      toolIds: ['use-agent', 'list-agents'],
+      toolIds: ['agent-use', 'agent-list'],
       handlers: createHandlers(),
     });
 
@@ -76,20 +76,20 @@ describe('buildInternalTools', () => {
 
   it('should bind system-only tools when schema and handler exist', () => {
     const handlers = createHandlers({
-      'update-task': async () => 'updated',
-      'classify-specialization': async () => '{"type":"skipped"}',
-      'create-specialization': async () => '{"specializationId":"id","isNew":true}',
+      'task-update': async () => 'updated',
+      'specialization-classify': async () => '{"type":"skipped"}',
+      'specialization-create': async () => '{"specializationId":"id","isNew":true}',
     });
 
     const result = buildInternalTools({
-      toolIds: ['update-task', 'classify-specialization', 'create-specialization'],
+      toolIds: ['task-update', 'specialization-classify', 'specialization-create'],
       handlers,
     });
 
     expect(result.boundToolIds).toEqual([
-      'update-task',
-      'classify-specialization',
-      'create-specialization',
+      'task-update',
+      'specialization-classify',
+      'specialization-create',
     ]);
     expect(result.skippedToolIds).toEqual([]);
     expect(result.tools.map((tool) => tool.name).sort()).toEqual([

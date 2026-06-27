@@ -6,11 +6,11 @@ export {
   createSpecializationToolHandler,
   runAgentInvokeWithTools,
   updateTaskToolHandler,
-} from './helpers/internalTools';
+} from './internalTools';
 
-export type { AgentInvokeProgressEventInput, InternalToolContext } from './helpers/internalTools';
-export type { ClassifySpecializationResult } from './helpers/internalTools/classifySpecialization/types';
-export type { CreateSpecializationToolResult } from './helpers/internalTools/createSpecialization/types';
+export type { AgentInvokeProgressEventInput, InternalToolContext } from './internalTools';
+export type { ClassifySpecializationResult } from './internalTools/classifySpecialization/types';
+export type { CreateSpecializationToolResult } from './internalTools/createSpecialization/types';
 
 export default handlers;
 

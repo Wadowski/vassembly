@@ -61,4 +61,29 @@ describe('buildSystemAgentSystemMessage', () => {
       }),
     ).toBe(workerRule);
   });
+
+  it('should append skills catalog section when provided', () => {
+    const catalogSection = '## Available Skills\n\n- **contract-review**: Review contracts';
+
+    const result = buildSystemAgentSystemMessage({
+      name: SYSTEM_AGENT_NAME.TaskWorker,
+      rule: baseRule,
+      skillsCatalogSection: catalogSection,
+    });
+
+    expect(result).toBe(`${baseRule}\n\n${catalogSection}`);
+  });
+
+  it('should append skills catalog after intent classifier sections', () => {
+    const catalogSection = '## Available Skills\n\n- **legal-research**: Research law';
+
+    const result = buildSystemAgentSystemMessage({
+      name: SYSTEM_AGENT_NAME.IntentClassifier,
+      rule: baseRule,
+      skillsCatalogSection: catalogSection,
+    });
+
+    expect(result).toContain('## Categories');
+    expect(result.endsWith(catalogSection)).toBe(true);
+  });
 });

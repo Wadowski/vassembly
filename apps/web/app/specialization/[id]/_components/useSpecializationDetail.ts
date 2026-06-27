@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 
 import { useSpecialization } from '@vassembly/ui-api-hooks';
 
-import type { SpecializationAgentItem, UseSpecializationDetailResult } from './types';
+import type { UseSpecializationDetailResult } from './types';
 
 export const useSpecializationDetail = ({
   specializationId,
@@ -20,9 +20,6 @@ export const useSpecializationDetail = ({
 
   const specialization = specializationData?.specialization;
 
-  const agents: SpecializationAgentItem[] = specialization?.agents ?? [];
-  const mcps = specialization?.mcps ?? [];
-
   const isNotFound = !loading && specializationData !== undefined && specialization === null;
 
   const handleRetry = useCallback((): void => {
@@ -31,8 +28,6 @@ export const useSpecializationDetail = ({
 
   return {
     specialization,
-    agents,
-    mcps,
     loading,
     error,
     errorMessage: error?.message,

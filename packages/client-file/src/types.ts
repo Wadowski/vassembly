@@ -19,6 +19,7 @@ export interface ClientFile {
   read: (params: ReadFileParams) => Promise<string>;
   write: (params: WriteFileParams) => Promise<void>;
   remove: (params: RemoveFileParams) => Promise<void>;
+  removeIfExists: (params: RemoveFileParams) => Promise<void>;
 }
 
 export interface DirectoryClientParams {

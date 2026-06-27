@@ -209,7 +209,7 @@ describe('create system agent command', () => {
       data: {
         id: 'system-agent-tools',
         ...BASE_INPUT,
-        assignedToolIds: ['use-agent', 'list-agents'],
+        assignedToolIds: ['agent-use', 'agent-list'],
         status: 'active',
         removedAt: null,
         createdAt: new Date('2026-01-05T00:00:00.000Z'),
@@ -219,17 +219,17 @@ describe('create system agent command', () => {
 
     const result = await create({
       ...BASE_INPUT,
-      assignedToolIds: ['use-agent', 'list-agents'],
+      assignedToolIds: ['agent-use', 'agent-list'],
     });
 
-    expect(result.data.assignedToolIds).toEqual(['use-agent', 'list-agents']);
+    expect(result.data.assignedToolIds).toEqual(['agent-use', 'agent-list']);
   });
 
   it('should reject create when assignedToolIds exceeds maximum count', async () => {
     await expect(
       create({
         ...BASE_INPUT,
-        assignedToolIds: ['use-agent', 'list-agents', 'extra-tool'],
+        assignedToolIds: ['agent-use', 'agent-list', 'extra-tool'],
       }),
     ).rejects.toThrow(ValidationError);
   });
@@ -238,7 +238,7 @@ describe('create system agent command', () => {
     await expect(
       create({
         ...BASE_INPUT,
-        assignedToolIds: ['use-agent', 'use-agent'],
+        assignedToolIds: ['agent-use', 'agent-use'],
       }),
     ).rejects.toThrow(ValidationError);
   });

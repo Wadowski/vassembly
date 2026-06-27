@@ -8,9 +8,19 @@
 }
 
 .panels {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.topRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-6;
+}
+
+.skillsRow {
+  width: 100%;
 }
 
 .errorBlock {
@@ -21,7 +31,7 @@
 }
 
 @media #{$media-mobile-only} {
-  .panels {
+  .topRow {
     grid-template-columns: 1fr;
   }
 }

@@ -49,6 +49,36 @@ export type {
   UseMcpWithAgentsResult,
 } from './mcps';
 export * from './specializations';
+export {
+  GET_SKILL_QUERY,
+  LIST_SKILLS_BY_SPECIALIZATION_QUERY,
+  useArchiveSkill,
+  useCreateSkill,
+  useSkill,
+  useSkillsBySpecialization,
+  useUpdateSkill,
+} from './skills';
+export type {
+  CreateSkillInput,
+  SkillArchiveMutationData,
+  SkillArchiveVariables,
+  SkillCreateMutationData,
+  SkillCreateVariables,
+  SkillFormInput,
+  SkillFormScriptInput,
+  SkillItem,
+  SkillListItem,
+  SkillScriptItem,
+  SkillScriptLanguage,
+  SkillScriptWriteInput,
+  SkillUpdateMutationData,
+  SkillUpdateVariables,
+  UpdateSkillInput,
+  UseSkillArgs,
+  UseSkillResult,
+  UseSkillsBySpecializationArgs,
+  UseSkillsBySpecializationResult,
+} from './skills';
 export * from './tasks';
 export {
   INTERNAL_TOOLS_QUERY,
