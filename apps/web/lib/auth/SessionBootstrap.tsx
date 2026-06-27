@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserAuth } from '@vassembly/ui-user-auth';
+import { useUserAuth, parseOnboardingCompleted } from '@vassembly/ui-user-auth';
 import { useAuth } from '@vassembly/ui-api-hooks';
 import { useEffect, useRef } from 'react';
 import { getTokens, setTokens, clearTokens } from './sessionStorage';
@@ -58,6 +58,7 @@ export const SessionBootstrap = () => {
           lastName: authResponse.user?.lastName,
           verifiedAt: authResponse.user?.verifiedAt ? new Date(authResponse.user.verifiedAt) : undefined,
           role: authResponse.user?.role,
+          onboardingCompleted: parseOnboardingCompleted({ authToken: tokens.authToken }),
         },
       });
     }

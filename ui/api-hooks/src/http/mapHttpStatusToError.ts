@@ -10,26 +10,34 @@ import {
   WrongParamError,
 } from '@vassembly/errors';
 
-const statusToError: Record<number, (message: string) => CommonError> = {
+export interface MapHttpStatusToErrorParams {
+  status: number;
+  message: string;
+  retryAfterSeconds?: number;
+}
+
+const statusToError: Record<
+  number,
+  (message: string, retryAfterSeconds?: number) => CommonError
+> = {
   400: (message) => new WrongParamError(message),
   401: (message) => new UnauthorizedError(message),
   403: (message) => new ForbiddenError(message),
   404: (message) => new NotFoundError(message),
   409: (message) => new ConflictError(message),
-  429: (message) => new TooManyRequestsError(message),
+  429: (message, retryAfterSeconds) =>
+    new TooManyRequestsError(message, { retryAfterSeconds }),
 };
 
 export const mapHttpStatusToError = ({
   status,
   message,
-}: {
-  status: number;
-  message: string;
-}): CommonError => {
+  retryAfterSeconds,
+}: MapHttpStatusToErrorParams): CommonError => {
   const mapped = statusToError[status];
 
   if (mapped) {
-    return mapped(message);
+    return mapped(message, retryAfterSeconds);
   }
 
   if (status >= 500 && status <= 599) {

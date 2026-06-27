@@ -13,6 +13,7 @@ const config: Config = {
     web: {
       port: 3000,
       passwordResetUrl: process.env.AUTH_PASSWORD_RESET_WEB_URL,
+      emailVerificationUrl: process.env.EMAIL_VERIFICATION_WEB_URL,
     },
     docs: {
       port: 3001,
@@ -37,6 +38,7 @@ const config: Config = {
     region: process.env.AWS_REGION || '',
     ses: {
       passwordResetTemplateName: 'reset-password',
+      emailVerificationTemplateName: 'verify-email',
       fromEmail: 'tbd@todo.com',
     },
   },

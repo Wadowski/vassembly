@@ -6,6 +6,11 @@ export const GET_USER_QUERY = `
       firstName
       lastName
       verifiedAt
+      onboarding {
+        version
+        startedAt
+        completedAt
+      }
     }
   }
 `;

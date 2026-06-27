@@ -1,4 +1,4 @@
-import { InternalError, NotFoundError } from '@vassembly/errors';
+import { InternalError, NotFoundError, TooManyRequestsError } from '@vassembly/errors';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { mockFetchResponse } from '../test/mockFetchResponse';
@@ -110,6 +110,34 @@ describe('executeRequest', () => {
     const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(requestInit.headers).not.toHaveProperty('Content-Type');
     expect(requestInit.body).toBeUndefined();
+  });
+
+  it('should attach retryAfterSeconds from Retry-After header on 429 responses', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        mockFetchResponse({
+          ok: false,
+          status: 429,
+          bodyText: JSON.stringify({ message: 'Resend cooldown active' }),
+          headers: { 'Retry-After': '30' },
+        }),
+      ),
+    );
+
+    let caughtError: unknown;
+    try {
+      await executeRequest({
+        config: baseConfig,
+        method: 'POST',
+        options: { path: '/auth/resend-verification' },
+      });
+    } catch (error) {
+      caughtError = error;
+    }
+
+    expect(caughtError).toBeInstanceOf(TooManyRequestsError);
+    expect((caughtError as TooManyRequestsError).retryAfterSeconds).toBe(30);
   });
 
   it('should throw InternalError when fetch rejects', async () => {

@@ -44,6 +44,7 @@ export const aiIntegrationCreateRoute = defineRoute({
       userId,
       body: body as CreateCredentialHandlerInput['body'],
     });
+    await authHandlers.checkAndCompleteOnboarding({ userId });
     return credential;
   },
 });

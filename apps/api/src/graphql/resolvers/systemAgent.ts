@@ -6,6 +6,9 @@ import userDomain from '@vassembly/domain-user';
 import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
+
 interface SystemAgentsListResolverArgs {
   page?: number | null;
   size?: number | null;
@@ -18,10 +21,6 @@ interface AgentsBySpecializationResolverArgs {
   page?: number | null;
   size?: number | null;
   search?: string | null;
-}
-
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
 }
 
 export const registerSystemAgentResolvers = (builder: Builder): void => {
@@ -41,6 +40,7 @@ export const registerSystemAgentResolvers = (builder: Builder): void => {
           args: SystemAgentsListResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'systemAgents', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');
@@ -81,6 +81,7 @@ export const registerSystemAgentResolvers = (builder: Builder): void => {
           args: AgentsBySpecializationResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'agentsBySpecialization', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');
@@ -106,6 +107,7 @@ export const registerSystemAgentResolvers = (builder: Builder): void => {
       systemAgentPreference: t.field({
         type: 'SystemAgentPreference',
         resolve: async (_root: unknown, _args: unknown, context: ApiGraphQLContext) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'systemAgentPreference', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');

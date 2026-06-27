@@ -12,6 +12,7 @@ const domainUser = {
 };
 
 export { commands, queries, gqlSchema, mongodbIndexes };
+export { buildVerificationUrl } from './utils/buildVerificationUrl';
 export type { UserPublicResponse };
 
 export default domainUser;

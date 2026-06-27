@@ -6,6 +6,9 @@ import skillService from '@vassembly/service-skill';
 import userDomain from '@vassembly/domain-user';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
+
 interface SkillResolverArgs {
   id: string;
 }
@@ -15,10 +18,6 @@ interface SkillsBySpecializationResolverArgs {
   page?: number | null;
   size?: number | null;
   search?: string | null;
-}
-
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
 }
 
 export const registerSkillResolvers = (builder: Builder): void => {
@@ -32,6 +31,7 @@ export const registerSkillResolvers = (builder: Builder): void => {
         nullable: true,
         args: { id: t.arg.string({ required: true }) },
         resolve: async (_root: unknown, args: SkillResolverArgs, context: ApiGraphQLContext) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'skill', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');
@@ -68,6 +68,7 @@ export const registerSkillResolvers = (builder: Builder): void => {
           args: SkillsBySpecializationResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'skillsBySpecialization', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');

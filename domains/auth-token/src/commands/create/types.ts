@@ -5,6 +5,7 @@ export type CreateAuthTokenInput = {
   role: 'user' | 'admin';
   userId: string;
   refreshTokenId: string;
+  onboardingCompleted?: boolean;
 };
 
 export type CreateAuthTokenArgs = {

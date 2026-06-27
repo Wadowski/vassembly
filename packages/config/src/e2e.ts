@@ -22,6 +22,7 @@ const config: Config = {
     web: {
       port: webPort,
       passwordResetUrl: process.env.AUTH_PASSWORD_RESET_WEB_URL,
+      emailVerificationUrl: process.env.EMAIL_VERIFICATION_WEB_URL ?? `${webOrigin}/verify-email`,
     },
     docs: {
       port: docsPort,
@@ -46,6 +47,7 @@ const config: Config = {
     region: process.env.AWS_REGION || '',
     ses: {
       passwordResetTemplateName: 'reset-password',
+      emailVerificationTemplateName: 'verify-email',
       fromEmail: 'tbd@todo.com',
     },
   },

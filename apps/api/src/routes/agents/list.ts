@@ -6,8 +6,8 @@ import {
 import { defineRoute } from '@vassembly/server';
 import { z } from 'zod';
 
-import { handlers as authHandlers } from '@vassembly/service-auth';
 import agentService from '@vassembly/service-agent';
+import { authorizeProtectedRequest } from '../shared/authorizeProtectedRequest';
 import { withErrorResponses } from '../errorSchema';
 
 const STATUS_FILTER_VALUES = [...Object.values(AgentStatus), AGENT_LIST_ALL_STATUSES] as unknown as [
@@ -53,7 +53,7 @@ export const agentListRoute = defineRoute({
     response: withErrorResponses(agentListResponseSchema),
   },
   handler: async ({ query, headers }) => {
-    const { userId } = await authHandlers.authorizeRequest({ headers });
+    const { userId } = await authorizeProtectedRequest({ headers });
     return agentService.listAgents({
       userId,
       page: query.page,

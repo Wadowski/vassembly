@@ -64,12 +64,14 @@ export interface SqsConfig {
 export interface SesConfig {
   configurationSetName?: string;
   passwordResetTemplateName: string;
+  emailVerificationTemplateName: string;
   fromEmail: string;
 }
 
 export interface WebConfig {
   port: number;
   passwordResetUrl?: string;
+  emailVerificationUrl?: string;
 }
 
 export interface MongoDbConfig {

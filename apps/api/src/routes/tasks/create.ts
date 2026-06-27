@@ -1,6 +1,6 @@
 import { UnauthorizedError } from '@vassembly/errors';
 import { assertUserRateLimit, defineRoute } from '@vassembly/server';
-import { handlers as authHandlers } from '@vassembly/service-auth';
+import { authorizeProtectedRequest } from '../shared/authorizeProtectedRequest';
 import taskService from '@vassembly/service-task';
 import { z } from 'zod';
 import { withErrorResponses } from '../errorSchema';
@@ -37,7 +37,7 @@ export const taskCreateRoute = defineRoute({
     response: withErrorResponses(taskResponseSchema, 201),
   },
   handler: async ({ body, headers }) => {
-    const authResult = await authHandlers.authorizeRequest({ headers });
+    const authResult = await authorizeProtectedRequest({ headers });
     const userId = authResult.userId;
 
     if (!userId) {

@@ -16,6 +16,8 @@ export const create = async ({ input, options }: CreateAuthTokenArgs): AuthToken
     createdAt: new Date(),
   });
 
+  const onboardingCompleted = input.onboardingCompleted ?? true;
+
   const token = await jwtClient.create({
     data: {
       sub: data.userId,
@@ -23,6 +25,7 @@ export const create = async ({ input, options }: CreateAuthTokenArgs): AuthToken
       jti: data.refreshTokenId,
       exp: data.expiresAt?.getTime(),
       iat: data.createdAt?.getTime(),
+      onb: onboardingCompleted,
     },
     options,
   });

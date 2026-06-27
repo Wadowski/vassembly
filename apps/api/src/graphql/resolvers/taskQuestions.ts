@@ -4,12 +4,11 @@ import taskQuestionsDomain, { toTaskQuestionsResponse } from '@vassembly/domain-
 import { NotFoundError, UnauthorizedError } from '@vassembly/errors';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
+
 interface TaskQuestionsResolverArgs {
   taskId: string;
-}
-
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
 }
 
 const EMPTY_TASK_QUESTIONS = ({ taskId }: { taskId: string }) => ({
@@ -32,6 +31,7 @@ export const registerTaskQuestionsResolvers = (builder: Builder): void => {
           args: TaskQuestionsResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'taskQuestions', context });
           const userId = context.authenticatedUserId;
 
           if (userId === undefined) {

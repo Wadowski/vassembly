@@ -15,6 +15,7 @@ import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../../aiIntegrationRoutes';
 import { Text } from '@vassembly/ui-text';
 import { useSnackbar } from '@vassembly/ui-snackbar';
 import { Button } from '@vassembly/ui-button';
+import { useUserAuth } from '@vassembly/ui-user-auth';
 
 import styles from '../AiIntegrationsList/styles.module.scss';
 import { AiIntegrationForm } from '../AiIntegrationForm';
@@ -23,6 +24,7 @@ const REDIRECT_AFTER_CREATE_MS = 1500;
 
 export function AiIntegrationCreatePageContent(): JSX.Element {
   const router = useRouter();
+  const { onboardingCompleted = true } = useUserAuth().user ?? {};
   const snackbar = useSnackbar();
   const form = useAiIntegrationForm({ mode: 'create' });
   const { handleChange, values: formValues } = form;
@@ -95,10 +97,11 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
         snackbar.show({ variant: 'success', message: 'Integration created', duration: 4000 });
       }
       setTimeout(() => {
-        router.push(AI_INTEGRATIONS_LIST_ANCHOR);
+        const redirectTarget = onboardingCompleted ? AI_INTEGRATIONS_LIST_ANCHOR : '/onboarding';
+        router.push(redirectTarget);
       }, REDIRECT_AFTER_CREATE_MS);
     },
-    [create, form, router, snackbar, testResult?.success],
+    [create, form, onboardingCompleted, router, snackbar, testResult?.success],
   );
 
   return (
@@ -107,7 +110,9 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
         className={styles.backLink}
         variant="text"
         text="← Back to agents"
-        onClick={() => router.push(AI_INTEGRATIONS_LIST_ANCHOR)}
+        onClick={() => {
+          router.push(onboardingCompleted ? AI_INTEGRATIONS_LIST_ANCHOR : '/onboarding');
+        }}
       />
       <Text variant="h1">Add integration</Text>
       <AiIntegrationForm

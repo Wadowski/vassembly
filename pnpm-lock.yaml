@@ -269,6 +269,9 @@ importers:
       '@vassembly/ui-snackbar':
         specifier: workspace:*
         version: link:../../ui/system-design/snackbar
+      '@vassembly/ui-stepper':
+        specifier: workspace:*
+        version: link:../../ui/system-design/stepper
       '@vassembly/ui-switch':
         specifier: workspace:^
         version: link:../../ui/system-design/switch
@@ -2032,9 +2035,15 @@ importers:
       '@vassembly/client-aws-ses':
         specifier: workspace:*
         version: link:../../packages/client-aws-ses
+      '@vassembly/client-encoder':
+        specifier: workspace:*
+        version: link:../../packages/client-encoder
       '@vassembly/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@vassembly/domain-ai-integration':
+        specifier: workspace:*
+        version: link:../../domains/ai-integration
       '@vassembly/domain-auth-token':
         specifier: workspace:*
         version: link:../../domains/auth-token

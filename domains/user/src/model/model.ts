@@ -18,4 +18,16 @@ export class UserModel extends Model {
   passwordResetToken?: string | null;
 
   passwordResetExpiresAt?: Date | null;
+
+  onboarding?: {
+    version: number;
+    startedAt?: Date;
+    completedAt?: Date | null;
+  };
+
+  emailVerificationToken?: string | null;
+
+  emailVerificationExpiresAt?: Date | null;
+
+  emailVerificationIssuedAt?: Date | null;
 }

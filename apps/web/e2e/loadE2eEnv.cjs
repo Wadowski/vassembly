@@ -81,3 +81,7 @@ process.env.NEXT_PUBLIC_API_BASE_URL =
   mergedFileEnv.NEXT_PUBLIC_API_BASE_URL ||
   process.env.E2E_API_BASE_URL ||
   DEFAULT_API_BASE_URL;
+
+if (typeof process.getBuiltinModule !== 'function') {
+  process.getBuiltinModule = (name) => require(name);
+}

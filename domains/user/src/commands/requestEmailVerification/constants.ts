@@ -1,0 +1,1 @@
+export const EMAIL_VERIFICATION_TOKEN_TTL_MS = 48 * 60 * 60 * 1000;

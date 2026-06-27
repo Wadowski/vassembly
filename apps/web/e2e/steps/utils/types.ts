@@ -1,6 +1,8 @@
 import type { BddWorld, SeedContext } from '@vassembly/e2e';
 
 export interface WebBddWorld extends BddWorld {
+  verificationToken?: string;
+  capturedReturnUrl?: string;
   agentId?: string;
   systemAgentId?: string;
   specializationId?: string;

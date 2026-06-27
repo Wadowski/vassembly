@@ -23,4 +23,18 @@ export const toUserPublicResponse = ({
   lastName: user.lastName,
   role: user.role,
   verifiedAt: user.verifiedAt === undefined ? undefined : toNullableIsoString(user.verifiedAt),
+  onboarding:
+    user.onboarding === undefined
+      ? undefined
+      : {
+          version: user.onboarding.version,
+          startedAt:
+            user.onboarding.startedAt === undefined
+              ? undefined
+              : toNullableIsoString(user.onboarding.startedAt),
+          completedAt:
+            user.onboarding.completedAt === undefined
+              ? undefined
+              : toNullableIsoString(user.onboarding.completedAt),
+        },
 });

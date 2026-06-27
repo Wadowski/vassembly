@@ -1,0 +1,1 @@
+export { OnboardingPageHeader } from './OnboardingPageHeader';

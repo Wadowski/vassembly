@@ -21,3 +21,7 @@ export {
 } from './internalTools';
 export type { InternalToolDefinition } from './internalTools';
 export { AI_INTEGRATION_PROVIDER_LABELS } from './aiIntegrationProviderLabels';
+export {
+  ONBOARDING_ALLOWED_ROUTES,
+  ONBOARDING_GRAPHQL_ALLOWED_QUERIES,
+} from './onboardingAllowedRoutes';
