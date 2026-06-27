@@ -19,8 +19,8 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
-    "@vassembly/client-aws-s3": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
+    "@vassembly/client-script-storage": "workspace:*",
     "@vassembly/commands": "workspace:*",
     "@vassembly/config": "workspace:*",
     "@vassembly/errors": "workspace:*",

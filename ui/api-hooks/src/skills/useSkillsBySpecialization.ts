@@ -12,6 +12,7 @@ interface GraphQLSkillsBySpecializationData {
       specializationId: string;
       name: string;
       description: string;
+      enabled: boolean;
     }>;
     total: number;
     page: number;

@@ -52,6 +52,7 @@ alwaysApply: true
  - Exact file paths or directories to work with
  - What to look for or what to do
  - What information to return in the final response
+ - For **architect**, **coder**, or **code-reviewer**: remind them to follow `.cursor/rules/software-design-patterns.mdc` ([Refactoring Guru catalog](https://refactoring.guru/design-patterns/catalog) — Command, Strategy, Factory, Facade, Adapter, State, etc.)
  
  ## Examples
  

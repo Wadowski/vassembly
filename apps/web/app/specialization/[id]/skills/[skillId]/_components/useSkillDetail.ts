@@ -60,11 +60,11 @@ export const useSkillDetail = ({
     skip: specializationId === '',
   });
 
-  const skill = skillData?.skill ?? undefined;
+  const skill = skillData !== undefined ? skillData.skill : undefined;
   const specializationName = specializationData?.specialization?.name;
 
   const sortedScripts = useMemo(() => {
-    if (skill === undefined) {
+    if (skill === undefined || skill === null) {
       return [];
     }
 

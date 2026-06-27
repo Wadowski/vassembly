@@ -50,8 +50,8 @@ Then('I see the internal tools catalog loaded on the agent form', async ({ page 
   }
 
   const listbox = await openInternalToolPicker({ page });
-  await expect(listbox.getByRole('option', { name: /^Use agent$/i })).toBeVisible();
-  await expect(listbox.getByRole('option', { name: /^List agents$/i })).toBeVisible();
+  await expect(listbox.getByRole('option', { name: /^agent - use$/i })).toBeVisible();
+  await expect(listbox.getByRole('option', { name: /^agent - list$/i })).toBeVisible();
   await page.keyboard.press('Escape');
 });
 

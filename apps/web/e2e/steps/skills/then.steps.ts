@@ -146,7 +146,7 @@ Then('the code viewer applies JavaScript syntax highlighting', async ({ page }) 
   });
 });
 
-Then('the code viewer applies Bash/shell syntax highlighting', async ({ page }) => {
+Then('the code viewer applies Bash\\/shell syntax highlighting', async ({ page }) => {
   if (!page) {
     return;
   }
@@ -172,6 +172,47 @@ Then('there is no {string} button', async ({ page }, buttonName: string) => {
   }
 
   await expect(page.getByRole('button', { name: buttonName, exact: true })).not.toBeVisible();
+});
+
+Then('I see an {string} button for skill {string}', async ({ page }, buttonName, skillName) => {
+  if (!page) {
+    return;
+  }
+
+  const skillsPanel = page.getByRole('region', { name: 'Skills' });
+  const skillRow = skillsPanel.locator('[data-enabled]').filter({ hasText: skillName });
+  const resolvedButtonName =
+    buttonName === 'Archive' ? `Archive skill ${skillName}` : buttonName;
+  await expect(skillRow.getByRole('button', { name: resolvedButtonName, exact: true })).toBeVisible({
+    timeout: DETAIL_READY_TIMEOUT_MS,
+  });
+});
+
+Then('skill {string} no longer appears in the active skills list', async ({ page }, skillName) => {
+  if (!page) {
+    return;
+  }
+
+  const skillsPanel = page.getByRole('region', { name: 'Skills' });
+  await expect(skillsPanel.getByText(skillName, { exact: true })).not.toBeVisible({
+    timeout: DETAIL_READY_TIMEOUT_MS,
+  });
+});
+
+Then('archived skills are excluded by default', async ({ world }) => {
+  const webWorld = world as import('../utils/types').WebBddWorld;
+  const items = webWorld.storedFields?.activeSkillsQueryResult;
+
+  if (!Array.isArray(items)) {
+    throw new Error('activeSkillsQueryResult must be set on world.');
+  }
+
+  const hasArchivedSkill = items.some((item) => {
+    const name = typeof item.name === 'string' ? item.name : '';
+    return name === 'contract-review';
+  });
+
+  expect(hasArchivedSkill).toBe(false);
 });
 
 Then('there is no edit or delete action on any skill item', async ({ page }) => {

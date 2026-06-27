@@ -6,7 +6,7 @@ export interface UseSkillDetailArgs {
 }
 
 export interface UseSkillDetailResult {
-  skill: SkillItem | undefined;
+  skill: SkillItem | null | undefined;
   specializationName: string | undefined;
   loading: boolean;
   error?: Error;

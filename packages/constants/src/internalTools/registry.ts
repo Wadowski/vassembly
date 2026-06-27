@@ -1,54 +1,96 @@
+import {
+  formatInternalToolDisplayName,
+  formatInternalToolId,
+} from './formatInternalToolName';
 import { InternalToolAccessScope } from './types';
 
 import type { InternalToolDefinition } from './types';
 
+interface DefineInternalToolParams {
+  domain: string;
+  action: string;
+  description: string;
+  accessScope: InternalToolAccessScope;
+  llmToolName: string;
+}
+
+const defineInternalTool = ({
+  domain,
+  action,
+  description,
+  accessScope,
+  llmToolName,
+}: DefineInternalToolParams): InternalToolDefinition => ({
+  id: formatInternalToolId({ domain, action }),
+  displayName: formatInternalToolDisplayName({ domain, action }),
+  description,
+  accessScope,
+  llmToolName,
+});
+
 export const INTERNAL_TOOLS: InternalToolDefinition[] = [
-  {
-    id: 'use-agent',
-    displayName: 'Use agent',
+  defineInternalTool({
+    domain: 'agent',
+    action: 'use',
     description: 'Delegate to another agent by name',
     accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
     llmToolName: 'use_agent',
-  },
-  {
-    id: 'list-agents',
-    displayName: 'List agents',
+  }),
+  defineInternalTool({
+    domain: 'agent',
+    action: 'list',
     description:
       'List agents visible to caller. Optionally filter by specializationIds to return agents linked to those specializations.',
     accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
     llmToolName: 'list_agents',
-  },
-  {
-    id: 'update-task',
-    displayName: 'Update task',
+  }),
+  defineInternalTool({
+    domain: 'task',
+    action: 'update',
     description: 'Persist title and/or category for a task by its ID',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'update_task',
-  },
-  {
-    id: 'ask-user',
-    displayName: 'Ask user',
+  }),
+  defineInternalTool({
+    domain: 'user',
+    action: 'ask',
     description:
       'Ask the task creator one or more questions. Execution pauses until all pending questions are answered.',
     accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
     llmToolName: 'ask_user',
-  },
-  {
-    id: 'classify-specialization',
-    displayName: 'Classify specialization',
+  }),
+  defineInternalTool({
+    domain: 'specialization',
+    action: 'classify',
     description:
       'Classify a task description into 1–3 specialization domains. Returns existing IDs or a signal to create a new specialization.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'classify_specialization',
-  },
-  {
-    id: 'create-specialization',
-    displayName: 'Create specialization',
+  }),
+  defineInternalTool({
+    domain: 'specialization',
+    action: 'create',
     description:
       'Provision a new specialization domain: creates the entity, provisions researcher/worker/validator agents, and maps relevant MCPs.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'create_specialization',
-  },
+  }),
+  defineInternalTool({
+    domain: 'skill',
+    action: 'create',
+    description:
+      'Create a skill for a specialization with name, description, rule, and optional scripts.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'create_skill',
+  }),
+  defineInternalTool({
+    domain: 'skill',
+    action: 'resolve',
+    description:
+      'Resolve the full rule text for a named skill in a specialization domain.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'resolve_skill',
+  }),
 ];
 
 export const INTERNAL_TOOL_IDS = INTERNAL_TOOLS.map((tool) => tool.id);

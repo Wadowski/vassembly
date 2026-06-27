@@ -28,6 +28,7 @@ export const gqlSkillSchema = (builder: Builder): void => {
       name: t.exposeString('name'),
       description: t.exposeString('description'),
       rule: t.exposeString('rule'),
+      enabled: t.exposeBoolean('enabled'),
       scripts: t.field({
         type: graphQLListType('SkillScript'),
         resolve: (parent: { scripts: unknown[] }) => parent.scripts,

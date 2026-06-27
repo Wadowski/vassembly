@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import { join } from "path";
-import { InternalError } from "@vassembly/errors";
+import { InternalError, NotFoundError } from "@vassembly/errors";
+import { isEnoentError } from "./isEnoentError";
 import {
   FileClientParams,
   ReadFileParams,
@@ -25,9 +26,17 @@ export const FileClient = ({
       const resolvedPath = resolvePath(filePath);
       const content = await fs.readFile(resolvedPath, "utf-8");
       return content;
-    } catch {
+    } catch (error) {
+      if (isEnoentError(error)) {
+        throw new NotFoundError(
+          `${CONSOLE_LOG_PREFIX} file not found at ${filePath}`,
+          error,
+        );
+      }
+
       throw new InternalError(
-        `${CONSOLE_LOG_PREFIX} failed to read file at ${filePath}`
+        `${CONSOLE_LOG_PREFIX} failed to read file at ${filePath}`,
+        error,
       );
     }
   };
@@ -52,9 +61,35 @@ export const FileClient = ({
     try {
       const resolvedPath = resolvePath(filePath);
       await fs.unlink(resolvedPath);
-    } catch {
+    } catch (error) {
+      if (isEnoentError(error)) {
+        throw new NotFoundError(
+          `${CONSOLE_LOG_PREFIX} file not found at ${filePath}`,
+          error,
+        );
+      }
+
       throw new InternalError(
-        `${CONSOLE_LOG_PREFIX} failed to remove file at ${filePath}`
+        `${CONSOLE_LOG_PREFIX} failed to remove file at ${filePath}`,
+        error,
+      );
+    }
+  };
+
+  const removeIfExists = async ({
+    filePath,
+  }: RemoveFileParams): Promise<void> => {
+    try {
+      const resolvedPath = resolvePath(filePath);
+      await fs.unlink(resolvedPath);
+    } catch (error) {
+      if (isEnoentError(error)) {
+        return;
+      }
+
+      throw new InternalError(
+        `${CONSOLE_LOG_PREFIX} failed to remove file at ${filePath}`,
+        error,
       );
     }
   };
@@ -63,5 +98,6 @@ export const FileClient = ({
     read,
     write,
     remove,
+    removeIfExists,
   };
 };

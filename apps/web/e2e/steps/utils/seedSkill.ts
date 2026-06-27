@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { requireWorkspaceModule } from '@vassembly/e2e';
 
-import { initDomainContext } from './initDomainContext';
+import { ensureDomainInfrastructure } from './initDomainContext';
 import { seedSpecialization } from './seedSpecialization';
 import type { InitDomainContextParams } from './initDomainContext';
 
@@ -34,12 +34,14 @@ export interface SeedSkillsForSpecializationParams extends InitDomainContextPara
 }
 
 const DEFAULT_SKILL_RULE = 'Follow the workflow instructions for this skill.';
-const DEFAULT_SCRIPT_STORAGE_ROOT = path.resolve(process.cwd(), '../../.data/skill-scripts');
+const DEFAULT_SCRIPT_STORAGE_ROOT = process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH
+  ? path.resolve(process.cwd(), process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH)
+  : path.resolve(process.cwd(), '../../.data/skill-scripts');
 
 const normalizeSkillKey = (name: string): string => name.trim().toLowerCase();
 
-const ensureSkillIndexes = async ({ context }: InitDomainContextParams): Promise<void> => {
-  initDomainContext({ context });
+export const ensureSkillIndexes = async ({ context }: InitDomainContextParams): Promise<void> => {
+  await ensureDomainInfrastructure({ context });
 
   const { init } = requireWorkspaceModule<typeof import('@vassembly/client-mongodb')>({
     moduleName: '@vassembly/client-mongodb',
@@ -85,7 +87,42 @@ export const seedSkill = async ({
   });
 
   if (existing !== null && existing._id !== undefined) {
-    return existing._id.toString();
+    const existingId = existing._id.toString();
+
+    await skillMongodbDao.update(
+      skillFactory.create({ id: existingId }),
+      skillFactory.create({
+        description,
+        rule,
+        enabled: true,
+        removedAt: null,
+      }),
+    );
+
+    if (scripts.length === 0) {
+      return existingId;
+    }
+
+    const skillScripts = [];
+
+    for (const script of scripts) {
+      const storageKey = `skills/${existingId}/${script.filename}`;
+
+      await writeScriptFile({ storageKey, content: script.content });
+
+      skillScripts.push({
+        filename: script.filename,
+        language: script.language,
+        storageKey,
+      });
+    }
+
+    await skillMongodbDao.update(
+      skillFactory.create({ id: existingId }),
+      skillFactory.create({ scripts: skillScripts }),
+    );
+
+    return existingId;
   }
 
   const skillId = await skillMongodbDao.create(
@@ -94,6 +131,7 @@ export const seedSkill = async ({
       name,
       description,
       rule,
+      enabled: true,
       scripts: [],
     }),
   );

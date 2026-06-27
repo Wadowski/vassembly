@@ -116,10 +116,10 @@ describe('update agent command', () => {
 
     const result = await update({
       id: 'agent-1',
-      data: { assignedToolIds: ['use-agent', 'list-agents'] },
+      data: { assignedToolIds: ['agent-use', 'agent-list'] },
     });
 
-    expect(result.data.assignedToolIds).toEqual(['use-agent', 'list-agents']);
+    expect(result.data.assignedToolIds).toEqual(['agent-use', 'agent-list']);
   });
 
   it('should accept clearing assignedToolIds to empty array on update', async () => {
@@ -146,7 +146,7 @@ describe('update agent command', () => {
     await expect(
       update({
         id: 'agent-1',
-        data: { assignedToolIds: ['list-agents', 'list-agents'] },
+        data: { assignedToolIds: ['agent-list', 'agent-list'] },
       }),
     ).rejects.toThrow(ValidationError);
   });

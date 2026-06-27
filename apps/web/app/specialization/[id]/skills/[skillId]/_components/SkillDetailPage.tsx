@@ -57,20 +57,22 @@ export const SkillDetailPage = (): JSX.Element | null => {
     );
   }
 
-  if (detail.skill === undefined) {
+  if (detail.skill == null) {
     return null;
   }
+
+  const skill = detail.skill;
 
   return (
     <main className={styles.page} data-testid="skill-detail-page">
       <SkillDetailHeader
         specializationId={specializationId}
         specializationName={detail.specializationName}
-        skill={detail.skill}
+        skill={skill}
       />
-      <SkillRuleSection rule={detail.skill.rule} />
+      <SkillRuleSection rule={skill.rule} />
       <SkillScriptsSection
-        scripts={detail.skill.scripts}
+        scripts={skill.scripts}
         activeScript={detail.activeScript}
         scriptContent={detail.scriptContent}
         scriptLoading={detail.scriptLoading}

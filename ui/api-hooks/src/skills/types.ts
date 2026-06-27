@@ -13,9 +13,11 @@ export interface SkillItem {
   name: string;
   description: string;
   rule: string;
+  enabled: boolean;
   scripts: SkillScriptItem[];
   createdAt: string;
   updatedAt: string;
+  removedAt: string | null;
 }
 
 export interface SkillListItem {
@@ -23,6 +25,66 @@ export interface SkillListItem {
   specializationId: string;
   name: string;
   description: string;
+  enabled: boolean;
+}
+
+export interface SkillScriptWriteInput {
+  filename: string;
+  language: SkillScriptLanguage;
+  content: string;
+}
+
+export interface CreateSkillInput {
+  specializationId: string;
+  name: string;
+  description: string;
+  rule: string;
+  scripts?: SkillScriptWriteInput[];
+}
+
+export interface UpdateSkillInput {
+  description?: string;
+  rule?: string;
+  enabled?: boolean;
+  scripts?: SkillScriptWriteInput[];
+}
+
+export interface SkillFormScriptInput {
+  filename: string;
+  language: SkillScriptLanguage;
+  content: string;
+}
+
+export interface SkillFormInput {
+  name: string;
+  description: string;
+  rule: string;
+  scripts: SkillFormScriptInput[];
+}
+
+export interface SkillCreateVariables {
+  body: CreateSkillInput;
+}
+
+export interface SkillCreateMutationData {
+  skill: SkillItem;
+}
+
+export interface SkillUpdateVariables {
+  skillId: string;
+  body: UpdateSkillInput;
+}
+
+export interface SkillUpdateMutationData {
+  skill: SkillItem;
+}
+
+export interface SkillArchiveVariables {
+  skillId: string;
+}
+
+export interface SkillArchiveMutationData {
+  skill: SkillItem;
 }
 
 export interface SkillsBySpecializationResponse {

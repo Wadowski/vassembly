@@ -8,6 +8,7 @@ export const GET_SKILL_QUERY = gql`
       name
       description
       rule
+      enabled
       scripts {
         filename
         language

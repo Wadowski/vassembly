@@ -13,9 +13,11 @@ export interface SkillResponse {
   name: string;
   description: string;
   rule: string;
+  enabled: boolean;
   scripts: SkillScriptResponse[];
   createdAt: string;
   updatedAt: string;
+  removedAt: string | null;
 }
 
 export interface SkillListResponse {

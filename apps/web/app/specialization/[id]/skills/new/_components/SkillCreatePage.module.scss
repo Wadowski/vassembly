@@ -1,0 +1,24 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  padding: $spacing-6;
+  max-width: 48rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.backLink {
+  color: $color-primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

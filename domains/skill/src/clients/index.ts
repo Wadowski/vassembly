@@ -6,4 +6,4 @@ export {
 
 export { createScriptStorageClient, scriptStorageClient } from './scriptStorage';
 
-export type { GetScriptContentParams, ScriptStorageClient } from './scriptStorage';
+export type { ScriptStorageClient } from './scriptStorage';

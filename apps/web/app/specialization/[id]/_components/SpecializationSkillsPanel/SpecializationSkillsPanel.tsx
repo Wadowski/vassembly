@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect } from 'react';
 
 import { useSkillsBySpecialization } from '@vassembly/ui-api-hooks';
@@ -29,6 +30,7 @@ export const SpecializationSkillsPanel = ({
   const panel = usePanelList({ total, size: PANEL_PAGE_SIZE });
   const items = data?.items ?? [];
   const hasError = error !== undefined && data === undefined;
+  const createHref = `/specialization/${specializationId}/skills/new`;
 
   const refreshSkills = useCallback(async (): Promise<void> => {
     const trimmedSearch = panel.debouncedSearch.trim();
@@ -50,9 +52,14 @@ export const SpecializationSkillsPanel = ({
 
   return (
     <section className={styles.panel} aria-label="Skills">
-      <Text variant="h2" as="h2">
-        Skills
-      </Text>
+      <div className={styles.headerRow}>
+        <Text variant="h2" as="h2">
+          Skills
+        </Text>
+        <Link href={createHref}>
+          <Button variant="contained" text="Create skill" />
+        </Link>
+      </div>
       <PanelSearchBar
         value={panel.searchInput}
         placeholder="Search skills"
@@ -81,6 +88,12 @@ export const SpecializationSkillsPanel = ({
               key={skill.id}
               skill={skill}
               specializationId={specializationId}
+              onSkillUpdated={() => {
+                void refreshSkills();
+              }}
+              onSkillArchived={() => {
+                void refreshSkills();
+              }}
             />
           ))}
         </div>

@@ -6,18 +6,32 @@
   gap: $spacing-3;
   padding: $spacing-3 $spacing-4;
   border-bottom: 1px solid $color-outline;
+  transition: background-color 0.2s ease-in-out;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &[data-enabled='false'] {
+    opacity: 0.65;
+  }
+}
+
+.contentLink {
+  flex: 1;
+  min-width: 0;
   color: inherit;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
 
   &:hover {
-    background: $color-surface-container;
+    text-decoration: none;
   }
 
   &:focus-visible {
     outline: 2px solid $color-primary;
-    outline-offset: -2px;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
   }
 }
 
@@ -26,12 +40,12 @@
   flex-direction: column;
   gap: $spacing-1;
   min-width: 0;
-  flex: 1;
 }
 
 .name {
   color: $color-text-primary;
   font-weight: $font-weight-medium;
+  font-family: $font-family-mono;
 }
 
 .description {
@@ -40,4 +54,11 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  flex-shrink: 0;
 }

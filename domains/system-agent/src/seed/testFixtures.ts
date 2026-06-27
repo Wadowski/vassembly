@@ -8,7 +8,7 @@ export const VALID_SEED_ENTRIES: SystemAgentSeedEntry[] = [
     description: 'Main assistant',
     rule: 'You are the main assistant.',
     category: AgentCategory.Utility,
-    assignedToolIds: ['use-agent', 'list-agents'],
+    assignedToolIds: ['agent-use', 'agent-list'],
   },
   {
     name: 'Intent classifier',

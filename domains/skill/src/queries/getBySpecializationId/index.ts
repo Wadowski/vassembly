@@ -26,7 +26,10 @@ const buildFilter = ({
   specializationId,
   search,
 }: BuildBySpecializationIdFilterParams): Record<string, unknown> => {
-  const conditions: Record<string, unknown>[] = [{ specializationId }];
+  const conditions: Record<string, unknown>[] = [
+    { specializationId },
+    { $or: [{ removedAt: { $exists: false } }, { removedAt: null }] },
+  ];
 
   const searchFilter = buildNameDescriptionSearchFilter({ search });
   if (searchFilter !== undefined) {

@@ -5,7 +5,7 @@ import {
   assignedToolIdsUpdateSchema,
 } from './assignedToolIdsSchema';
 
-const V1_REGISTRY_TOOL_IDS = ['use-agent', 'list-agents'] as const;
+const V1_REGISTRY_TOOL_IDS = ['agent-use', 'agent-list'] as const;
 
 describe('assignedToolIdsCreateSchema', () => {
   it('should default to empty array when assignedToolIds is omitted', () => {
@@ -21,9 +21,9 @@ describe('assignedToolIdsCreateSchema', () => {
   });
 
   it('should accept valid registry tool ids', () => {
-    const result = assignedToolIdsCreateSchema.parse(['use-agent', 'list-agents']);
+    const result = assignedToolIdsCreateSchema.parse(['agent-use', 'agent-list']);
 
-    expect(result).toEqual(['use-agent', 'list-agents']);
+    expect(result).toEqual(['agent-use', 'agent-list']);
   });
 
   it('should accept all v1 registry tool ids without an artificial max length cap', () => {
@@ -33,7 +33,7 @@ describe('assignedToolIdsCreateSchema', () => {
   });
 
   it('should reject duplicate tool ids', () => {
-    expect(() => assignedToolIdsCreateSchema.parse(['use-agent', 'use-agent'])).toThrow();
+    expect(() => assignedToolIdsCreateSchema.parse(['agent-use', 'agent-use'])).toThrow();
   });
 
   it('should reject empty string tool ids', () => {
@@ -53,9 +53,9 @@ describe('assignedToolIdsUpdateSchema', () => {
   });
 
   it('should accept valid registry tool ids replacement', () => {
-    const result = assignedToolIdsUpdateSchema.parse(['list-agents']);
+    const result = assignedToolIdsUpdateSchema.parse(['agent-list']);
 
-    expect(result).toEqual(['list-agents']);
+    expect(result).toEqual(['agent-list']);
   });
 
   it('should accept clearing assignedToolIds to empty array', () => {
@@ -66,7 +66,7 @@ describe('assignedToolIdsUpdateSchema', () => {
 
   it('should reject duplicate tool ids on update', () => {
     expect(() =>
-      assignedToolIdsUpdateSchema.parse(['list-agents', 'list-agents']),
+      assignedToolIdsUpdateSchema.parse(['agent-list', 'agent-list']),
     ).toThrow();
   });
 

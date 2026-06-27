@@ -9,6 +9,13 @@
   background: $color-surface-container-low;
 }
 
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-4;
+}
+
 .list {
   display: flex;
   flex-direction: column;

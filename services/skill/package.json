@@ -19,7 +19,10 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/constants": "workspace:*",
     "@vassembly/domain-skill": "workspace:*",
+    "@vassembly/domain-specialization": "workspace:*",
+    "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*"
   }
 }

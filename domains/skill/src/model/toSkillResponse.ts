@@ -1,4 +1,4 @@
-import { assertRequiredFields, toIsoString } from '@vassembly/mappers';
+import { assertRequiredFields, toIsoString, toNullableIsoString } from '@vassembly/mappers';
 
 import type { SkillResponse } from './dto';
 import type { SkillModel } from './model';
@@ -9,6 +9,7 @@ const REQUIRED_FIELDS = [
   'name',
   'description',
   'rule',
+  'enabled',
   'scripts',
   'createdAt',
   'updatedAt',
@@ -31,11 +32,13 @@ export const toSkillResponse = ({ skill }: ToSkillResponseParams): SkillResponse
     name: skill.name!,
     description: skill.description!,
     rule: skill.rule!,
+    enabled: skill.enabled ?? true,
     scripts: (skill.scripts ?? []).map((script) => ({
       filename: script.filename,
       language: script.language,
     })),
     createdAt: toIsoString({ value: skill.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: skill.updatedAt!, fieldName: 'updatedAt' }),
+    removedAt: toNullableIsoString(skill.removedAt),
   };
 };

@@ -1,7 +1,7 @@
 import { applyResolvers } from '@vassembly/graphql';
 import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 import { gqlSchema as gqlSkillSchema } from '@vassembly/domain-skill';
-import { NotFoundError, UnauthorizedError } from '@vassembly/errors';
+import { NotFoundError, UnauthorizedError, WrongParamError } from '@vassembly/errors';
 import skillService from '@vassembly/service-skill';
 import userDomain from '@vassembly/domain-user';
 import type { Builder } from '@vassembly/graphql';
@@ -46,7 +46,7 @@ export const registerSkillResolvers = (builder: Builder): void => {
             const result = await skillService.getSkill({ id: args.id });
             return result.skill;
           } catch (error) {
-            if (error instanceof NotFoundError) {
+            if (error instanceof NotFoundError || error instanceof WrongParamError) {
               return null;
             }
 

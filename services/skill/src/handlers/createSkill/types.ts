@@ -1,0 +1,19 @@
+import type { SkillScriptLanguage } from '@vassembly/domain-skill';
+
+export interface SkillScriptWriteInput {
+  filename: string;
+  language: SkillScriptLanguage;
+  content: string;
+}
+
+export interface CreateSkillInput {
+  specializationId: string;
+  name: string;
+  description: string;
+  rule: string;
+  scripts?: SkillScriptWriteInput[];
+}
+
+export interface CreateSkillResult {
+  skill: import('@vassembly/domain-skill').SkillResponse;
+}

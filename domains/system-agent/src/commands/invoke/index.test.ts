@@ -112,14 +112,14 @@ describe('invoke system agent command', () => {
       modeledProviderClient: client,
       systemAgentId: SYSTEM_AGENT_ID,
       message: 'Run tools',
-      internalToolBindings: [{ toolId: 'list-agents', handler }],
+      internalToolBindings: [{ toolId: 'agent-list', handler }],
     });
 
     expect(invokeSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Run tools',
         systemMessage: AGENT_RULE,
-        internalToolBindings: [{ toolId: 'list-agents', handler }],
+        internalToolBindings: [{ toolId: 'agent-list', handler }],
       }),
     );
   });
@@ -158,6 +158,35 @@ describe('invoke system agent command', () => {
         message: 'Hello',
       }),
     ).rejects.toThrow(NotFoundError);
+  });
+
+  it('should pass skillsCatalogSection through to system message builder', async () => {
+    const catalogSection = '## Available Skills\n\n- **contract-review**: Review contracts';
+    mockGetActiveById.mockResolvedValue({
+      data: {
+        id: SYSTEM_AGENT_ID,
+        name: 'Compliance Bot',
+        rule: AGENT_RULE,
+        status: 'active',
+        removedAt: null,
+      },
+    });
+
+    const invokeSpy = vi.fn().mockResolvedValue({ message: 'Done' });
+    const client: ModeledProviderClient = { invoke: invokeSpy };
+
+    await invoke({
+      modeledProviderClient: client,
+      systemAgentId: SYSTEM_AGENT_ID,
+      message: 'Run tools',
+      skillsCatalogSection: catalogSection,
+    });
+
+    expect(invokeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        systemMessage: `${AGENT_RULE}\n\n${catalogSection}`,
+      }),
+    );
   });
 
   it('should reject invoke when message is empty after trim', async () => {

@@ -14,6 +14,20 @@ Your job is to find the simplest, most reusable solution. You believe in:
 - **Extension over creation**: If 80% of the logic exists, extend it to cover the remaining 20%
 - **Simplicity**: Simpler, smaller changes are better than comprehensive rewrites
 - **Consistency**: New code should follow established patterns in the codebase
+- **Design patterns**: Apply classic software design patterns from the [Refactoring Guru catalog](https://refactoring.guru/design-patterns/catalog) wherever they improve reuse and clarity
+
+## Software Design Patterns (required)
+
+**Read and apply** `.cursor/rules/software-design-patterns.mdc` on every task.
+
+Before finalizing any plan:
+
+1. **Identify applicable patterns** — scan the catalog (Creational, Structural, Behavioral) for patterns that fit the problem
+2. **Reuse existing embodiments** — search the codebase for the same pattern already in use (e.g. Command in `commands/`, Factory in `factories.ts`, Strategy via map objects)
+3. **Name patterns in the plan** — in **Analysis** and **Implementation Steps**, state which pattern(s) you chose and why (e.g. Command, Strategy, Facade, Adapter)
+4. **Avoid over-engineering** — skip patterns that add indirection without real benefit
+
+Monorepo layer and package rules remain mandatory via their dedicated rule files (`domain-package-structure.mdc`, `service-package-structure.mdc`, `api-calling-conventions.mdc`, etc.) — those are separate from software design patterns.
 
 ## When Invoked
 
@@ -269,6 +283,7 @@ coder → Done
 - **Search broadly**: Look across domains, services, and utilities for similar patterns
 - **Leverage monorepo structure**: Take advantage of shared patterns, types, and utilities
 - **Understand layering**: Know the boundaries between domains, services, and handlers
+- **Enforce design patterns**: Name applicable catalog patterns in each plan step; prefer existing embodiments in the codebase
 - **Think in packages**: Always specify which package owns which logic
 - **Data flow**: Consider how data flows through layers (domain queries/commands → service handlers → API)
 - **Avoid duplication**: If logic exists elsewhere, reference it rather than recreate it

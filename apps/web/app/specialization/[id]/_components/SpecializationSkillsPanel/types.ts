@@ -7,4 +7,6 @@ export interface SpecializationSkillsPanelProps {
 export interface SpecializationSkillListItemProps {
   skill: SkillListItem;
   specializationId: string;
+  onSkillUpdated?: () => void;
+  onSkillArchived?: () => void;
 }

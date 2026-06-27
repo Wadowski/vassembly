@@ -25,60 +25,76 @@ const filterToolsByAgentType = ({
   getAllInternalTools().filter((tool) => isToolEligibleForAgentType(tool, agentType));
 
 describe('internal tool registry', () => {
-  it('should contain use-agent, list-agents, update-task, and ask-user with v1 metadata', () => {
+  it('should contain agent-use, agent-list, task-update, and user-ask with v1 metadata', () => {
     const tools = getAllInternalTools();
 
     expect(tools).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          id: 'use-agent',
-          displayName: 'Use agent',
+          id: 'agent-use',
+          displayName: 'agent - use',
           description: 'Delegate to another agent by name',
           accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
           llmToolName: 'use_agent',
         }),
         expect.objectContaining({
-          id: 'list-agents',
-          displayName: 'List agents',
+          id: 'agent-list',
+          displayName: 'agent - list',
           description:
             'List agents visible to caller. Optionally filter by specializationIds to return agents linked to those specializations.',
           accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
           llmToolName: 'list_agents',
         }),
         expect.objectContaining({
-          id: 'update-task',
-          displayName: 'Update task',
+          id: 'task-update',
+          displayName: 'task - update',
           description: 'Persist title and/or category for a task by its ID',
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'update_task',
         }),
         expect.objectContaining({
-          id: 'ask-user',
-          displayName: 'Ask user',
+          id: 'user-ask',
+          displayName: 'user - ask',
           description:
             'Ask the task creator one or more questions. Execution pauses until all pending questions are answered.',
           accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
           llmToolName: 'ask_user',
         }),
         expect.objectContaining({
-          id: 'classify-specialization',
-          displayName: 'Classify specialization',
+          id: 'specialization-classify',
+          displayName: 'specialization - classify',
           description:
             'Classify a task description into 1–3 specialization domains. Returns existing IDs or a signal to create a new specialization.',
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'classify_specialization',
         }),
         expect.objectContaining({
-          id: 'create-specialization',
-          displayName: 'Create specialization',
+          id: 'specialization-create',
+          displayName: 'specialization - create',
           description:
             'Provision a new specialization domain: creates the entity, provisions researcher/worker/validator agents, and maps relevant MCPs.',
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'create_specialization',
         }),
+        expect.objectContaining({
+          id: 'skill-create',
+          displayName: 'skill - create',
+          description:
+            'Create a skill for a specialization with name, description, rule, and optional scripts.',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'create_skill',
+        }),
+        expect.objectContaining({
+          id: 'skill-resolve',
+          displayName: 'skill - resolve',
+          description:
+            'Resolve the full rule text for a named skill in a specialization domain.',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'resolve_skill',
+        }),
       ]),
     );
-    expect(tools).toHaveLength(6);
+    expect(tools).toHaveLength(8);
   });
 
   it('should have unique registry ids', () => {
@@ -103,28 +119,28 @@ describe('internal tool registry', () => {
 
 describe('getInternalToolById', () => {
   it('should return the matching entry when id exists', () => {
-    const useAgent = getInternalToolById('use-agent');
-    const listAgents = getInternalToolById('list-agents');
-    const updateTask = getInternalToolById('update-task');
+    const useAgent = getInternalToolById('agent-use');
+    const listAgents = getInternalToolById('agent-list');
+    const updateTask = getInternalToolById('task-update');
 
     expect(useAgent).toEqual(
       expect.objectContaining({
-        id: 'use-agent',
-        displayName: 'Use agent',
+        id: 'agent-use',
+        displayName: 'agent - use',
         accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
       }),
     );
     expect(listAgents).toEqual(
       expect.objectContaining({
-        id: 'list-agents',
-        displayName: 'List agents',
+        id: 'agent-list',
+        displayName: 'agent - list',
         accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
       }),
     );
     expect(updateTask).toEqual(
       expect.objectContaining({
-        id: 'update-task',
-        displayName: 'Update task',
+        id: 'task-update',
+        displayName: 'task - update',
         accessScope: InternalToolAccessScope.SYSTEM_ONLY,
         llmToolName: 'update_task',
       }),
@@ -140,7 +156,7 @@ describe('isToolEligibleForAgentType', () => {
   it('should allow SYSTEM_AND_PERSONAL tools for personal agents', () => {
     const tool: InternalToolDefinition = {
       id: 'shared-tool',
-      displayName: 'Shared tool',
+      displayName: 'shared - tool',
       description: 'Available to personal and system agents',
       accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
       llmToolName: 'shared_tool',
@@ -152,7 +168,7 @@ describe('isToolEligibleForAgentType', () => {
   it('should allow SYSTEM_AND_PERSONAL tools for system agents', () => {
     const tool: InternalToolDefinition = {
       id: 'shared-tool',
-      displayName: 'Shared tool',
+      displayName: 'shared - tool',
       description: 'Available to personal and system agents',
       accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
       llmToolName: 'shared_tool',
@@ -164,7 +180,7 @@ describe('isToolEligibleForAgentType', () => {
   it('should reject SYSTEM_ONLY tools for personal agents', () => {
     const tool: InternalToolDefinition = {
       id: 'system-only-tool',
-      displayName: 'System only tool',
+      displayName: 'system - only',
       description: 'Available to system agents only',
       accessScope: InternalToolAccessScope.SYSTEM_ONLY,
       llmToolName: 'system_only_tool',
@@ -176,7 +192,7 @@ describe('isToolEligibleForAgentType', () => {
   it('should allow SYSTEM_ONLY tools for system agents', () => {
     const tool: InternalToolDefinition = {
       id: 'system-only-tool',
-      displayName: 'System only tool',
+      displayName: 'system - only',
       description: 'Available to system agents only',
       accessScope: InternalToolAccessScope.SYSTEM_ONLY,
       llmToolName: 'system_only_tool',
@@ -191,9 +207,9 @@ describe('filtering tools by agent type', () => {
     const eligibleTools = filterToolsByAgentType({ agentType: 'personal' });
 
     expect(eligibleTools.map((tool) => tool.id).sort()).toEqual([
-      'ask-user',
-      'list-agents',
-      'use-agent',
+      'agent-list',
+      'agent-use',
+      'user-ask',
     ]);
   });
 
@@ -201,12 +217,14 @@ describe('filtering tools by agent type', () => {
     const eligibleTools = filterToolsByAgentType({ agentType: 'system' });
 
     expect(eligibleTools.map((tool) => tool.id).sort()).toEqual([
-      'ask-user',
-      'classify-specialization',
-      'create-specialization',
-      'list-agents',
-      'update-task',
-      'use-agent',
+      'agent-list',
+      'agent-use',
+      'skill-create',
+      'skill-resolve',
+      'specialization-classify',
+      'specialization-create',
+      'task-update',
+      'user-ask',
     ]);
   });
 });

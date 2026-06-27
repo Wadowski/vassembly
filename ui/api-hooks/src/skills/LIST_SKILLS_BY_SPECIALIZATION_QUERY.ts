@@ -18,6 +18,7 @@ export const LIST_SKILLS_BY_SPECIALIZATION_QUERY = gql`
         specializationId
         name
         description
+        enabled
       }
       total
       page

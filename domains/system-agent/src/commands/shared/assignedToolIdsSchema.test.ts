@@ -6,9 +6,9 @@ import {
   assignedToolIdsUpdateSchema,
 } from './assignedToolIdsSchema';
 
-const VALID_REGISTRY_TOOL_IDS = ['use-agent', 'list-agents'] as const;
+const VALID_REGISTRY_TOOL_IDS = ['agent-use', 'agent-list'] as const;
 
-const TOO_MANY_TOOL_IDS = ['use-agent', 'list-agents', 'extra-tool'] as const;
+const TOO_MANY_TOOL_IDS = ['agent-use', 'agent-list', 'extra-tool'] as const;
 
 describe('assignedToolIdsCreateSchema', () => {
   it('should default to empty array when omitted', () => {
@@ -20,7 +20,7 @@ describe('assignedToolIdsCreateSchema', () => {
   it('should accept valid registry tool ids', () => {
     const result = assignedToolIdsCreateSchema.parse([...VALID_REGISTRY_TOOL_IDS]);
 
-    expect(result).toEqual(['use-agent', 'list-agents']);
+    expect(result).toEqual(['agent-use', 'agent-list']);
   });
 
   it('should reject when assignedToolIds exceeds maximum count', () => {
@@ -28,7 +28,7 @@ describe('assignedToolIdsCreateSchema', () => {
   });
 
   it('should reject when assignedToolIds contains duplicate ids', () => {
-    expect(() => assignedToolIdsCreateSchema.parse(['use-agent', 'use-agent'])).toThrow(ZodError);
+    expect(() => assignedToolIdsCreateSchema.parse(['agent-use', 'agent-use'])).toThrow(ZodError);
   });
 
   it('should reject when assignedToolIds contains empty strings', () => {
@@ -48,9 +48,9 @@ describe('assignedToolIdsUpdateSchema', () => {
   });
 
   it('should accept valid registry tool ids replacement', () => {
-    const result = assignedToolIdsUpdateSchema.parse(['use-agent']);
+    const result = assignedToolIdsUpdateSchema.parse(['agent-use']);
 
-    expect(result).toEqual(['use-agent']);
+    expect(result).toEqual(['agent-use']);
   });
 
   it('should accept clearing assignedToolIds to empty array', () => {
@@ -64,7 +64,7 @@ describe('assignedToolIdsUpdateSchema', () => {
   });
 
   it('should reject when assignedToolIds contains duplicate ids', () => {
-    expect(() => assignedToolIdsUpdateSchema.parse(['list-agents', 'list-agents'])).toThrow(
+    expect(() => assignedToolIdsUpdateSchema.parse(['agent-list', 'agent-list'])).toThrow(
       ZodError,
     );
   });

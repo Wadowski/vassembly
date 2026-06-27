@@ -1,15 +1,17 @@
+import * as commands from './commands';
 import * as queries from './queries';
 
 import { mongodbIndexes } from './clients';
 import { gqlSkillSchema } from './model';
 
 export const skillDomain = {
+  commands,
   queries,
   mongodbIndexes,
   gqlSchema: gqlSkillSchema,
 };
 
-export { queries, mongodbIndexes, gqlSkillSchema as gqlSchema };
+export { commands, queries, mongodbIndexes, gqlSkillSchema as gqlSchema };
 
 export {
   SkillModel,
@@ -22,7 +24,6 @@ export type { SkillListResponse, SkillResponse, SkillScript, SkillScriptLanguage
 export {
   getSkillsCollection,
   mongodbIndexes as skillMongodbIndexes,
-  scriptStorageClient,
   skillMongodbDao,
 } from './clients';
 
@@ -30,8 +31,13 @@ export {
   COLLECTION_NAME,
   SKILL_DESCRIPTION_MAX_LENGTH,
   SKILL_NAME_MAX_LENGTH,
+  SKILL_RULE_MAX_LENGTH,
   SKILL_SCRIPT_LANGUAGES,
+  SKILL_SCRIPT_MAX_COUNT,
   SKILL_SCRIPT_MAX_SIZE_BYTES,
 } from './constants';
+
+export { formatSkillsCatalogSection } from './utils/formatSkillsCatalogSection';
+export type { FormatSkillsCatalogSectionParams } from './utils/formatSkillsCatalogSection';
 
 export default skillDomain;

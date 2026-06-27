@@ -28,7 +28,8 @@ Infer scope when omitted:
 - Single failing test file in output → test scope
 - CI / broad failure with no package hint → all
 
-3. **Initial error output** from the handoff (if any)
+3. **Initial error output** from the handoff (if any) — use only to infer failing checks and scope. **Do not pass it to subagents.**
+**Do not run checks on your own**
 
 ### 2. Retry loop (max 5 attempts)
 
@@ -41,16 +42,17 @@ Read and follow `.cursor/skills/fix-tests/SKILL.md` for this single fix attempt.
 
 failing checks: <comma-separated>
 scope: <resolved scope>
-<error output from previous attempt, or initial handoff output for try 1>
 ```
+
+Pass **only** `failing checks` and `scope`. No error output, no verification details, no fix suggestions from prior attempts.
 
 2. **Wait** for the subagent to complete.
 
 3. **Evaluate** the subagent result:
    - **PASS** → report final SUCCESS and stop.
-   - **FAIL** → if `try < 5`, use the subagent's verification output as error output for the next spawn. If `try === 5`, report final FAILURE and stop.
+   - **FAIL** → if `try < 5`, update the failing-checks list from the subagent's "Still failing" section (check names only). If `try === 5`, report final FAILURE and stop.
 
-Each retry is a **separate subagent spawn** — never ask one subagent to retry internally.
+Each retry is a **separate, isolated subagent spawn** — never ask one subagent to retry internally, and never forward output from a prior attempt.
 
 ### 3. Final report
 
@@ -89,14 +91,15 @@ Recommended next steps: <what a human should investigate>
 ```text
 failing checks: <comma-separated, e.g. unit, lint, build, types, e2e>
 scope: all | packages: <pkg1,pkg2> | test: <pkg> <path>   (optional; infer if missing)
-<error output / failing command output>
+<error output / failing command output>   (for your inference only — not forwarded to subagents)
 ```
 
 ## Constraints
 
 - ✅ Decide scope and failing checks before spawning
 - ✅ Spawn one subagent per attempt (max 5)
-- ✅ Pass updated error output to each subsequent spawn
+- ✅ Pass only failing check names and scope to each spawn — nothing from prior attempts
 - ❌ Do not fix code yourself
 - ❌ Do not run check scripts yourself
 - ❌ Do not ask a subagent to perform multiple attempts
+- ❌ Do not pass error output, verification output, or fix suggestions between attempts

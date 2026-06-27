@@ -6,19 +6,25 @@ import { formatIntentRoutingSection } from './formatIntentRoutingSection';
 export interface BuildSystemAgentSystemMessageParams {
   name: string;
   rule: string;
+  skillsCatalogSection?: string;
 }
 
 export const buildSystemAgentSystemMessage = ({
   name,
   rule,
+  skillsCatalogSection,
 }: BuildSystemAgentSystemMessageParams): string => {
+  let systemMessage = rule;
+
   if (name === SYSTEM_AGENT_NAME.IntentClassifier) {
-    return `${rule}\n\n${formatIntentCategoriesSection()}`;
+    systemMessage = `${rule}\n\n${formatIntentCategoriesSection()}`;
+  } else if (name === SYSTEM_AGENT_NAME.Assistant) {
+    systemMessage = `${rule}\n\n${formatIntentRoutingSection()}`;
   }
 
-  if (name === SYSTEM_AGENT_NAME.Assistant) {
-    return `${rule}\n\n${formatIntentRoutingSection()}`;
+  if (skillsCatalogSection) {
+    systemMessage = `${systemMessage}\n\n${skillsCatalogSection}`;
   }
 
-  return rule;
+  return systemMessage;
 };

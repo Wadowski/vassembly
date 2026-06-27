@@ -12,6 +12,7 @@ import {
   seedSkill,
   seedSkillsForSpecialization,
 } from '../utils/seedSkill';
+import { archiveSkillForE2e } from '../utils/skillStateHelpers';
 import type { WebBddWorld } from '../utils/types';
 
 const { Given } = createBdd(bddTest);
@@ -269,7 +270,12 @@ Given(
     const webWorld = world as WebBddWorld;
 
     if (!webWorld.specializationId) {
-      throw new Error('specializationId is required but not set on world.');
+      const specializationId = await seedSpecialization({
+        context: seed,
+        name: 'E2E Skills',
+        description: LEGAL_DESCRIPTION,
+      });
+      rememberSpecializationId({ world: webWorld, name: 'E2E Skills', specializationId });
     }
 
     const normalizedLanguage = language.trim().toLowerCase();
@@ -302,6 +308,10 @@ Given(
     });
 
     rememberSkillId({ world: webWorld, name: skillName, skillId });
+    webWorld.storedFields = {
+      ...(webWorld.storedFields ?? {}),
+      activeSkillName: skillName,
+    };
   },
 );
 
@@ -357,3 +367,28 @@ Given(
     };
   },
 );
+
+Given(
+  'skill {string} exists and is not archived',
+  async ({ world }, skillName: string) => {
+    const webWorld = world as WebBddWorld;
+    const skillKey = normalizeSkillKey(skillName);
+    const skillId = webWorld.skillIds?.[skillKey] ?? webWorld.skillId;
+
+    if (!skillId) {
+      throw new Error(`skill "${skillName}" must be seeded before archive scenario.`);
+    }
+  },
+);
+
+Given('skill {string} is archived', async ({ seed, world }, skillName: string) => {
+  const webWorld = world as WebBddWorld;
+  const skillKey = normalizeSkillKey(skillName);
+  const skillId = webWorld.skillIds?.[skillKey] ?? webWorld.skillId;
+
+  if (!skillId) {
+    throw new Error(`skill "${skillName}" must be seeded before archiving.`);
+  }
+
+  await archiveSkillForE2e({ context: seed, skillId });
+});

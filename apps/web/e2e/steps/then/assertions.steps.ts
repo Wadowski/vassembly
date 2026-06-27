@@ -123,3 +123,11 @@ Then('the form should still be visible', async ({ page }) => {
 
   await expect(page.locator('form')).toBeVisible();
 });
+
+Then('I see a {string} button', async ({ page }, buttonText: string) => {
+  if (!page) {
+    return;
+  }
+
+  await expect(page.getByRole('button', { name: new RegExp(buttonText, 'i') }).first()).toBeVisible();
+});

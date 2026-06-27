@@ -7,5 +7,6 @@ export class SkillModel extends Model {
   name!: string;
   description!: string;
   rule!: string;
+  enabled!: boolean;
   scripts!: SkillScript[];
 }

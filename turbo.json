@@ -22,7 +22,9 @@
     "ENCODER_SECRET",
     "MONGODB_URL",
     "MONGODB_DATABASE",
-    "JWT_SECRET"
+    "JWT_SECRET",
+    "SKILL_SCRIPT_STORAGE_BUCKET",
+    "SKILL_SCRIPT_STORAGE_LOCAL_PATH"
   ],
   "tasks": {
     "build": {

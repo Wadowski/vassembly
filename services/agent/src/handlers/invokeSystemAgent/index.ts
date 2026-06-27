@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
 import userDomain from '@vassembly/domain-user';
 
-import { runAgentInvokeWithTools } from '../../helpers/internalTools/runAgentInvokeWithTools';
+import { runAgentInvokeWithTools } from '../../internalTools/runAgentInvokeWithTools';
 import { resolveSystemCallCredentialId } from '../shared/resolveSystemCallCredentialId';
 
 import type { InvokeSystemAgentParams, InvokeSystemAgentResult } from './types';

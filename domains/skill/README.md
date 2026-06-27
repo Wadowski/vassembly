@@ -2,50 +2,70 @@
 
 Backend foundation for the skill catalog — reusable skill definitions linked to specializations with rules and script metadata.
 
-**Consumers:** `@vassembly/service-skill` (reads), `apps/api` GraphQL gateway and REST script endpoint.
+**Consumers:** `@vassembly/service-skill`, `apps/api` (GraphQL queries and REST commands), `@vassembly/service-agent` (catalog injection and `skill-resolve` tool).
 
 **Architecture:** See [Skill — Architecture](../../docs/features/skill/architecture.md).
-
-## Key features
-
-- **`queries.getById`** — public DTO query by skill ID
-- **`queries.getModelById`** — internal model query for REST script resolution
-- **`queries.getBySpecializationId`** — list skills for a specialization, sorted by name
-- **`mongodbIndexes`** — unique index on `{ specializationId, name }` plus list index
-- **`scriptStorageClient`** — S3 (production) or local filesystem (development) script reads
-- **`gqlSchema`** — GraphQL types for `Skill`, `SkillScript`, and `SkillScriptLanguage`
-
-## Installation & usage
-
-```bash
-pnpm add @vassembly/domain-skill
-```
-
-```typescript
-import skillDomain from '@vassembly/domain-skill';
-
-const { data: skill } = await skillDomain.queries.getById({ id: '...' });
-const { items } = await skillDomain.queries.getBySpecializationId({ specializationId: '...' });
-```
 
 ## Exports
 
 ### Default export (`skillDomain`)
 
-| Export | Description |
-|--------|-------------|
-| `queries` | Read operations (`getById`, `getModelById`, `getBySpecializationId`) |
-| `mongodbIndexes` | Bootstrap indexes for the `skills` collection |
-| `gqlSchema` | GraphQL schema builder for `Skill` types |
+Object with `commands`, `queries`, `mongodbIndexes`, and `gqlSchema`.
 
-### Models
+```typescript
+import skillDomain from '@vassembly/domain-skill';
 
-- `SkillModel` — skill entity (`specializationId`, `name`, `description`, `rule`, `scripts`)
-- `skillFactory` — factory for creating model instances
-- `toSkillResponse` — maps model to `SkillResponse` DTO (strips `storageKey` from scripts)
+const { data: skill } = await skillDomain.queries.getById({ id: '...' });
+await skillDomain.commands.removeSoft({ id: skill.data.id });
+```
 
-### Clients
+### Commands
 
-- `skillMongodbDao` — MongoDB DAO for the `skills` collection
-- `getSkillsCollection` — typed collection accessor
-- `scriptStorageClient` — script content storage abstraction
+#### `commands.create(input): CreateSkillCommandResult`
+Creates a skill with rule and scripts; persists script content to storage. Use `onDuplicate: 'error' | 'returnExisting'` to control name conflicts within a specialization.
+
+#### `commands.update(input): UpdateSkillCommandResult`
+Updates description, rule, enabled flag, and/or scripts for an existing skill.
+
+#### `commands.removeSoft({ id }): RemoveSoftResult`
+Soft-archives a skill by setting `removedAt`. Rejects already-archived skills (`WrongParamError`).
+
+### Queries
+
+#### `queries.getById({ id }): GetByIdResult`
+Returns a single skill as `SkillResponse` DTO (includes archived skills).
+
+#### `queries.getModelById({ id }): GetModelByIdResult`
+Internal query returning the raw `SkillModel` (used by commands and REST script resolution).
+
+#### `queries.getBySpecializationId(input): GetBySpecializationIdResult`
+Paginated list for a specialization, sorted by name. **Excludes archived** skills (`removedAt` null or unset). Supports optional `search`, `page`, and `size`.
+
+#### `queries.getCatalogBySpecializationId({ specializationId }): GetCatalogBySpecializationIdResult`
+Lightweight catalog for agent prompts: **enabled, non-archived** skills only, returning `{ name, description }[]` sorted by name.
+
+#### `queries.getActiveRuleByName({ specializationId, skillName }): GetActiveRuleByNameResult`
+Resolves the rule text for an **enabled, non-archived** skill by name within a specialization. Throws `NotFoundError` when no match.
+
+### `formatSkillsCatalogSection({ items }): string`
+Formats catalog items into a `## Available Skills` markdown section for system-prompt injection. Returns an empty string when `items` is empty.
+
+### Models & clients
+
+- `SkillModel`, `skillFactory`, `toSkillResponse` — entity, factory, and public DTO mapper (strips `storageKey` from scripts)
+- `skillMongodbDao`, `getSkillsCollection` — MongoDB access; script storage is internal to domain clients
+- `mongodbIndexes` — unique `{ specializationId, name }` plus list index
+- `gqlSchema` — GraphQL types for `Skill`, `SkillScript`, and `SkillScriptLanguage`
+- Constants: `SKILL_NAME_MAX_LENGTH`, `SKILL_SCRIPT_LANGUAGES`, etc.
+
+## Dependencies
+
+- **@vassembly/client-mongodb**: MongoDB DAO for the `skills` collection
+- **@vassembly/client-aws-s3**: Production script storage reads/writes
+- **@vassembly/commands**: `createDb`, `updateDb`, `removeSoftDb` helpers for write operations
+- **@vassembly/queries**: `getDbById` helper for internal reads
+- **@vassembly/model**: `Model` base class and factory utilities
+- **@vassembly/mappers**: Date serialization in DTO mappers
+- **@vassembly/graphql**: GraphQL schema builder for skill types
+- **@vassembly/errors**, **@vassembly/validation**, **@vassembly/config**: Errors, input validation, and storage config
+- **zod**: Command and query input schemas

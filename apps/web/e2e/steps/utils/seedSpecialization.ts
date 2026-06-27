@@ -56,7 +56,7 @@ const ensureSpecializationIndexes = async ({ context }: InitDomainContextParams)
   await init({ indexFunctions: [specializationDomain.default.mongodbIndexes] });
 };
 
-const ensureSystemAgentIndexes = async ({ context }: InitDomainContextParams): Promise<void> => {
+export const ensureSystemAgentIndexes = async ({ context }: InitDomainContextParams): Promise<void> => {
   initDomainContext({ context });
 
   const { init } = requireWorkspaceModule<typeof import('@vassembly/client-mongodb')>({
@@ -107,8 +107,19 @@ const seedSpecializationAgents = async ({
   const rolesToCreate = AGENT_ROLES.slice(0, provisionedAgentCount);
 
   for (const role of rolesToCreate) {
+    const agentName = toAgentName({ specializationName, role });
+
+    try {
+      const existing = await systemAgentDomain.default.queries.getActiveByName({ name: agentName });
+      if (existing.data.id) {
+        continue;
+      }
+    } catch {
+      // Agent does not exist yet — create below.
+    }
+
     await systemAgentDomain.default.commands.create({
-      name: toAgentName({ specializationName, role }),
+      name: agentName,
       rule: `E2E ${role} rule for ${specializationName}`,
       description: `E2E ${role} agent`,
       category: 'utility',

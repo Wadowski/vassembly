@@ -2,7 +2,7 @@
 
 **Feature slug:** `skill`
 **PRD:** [`prd.md`](./prd.md)
-**Phase:** MVP — Read & view
+**Phases covered:** MVP (Read & view) · Phase 2 (Provisioning) · Phase 3 (Agent consumption)
 **Reference architecture:** [`specialization/architecture.md`](../specialization/architecture.md)
 
 ---
@@ -13,62 +13,101 @@
 
 | Existing piece | Location | Reuse plan |
 |---|---|---|
-| `domains/specialization` — domain pattern | `domains/specialization/src/` | Template for `domains/skill`: identical `model/dto/factory/graphql/queries/clients` layout; no `commands/` in MVP |
-| `services/specialization` — thin service layer | `services/specialization/src/handlers/` | Template for `services/skill`: same `getSpecialization`/`listSpecializations` handler structure; no cross-domain enrichment needed in MVP |
-| `getBySpecializationId` FK query | `domains/system-agent/src/queries/getBySpecializationId/` | Copy pattern verbatim for `domains/skill/src/queries/getBySpecializationId/` — same validation, same `getManyRaw` with `{ sort: { name: 1 } }` |
-| `SpecializationAgentsPanel` / `SpecializationMcpsPanel` | `apps/web/app/specialization/[id]/_components/` | Copy + adapt for `SpecializationSkillsPanel`: same section / empty-state / list-item structure |
-| `useSpecializationDetail` hook | `apps/web/app/specialization/[id]/_components/useSpecializationDetail.ts` | Pattern for `useSkillDetail`; separate script-content state managed independently |
-| `GET_SPECIALIZATION_QUERY` / `useSpecialization` | `ui/api-hooks/src/specializations/` | Pattern for `GET_SKILL_QUERY`, `LIST_SKILLS_BY_SPECIALIZATION_QUERY`, `useSkill`, `useSkillsBySpecialization` |
-| `@vassembly/client-aws-s3` | `packages/client-aws-s3/src/client.ts` | Call `AwsS3Client({ bucketName }).getFile({ key: storageKey })` for production script reads |
-| `S3Config` / `Config` interfaces | `packages/config/src/types.ts` | Extend with `SkillsConfig` for bucket name + local root path |
-| `mongodbIndexes` pattern | `domains/specialization/src/clients/mongodb.ts` | Same `MongoDbDAO` + `createIndex` pattern for skill indexes |
-| `registerApiMongoIndexes` bootstrap | `apps/api/src/bootstrap/mongoIndexes.ts` | Add `skillMongodbIndexes` import to `getApiMongoIndexFunctions()` |
-| `registerSpecializationResolvers` pattern | `apps/api/src/graphql/resolvers/specialization.ts` | Copy structure for `registerSkillResolvers`; admin role-gate with same `assertHasRole` pattern |
+| `domains/specialization` — domain pattern | `domains/specialization/src/` | Template for `domains/skill`: identical `model/dto/factory/graphql/queries/clients` layout |
+| `services/specialization` — thin service layer | `services/specialization/src/handlers/` | Template for `services/skill`: same handler structure |
+| `getBySpecializationId` FK query | `domains/system-agent/src/queries/getBySpecializationId/` | Pattern verbatim for `domains/skill/src/queries/getBySpecializationId/` |
+| `SpecializationAgentsPanel` / `SpecializationMcpsPanel` | `apps/web/app/specialization/[id]/_components/` | Copy + adapt for `SpecializationSkillsPanel` |
+| `useSpecializationDetail` hook | `apps/web/app/specialization/[id]/_components/useSpecializationDetail.ts` | Pattern for `useSkillDetail` |
+| `GET_SPECIALIZATION_QUERY` / `useSpecialization` | `ui/api-hooks/src/specializations/` | Pattern for `GET_SKILL_QUERY`, `LIST_SKILLS_BY_SPECIALIZATION_QUERY` |
+| `@vassembly/client-aws-s3` | `packages/client-aws-s3/src/client.ts` | `AwsS3Client({ bucketName }).getFile({ key: storageKey })` |
+| `S3Config` / `Config` interfaces | `packages/config/src/types.ts` | Extend with `SkillsConfig` |
+| `mongodbIndexes` pattern | `domains/specialization/src/clients/mongodb.ts` | Same `MongoDbDAO` + `createIndex` pattern |
+| `registerApiMongoIndexes` bootstrap | `apps/api/src/bootstrap/mongoIndexes.ts` | Add `skillMongodbIndexes` |
+| `registerSpecializationResolvers` pattern | `apps/api/src/graphql/resolvers/specialization.ts` | Copy structure for `registerSkillResolvers` |
 | `defineRoute` + `authorizeAdminRequest` | `apps/api/src/routes/system-agents/getById.ts` | Pattern for REST script content route |
 | `ProtectedAuthRoute` with `roles={['admin']}` | `apps/web/lib/auth/ProtectedAuthRoute.tsx` | Route guard for skill detail page |
-| `NotFoundError` | `@vassembly/errors` | Throw when skill not found or script file missing in storage |
+| `NotFoundError` | `@vassembly/errors` | Throw when skill not found |
+| **`domains/system-agent/commands/removeSoft`** | `domains/system-agent/src/commands/removeSoft/` | Exact pattern for `domains/skill/src/commands/removeSoft/` |
+| **`services/agent/handlers/archiveSystemAgent`** | `services/agent/src/handlers/archiveSystemAgent/` | Pattern for `services/skill/handlers/archiveSkill/` |
+| **`apps/api/src/routes/system-agents/delete.ts`** | `apps/api/src/routes/system-agents/delete.ts` | Pattern for `apps/api/src/routes/skills/archive.ts` |
+| **`ui/api-hooks/src/systemAgents/http/archiveSystemAgent.ts`** | existing | Pattern for `ui/api-hooks/src/skills/http/archiveSkill.ts` |
+| **`INTERNAL_TOOLS` registry** | `packages/constants/src/internalTools/registry.ts` | Add `resolve-skill` entry (`SYSTEM_ONLY`) |
+| **`SYSTEM_AGENT_NAME` enum** | `packages/constants/src/SystemAgentName.ts` | Add `SkillResolver = 'Skill resolver'` |
+| **`systemAgents.json` seed** | `domains/system-agent/seed/systemAgents.json` | Add "Skill resolver" seed entry |
+| **`buildSystemAgentSystemMessage`** | `domains/system-agent/src/utils/buildSystemAgentSystemMessage/index.ts` | Extend to accept optional `skillsCatalogSection?: string` |
+| **`services/agent/helpers/internalTools/createInternalToolHandlers`** | existing | Add `'resolve-skill'` binding |
+| **`runAgentInvokeWithTools.ts` `invokeSystemAgent`** | `services/agent/src/helpers/internalTools/runAgentInvokeWithTools.ts` | Inject catalog section before system agent invoke |
+| **`packages/client-langchain` schemas** | `packages/client-langchain/src/internalTools/schemas/` | Add `resolveSkillSchema.ts` |
 
-### What is Genuinely New
+### What Already Exists from MVP
 
-- `@vassembly/domain-skill` — new domain package: `SkillModel`, constants, FK queries, MongoDB client with indexes
-- `@vassembly/service-skill` — thin read-only service: `listSkillsBySpecialization`, `getSkill` handlers
-- `ScriptStorageClient` — storage abstraction inside `domains/skill/src/clients/scriptStorage.ts`; hides S3 vs local filesystem behind a single interface
-- `Config.skills` — new `SkillsConfig` section in `packages/config/src/types.ts` with bucket name + local root path
-- `GET /api/skills/:skillId/scripts/:filename` — Fastify REST endpoint for script content (text/plain); admin-only
-- `registerSkillResolvers` — GraphQL resolver with `skill(id)` and `skillsBySpecialization(specializationId)` queries
-- `ui/api-hooks/src/skills/` — `useSkill`, `useSkillsBySpecialization` hooks
-- `SpecializationSkillsPanel` — third panel on specialization detail page; fetches independently via `useSkillsBySpecialization`
-- `/specialization/[id]/skills/[skillId]` — skill detail Next.js route with rule section + script file list + code viewer
-- `react-syntax-highlighter` — new frontend dependency; no existing syntax-highlighting component found in the codebase
+The MVP phase shipped the following — **do not rebuild**:
 
-### Simplifications Applied
+| Package | What exists |
+|---|---|
+| `domains/skill` | `model/`, `queries/getById`, `queries/getModelById`, `queries/getBySpecializationId`, `commands/create`, `commands/update`, `clients/mongodb`, `clients/scriptStorage`, `constants` |
+| `services/skill` | `handlers/createSkill`, `handlers/updateSkill`, `handlers/listSkillsBySpecialization`, `handlers/getSkill` |
+| `apps/api/routes/skills` | `create.ts`, `update.ts`, `getSkillScript.ts`, `index.ts` |
+| `ui/api-hooks/src/skills` | `GET_SKILL_QUERY`, `LIST_SKILLS_BY_SPECIALIZATION_QUERY`, `useSkill`, `useSkillsBySpecialization`, `useCreateSkill`, `useUpdateSkill`, `http/createSkill`, `http/updateSkill`, `types.ts` |
+| `apps/web` | `SpecializationSkillsPanel`, skill detail route, skill create/edit routes, `SkillForm` |
+| `packages/constants` | `create-skill` registered in `INTERNAL_TOOLS` |
+| `packages/client-langchain` | `createSkillSchema.ts` |
 
-| Original consideration | Architecture decision | Saving |
-|---|---|---|
-| Separate `packages/skill-script-storage` package | Storage abstraction inside `domains/skill/src/clients/scriptStorage.ts` | No third new package; co-located with the domain that owns script metadata |
-| GraphQL field for script code inline | REST `GET /api/skills/:skillId/scripts/:filename` (text/plain) | Avoids large binary/text payloads inside GraphQL; consistent with calling convention |
-| `skillsCount` field on `Specialization` list type | Deferred to Phase 2; skills panel on detail uses a separate `skillsBySpecialization` query | No N+1 on specialization list; no change to `domains/specialization` in MVP |
-| Admin write endpoints (create/update/delete) in MVP | Domain model + validation ready but no REST routes exposed; seed-only for MVP/E2E | Clean scope; Phase 2 only adds routes + service handler |
-| Separate `packages/config-skill` for config types | Extend existing `packages/config/src/types.ts` in place | No new package for config; one-line interface addition |
-| `scripts/` prefix in `storageKey` | `storageKey = "skills/{skillId}/{filename}"` where `filename` is the full value (e.g., `scripts/validate.py`) | Deterministic and derivable from `skillId + filename`; no extra transformation |
+### What is Genuinely New by Phase
 
-### Layers Involved
+**Phase 2 — Provisioning (archive only; create/edit already shipped)**
+
+- `domains/skill/commands/removeSoft` — soft-delete command using `removeSoftDb` from `@vassembly/commands`
+- `domains/skill/queries/getBySpecializationId` — **update** existing filter to exclude `removedAt != null`
+- `services/skill/handlers/archiveSkill` — admin archive handler (mirrors `archiveSystemAgent`)
+- `apps/api/src/routes/skills/archive.ts` — REST `DELETE /skills/:skillId` (admin-gated)
+- `ui/api-hooks/src/skills/http/archiveSkill.ts` + `useArchiveSkill.ts` — client-side archive hook
+- Admin archive dialog UI on the skills panel / skill detail page
+
+**Phase 3 — Agent consumption**
+
+- `domains/skill/queries/getCatalogBySpecializationId` — catalog-tier query: returns only `enabled: true AND removedAt: null`, name+description only, for system message injection
+- `domains/skill/queries/getActiveRuleByName` — rule-tier query: looks up a single active skill rule by `specializationId + name`
+- `domains/skill/utils/formatSkillsCatalogSection` — pure function: formats an array of `{name, description}` into a system-message-ready text block
+- `services/agent/helpers/internalTools/resolveSkill` — `resolve-skill` internal tool handler
+- `packages/client-langchain/schemas/resolveSkillSchema.ts` — Zod schema for `resolve_skill` LLM tool
+- `packages/constants` — add `resolve-skill` to `INTERNAL_TOOLS` registry; add `SkillResolver` to `SYSTEM_AGENT_NAME`
+- `domains/system-agent/seed/systemAgents.json` — add "Skill resolver" seed entry
+- `domains/system-agent/commands/invoke/index.ts` + `types.ts` — accept optional `skillsCatalogSection?: string`; pass to `buildSystemAgentSystemMessage`
+- `domains/system-agent/utils/buildSystemAgentSystemMessage/index.ts` + `types` — append `skillsCatalogSection` when present
+- `services/agent/helpers/internalTools/runAgentInvokeWithTools.ts` `invokeSystemAgent` — query catalog and inject before invoke when `agent.specializationId` is set
+- `services/agent/helpers/internalTools/createInternalToolHandlers.ts` — add `'resolve-skill'` binding
+
+### Layers Involved (all phases)
 
 ```
-packages/config                     ← extend Config + SkillsConfig types; wire env vars
-domains/skill                       ← NEW: SkillModel, queries (getById, getBySpecializationId),
-                                      clients (mongodb + scriptStorage)
-services/skill                      ← NEW: listSkillsBySpecialization, getSkill handlers
-apps/api                            ← new skill GraphQL resolver + REST script endpoint + index bootstrap
-ui/api-hooks                        ← new skills hooks (useSkill, useSkillsBySpecialization)
-apps/web                            ← SpecializationSkillsPanel + /specialization/[id]/skills/[skillId]/ route
+packages/config                     ← extend Config + SkillsConfig types
+packages/constants                  ← add resolve-skill to INTERNAL_TOOLS; add SkillResolver to SYSTEM_AGENT_NAME
+packages/client-langchain           ← add resolveSkillSchema
+
+domains/skill                       ← extend: commands/removeSoft, queries updates (archive filter + catalog + rule),
+                                      utils/formatSkillsCatalogSection
+domains/system-agent                ← extend: commands/invoke (skillsCatalogSection param),
+                                      utils/buildSystemAgentSystemMessage (append section),
+                                      seed/systemAgents.json (Skill resolver)
+
+services/skill                      ← add: handlers/archiveSkill
+services/agent                      ← extend: runAgentInvokeWithTools (catalog injection),
+                                      internalTools/resolveSkill (new handler),
+                                      createInternalToolHandlers (register resolve-skill)
+
+apps/api                            ← add: routes/skills/archive.ts; register in routes/skills/index.ts
+ui/api-hooks                        ← add: skills/http/archiveSkill.ts, skills/useArchiveSkill.ts
+apps/web                            ← add: archive dialog + button in skills panel / skill detail
 ```
+
+> **Domain isolation:** `domains/system-agent` must NOT import `domains/skill`. Catalog injection happens entirely in `services/agent`, which is allowed to import both domains. The catalog section is passed to `domains/system-agent/commands/invoke` as a pre-formatted `string` — no skill types cross the boundary.
 
 ---
 
 ## Architecture & Package Placement
 
-### Data Flow: Admin reads skills list (GraphQL)
+### Data Flow: MVP — Admin reads skills list (GraphQL)
 
 ```mermaid
 sequenceDiagram
@@ -81,40 +120,78 @@ sequenceDiagram
     GQL->>GQL: assertHasRole(ADMIN)
     GQL->>Svc: listSkillsBySpecialization({ specializationId })
     Svc->>SkDomain: queries.getBySpecializationId({ specializationId })
-    SkDomain-->>Svc: SkillModel[]
-    Svc-->>GQL: SkillResponse[] (metadata + rule + script metadata; no code)
-    GQL-->>UI: [Skill] → list of skills with scripts[] metadata
+    Note over SkDomain: filter: removedAt: null (Phase 2+)
+    SkDomain-->>Svc: SkillModel[] (active only)
+    Svc-->>GQL: SkillResponse[]
+    GQL-->>UI: [Skill] list
 ```
 
-### Data Flow: Admin views skill detail + script code (GraphQL + REST)
+### Data Flow: Phase 2 — Admin archives a skill (REST DELETE)
 
 ```mermaid
 sequenceDiagram
-    participant UI as apps/web (SkillDetailPage)
-    participant GQL as GraphQL (apps/api)
-    participant REST as REST (apps/api)
-    participant Svc as services/skill
+    participant UI as apps/web (ArchiveSkillDialog)
+    participant REST as REST DELETE /api/skills/:id (apps/api)
+    participant Svc as services/skill (archiveSkill)
+    participant SkDomain as domains/skill (commands.removeSoft)
+
+    UI->>REST: DELETE /api/skills/:skillId (admin token)
+    REST->>REST: authorizeAdminRequest → userId
+    REST->>Svc: archiveSkill({ adminUserId, skillId })
+    Svc->>SkDomain: queries.getById({ id: skillId }) → verify exists
+    Svc->>SkDomain: commands.removeSoft({ id: skillId })
+    Note over SkDomain: sets removedAt = now; skill excluded from active queries
+    SkDomain-->>Svc: SkillModel (archived)
+    Svc-->>REST: SkillResponse (with removedAt)
+    REST-->>UI: 200 { skill }
+    Note over UI: remove skill from panel list; show success toast
+```
+
+### Data Flow: Phase 3 — Catalog tier (auto-inject into system agent)
+
+```mermaid
+sequenceDiagram
+    participant Caller as use_agent tool caller
+    participant SvcAgent as services/agent (runAgentInvokeWithTools)
     participant SkDomain as domains/skill
-    participant Storage as ScriptStorageClient
+    participant SADomain as domains/system-agent (commands.invoke)
 
-    UI->>GQL: query Skill($id)
-    GQL->>GQL: assertHasRole(ADMIN)
-    GQL->>Svc: getSkill({ id })
-    Svc->>SkDomain: queries.getById({ id })
-    SkDomain-->>Svc: SkillModel
-    Svc-->>GQL: SkillResponse (name, description, rule, scripts[]{filename, language})
-    GQL-->>UI: Skill (no storageKey exposed)
+    Caller->>SvcAgent: invokeSystemAgent({ agentId, message })
+    SvcAgent->>SADomain: queries.getActiveById({ id: agentId })
+    SADomain-->>SvcAgent: SystemAgentModel (specializationId set)
+    SvcAgent->>SkDomain: queries.getCatalogBySpecializationId({ specializationId })
+    Note over SkDomain: filter: enabled:true AND removedAt:null; returns name+description only
+    SkDomain-->>SvcAgent: CatalogItem[]
+    SvcAgent->>SkDomain: utils.formatSkillsCatalogSection(items)
+    SkDomain-->>SvcAgent: skillsCatalogSection string
+    SvcAgent->>SADomain: commands.invoke({ ..., skillsCatalogSection })
+    Note over SADomain: buildSystemAgentSystemMessage appends catalog section
+    SADomain-->>SvcAgent: InvokeSystemAgentResult
+```
 
-    Note over UI: Default: first script selected alphabetically
-    UI->>REST: GET /api/skills/:skillId/scripts/:filename (URL-encoded, admin token)
-    REST->>REST: authorizeAdminRequest({ headers })
-    REST->>SkDomain: queries.getModelById({ id: skillId })
-    REST->>REST: find script where filename === decodedFilename → 404 if missing
-    REST->>Storage: getScriptContent({ storageKey })
-    Storage-->>REST: script source string
-    REST-->>UI: 200 text/plain
+> **Personal agents never receive catalog:** `invokePersonalAgent` does not perform catalog injection. Only `invokeSystemAgent` injects when `agent.specializationId != null`.
 
-    Note over UI: User selects different script → repeat REST call
+### Data Flow: Phase 3 — Rule tier (resolve-skill on demand)
+
+```mermaid
+sequenceDiagram
+    participant Worker as Worker system agent
+    participant SADomain as domains/system-agent (commands.invoke)
+    participant Resolver as "Skill resolver" system agent
+    participant ResolveTool as resolve-skill handler (services/agent)
+    participant SkDomain as domains/skill
+
+    Worker->>SADomain: use_agent("Skill resolver", "get rule for contract-review")
+    SADomain->>Resolver: invoke
+    Resolver->>ResolveTool: resolve_skill({ skillName: "contract-review" })
+    Note over ResolveTool: no specializationId arg → look up callerAgentId's specializationId
+    ResolveTool->>SADomain: queries.getActiveById({ id: callerAgentId })
+    SADomain-->>ResolveTool: SystemAgentModel.specializationId
+    ResolveTool->>SkDomain: queries.getActiveRuleByName({ specializationId, skillName })
+    Note over SkDomain: filter: enabled:true AND removedAt:null AND name===skillName
+    SkDomain-->>ResolveTool: rule string
+    ResolveTool-->>Resolver: JSON { skillName, rule }
+    Resolver-->>Worker: full rule text
 ```
 
 ### Cross-Package Dependency Map
@@ -123,43 +200,51 @@ sequenceDiagram
 packages/config
   ↑ imported by: apps/api (SkillsConfig wiring), domains/skill (scriptStorage factory)
 
+packages/constants
+  ↑ imported by: domains/system-agent (buildSystemAgentSystemMessage, SYSTEM_AGENT_NAME),
+                 services/agent (INTERNAL_TOOLS registry, SYSTEM_AGENT_NAME)
+
+packages/client-langchain
+  ↑ imported by: domains/agent (tool schema registration for LLM)
+
 domains/skill
-  ↑ imported by: services/skill, apps/api (REST route handler, GraphQL schema registration)
+  ↑ imported by: services/skill, services/agent (catalog injection + resolve-skill), apps/api (REST + GraphQL)
+
+domains/system-agent
+  ↑ imported by: services/agent (catalog injection, resolve-skill context lookup)
+  ⚠️  does NOT import domains/skill
 
 services/skill
   ↑ imported by: apps/api (GraphQL resolver)
 
+services/agent
+  ↑ imported by: apps/api (invoke + agent management handlers)
+
 ui/api-hooks (skills/)
   ↑ imported by: apps/web
 
-apps/web (SpecializationSkillsPanel + skill detail route)
+apps/web
   — imports: @vassembly/ui-api-hooks (skill hooks), next/navigation, react-syntax-highlighter
 ```
-
-> **Dependency note:** `domains/skill` does not import any other domain. It has no inter-domain dependencies in MVP — all it needs is `@vassembly/client-mongodb`, `@vassembly/client-aws-s3`, `@vassembly/config`, and standard utilities. This keeps the domain fully self-contained.
 
 ---
 
 ## Recommendation
 
-**Approach:** Introduce two new packages (`domain-skill`, `service-skill`) following the established specialization pattern exactly. Script storage abstraction lives inside the domain's `clients/` folder. The UI extends the specialization detail page with a third skills panel and adds a nested skill detail route. No existing packages are modified except `packages/config` (type extension) and `apps/api` (resolver + route + index bootstrap).
+**Overall approach:** All three phases extend existing packages incrementally — no new packages are introduced beyond what the MVP plan already created (`domain-skill`, `service-skill`). Phase 2 adds the archive command to the skill domain and a thin archive handler to the service. Phase 3 adds two new queries to the skill domain, a formatting utility, and extends `services/agent` with catalog injection and the `resolve-skill` tool handler. The `domains/system-agent` receives only a minimal param extension to `invoke` — it never imports `domains/skill`.
 
-**Why this reduces complexity vs alternatives:**
-- Zero changes to `domains/specialization`, `services/specialization`, or any existing domain — clean extension.
-- Storage abstraction co-located with the domain avoids a third new package and an additional cross-package import.
-- REST endpoint for script content follows the established calling convention (large text/binary = REST, not GraphQL).
-- UI panels follow the `SpecializationAgentsPanel` / `SpecializationMcpsPanel` pattern verbatim.
-
-**Trade-offs:**
-- The specialization detail page adds a third async panel (`skillsBySpecialization` query fires on detail load). Acceptable at MVP scale (p95 < 200 ms per PRD NFR). Phase 2 can add `skillsCount` to the specialization list query if aggregate counts are needed.
-- `react-syntax-highlighter` is a new frontend dependency (~100 KB minified). No existing highlighting component found in the codebase. Acceptable trade-off for readable script display per SK-4 requirement.
-- Script content is fetched per-select client-side via REST, not pre-loaded. This means a loading state per script selection — acceptable for an audit/read UI.
+**Why this reduces complexity:**
+- Archive reuses `removeSoftDb` verbatim — zero novel logic.
+- Catalog injection is a pure data read + string format inserted into the existing `invokeSystemAgent` call path — no new abstractions.
+- `resolve-skill` handler mirrors the `createSkill` handler structure exactly.
+- `buildSystemAgentSystemMessage` extension follows the existing `formatIntentCategoriesSection` pattern.
+- Personal agents are completely unaffected — catalog injection is conditional on `specializationId` which personal agents never have.
 
 ---
 
 ## Domain Model Details
 
-### `SkillModel` (`domains/skill/src/model/model.ts`)
+### `SkillModel` (`domains/skill/src/model/model.ts`) — existing
 
 ```typescript
 import { Model } from '@vassembly/model';
@@ -170,98 +255,68 @@ export class SkillModel extends Model {
   name!: string;
   description!: string;
   rule!: string;
+  enabled!: boolean;
   scripts!: SkillScript[];
+  // removedAt?: Date | null  ← inherited from base Model via removeSoftDb
 }
 ```
 
-### `SkillScript` subdocument (`domains/skill/src/model/types.ts`)
+> `enabled` and `removedAt` together determine active status. Phase 3 catalog queries filter on `enabled: true AND removedAt: null`.
+
+### Response DTO (`domains/skill/src/model/dto.ts`) — Phase 2 extension
+
+Add `removedAt: string | null` to `SkillResponse`:
 
 ```typescript
-export const SKILL_SCRIPT_LANGUAGES = ['python', 'nodejs', 'bash'] as const;
-export type SkillScriptLanguage = (typeof SKILL_SCRIPT_LANGUAGES)[number];
-
-export interface SkillScript {
-  filename: string;    // e.g. "scripts/validate.py" — relative path within skill
-  language: SkillScriptLanguage;
-  storageKey: string;  // e.g. "skills/skill_123/scripts/validate.py" — server-internal
-}
-```
-
-### Response DTOs (`domains/skill/src/model/dto.ts`)
-
-```typescript
-export interface SkillScriptResponse {
-  filename: string;
-  language: SkillScriptLanguage;
-  // storageKey intentionally omitted — server-internal; never exposed in API responses
-}
-
 export interface SkillResponse {
   id: string;
   specializationId: string;
   name: string;
   description: string;
   rule: string;
+  enabled: boolean;
   scripts: SkillScriptResponse[];
   createdAt: string;
   updatedAt: string;
-}
-
-export interface SkillListResponse {
-  items: SkillResponse[];
+  removedAt: string | null;  // Phase 2 addition
 }
 ```
 
-> `storageKey` is stripped in `toSkillResponse` mapper — not part of the DTO. The REST script endpoint resolves it internally from the `SkillModel`.
-
-### Constants (`domains/skill/src/constants.ts`)
+### Catalog Item type (`domains/skill/src/queries/getCatalogBySpecializationId/types.ts`) — Phase 3
 
 ```typescript
-export const COLLECTION_NAME = 'skills';
-export const SKILL_NAME_MAX_LENGTH = 64;          // agentskills.io constraint
-export const SKILL_DESCRIPTION_MAX_LENGTH = 1024; // FR-DM-4
-export const SKILL_SCRIPT_MAX_SIZE_BYTES = 512 * 1024; // 512 KB per script (OQ-8 default)
+export interface SkillCatalogItem {
+  name: string;
+  description: string;
+}
+
+export interface GetCatalogBySpecializationIdParams {
+  specializationId: string;
+}
+
+export interface GetCatalogBySpecializationIdResult {
+  items: SkillCatalogItem[];
+}
 ```
-
-### Storage Key Convention
-
-```
-skills/{skillId}/{filename}
-```
-
-Where `filename` is the value stored in `SkillScript.filename` (e.g., `scripts/validate.py`).
-
-Full key example: `skills/skill_contract_review_01/scripts/validate.py`
-
-> This makes `storageKey` deterministic and derivable from `skillId + filename`. For seeding, the storageKey can be generated as `skills/${skill.id}/${script.filename}` without additional configuration.
 
 ---
 
 ## API Design
 
-### GraphQL Schema (`domains/skill/src/model/graphql.ts`)
+### GraphQL (unchanged from MVP)
 
 ```graphql
-enum SkillScriptLanguage {
-  python
-  nodejs
-  bash
-}
-
-type SkillScript {
-  filename: String!
-  language: SkillScriptLanguage!
-}
-
 type Skill {
   id: ID!
   specializationId: ID!
   name: String!
   description: String!
   rule: String!
+  enabled: Boolean!
   scripts: [SkillScript!]!
   createdAt: String!
   updatedAt: String!
+  removedAt: String
 }
 
 type Query {
@@ -270,824 +325,871 @@ type Query {
 }
 ```
 
-Both queries require `AUTH_TOKEN_ROLE.ADMIN`. `storageKey` is not included in the `SkillScript` type.
+Both queries require `AUTH_TOKEN_ROLE.ADMIN`. Active-only filter (`removedAt: null`) applied in `getBySpecializationId` query (Phase 2 update).
 
-**Resolver (`apps/api/src/graphql/resolvers/skill.ts`)** mirrors `registerSpecializationResolvers` exactly:
-
-```typescript
-// gqlSkillSchema(builder) called once to register types
-// skill(id: ID!) → skillService.getSkill({ id }) → returns SkillResponse | null
-// skillsBySpecialization(specializationId: ID!) → skillService.listSkillsBySpecialization({ specializationId })
-// Both: const { userId } = context.authenticatedUserId; assertHasRole({ userId, role: AUTH_TOKEN_ROLE.ADMIN })
-```
-
-### REST: Script Content
+### REST: Script Content (MVP — unchanged)
 
 ```
 GET /api/skills/:skillId/scripts/:filename
 Authorization: Bearer <admin token>
 ```
 
-**Request:**
-- `:skillId` — the skill's MongoDB ID
-- `:filename` — URL-encoded relative path (e.g., `scripts%2Fvalidate.py` for `scripts/validate.py`)
+### REST: Archive Skill (Phase 2 — new)
 
-**Response:**
+```
+DELETE /api/skills/:skillId
+Authorization: Bearer <admin token>
+```
 
 | Status | Body | Condition |
 |--------|------|-----------|
-| `200 text/plain` | Script source code string | Success |
+| `200` | `{ skill: SkillResponse }` | Archived successfully |
 | `403` | error JSON | Non-admin or unauthenticated |
-| `404` | `{ error: "skill_not_found" }` | `skillId` not in DB |
-| `404` | `{ error: "script_not_found" }` | `filename` not in `skill.scripts[]` |
-| `404` | `{ error: "script_file_missing" }` | Storage key exists in DB but file absent in storage |
-| `500` | `{ error: "storage_error" }` | Storage read failure (S3 error / FS permission) |
+| `404` | `{ error: "skill_not_found" }` | Skill ID not in DB |
+| `409` | `{ error: "already_archived" }` | Skill already archived |
 
 **Server-side steps:**
 1. `authorizeAdminRequest({ headers })` — 403 if not admin
-2. `decodeURIComponent(request.params.filename)` — decode filename
-3. `skillDomain.queries.getModelById({ id: skillId })` — 404 `skill_not_found` if missing
-4. Find `script` in `skill.scripts` where `script.filename === decodedFilename` — 404 `script_not_found` if absent
-5. `scriptStorageClient.getScriptContent({ storageKey: script.storageKey })` — 404/500 on storage error
-6. `reply.type('text/plain').send(content)`
+2. `skillService.archiveSkill({ adminUserId, skillId })` — throws `NotFoundError` / `WrongParamError`
+3. Return `200 { skill: archivedSkillResponse }`
 
-**Route file:** `apps/api/src/routes/skills/getSkillScript.ts`
-**Route registration:** `routesWithPrefix('/skills', skillRoutesList)` in `apps/api/src/routes/index.ts`
+**Route file:** `apps/api/src/routes/skills/archive.ts`
+
+### Internal Tool: `resolve-skill` (Phase 3 — new, system-only)
+
+**LLM tool name:** `resolve_skill`
+**Access scope:** `SYSTEM_ONLY`
+
+**Args schema (`packages/client-langchain/schemas/resolveSkillSchema.ts`):**
+
+```typescript
+export const resolveSkillSchema = z.object({
+  skillName: z.string().min(1).describe('Exact name of the skill to resolve (e.g. "contract-review")'),
+  specializationId: z.string().optional().describe(
+    'Override specializationId. If omitted, the calling agent\'s specializationId is used.',
+  ),
+});
+```
+
+**Handler result:** Returns a JSON string `{ skillName: string; rule: string }`.
+
+**Error behavior:**
+- `NotFoundError` if skill not found, archived, or disabled — LLM receives a descriptive error string.
 
 ---
 
-## Storage Abstraction Design
+## Phase 2 — Archive Implementation Details
 
-### `ScriptStorageClient` interface + factory (`domains/skill/src/clients/scriptStorage.ts`)
+### `domains/skill/commands/removeSoft` (new)
+
+Pattern: verbatim copy of `domains/system-agent/src/commands/removeSoft/index.ts` adapted for skill:
 
 ```typescript
-export interface ScriptStorageClient {
-  getScriptContent: (params: { storageKey: string }) => Promise<string>;
-}
+// domains/skill/src/commands/removeSoft/index.ts
+import { removeSoftDb } from '@vassembly/commands';
+import { WrongParamError, NotFoundError } from '@vassembly/errors';
+import { skillMongodbDao } from '../../clients';
+import { SkillModel, skillFactory } from '../../model';
+import { getModelById } from '../../queries/getModelById';
 
-export const createScriptStorageClient = (): ScriptStorageClient => {
-  const isLocal = config.environment !== Environment.Production;
+export const removeSoft = async ({ id }: RemoveSoftParams): Promise<RemoveSoftResult> => {
+  const existing = await getModelById({ id });
+  if (existing.data === null) throw new NotFoundError('Skill not found');
+  if (existing.data.removedAt != null) throw new WrongParamError('Archive requires active skill');
 
-  if (isLocal) {
-    const localRootPath = config.skills.scriptStorage.localRootPath ?? './.data/skill-scripts';
-    return {
-      getScriptContent: async ({ storageKey }) => {
-        const fullPath = path.join(localRootPath, storageKey);
-        return fs.readFile(fullPath, 'utf-8'); // throws on missing file → REST layer maps to 404
-      },
-    };
+  const persistRemoveSoft = removeSoftDb<SkillModel>({
+    dao: skillMongodbDao,
+    factory: skillFactory,
+  });
+
+  return persistRemoveSoft({ id });
+};
+```
+
+### `domains/skill/queries/getBySpecializationId` — update (Phase 2)
+
+Add `removedAt: null` condition to `buildFilter`:
+
+```typescript
+const buildFilter = ({ specializationId, search }: BuildBySpecializationIdFilterParams) => {
+  const conditions = [
+    { specializationId },
+    { $or: [{ removedAt: { $exists: false } }, { removedAt: null }] },
+  ];
+  const searchFilter = buildNameDescriptionSearchFilter({ search });
+  if (searchFilter !== undefined) conditions.push(searchFilter);
+  return { $and: conditions };
+};
+```
+
+### `services/skill/handlers/archiveSkill` (new)
+
+```typescript
+// services/skill/src/handlers/archiveSkill/index.ts
+import { AUTH_TOKEN_ROLE } from '@vassembly/constants';
+import skillDomain from '@vassembly/domain-skill';
+import userDomain from '@vassembly/domain-user';
+import { NotFoundError } from '@vassembly/errors';
+import { toSkillResponse } from '@vassembly/domain-skill';
+
+export const archiveSkill = async ({
+  adminUserId,
+  skillId,
+}: ArchiveSkillParams): Promise<ArchiveSkillResult> => {
+  await userDomain.queries.assertHasRole({ userId: adminUserId, role: AUTH_TOKEN_ROLE.ADMIN });
+
+  const existing = await skillDomain.queries.getById({ id: skillId });
+  if (!existing.data) throw new NotFoundError('Skill not found');
+
+  const result = await skillDomain.commands.removeSoft({ id: skillId });
+  return { skill: toSkillResponse({ skill: result.data }) };
+};
+```
+
+### Admin Archive UI
+
+The archive dialog follows the existing pattern for system agent archiving. The `SpecializationSkillsPanel` item and/or the `SkillDetailPage` header gains an archive button (admin only). On confirmation:
+
+1. `useArchiveSkill` hook calls `DELETE /api/skills/:skillId`
+2. On success: refetch `skillsBySpecialization` query (panel list auto-updates)
+3. If on detail page: navigate back to specialization detail
+
+---
+
+## Phase 3 — Agent Consumption Implementation Details
+
+### `domains/skill/queries/getCatalogBySpecializationId` (new)
+
+Returns only active (non-archived, enabled) skills, projecting only `name` and `description`:
+
+```typescript
+// domains/skill/src/queries/getCatalogBySpecializationId/index.ts
+export const getCatalogBySpecializationId = async ({
+  specializationId,
+}: GetCatalogBySpecializationIdParams): Promise<GetCatalogBySpecializationIdResult> => {
+  const rows = await skillMongodbDao.getManyRaw(
+    {
+      specializationId,
+      enabled: true,
+      $or: [{ removedAt: { $exists: false } }, { removedAt: null }],
+    },
+    { sort: { name: 1 } },
+  );
+
+  const items: SkillCatalogItem[] = rows.map((row) => ({
+    name: String(row.name),
+    description: String(row.description),
+  }));
+
+  return { items };
+};
+```
+
+### `domains/skill/queries/getActiveRuleByName` (new)
+
+```typescript
+// domains/skill/src/queries/getActiveRuleByName/index.ts
+export const getActiveRuleByName = async ({
+  specializationId,
+  skillName,
+}: GetActiveRuleByNameParams): Promise<GetActiveRuleByNameResult> => {
+  const row = await skillMongodbDao.getRaw({
+    specializationId,
+    name: skillName,
+    enabled: true,
+    $or: [{ removedAt: { $exists: false } }, { removedAt: null }],
+  });
+
+  if (!row) {
+    throw new NotFoundError(`Skill "${skillName}" not found or not active`);
   }
 
-  const s3 = AwsS3Client({ bucketName: config.skills.scriptStorage.bucketName });
+  return { rule: String(row.rule) };
+};
+```
+
+### `domains/skill/utils/formatSkillsCatalogSection` (new)
+
+Pure function; lives in `domains/skill/src/utils/formatSkillsCatalogSection.ts`:
+
+```typescript
+export interface FormatSkillsCatalogSectionParams {
+  items: Array<{ name: string; description: string }>;
+}
+
+export const formatSkillsCatalogSection = ({
+  items,
+}: FormatSkillsCatalogSectionParams): string => {
+  if (items.length === 0) return '';
+
+  const lines = items.map((item) => `- **${item.name}**: ${item.description}`);
+  return `## Available Skills\n\n${lines.join('\n')}`;
+};
+```
+
+> Exported from `domains/skill/src/index.ts` as a named utility.
+
+### `domains/system-agent/commands/invoke` extension (Phase 3)
+
+Extend `InvokeSystemAgentParams` with optional `skillsCatalogSection`:
+
+```typescript
+// domains/system-agent/src/commands/invoke/types.ts (extend)
+export interface InvokeSystemAgentParams {
+  // ...existing fields...
+  skillsCatalogSection?: string;  // Phase 3: pre-formatted catalog block from services/agent
+}
+```
+
+Pass through to `buildSystemAgentSystemMessage`:
+
+```typescript
+// domains/system-agent/src/commands/invoke/index.ts (extend call)
+systemMessage: buildSystemAgentSystemMessage({
+  name: agentResult.data.name!,
+  rule: agentResult.data.rule,
+  skillsCatalogSection: params.skillsCatalogSection,
+}),
+```
+
+### `domains/system-agent/utils/buildSystemAgentSystemMessage` extension (Phase 3)
+
+```typescript
+// extend BuildSystemAgentSystemMessageParams
+export interface BuildSystemAgentSystemMessageParams {
+  name: string;
+  rule: string;
+  skillsCatalogSection?: string;  // Phase 3 addition
+}
+
+export const buildSystemAgentSystemMessage = ({
+  name,
+  rule,
+  skillsCatalogSection,
+}: BuildSystemAgentSystemMessageParams): string => {
+  let systemMessage = rule;
+
+  if (name === SYSTEM_AGENT_NAME.IntentClassifier) {
+    systemMessage = `${rule}\n\n${formatIntentCategoriesSection()}`;
+  } else if (name === SYSTEM_AGENT_NAME.Assistant) {
+    systemMessage = `${rule}\n\n${formatIntentRoutingSection()}`;
+  }
+
+  if (skillsCatalogSection) {
+    systemMessage = `${systemMessage}\n\n${skillsCatalogSection}`;
+  }
+
+  return systemMessage;
+};
+```
+
+### `services/agent/helpers/internalTools/runAgentInvokeWithTools.ts` extension (Phase 3)
+
+Extend `invokeSystemAgent` to query and inject the catalog when `agent.specializationId` is set:
+
+```typescript
+// add import at top
+import skillDomain, { formatSkillsCatalogSection } from '@vassembly/domain-skill';
+
+// inside invokeSystemAgent, after getting the agent:
+const skillsCatalogSection =
+  agent.specializationId
+    ? await buildSkillsCatalogSection({ specializationId: agent.specializationId })
+    : undefined;
+
+// pass to invoke:
+const result = await systemAgentDomain.commands.invoke({
+  modeledProviderClient: client,
+  systemAgentId: agentId,
+  message,
+  internalToolBindings: bindings,
+  signal: toolContext.abortSignal,
+  shouldAbort: toolContext.shouldAbort,
+  skillsCatalogSection,  // Phase 3 addition
+});
+```
+
+Where `buildSkillsCatalogSection` is an internal helper (same file or extracted to a small file in `services/agent/helpers/`):
+
+```typescript
+const buildSkillsCatalogSection = async ({
+  specializationId,
+}: {
+  specializationId: string;
+}): Promise<string | undefined> => {
+  const { items } = await skillDomain.queries.getCatalogBySpecializationId({ specializationId });
+  if (items.length === 0) return undefined;
+  return formatSkillsCatalogSection({ items });
+};
+```
+
+### `services/agent/helpers/internalTools/resolveSkill` (new)
+
+```typescript
+// services/agent/src/helpers/internalTools/resolveSkill/index.ts
+import skillDomain from '@vassembly/domain-skill';
+import systemAgentDomain from '@vassembly/domain-system-agent';
+import { NotFoundError, ValidationError } from '@vassembly/errors';
+import type { InternalToolContext } from '../types';
+
+export const resolveSkillToolHandler = async (
+  args: Record<string, unknown>,
+  context: InternalToolContext,
+): Promise<string> => {
+  const skillName = typeof args.skillName === 'string' ? args.skillName.trim() : '';
+  if (!skillName) throw new ValidationError('skillName is required');
+
+  let specializationId = typeof args.specializationId === 'string'
+    ? args.specializationId.trim()
+    : '';
+
+  if (!specializationId) {
+    const { data: callerAgent } = await systemAgentDomain.queries.getActiveById({
+      id: context.callerAgentId,
+    });
+    specializationId = callerAgent?.specializationId ?? '';
+  }
+
+  if (!specializationId) {
+    throw new ValidationError('Cannot resolve skill: no specializationId available');
+  }
+
+  const { rule } = await skillDomain.queries.getActiveRuleByName({ specializationId, skillName });
+  return JSON.stringify({ skillName, rule });
+};
+```
+
+### "Skill resolver" seed (`domains/system-agent/seed/systemAgents.json` — Phase 3)
+
+Add new entry:
+
+```json
+{
+  "name": "Skill resolver",
+  "description": "Resolves the full rule of a named skill for the calling agent's specialization domain.",
+  "rule": "You retrieve the full instructions for a skill by name.\n\nWorkflow:\n1. Call resolve_skill with the skill name from the caller's message.\n2. If specializationId is not provided in the call, the tool resolves it automatically from your context.\n3. Return the full rule text to the caller as-is — no summarization or modification.\n\nIf resolve_skill returns an error, forward the error message to the caller.",
+  "category": "utility",
+  "assignedToolIds": ["resolve-skill"]
+}
+```
+
+---
+
+## Storage Abstraction Design (Refactored — Script Storage Strategy)
+
+> **Status**: The original inline implementation in `domains/skill/src/clients/scriptStorage.ts` has been replaced by a Strategy-pattern design split across `packages/client-script-storage` (new), an extended `packages/client-file`, and a thin domain factory.
+
+### Design Goals
+
+- Apply Strategy pattern: `LocalScriptStorageStrategy` (fs) and `S3ScriptStorageStrategy` — each isolated in its own module
+- Extract strategies into a reusable `packages/client-script-storage` package, keeping the domain client thin
+- Reuse `@vassembly/client-file` (`FileClient`, `DirectoryClient`) in the local strategy instead of duplicating `node:fs` logic
+- Remove `scriptStorageClient` from the domain's public exports — move the read path behind a domain query
+- Fix the API route convention violation: `apps/api` must not import `scriptStorageClient` directly
+
+---
+
+### Package: `packages/client-script-storage` (new)
+
+Provides the strategy interface and two concrete implementations. Consumed only by `domains/*/src/clients/`.
+
+```
+packages/client-script-storage/
+├── src/
+│   ├── index.ts                      ← exports: ScriptStorageStrategy type + both factories
+│   ├── types.ts                      ← ScriptStorageStrategy, GetScriptContentParams,
+│   │                                    PutScriptContentParams, RemoveScriptContentParams
+│   ├── localStrategy/
+│   │   ├── index.ts                  ← LocalScriptStorageStrategy({ rootPath })
+│   │   └── types.ts                  ← LocalStrategyParams
+│   └── s3Strategy/
+│       ├── index.ts                  ← S3ScriptStorageStrategy({ bucketName })
+│       └── types.ts                  ← S3StrategyParams
+├── package.json
+├── tsconfig.json
+├── vitest.config.ts
+└── README.md
+```
+
+**`ScriptStorageStrategy` interface (`types.ts`):**
+
+```typescript
+export interface ScriptStorageStrategy {
+  getScriptContent: (params: GetScriptContentParams) => Promise<string>;
+  putScriptContent: (params: PutScriptContentParams) => Promise<void>;
+  removeScriptContent: (params: RemoveScriptContentParams) => Promise<void>;
+}
+```
+
+**`LocalScriptStorageStrategy` (`localStrategy/index.ts`):**
+
+Uses `FileClient` + `DirectoryClient` from `@vassembly/client-file`. Composes `DirectoryClient.create` before writing to ensure parent directories exist.
+
+```typescript
+export const LocalScriptStorageStrategy = ({ rootPath }: LocalStrategyParams): ScriptStorageStrategy => {
+  const dir = DirectoryClient({ basePath: rootPath });
+  const file = FileClient({ basePath: rootPath });
+
   return {
-    getScriptContent: ({ storageKey }) => s3.getFile({ key: storageKey }),
+    getScriptContent: async ({ storageKey }) =>
+      file.read({ filePath: storageKey }),    // throws NotFoundError on ENOENT (see client-file extension)
+
+    putScriptContent: async ({ storageKey, content }) => {
+      const parentDir = path.dirname(storageKey);
+      if (parentDir !== '.') {
+        await dir.create({ dirPath: parentDir });
+      }
+      await file.write({ filePath: storageKey, content });
+    },
+
+    removeScriptContent: async ({ storageKey }) =>
+      file.removeIfExists({ filePath: storageKey }), // swallows ENOENT gracefully
   };
+};
+```
+
+**`S3ScriptStorageStrategy` (`s3Strategy/index.ts`):**
+
+```typescript
+export const S3ScriptStorageStrategy = ({ bucketName }: S3StrategyParams): ScriptStorageStrategy => {
+  const s3 = AwsS3Client({ bucketName });
+
+  return {
+    getScriptContent: async ({ storageKey }) => {
+      const content = await s3.getFile({ key: storageKey });
+      if (content === undefined) throw new NotFoundError('script_file_missing');
+      return content;
+    },
+    putScriptContent: async ({ storageKey, content }) => {
+      await s3.uploadFile({ key: storageKey, file: Buffer.from(content, 'utf-8'), fileType: 'text/plain' });
+    },
+    removeScriptContent: async ({ storageKey }) => s3.removeFile({ key: storageKey }),
+  };
+};
+```
+
+---
+
+### Package: `packages/client-file` (extended)
+
+Two gaps required extension to support the local strategy:
+
+| Gap | Fix |
+|-----|-----|
+| `FileClient.read` wraps ENOENT as `InternalError` — callers cannot distinguish "file not found" | `read` now throws `NotFoundError` for ENOENT, `InternalError` for other failures |
+| `FileClient.remove` wraps ENOENT as `InternalError` — removal of missing file should be a no-op | New `removeIfExists` method: swallows ENOENT, rethrows other errors as `InternalError` |
+
+> `FileClient.write` does not auto-create parent dirs. The local strategy handles this explicitly via `DirectoryClient.create` — no change needed to `client-file`.
+
+---
+
+### Domain factory: `domains/skill/src/clients/scriptStorage.ts` (refactored)
+
+The factory becomes ~20 lines — pure config-to-strategy dispatch, no inline fs/S3 code:
+
+```typescript
+import { LocalScriptStorageStrategy, S3ScriptStorageStrategy } from '@vassembly/client-script-storage';
+import type { ScriptStorageStrategy } from '@vassembly/client-script-storage';
+import { config, Environment } from '@vassembly/config';
+
+export type ScriptStorageClient = ScriptStorageStrategy;  // stable alias for domain consumers
+
+export const createScriptStorageClient = (): ScriptStorageClient => {
+  if (config.environment !== Environment.Production) {
+    const rootPath = config.skills.scriptStorage.localRootPath ?? './.data/skill-scripts';
+    return LocalScriptStorageStrategy({ rootPath });
+  }
+
+  const { bucketName } = config.skills.scriptStorage;
+  if (!bucketName) throw new Error('SKILL_SCRIPT_STORAGE_BUCKET is required in production');
+
+  return S3ScriptStorageStrategy({ bucketName });
 };
 
 export const scriptStorageClient = createScriptStorageClient();
 ```
 
-> `createScriptStorageClient()` is called once at module load time. The REST route imports `scriptStorageClient` directly — no DI needed. Filesystem read errors (ENOENT) and S3 errors both bubble up; the REST route handler maps them to 404 (missing file) or 500 (other error) by inspecting the error code.
+`ScriptStorageClient` is kept as a type alias for backward compatibility with `commands/shared/persistScripts.ts`. The singleton `scriptStorageClient` remains for internal domain use only — it is **no longer exported from `domains/skill/src/index.ts`**.
+
+---
+
+### Domain query: `domains/skill/src/queries/getScriptContent/` (new)
+
+Encapsulates the full "get script content" read path — previously scattered across the API route:
+
+```typescript
+export const getScriptContent = async ({ skillId, filename }: GetScriptContentParams): Promise<GetScriptContentResult> => {
+  const { data: skill } = await getModelById({ id: skillId });
+  const script = skill.scripts.find((s) => s.filename === filename);
+  if (!script) throw new NotFoundError('script_not_found');
+  const content = await scriptStorageClient.getScriptContent({ storageKey: script.storageKey });
+  return { content };
+};
+```
+
+Exported from `domains/skill/src/queries/index.ts` and domain index.
+
+---
+
+### Service handler: `services/skill/src/handlers/getSkillScript/` (new)
+
+Thin delegator — authorization is handled at the route level via `authorizeAdminRequest`:
+
+```typescript
+export const getSkillScript = async ({ skillId, filename }: GetSkillScriptParams): Promise<GetSkillScriptResult> => {
+  return skillDomain.queries.getScriptContent({ skillId, filename });
+};
+```
+
+---
+
+### API route: `apps/api/src/routes/skills/getSkillScript.ts` (refactored)
+
+- Remove direct `scriptStorageClient` import
+- Remove `isEnoentError` helper (ENOENT → `NotFoundError` now handled in `FileClient.read` / domain query)
+- Call `skillService.handlers.getSkillScript({ skillId, filename })`
+
+---
 
 ### Config Extension (`packages/config/src/types.ts`)
 
+Unchanged from MVP:
+
 ```typescript
 export interface SkillScriptStorageConfig {
-  bucketName: string;       // S3 bucket name (required in production)
-  localRootPath?: string;   // Local dev root; default: ./.data/skill-scripts (OQ-6)
+  bucketName: string;
+  localRootPath?: string;
 }
 
 export interface SkillsConfig {
   scriptStorage: SkillScriptStorageConfig;
 }
-
-// Extend Config:
-export interface Config {
-  // ...existing fields...
-  skills: SkillsConfig;
-}
 ```
-
-**Environment variables (to add to `apps/api` config wiring):**
-- `SKILL_SCRIPT_STORAGE_BUCKET` → `config.skills.scriptStorage.bucketName`
-- `SKILL_SCRIPT_STORAGE_LOCAL_PATH` → `config.skills.scriptStorage.localRootPath` (optional; default `./.data/skill-scripts`)
-
-### Local Dev Folder Structure
-
-```
-.data/
-  skill-scripts/
-    skills/
-      {skillId}/
-        scripts/
-          validate.py
-          run-check.sh
-```
-
-Files placed at `.data/skill-scripts/skills/{skillId}/scripts/{bare-filename}` — matching the `storageKey` convention (`skills/{skillId}/scripts/{bare-filename}`).
-
----
-
-## UI File Structure
-
-### `ui/api-hooks/src/skills/`
-
-```
-skills/
-  GET_SKILL_QUERY.ts
-  LIST_SKILLS_BY_SPECIALIZATION_QUERY.ts
-  useSkill.ts
-  useSkillsBySpecialization.ts
-  types.ts
-  index.ts
-```
-
-**`LIST_SKILLS_BY_SPECIALIZATION_QUERY.ts`:**
-
-```typescript
-export const LIST_SKILLS_BY_SPECIALIZATION_QUERY = gql`
-  query SkillsBySpecialization($specializationId: ID!) {
-    skillsBySpecialization(specializationId: $specializationId) {
-      id specializationId name description rule
-      scripts { filename language }
-      createdAt updatedAt
-    }
-  }
-`;
-```
-
-**`GET_SKILL_QUERY.ts`:**
-
-```typescript
-export const GET_SKILL_QUERY = gql`
-  query Skill($id: ID!) {
-    skill(id: $id) {
-      id specializationId name description rule
-      scripts { filename language }
-      createdAt updatedAt
-    }
-  }
-`;
-```
-
-**`types.ts`** — key types:
-
-```typescript
-export interface SkillScriptItem {
-  filename: string;
-  language: 'python' | 'nodejs' | 'bash';
-}
-
-export interface SkillItem {
-  id: string;
-  specializationId: string;
-  name: string;
-  description: string;
-  rule: string;
-  scripts: SkillScriptItem[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UseSkillsBySpecializationArgs {
-  specializationId: string;
-  skip?: boolean;
-}
-
-export interface UseSkillsBySpecializationResult {
-  data?: { skillsBySpecialization: SkillItem[] };
-  loading: boolean;
-  error?: Error;
-  refetch: () => void;
-}
-
-export interface UseSkillArgs {
-  skillId: string;
-  skip?: boolean;
-}
-
-export interface UseSkillResult {
-  data?: { skill: SkillItem | null };
-  loading: boolean;
-  error?: CommonError;
-  refetch: () => void;
-}
-```
-
-### Specialization detail extensions (`apps/web/app/specialization/[id]/`)
-
-**New files (third panel):**
-
-```
-_components/
-  SpecializationSkillsPanel/
-    SpecializationSkillsPanel.tsx      ← calls useSkillsBySpecialization internally; handles own states
-    SpecializationSkillsPanel.module.scss
-    SpecializationSkillListItem/
-      SpecializationSkillListItem.tsx  ← name (code style) + description (truncated 80 chars) + link
-      SpecializationSkillListItem.module.scss
-    types.ts
-```
-
-**Modified files:**
-- `SpecializationDetailPage.tsx` — add `<SpecializationSkillsPanel specializationId={specializationId} />` as a third panel in the panels layout section
-
-> `useSpecializationDetail.ts` is NOT modified — skills data is fetched independently by the panel component, not via the specialization detail hook. This preserves the existing detail page load path.
-
-### Skill detail route (`apps/web/app/specialization/[id]/skills/`)
-
-```
-skills/
-  [skillId]/
-    page.tsx                              ← ProtectedAuthRoute + SkillDetailPage
-    _components/
-      SkillDetailPage.tsx                 ← orchestrates all sub-sections
-      SkillDetailPage.module.scss
-      SkillDetailHeader/
-        SkillDetailHeader.tsx             ← back link (← {specializationName}), h1 name, description
-        SkillDetailHeader.module.scss
-      SkillRuleSection/
-        SkillRuleSection.tsx              ← "Instructions" heading + rendered Markdown / preformatted rule
-        SkillRuleSection.module.scss
-      SkillScriptsSection/
-        SkillScriptsSection.tsx           ← file list (left) + code viewer (right); empty state
-        SkillScriptsSection.module.scss
-        SkillScriptList/
-          SkillScriptList.tsx             ← list of filenames; active selection highlight
-        SkillCodeViewer/
-          SkillCodeViewer.tsx             ← SyntaxHighlighter wrapper with language map + loading/error states
-          SkillCodeViewer.module.scss
-      SkillNotFoundMessage/
-        SkillNotFoundMessage.tsx          ← "Skill not found." + back link to specialization
-      SkillDetailSkeleton/
-        SkillDetailSkeleton.tsx
-      useSkillDetail.ts                   ← GraphQL query + script content REST fetch state machine
-      types.ts
-      constants.ts                        ← LANGUAGE_MAP, SCRIPT_CONTENT_MAX_DISPLAY_BYTES
-```
-
-### `useSkillDetail` hook (`apps/web/.../useSkillDetail.ts`)
-
-```typescript
-// State managed:
-// - skill metadata (from GraphQL useSkill hook)
-// - activeScript: SkillScriptItem | null (default: first alphabetically by filename)
-// - scriptContent: string | null
-// - scriptLoading: boolean
-// - scriptError: string | null
-
-// Script content fetch:
-// fetch(`/api/skills/${skillId}/scripts/${encodeURIComponent(activeScript.filename)}`)
-// with Authorization: Bearer token from useAuthToken() (or equivalent auth hook)
-// Fires when activeScript changes (useEffect)
-
-// Returns: { skill, loading, error, isNotFound, activeScript, setActiveScript,
-//            scriptContent, scriptLoading, scriptError, handleRetry }
-```
-
-### `SkillCodeViewer` syntax highlighting (`apps/web/.../SkillCodeViewer.tsx`)
-
-**New dependency:** `react-syntax-highlighter` + `@types/react-syntax-highlighter`
-
-**Language map** (`constants.ts`):
-
-```typescript
-export const LANGUAGE_MAP: Record<SkillScriptLanguage, string> = {
-  python: 'python',
-  nodejs: 'javascript',
-  bash: 'bash',
-};
-```
-
-`SkillCodeViewer` renders:
-- Loading: skeleton / spinner
-- Error: inline `Alert variant="error"` with retry button
-- Content: `<SyntaxHighlighter language={LANGUAGE_MAP[script.language]} style={vscDarkPlus}>{content}</SyntaxHighlighter>`
 
 ---
 
 ## MongoDB Indexes
-
-Defined in `domains/skill/src/clients/mongodb.ts`:
-
-| Index | Options | Rationale |
-|---|---|---|
-| `{ specializationId: 1, name: 1 }` | `unique: true` | Skill name unique per specialization (OQ-5 decision: per-specialization uniqueness); prevents duplicate skill names within a domain |
-| `{ specializationId: 1 }` | — | `getBySpecializationId` query; list-by-specialization without full collection scan |
 
 ```typescript
 export const mongodbIndexes = async (): Promise<void> => {
   const collection = getSkillsCollection();
   await collection.createIndex({ specializationId: 1, name: 1 }, { unique: true });
   await collection.createIndex({ specializationId: 1 });
+  // Phase 3: catalog query uses (specializationId, enabled, removedAt) — covered by { specializationId: 1 } + collection-level filter
 };
 ```
 
-**Registration in `apps/api/src/bootstrap/mongoIndexes.ts`:**
+> No additional indexes needed for Phase 3 catalog queries. The `{ specializationId: 1 }` index covers the catalog and rule lookups; `enabled` and `removedAt` filtering is in-memory on the small result set.
 
-```typescript
-import { mongodbIndexes as skillMongodbIndexes } from '@vassembly/domain-skill';
-// Add to getApiMongoIndexFunctions():
-skillMongodbIndexes,
+---
+
+## UI File Structure
+
+### Phase 2 additions to `ui/api-hooks/src/skills/`
+
 ```
+skills/
+  http/
+    archiveSkill.ts          ← DELETE /api/skills/:id → { skill: SkillItem }
+  useArchiveSkill.ts         ← wraps archiveSkill http, returns { archive, loading, error }
+  index.ts                   ← re-export archiveSkill, useArchiveSkill
+```
+
+### Phase 2 additions to `apps/web`
+
+```
+specialization/[id]/_components/SpecializationSkillsPanel/
+  SkillArchiveDialog/
+    SkillArchiveDialog.tsx          ← confirmation modal: "Archive {name}?" + confirm/cancel
+    SkillArchiveDialog.module.scss
+  (extend SpecializationSkillsPanel.tsx) ← add archive button to each skill row (kebab menu or direct)
+```
+
+And/or on skill detail:
+
+```
+specialization/[id]/skills/[skillId]/_components/
+  (extend SkillDetailHeader.tsx) ← add "Archive" button (admin only)
+```
+
+The archive button trigger options are left to the UI implementation phase. Either kebab menu on panel list item, or a prominent action on detail page — both are valid. The architecture permits both entry points independently since they both call `useArchiveSkill`.
 
 ---
 
 ## Implementation Steps
 
-### Step 1 — `packages/config`: extend `Config` with `SkillsConfig`
-
-**`packages/config/src/types.ts`:**
-- Add `SkillScriptStorageConfig` interface: `bucketName: string`, `localRootPath?: string`
-- Add `SkillsConfig` interface: `scriptStorage: SkillScriptStorageConfig`
-- Extend `Config` with `skills: SkillsConfig`
-
-**`apps/api` config wiring** (wherever env vars are mapped to `config`):
-- `SKILL_SCRIPT_STORAGE_BUCKET` → `config.skills.scriptStorage.bucketName`
-- `SKILL_SCRIPT_STORAGE_LOCAL_PATH` → `config.skills.scriptStorage.localRootPath` (optional; default `./.data/skill-scripts`)
-
----
-
-### Step 2 — `domains/skill`: new domain package
-
-New package: `@vassembly/domain-skill`
-
-**`package.json` dependencies** (same as `@vassembly/domain-specialization` + `@vassembly/client-aws-s3` + `@vassembly/config`):
-
-```json
-{
-  "name": "@vassembly/domain-skill",
-  "dependencies": {
-    "@vassembly/client-aws-s3": "workspace:*",
-    "@vassembly/client-mongodb": "workspace:*",
-    "@vassembly/commands": "workspace:*",
-    "@vassembly/config": "workspace:*",
-    "@vassembly/errors": "workspace:*",
-    "@vassembly/graphql": "workspace:*",
-    "@vassembly/mappers": "workspace:*",
-    "@vassembly/model": "workspace:*",
-    "@vassembly/queries": "workspace:*",
-    "@vassembly/validation": "workspace:*",
-    "zod": "^4.3.6"
-  }
-}
-```
-
-**Full folder structure:**
-
-```
-domains/skill/
-  package.json
-  tsconfig.json
-  README.md
-  src/
-    model/
-      model.ts              ← SkillModel extends Model (specializationId, name, description, rule, scripts)
-      types.ts              ← SkillScript, SkillScriptLanguage
-      dto.ts                ← SkillResponse, SkillScriptResponse, SkillListResponse
-      factories.ts          ← skillFactory.create(partial)
-      toSkillResponse.ts    ← maps SkillModel → SkillResponse (strips storageKey)
-      graphql.ts            ← gqlSkillSchema: Skill type, SkillScript type, SkillScriptLanguage enum
-      index.ts
-    queries/
-      getById/
-        index.ts            ← getById({ id }) → SkillResponse; throws NotFoundError if missing
-        types.ts
-      getModelById/
-        index.ts            ← getModelById({ id }) → SkillModel; used by REST route for storageKey access
-        types.ts
-      getBySpecializationId/
-        index.ts            ← mirrors domains/system-agent FK query exactly
-        types.ts
-      index.ts
-    clients/
-      mongodb.ts            ← skillMongodbDao + getSkillsCollection + mongodbIndexes
-      scriptStorage.ts      ← ScriptStorageClient interface + createScriptStorageClient factory
-      index.ts
-    constants.ts            ← COLLECTION_NAME, name/description limits, SKILL_SCRIPT_LANGUAGES
-    index.ts
-```
-
-> **No `commands/` in MVP.** Skills are read-only from the admin UI; created via seeding or future internal tools. Phase 2 adds `create`, `update`, and `archive` commands.
-
-**`src/model/graphql.ts`** — uses `defineModelSchema` pattern from `@vassembly/graphql`:
-
-```typescript
-// gqlSkillSchema registers:
-// - SkillScriptLanguage (enum type)
-// - SkillScript (filename: String!, language: SkillScriptLanguage!)
-// - Skill (id, specializationId, name, description, rule, scripts: [SkillScript!]!, createdAt, updatedAt)
-// Note: storageKey NOT exposed in SkillScript GraphQL type
-```
-
-**`src/clients/scriptStorage.ts`** — storage factory (see Storage Abstraction section above).
-
-**`src/queries/getBySpecializationId/index.ts`** — verbatim copy of `domains/system-agent/src/queries/getBySpecializationId/index.ts` adapted for skill:
-
-```typescript
-// Validates input, queries skillMongodbDao.getManyRaw({ specializationId }),
-// sorts by { name: 1 }, maps via skillFactory.create, returns { items: SkillModel[] }
-```
-
----
-
-### Step 3 — `services/skill`: new read-only service package
-
-New package: `@vassembly/service-skill`
-
-**`package.json` dependencies:**
-
-```json
-{
-  "name": "@vassembly/service-skill",
-  "dependencies": {
-    "@vassembly/domain-skill": "workspace:*",
-    "@vassembly/errors": "workspace:*"
-  }
-}
-```
-
-**Folder structure:**
-
-```
-services/skill/
-  package.json
-  tsconfig.json
-  README.md
-  src/
-    handlers/
-      listSkillsBySpecialization/
-        index.ts      ← delegates to skillDomain.queries.getBySpecializationId
-        types.ts
-      getSkill/
-        index.ts      ← delegates to skillDomain.queries.getById; throws NotFoundError if null
-        types.ts
-      index.ts
-    index.ts
-```
-
-**`handlers/listSkillsBySpecialization/types.ts`:**
-
-```typescript
-export interface ListSkillsBySpecializationInput {
-  specializationId: string;
-}
-
-export interface ListSkillsBySpecializationResult {
-  items: SkillResponse[];
-}
-```
+### Phase 2 — Archive
 
-**`handlers/getSkill/types.ts`:**
+**Step P2-1 — `domains/skill/commands/removeSoft`**
 
-```typescript
-export interface GetSkillInput {
-  id: string;
-}
+Create `domains/skill/src/commands/removeSoft/index.ts` + `types.ts` following the `domains/system-agent/src/commands/removeSoft/index.ts` pattern. Export from `domains/skill/src/commands/index.ts`.
 
-export interface GetSkillResult {
-  skill: SkillResponse;
-}
-```
+**Step P2-2 — `domains/skill/queries/getBySpecializationId` update**
 
-`getSkill` throws `NotFoundError` when the skill does not exist (mirrors `getSpecialization` pattern). `listSkillsBySpecialization` returns `{ items: [] }` for an unknown `specializationId` — no error (empty result is valid).
+In `buildFilter`, add `{ $or: [{ removedAt: { $exists: false } }, { removedAt: null }] }` to the `conditions` array. No type changes needed — the filter is raw MongoDB.
 
-No cross-domain enrichment in MVP (unlike `services/specialization`). Phase 3 extension point: inject runtime skill content into agent context.
+**Step P2-3 — `domains/skill/model/dto.ts` update**
 
----
+Add `removedAt: string | null` to `SkillResponse`. Update `toSkillResponse` mapper to include it via `toNullableIsoString`.
 
-### Step 4 — `apps/api`: GraphQL resolver + builder registration
-
-**New file: `apps/api/src/graphql/resolvers/skill.ts`**
+**Step P2-4 — `services/skill/handlers/archiveSkill`**
 
-Mirrors `registerSpecializationResolvers` exactly:
-- Import `gqlSkillSchema` from `@vassembly/domain-skill`
-- Import `skillService` from `@vassembly/service-skill`
-- `skill(id: ID!)` → `assertHasRole(ADMIN)` → `skillService.getSkill({ id })` → returns `SkillResponse | null`
-- `skillsBySpecialization(specializationId: ID!)` → `assertHasRole(ADMIN)` → `skillService.listSkillsBySpecialization({ specializationId })` → returns `[SkillResponse]`
+Create `handlers/archiveSkill/index.ts` + `types.ts`. Export from `handlers/index.ts`. Handler: assertHasRole, getById (verify exists), removeSoft, return SkillResponse.
 
-**`apps/api/src/graphql/index.ts`** — add after existing registrations:
+**Step P2-5 — `apps/api/src/routes/skills/archive.ts`**
 
-```typescript
-import { registerSkillResolvers } from './resolvers/skill';
+New `DELETE /:skillId` route. Pattern: `systemAgentDeleteRoute` in `apps/api/src/routes/system-agents/delete.ts`. Add to `apps/api/src/routes/skills/index.ts` routes array.
 
-// In builder setup:
-registerSkillResolvers(builder);
-```
+**Step P2-6 — `ui/api-hooks` archive client + hook**
 
-> `gqlSkillSchema(builder)` is called inside `registerSkillResolvers` (same as `registerSpecializationResolvers` calling `gqlSpecializationSchema(builder)`) — no separate call needed.
+Create `skills/http/archiveSkill.ts` (mirrors `http/archiveSystemAgent.ts`). Create `skills/useArchiveSkill.ts`. Export from `skills/index.ts`.
 
----
+**Step P2-7 — `apps/web` archive UI**
 
-### Step 5 — `apps/api`: REST script content endpoint
+Add archive button + `SkillArchiveDialog` to `SpecializationSkillsPanel` list item and/or `SkillDetailHeader`. On confirm: call `useArchiveSkill`, then refetch or navigate away.
 
-**New file: `apps/api/src/routes/skills/getSkillScript.ts`**
+**Step P2-8 — Update SK-6 E2E**
 
-```typescript
-// defineRoute({
-//   method: 'GET',
-//   url: '/:skillId/scripts/:filename',
-//   handler: async ({ headers, params }) => {
-//     const { userId } = await authHandlers.authorizeAdminRequest({ headers });
-//     const { skillId, filename: encodedFilename } = params;
-//     const filename = decodeURIComponent(encodedFilename);
-//
-//     const skillModel = await skillDomain.queries.getModelById({ id: skillId });
-//     // → NotFoundError maps to 404 via Fastify error handler
-//
-//     const script = skillModel.scripts.find((s) => s.filename === filename);
-//     if (!script) throw new NotFoundError('script_not_found');
-//
-//     const content = await scriptStorageClient.getScriptContent({ storageKey: script.storageKey });
-//     // → storage errors: map ENOENT / missing-key to NotFoundError; other errors to InternalError
-//
-//     reply.type('text/plain').send(content);
-//   }
-// })
-```
+SK-6 scenario is superseded for Phase 2: admin _can_ now archive from specialization detail. Update `apps/web/e2e/features/skills/skill-list-on-specialization.feature` to reflect mutation UI now in scope (archive button visible; SK-9 scenario added).
 
-**New file: `apps/api/src/routes/skills/index.ts`** — exports `skillRoutesList`.
+### Phase 3 — Agent Consumption
 
-**`apps/api/src/routes/index.ts`** — add:
+**Step P3-1 — `packages/constants` registry + enum**
 
-```typescript
-import { routes as skillRoutesList } from './skills';
-const skillRoutes = routesWithPrefix('/skills', skillRoutesList);
-// Add skillRoutes to routes array
-```
+In `internalTools/registry.ts`: add `resolve-skill` entry (`SYSTEM_ONLY`, `llmToolName: 'resolve_skill'`).
+In `SystemAgentName.ts`: add `SkillResolver = 'Skill resolver'`.
 
----
+**Step P3-2 — `packages/client-langchain/schemas/resolveSkillSchema.ts`**
 
-### Step 6 — `apps/api`: Index bootstrap registration
+Create Zod schema with `skillName` (required) + `specializationId` (optional). Register in the tool schemas index.
 
-**`apps/api/src/bootstrap/mongoIndexes.ts`** — add:
+**Step P3-3 — `domains/skill` Phase 3 queries + util**
 
-```typescript
-import { mongodbIndexes as skillMongodbIndexes } from '@vassembly/domain-skill';
+Create:
+- `queries/getCatalogBySpecializationId/index.ts` + `types.ts`
+- `queries/getActiveRuleByName/index.ts` + `types.ts`
+- `utils/formatSkillsCatalogSection.ts`
 
-// In getApiMongoIndexFunctions():
-skillMongodbIndexes,
-```
+Export all three from `domains/skill/src/index.ts`.
 
----
+**Step P3-4 — `domains/system-agent/commands/invoke` + `buildSystemAgentSystemMessage` extension**
 
-### Step 7 — `ui/api-hooks/src/skills/`: GraphQL query hooks
+- `invoke/types.ts`: add optional `skillsCatalogSection?: string` to `InvokeSystemAgentParams`
+- `invoke/index.ts`: pass `skillsCatalogSection: params.skillsCatalogSection` to `buildSystemAgentSystemMessage`
+- `utils/buildSystemAgentSystemMessage/index.ts`: extend `BuildSystemAgentSystemMessageParams` with `skillsCatalogSection?: string`; append to message after existing sections when present
 
-**Files to create** (see UI File Structure section above for full schema).
+**Step P3-5 — `services/agent/helpers/internalTools/resolveSkill`**
 
-Export from `ui/api-hooks/src/index.ts`:
+Create `helpers/internalTools/resolveSkill/index.ts` + `types.ts` (mirrors `createSkill` tool handler). No unit test for the registry binding itself — handler logic is tested.
 
-```typescript
-export { useSkill, useSkillsBySpecialization } from './skills';
-export type { SkillItem, SkillScriptItem, UseSkillArgs, UseSkillsBySpecializationArgs } from './skills';
-```
+**Step P3-6 — `services/agent/helpers/internalTools/createInternalToolHandlers.ts`**
 
----
+Import `resolveSkillToolHandler`; add `'resolve-skill': (args) => resolveSkillToolHandler(args, toolContext)` to the returned map.
 
-### Step 8 — `apps/web`: `SpecializationSkillsPanel` on specialization detail
+**Step P3-7 — `services/agent/helpers/internalTools/runAgentInvokeWithTools.ts`**
 
-**Files to create:**
+In `invokeSystemAgent`: after `getActiveById`, check `agent.specializationId`; if set, call `buildSkillsCatalogSection`; pass result as `skillsCatalogSection` to `systemAgentDomain.commands.invoke`. Personal agent path (`invokePersonalAgent`) is NOT changed.
 
-```
-apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/
-  SpecializationSkillsPanel.tsx
-  SpecializationSkillsPanel.module.scss
-  SpecializationSkillListItem/
-    SpecializationSkillListItem.tsx
-    SpecializationSkillListItem.module.scss
-  types.ts
-```
+**Step P3-8 — `domains/system-agent/seed/systemAgents.json`**
 
-`SpecializationSkillsPanel` calls `useSkillsBySpecialization({ specializationId })` internally. It handles its own loading skeleton, empty state ("No skills linked to this specialization yet."), and error state (inline alert — does NOT break the parent page). This mirrors `SpecializationMcpsPanel` architecture exactly.
-
-Each skill row: name (monospace code style, per agentskills.io hyphenated convention), description (truncated ~80 chars), click → `/specialization/{id}/skills/{skillId}`.
-
-**`SpecializationDetailPage.tsx`** — add to panels section:
-
-```typescript
-<SpecializationSkillsPanel specializationId={specializationId} />
-```
-
----
-
-### Step 9 — `apps/web`: Skill detail route
-
-**New Next.js route:** `apps/web/app/specialization/[id]/skills/[skillId]/page.tsx`
-
-```typescript
-// ProtectedAuthRoute with roles={['admin']} wrapping SkillDetailPage
-// Reads params: specializationId (from [id]), skillId (from [skillId])
-```
-
-**`SkillDetailPage.tsx`** orchestrates:
-1. `SkillDetailSkeleton` — while loading
-2. `SkillNotFoundMessage` — when `isNotFound` (with back link to `/specialization/{id}`)
-3. Error block with retry — when error and no data
-4. Rendered page:
-   - `SkillDetailHeader` — back link (`← {specializationName or 'Back'}`), h1 `skill.name`, `skill.description`
-   - `SkillRuleSection` — "Instructions" heading + rule content (preformatted `<pre>` or Markdown renderer if available)
-   - `SkillScriptsSection` — file list + code viewer (hidden when `skill.scripts.length === 0` → shows "No scripts bundled with this skill.")
-
-**`useSkillDetail.ts`** — hook contract:
-
-```typescript
-// Calls useSkill({ skillId })
-// State: activeScript (default: skill.scripts sorted by filename asc, first item)
-// On activeScript change: fetch('/api/skills/{skillId}/scripts/{encodeURIComponent(filename)}', ...)
-// Returns: { skill, loading, error, isNotFound, activeScript, setActiveScript,
-//            scriptContent, scriptLoading, scriptError, handleScriptRetry }
-```
-
-**`constants.ts`:**
-
-```typescript
-export const LANGUAGE_MAP: Record<SkillScriptLanguage, string> = {
-  python: 'python',
-  nodejs: 'javascript',
-  bash: 'bash',
-};
-
-export const EMPTY_SCRIPTS_MESSAGE = 'No scripts bundled with this skill.';
-```
-
-**`SkillCodeViewer.tsx`** — renders `react-syntax-highlighter` `<SyntaxHighlighter>` with `language={LANGUAGE_MAP[activeScript.language]}` and `style={vscDarkPlus}`. Shows loading spinner while `scriptLoading` is true; shows inline alert on `scriptError`.
-
-**Install dependency in `apps/web`:**
-
-```bash
-pnpm add react-syntax-highlighter @types/react-syntax-highlighter
-```
+Add "Skill resolver" entry with `assignedToolIds: ["resolve-skill"]` and the rule instructing the agent to call `resolve_skill`.
 
 ---
 
 ## Todo Plan
 
+### Phase 2 Todos
+
 ```
-1. packages/config — extend Config with SkillsConfig
-   Changes needed: Add SkillScriptStorageConfig + SkillsConfig interfaces;
-                   extend Config with skills: SkillsConfig
+P2-1. domains/skill — add commands/removeSoft
+   Changes needed: Create removeSoft command using removeSoftDb pattern;
+                   guard against re-archiving; export from commands/index.ts
+   Files to create:
+     - domains/skill/src/commands/removeSoft/index.ts
+     - domains/skill/src/commands/removeSoft/types.ts
    Files to modify:
-     - packages/config/src/types.ts
-   Files to identify and modify (env var wiring):
-     - apps/api/src/index.ts or config wiring file (SKILL_SCRIPT_STORAGE_BUCKET + LOCAL_PATH)
+     - domains/skill/src/commands/index.ts (add export)
+   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: none
+
+P2-2. domains/skill — update getBySpecializationId + dto (archive filter + removedAt field)
+   Changes needed: Add removedAt:null filter to buildFilter; add removedAt to SkillResponse DTO;
+                   update toSkillResponse mapper to include removedAt via toNullableIsoString
+   Files to modify:
+     - domains/skill/src/queries/getBySpecializationId/index.ts (buildFilter)
+     - domains/skill/src/model/dto.ts (add removedAt field)
+     - domains/skill/src/model/toSkillResponse.ts (map removedAt)
+   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P2-1 (removedAt semantics defined by removeSoft)
+
+P2-3. services/skill — add archiveSkill handler
+   Changes needed: Create archiveSkill handler: assertHasRole → getById → commands.removeSoft → return SkillResponse
+   Files to create:
+     - services/skill/src/handlers/archiveSkill/index.ts
+     - services/skill/src/handlers/archiveSkill/types.ts
+   Files to modify:
+     - services/skill/src/handlers/index.ts (add export)
+   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P2-1, P2-2
+
+P2-4. apps/api — archive REST route (DELETE /skills/:skillId)
+   Changes needed: Add DELETE /:skillId route following system-agents/delete.ts pattern;
+                   calls skillService.archiveSkill; register in routes/skills/index.ts
+   Files to create:
+     - apps/api/src/routes/skills/archive.ts
+   Files to modify:
+     - apps/api/src/routes/skills/index.ts (add archiveSkillRoute to routes array)
+   Suggested subagent workflow: coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P2-3
+
+P2-5. ui/api-hooks — archive skill client + hook
+   Changes needed: Add archiveSkill HTTP function and useArchiveSkill hook;
+                   export from skills/index.ts
+   Files to create:
+     - ui/api-hooks/src/skills/http/archiveSkill.ts
+     - ui/api-hooks/src/skills/useArchiveSkill.ts
+   Files to modify:
+     - ui/api-hooks/src/skills/http/index.ts (add export)
+     - ui/api-hooks/src/skills/index.ts (add export)
+   Suggested subagent workflow: coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P2-4
+
+P2-6. apps/web — archive dialog + button UI
+   Changes needed: Add SkillArchiveDialog; add archive button/menu on SpecializationSkillsPanel
+                   item or SkillDetailHeader; on confirm call useArchiveSkill then refetch/navigate
+   Files to create:
+     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/SkillArchiveDialog/SkillArchiveDialog.tsx
+     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/SkillArchiveDialog/SkillArchiveDialog.module.scss
+   Files to modify:
+     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/SpecializationSkillsPanel.tsx
+       (or SkillDetailHeader.tsx — implementer chooses entry point)
+   Suggested subagent workflow: coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P2-5
+
+P2-7. apps/web — E2E update (SK-6 + SK-9)
+   Changes needed: Update SK-6 to reflect mutation UI now in scope (archive button visible);
+                   add SK-9 Gherkin scenarios to skill-list-on-specialization.feature
+   Files to modify:
+     - apps/web/e2e/features/skills/skill-list-on-specialization.feature
+   Files to create (if new steps needed):
+     - apps/web/e2e/steps/skills/archiveSkill.ts (only if not covered by existing step files)
+   Suggested subagent workflow: tdd-e2e-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P2-6
+```
+
+### Phase 3 Todos
+
+```
+P3-1. packages/constants — add resolve-skill + SkillResolver
+   Changes needed: Add resolve-skill entry (SYSTEM_ONLY, llmToolName: 'resolve_skill') to INTERNAL_TOOLS;
+                   add SkillResolver = 'Skill resolver' to SYSTEM_AGENT_NAME enum
+   Files to modify:
+     - packages/constants/src/internalTools/registry.ts
+     - packages/constants/src/SystemAgentName.ts
    Suggested subagent workflow: coder → Done
    Dependencies: none
 
-2. domains/skill — new domain package (scaffolding + full implementation)
-   Changes needed: Create package from domain-specialization template; implement SkillModel,
-                   SkillScript types, DTO, factory, toSkillResponse mapper, GraphQL schema
-                   (Skill, SkillScript, SkillScriptLanguage enum), MongoDB client with indexes,
-                   scriptStorage factory (S3/local), getById + getModelById + getBySpecializationId queries
+P3-2. packages/client-langchain — resolveSkillSchema
+   Changes needed: Create resolveSkillSchema.ts with skillName (required) + specializationId (optional);
+                   export from internalTools/schemas index
    Files to create:
-     - domains/skill/package.json
-     - domains/skill/tsconfig.json
-     - domains/skill/README.md
-     - domains/skill/src/model/model.ts
-     - domains/skill/src/model/types.ts
-     - domains/skill/src/model/dto.ts
-     - domains/skill/src/model/factories.ts
-     - domains/skill/src/model/toSkillResponse.ts
-     - domains/skill/src/model/graphql.ts
-     - domains/skill/src/model/index.ts
-     - domains/skill/src/queries/getById/index.ts
-     - domains/skill/src/queries/getById/types.ts
-     - domains/skill/src/queries/getModelById/index.ts
-     - domains/skill/src/queries/getModelById/types.ts
-     - domains/skill/src/queries/getBySpecializationId/index.ts
-     - domains/skill/src/queries/getBySpecializationId/types.ts
-     - domains/skill/src/queries/index.ts
-     - domains/skill/src/clients/mongodb.ts
-     - domains/skill/src/clients/scriptStorage.ts
-     - domains/skill/src/clients/index.ts
-     - domains/skill/src/constants.ts
-     - domains/skill/src/index.ts
-   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations) → documentation-writer
-   Dependencies: todo #1 (config types needed for scriptStorage factory)
-
-3. services/skill — new read-only service package
-   Changes needed: Create package; implement listSkillsBySpecialization (delegate to
-                   getBySpecializationId) and getSkill (delegate to getById, throw NotFoundError)
-   Files to create:
-     - services/skill/package.json
-     - services/skill/tsconfig.json
-     - services/skill/README.md
-     - services/skill/src/handlers/listSkillsBySpecialization/index.ts
-     - services/skill/src/handlers/listSkillsBySpecialization/types.ts
-     - services/skill/src/handlers/getSkill/index.ts
-     - services/skill/src/handlers/getSkill/types.ts
-     - services/skill/src/handlers/index.ts
-     - services/skill/src/index.ts
-   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations) → documentation-writer
-   Dependencies: todo #2
-
-4. apps/api — GraphQL resolver + builder registration
-   Changes needed: Add registerSkillResolvers with skill(id) and skillsBySpecialization queries;
-                   both admin-gated; register in graphql/index.ts builder
-   Files to create:
-     - apps/api/src/graphql/resolvers/skill.ts
+     - packages/client-langchain/src/internalTools/schemas/resolveSkillSchema.ts
    Files to modify:
-     - apps/api/src/graphql/index.ts (register skill schema + resolver)
-   Suggested subagent workflow: coder ↔ code-reviewer (loop: max 2 iterations)
-   Dependencies: todos #2, #3
-
-5. apps/api — REST script content endpoint
-   Changes needed: Add GET /skills/:skillId/scripts/:filename route;
-                   admin-gated; URL-decode filename; resolve storageKey from SkillModel.scripts[];
-                   call scriptStorageClient.getScriptContent; return text/plain;
-                   register with routesWithPrefix('/skills', ...)
-   Files to create:
-     - apps/api/src/routes/skills/getSkillScript.ts
-     - apps/api/src/routes/skills/index.ts
-   Files to modify:
-     - apps/api/src/routes/index.ts (add skill routes with /skills prefix)
-   Suggested subagent workflow: coder ↔ code-reviewer (loop: max 2 iterations)
-   Dependencies: todo #2
-
-6. apps/api — MongoDB index registration
-   Changes needed: Import skillMongodbIndexes from @vassembly/domain-skill;
-                   add to getApiMongoIndexFunctions() array
-   Files to modify:
-     - apps/api/src/bootstrap/mongoIndexes.ts
+     - packages/client-langchain/src/internalTools/schemas/index.ts (add export)
    Suggested subagent workflow: coder → Done
-   Dependencies: todo #2
+   Dependencies: none
 
-7. ui/api-hooks — skills query hooks
-   Changes needed: Add GET_SKILL_QUERY, LIST_SKILLS_BY_SPECIALIZATION_QUERY, useSkill,
-                   useSkillsBySpecialization, SkillItem/SkillScriptItem types; export from package index
+P3-3. domains/skill — Phase 3 queries + formatSkillsCatalogSection util
+   Changes needed: Add getCatalogBySpecializationId query (enabled+non-archived, name+description only);
+                   add getActiveRuleByName query (active skill rule lookup by name+specializationId);
+                   add formatSkillsCatalogSection pure util;
+                   export all three from domains/skill/src/index.ts
    Files to create:
-     - ui/api-hooks/src/skills/GET_SKILL_QUERY.ts
-     - ui/api-hooks/src/skills/LIST_SKILLS_BY_SPECIALIZATION_QUERY.ts
-     - ui/api-hooks/src/skills/useSkill.ts
-     - ui/api-hooks/src/skills/useSkillsBySpecialization.ts
-     - ui/api-hooks/src/skills/types.ts
-     - ui/api-hooks/src/skills/index.ts
+     - domains/skill/src/queries/getCatalogBySpecializationId/index.ts
+     - domains/skill/src/queries/getCatalogBySpecializationId/types.ts
+     - domains/skill/src/queries/getActiveRuleByName/index.ts
+     - domains/skill/src/queries/getActiveRuleByName/types.ts
+     - domains/skill/src/utils/formatSkillsCatalogSection.ts
    Files to modify:
-     - ui/api-hooks/src/index.ts (add skills exports)
-   Suggested subagent workflow: coder ↔ code-reviewer (loop: max 2 iterations)
-   Dependencies: todo #4 (resolver must exist for schema to be correct)
+     - domains/skill/src/queries/index.ts (add exports)
+     - domains/skill/src/index.ts (export formatSkillsCatalogSection)
+   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P2-1, P2-2 (removedAt semantics must be defined)
 
-8. apps/web — SpecializationSkillsPanel (third panel on specialization detail)
-   Changes needed: Create SpecializationSkillsPanel calling useSkillsBySpecialization;
-                   add SpecializationSkillListItem (name + description + link);
-                   add panel to SpecializationDetailPage.tsx panels section
-   Files to create:
-     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/SpecializationSkillsPanel.tsx
-     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/SpecializationSkillsPanel.module.scss
-     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/SpecializationSkillListItem/SpecializationSkillListItem.tsx
-     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/SpecializationSkillListItem/SpecializationSkillListItem.module.scss
-     - apps/web/app/specialization/[id]/_components/SpecializationSkillsPanel/types.ts
+P3-4. domains/system-agent — invoke + buildSystemAgentSystemMessage extension
+   Changes needed: Add optional skillsCatalogSection?: string to InvokeSystemAgentParams;
+                   pass through in invoke/index.ts to buildSystemAgentSystemMessage;
+                   extend BuildSystemAgentSystemMessageParams + append section at end of message
    Files to modify:
-     - apps/web/app/specialization/[id]/_components/SpecializationDetailPage.tsx
-   Suggested subagent workflow: coder ↔ code-reviewer (loop: max 2 iterations)
-   Dependencies: todos #4, #7
+     - domains/system-agent/src/commands/invoke/types.ts
+     - domains/system-agent/src/commands/invoke/index.ts
+     - domains/system-agent/src/utils/buildSystemAgentSystemMessage/index.ts
+   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: none (no skill domain import; just adds a string param)
 
-9. apps/web — Skill detail route (/specialization/[id]/skills/[skillId])
-   Changes needed: New nested route with ProtectedAuthRoute;
-                   SkillDetailPage orchestrating header + rule + scripts sections;
-                   useSkillDetail hook managing GraphQL query + script content REST fetch;
-                   SkillCodeViewer with react-syntax-highlighter;
-                   add react-syntax-highlighter dependency to apps/web
+P3-5. services/agent — resolveSkill tool handler
+   Changes needed: Create resolveSkillToolHandler; accepts { skillName, specializationId? };
+                   if no specializationId arg, look up callerAgentId's specializationId via systemAgentDomain;
+                   call skillDomain.queries.getActiveRuleByName; return JSON { skillName, rule }
    Files to create:
-     - apps/web/app/specialization/[id]/skills/[skillId]/page.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillDetailPage.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillDetailPage.module.scss
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillDetailHeader/SkillDetailHeader.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillDetailHeader/SkillDetailHeader.module.scss
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillRuleSection/SkillRuleSection.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillRuleSection/SkillRuleSection.module.scss
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillScriptsSection/SkillScriptsSection.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillScriptsSection/SkillScriptsSection.module.scss
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillScriptsSection/SkillScriptList/SkillScriptList.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillScriptsSection/SkillCodeViewer/SkillCodeViewer.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillScriptsSection/SkillCodeViewer/SkillCodeViewer.module.scss
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillNotFoundMessage/SkillNotFoundMessage.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/SkillDetailSkeleton/SkillDetailSkeleton.tsx
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/useSkillDetail.ts
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/types.ts
-     - apps/web/app/specialization/[id]/skills/[skillId]/_components/constants.ts
-   Suggested subagent workflow: tdd-e2e-test-writer → coder ↔ code-reviewer (loop: max 2 iterations) → documentation-writer
-   Dependencies: todos #4, #5, #7, #8
+     - services/agent/src/helpers/internalTools/resolveSkill/index.ts
+     - services/agent/src/helpers/internalTools/resolveSkill/types.ts
+   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P3-3
 
-10. apps/web — E2E feature files (Gherkin scenarios SK-1 through SK-6)
-    Changes needed: Write failing Playwright BDD feature files covering all Gherkin scenarios
-                    from PRD sections SK-1 to SK-6
-    Files to create:
-      - apps/web/e2e/features/skills/skill-list-on-specialization.feature  (SK-1, SK-6)
-      - apps/web/e2e/features/skills/skill-detail.feature                  (SK-2, SK-3, SK-4, SK-5)
-      - apps/web/e2e/steps/skills/ (new steps only if not covered by existing step files)
-    Suggested subagent workflow: tdd-e2e-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
-    Dependencies: PRD exists (done); todos #8, #9 must be implemented for E2E to pass
+P3-6. services/agent — register resolve-skill in createInternalToolHandlers
+   Changes needed: Import resolveSkillToolHandler; add 'resolve-skill' binding
+   Files to modify:
+     - services/agent/src/helpers/internalTools/createInternalToolHandlers.ts
+   Suggested subagent workflow: coder → Done
+   Dependencies: P3-5
+
+P3-7. services/agent — catalog injection in runAgentInvokeWithTools
+   Changes needed: In invokeSystemAgent, after getActiveById check agent.specializationId;
+                   if set, call buildSkillsCatalogSection (local helper using getCatalogBySpecializationId
+                   + formatSkillsCatalogSection); pass skillsCatalogSection to systemAgentDomain.commands.invoke
+   Files to modify:
+     - services/agent/src/helpers/internalTools/runAgentInvokeWithTools.ts
+   Suggested subagent workflow: tdd-unit-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: P3-3, P3-4
+
+P3-8. domains/system-agent/seed — add Skill resolver entry
+   Changes needed: Add Skill resolver entry to systemAgents.json with resolve-skill assignedToolId
+                   and rule instructing the agent to call resolve_skill and return rule as-is
+   Files to modify:
+     - domains/system-agent/seed/systemAgents.json
+   Suggested subagent workflow: coder → Done
+   Dependencies: P3-1 (resolve-skill must be in registry before seed references it)
+
+P3-9. apps/web — E2E feature files (SK-10 through SK-12)
+   Changes needed: Write failing Playwright BDD feature files for catalog injection (SK-10),
+                   resolve-skill tool (SK-11), and skill-resolver agent workflow (SK-12)
+   Files to create:
+     - apps/web/e2e/features/skills/skill-catalog-injection.feature   (SK-10)
+     - apps/web/e2e/features/skills/skill-resolve.feature              (SK-11, SK-12)
+   Suggested subagent workflow: tdd-e2e-test-writer → coder ↔ code-reviewer (loop: max 2 iterations)
+   Dependencies: PRD SK-10 through SK-12 Gherkin scenarios; P3-7, P3-8 backend must pass for E2E green
 ```
 
 ### Parallelism
 
-- **Batch 1 (no deps):** Todo #1 — config types
-- **Batch 2 (depends on #1):** Todo #2 (domain) — start once config types exist
-- **Batch 3 (depends on #2):** Todos #3, #5, #6 — run in parallel once domain is ready
-- **Batch 4 (depends on #2, #3):** Todo #4 (GraphQL resolver)
-- **Batch 5 (depends on #4):** Todo #7 (api-hooks)
-- **Batch 6 (depends on #4, #5, #7):** Todos #8, #9 — UI work (can run in parallel)
-- **Batch 7 (depends on #8, #9):** Todo #10 (E2E feature files — can be written failing in parallel with #8/#9 once PRD is final)
+**Phase 2:**
+- Batch P2-A (no deps): `P2-1`
+- Batch P2-B (depends on P2-1): `P2-2`
+- Batch P2-C (depends on P2-2): `P2-3`
+- Batch P2-D (depends on P2-3): `P2-4`
+- Batch P2-E (depends on P2-4): `P2-5`
+- Batch P2-F (depends on P2-5): `P2-6`
+- Batch P2-G (depends on P2-6): `P2-7` (E2E)
+
+**Phase 3:**
+- Batch P3-A (no deps): `P3-1`, `P3-2`, `P3-4` — run in parallel
+- Batch P3-B (depends on P2-1, P2-2): `P3-3`
+- Batch P3-C (depends on P3-3): `P3-5`
+- Batch P3-D (depends on P3-3, P3-4): `P3-7`
+- Batch P3-E (depends on P3-5): `P3-6`
+- Batch P3-F (depends on P3-1): `P3-8`
+- Batch P3-G (depends on P3-7, P3-8): `P3-9` (E2E)
 
 ---
 
@@ -1095,20 +1197,20 @@ pnpm add react-syntax-highlighter @types/react-syntax-highlighter
 
 | Package | Test type | Key scenarios |
 |---|---|---|
-| `domains/skill` (getBySpecializationId) | Unit | Returns skills for given `specializationId`; empty `[]` for unknown ID; sorted by `name` |
-| `domains/skill` (getById) | Unit | Returns `SkillResponse` for valid ID; throws `NotFoundError` for missing ID |
-| `domains/skill` (scriptStorage — local) | Unit | Reads file from correct path; throws on missing file (maps to NotFoundError upstream) |
-| `domains/skill` (scriptStorage — S3) | Unit | Calls `AwsS3Client.getFile` with correct `storageKey`; propagates S3 error |
-| `domains/skill` (toSkillResponse mapper) | Unit | `storageKey` is absent from `SkillScriptResponse`; all other fields present and correct |
-| `services/skill` (listSkillsBySpecialization) | Unit | Returns `items: []` for unknown specializationId; returns correct items when found |
-| `services/skill` (getSkill) | Unit | Returns `SkillResponse` for valid ID; throws `NotFoundError` for missing ID |
-| `apps/api` (getSkillScript REST route) | Unit | 200 text/plain on valid skill+filename; 404 on missing skill; 404 on missing filename in scripts[]; 404 on missing storage file; 403 non-admin |
-| `apps/web` (E2E — SK-1) | E2E | Admin sees Skills panel with skills on specialization detail; empty state when no skills |
-| `apps/web` (E2E — SK-2) | E2E | Clicking skill row navigates to `/specialization/{id}/skills/{skillId}` |
-| `apps/web` (E2E — SK-3) | E2E | Skill detail shows rule + script list; selecting script switches displayed code |
-| `apps/web` (E2E — SK-4) | E2E | Python/nodejs/bash scripts use correct syntax highlighting language |
-| `apps/web` (E2E — SK-5) | E2E | Unknown skillId shows "Skill not found." with back link |
-| `apps/web` (E2E — SK-6) | E2E | No create/edit/delete controls on specialization detail or skill detail |
+| `domains/skill` (removeSoft) | Unit | Archives active skill; throws `WrongParamError` if already archived; throws `NotFoundError` if missing |
+| `domains/skill` (getBySpecializationId — archive filter) | Unit | Archived skills excluded from result; active skills returned; search still works |
+| `domains/skill` (getCatalogBySpecializationId) | Unit | Returns only enabled+non-archived skills; disabled or archived excluded; empty array for unknown specializationId |
+| `domains/skill` (getActiveRuleByName) | Unit | Returns rule for active skill; throws `NotFoundError` for archived/disabled/missing skill |
+| `domains/skill` (formatSkillsCatalogSection) | Unit | Empty array → empty string; items → correct markdown section with name+description |
+| `services/skill` (archiveSkill) | Unit | Archives existing skill; throws `NotFoundError` for unknown skillId; throws on non-admin |
+| `domains/system-agent` (buildSystemAgentSystemMessage + skillsCatalogSection) | Unit | Appends catalog section when provided; no catalog when undefined; existing IntentClassifier/Assistant behavior unchanged |
+| `domains/system-agent` (invoke with skillsCatalogSection) | Unit | Passes skillsCatalogSection to buildSystemAgentSystemMessage correctly |
+| `services/agent` (resolveSkillToolHandler) | Unit | Returns JSON `{ skillName, rule }` for active skill; uses callerAgentId's specializationId when arg omitted; throws on missing/archived skill |
+| `services/agent` (runAgentInvokeWithTools — catalog injection) | Unit | System agent with specializationId gets catalog section; agent without specializationId gets no catalog; personal agent unaffected |
+| `apps/api` (DELETE /skills/:skillId) | Unit | 200 on valid archive; 404 on missing skill; 409 on already archived; 403 non-admin |
+| `apps/web` (E2E — SK-9) | E2E | Admin archives skill from panel; skill removed from list; archived skill excluded from runtime catalog |
+| `apps/web` (E2E — SK-10) | E2E | Specialization-scoped system agent invoke includes catalog section with enabled skills; agent without specializationId has no catalog |
+| `apps/web` (E2E — SK-11/SK-12) | E2E | Skill resolver + resolve-skill returns full rule; disabled/archived skill returns error |
 
 ---
 
@@ -1116,28 +1218,36 @@ pnpm add react-syntax-highlighter @types/react-syntax-highlighter
 
 | # | Risk | Likelihood | Impact | Mitigation |
 |---|------|------------|--------|------------|
-| R-1 | Script content fetch per-select adds latency on each selection | Low | UX — script viewer feels slow | Add loading state in `SkillCodeViewer`; p95 target is 500 ms per PRD NFR; cache content client-side in `useSkillDetail` state (same React state, no re-fetch on re-select) |
-| R-2 | `storageKey` exposed to client via API response | High | Security — bucket path leak | `toSkillResponse` mapper explicitly strips `storageKey`; GraphQL `SkillScript` type does not declare it; REST route resolves it server-side from `SkillModel` only |
-| R-3 | Local filesystem path traversal via malicious `storageKey` | Medium | Security — arbitrary file read in dev | `storageKey` is stored in DB and never set by the REST request directly; `decodeURIComponent` is applied to `:filename`; server matches against `skill.scripts[]` before resolving `storageKey` |
-| R-4 | `react-syntax-highlighter` bundle size adds to initial page load | Low | Performance | Import dynamically or use the lighter `PrismLight` build; highlight only the languages needed (`python`, `javascript`, `bash`) |
-| R-5 | `SpecializationSkillsPanel` fires a query on every specialization detail load | Low | Performance | Query is fast (index on `specializationId`); failure is isolated (panel shows error independently; parent page unaffected per PRD NFR 5.2) |
-| R-6 | `config.skills.scriptStorage.bucketName` not wired in production deploy | High (deploy gap) | Script content fetch fails in production | Add to `.env.example` and deployment checklist; `createScriptStorageClient()` should throw on startup if `bucketName` is empty in production (fail-fast) |
-| R-7 | E2E seed: skills + script files not set up for test environment | Medium | E2E tests cannot pass SK-3/SK-4 | Add skill seed fixture (mirroring specialization MCP seed); place script files in `.data/skill-scripts` for test env; document in E2E README |
+| R-1 | Script content fetch per-select adds latency on each selection | Low | UX — script viewer feels slow | Loading state in `SkillCodeViewer`; cache content client-side in `useSkillDetail` state (no re-fetch on re-select) |
+| R-2 | `storageKey` exposed to client via API response | High | Security — bucket path leak | `toSkillResponse` mapper strips `storageKey`; not in GraphQL `SkillScript` type; REST route resolves server-side |
+| R-3 | Path traversal via malicious `storageKey` | Medium | Security (dev) | `storageKey` sourced from DB only; `decodeURIComponent` applied; matched against `skill.scripts[]` before resolving key |
+| R-4 | `react-syntax-highlighter` bundle size | Low | Performance | Import dynamically or use PrismLight build; highlight only needed languages |
+| R-5 | `config.skills.scriptStorage.bucketName` not wired in production | High | Script content fails | Add to `.env.example`; fail-fast on startup if bucketName empty in production |
+| R-6 | Catalog section bloats system message token count | Medium | Cost / context window | Catalog section is name+description only (typically < 500 tokens for 20 skills); monitor token usage |
+| R-7 | `resolveSkillToolHandler` fails to look up callerAgentId's specializationId if agent is archived | Low | Rule tier broken for archived agents | `getActiveById` returns null → propagate `ValidationError` with clear message |
+| R-8 | Seed "Skill resolver" agent collides with DB on re-seed | Low | Duplicate agent | Seed uses `upsertByName` pattern (same as other system agents); idempotent |
+| R-9 | Archive filter (`removedAt: null`) breaks existing admin skill list | Medium | Admin sees fewer skills unexpectedly | Guard with unit test on `getBySpecializationId`; no previously archived skills exist at launch |
+| R-10 | `invokeSystemAgent` catalog query adds latency to every system agent invoke with specializationId | Medium | Response time regression | Catalog query is indexed (`{ specializationId: 1 }`); result cached in-request (single call per invoke); monitor p95 |
 
 ---
 
-## Open Questions (Pending User Approval)
+## Open Questions / Architecture Decisions Made
 
-| # | Question | Default recommendation |
-|---|----------|------------------------|
-| OQ-1 | Route shape: `/specialization/[id]/skills/[skillId]` vs `/skill/[id]`? | **Nested** — preserves specialization breadcrumb context (see PRD OQ-1) |
-| OQ-2 | `rule` rendered as Markdown or preformatted `<pre>` block? | **Preformatted `<pre>`** in MVP (no Markdown renderer found for system agent rules); if a Markdown renderer is added, swap in Phase 2 |
-| OQ-3 | S3 bucket for skills: shared with other S3 usage or dedicated bucket? | **New dedicated bucket** (`skill-scripts` or similar); `config.skills.scriptStorage.bucketName` wired separately — avoids co-mingling skill scripts with other storage objects |
-| OQ-4 | Local dev: create `.data/skill-scripts/` automatically or require manual setup? | **Manual for MVP**; document in README; E2E fixture creates necessary directories as part of seed |
-| OQ-5 | `react-syntax-highlighter` vs alternative (e.g. `shiki`, `highlight.js`)? | **`react-syntax-highlighter` with PrismLight** — most used in React ecosystem, easy per-language import, manageable bundle; revisit if perf profiling flags it |
-| OQ-6 | Syntax highlighting theme for code viewer? | **`vscDarkPlus`** (bundled with react-syntax-highlighter, matches modern editor aesthetics); align with design system dark mode if one exists |
-| OQ-7 | Should skill seed be a separate seed file in `domains/skill/seed/` (mirroring system-agent seed) or a DB migration script? | **`domains/skill/seed/skills.json`** — consistent with `systemAgents.json` pattern; seeded at API startup alongside system agents |
+| # | Question | Decision taken |
+|---|----------|----------------|
+| OQ-1 | Route shape: `/specialization/[id]/skills/[skillId]` vs `/skill/[id]`? | **Nested** — preserves breadcrumb context |
+| OQ-2 | `rule` rendered as Markdown or preformatted `<pre>` block? | **Preformatted `<pre>`** in MVP; swap in Phase 2 edit form if Markdown editor is introduced |
+| OQ-3 | S3 bucket for skills: shared or dedicated? | **Dedicated bucket** — `config.skills.scriptStorage.bucketName` wired separately |
+| OQ-4 | Local dev: auto-create `.data/skill-scripts/` or manual? | **Manual** in MVP; E2E fixture creates dirs as part of seed |
+| OQ-5 | Syntax highlighting lib? | **`react-syntax-highlighter` with PrismLight** — most used in React ecosystem |
+| OQ-6 | Syntax highlighting theme? | **`vscDarkPlus`** — bundled, matches modern editor aesthetics |
+| OQ-7 | Skill seed format? | **`domains/skill/seed/skills.json`** — consistent with `systemAgents.json` pattern |
+| OQ-8 | `update-skill` internal tool? | **Not planned** — admin REST PATCH (`update` command) covers updates; no tool |
+| OQ-9 | Where does catalog formatting live? | **`domains/skill/src/utils/formatSkillsCatalogSection.ts`** — owned by skill domain; exported from domain index |
+| OQ-10 | How does `resolve-skill` get specializationId? | **Context-first**: looks up `callerAgentId.specializationId` from `systemAgentDomain`; accepts explicit override arg |
+| OQ-11 | Does `buildSystemAgentSystemMessage` need to know about skills? | **No** — it only receives a pre-built `string` (`skillsCatalogSection`); zero skill-domain coupling in `domains/system-agent` |
+| OQ-12 | Where is catalog injection placed (before/after existing sections)? | **After** — appended at the end of the resolved system message so it doesn't override role-specific routing sections |
 
 ---
 
-*End of Skill MVP architecture — ready for implementation. Each todo item is scoped to a single package with file-level detail for delegation to coder/test-writer subagents.*
+*End of Skill architecture — MVP + Phase 2 (provisioning) + Phase 3 (agent consumption). Each todo item is scoped to a single package with file-level detail for delegation to coder/tdd-writer subagents.*

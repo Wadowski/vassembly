@@ -1,7 +1,7 @@
 # Product Requirements Document: Skill (Vassembly)
 
 **Document status:** Draft for design & engineering handoff  
-**Last updated:** 2026-06-24  
+**Last updated:** 2026-06-25  
 **Related PRDs:** [Specialization](../specialization/prd.md), [System Agent](../system-agent/prd.md), [Agent Internal Tools](../agent-internal-tools/prd.md)  
 **Feature slug:** `skill`  
 **Standard reference:** [Agent Skills open standard](https://agentskills.io/specification)
@@ -38,8 +38,8 @@ MVP delivers **read-only admin visibility**: list skills on the specialization d
 | Phase | Deliverable |
 |-------|-------------|
 | **MVP — Read & view** | Skill domain + service, S3/local script storage, GraphQL reads, script content REST read, admin UI (list on specialization detail + skill detail page) |
-| **Phase 2 — Provisioning** | Agent internal tool(s) to create/update skills; upload scripts to storage |
-| **Phase 3 — Agent consumption** | System agents load skills by specialization at runtime |
+| **Phase 2 — Provisioning** | Admin create/edit UI; `create-skill` internal tool; archive (soft removal); script upload to storage |
+| **Phase 3 — Agent consumption** | Two-tier runtime loading: skill catalog (name + description) auto-injected for specialization-scoped system agents; full rules on demand via `skill-resolver` agent + `resolve-skill` tool |
 | **Phase 4 — Full agentskills.io** | `references/`, `assets/` folders; optional frontmatter fields (`license`, `compatibility`, `metadata`, `allowed-tools`) |
 
 ---
@@ -174,17 +174,157 @@ Scenario: Unknown skill ID returns not found
   And I see a link back to the parent specialization detail page
 ```
 
-**SK-6 — No skill mutation UI in MVP**
+**SK-6 — No skill mutation UI in MVP** *(superseded by SK-8 in Phase 2; retained for MVP regression only)*
 
 ```gherkin
 As a platform admin
 I want to understand that skills are read-only in MVP
-So that I do not expect create or edit controls
+So that I am not expect create or edit controls
 
 Scenario: No create/edit/delete UI on skill pages
   Given I am on a specialization detail page or skill detail page
   Then there is no "Create skill" button
   And there is no edit or delete action on any skill item
+```
+
+### Phase 2 — Provisioning stories
+
+**SK-7 — Create skill via internal tool**
+
+```gherkin
+As a system agent with create-skill assigned
+I want to create a skill for a specialization with optional scripts
+So that domain knowledge is provisioned without admin UI
+
+Scenario: Create skill with scripts
+  Given a valid specializationId
+  When the agent calls create_skill with name, description, rule, and scripts[]
+  Then a skill document is persisted with enabled: true
+  And script files are stored at the configured storage backend
+  And the tool returns { skillId, isNew: true }
+
+Scenario: Idempotent create returns existing
+  Given a skill "contract-review" already exists for the specialization
+  When create_skill is called with the same name
+  Then the tool returns { skillId, isNew: false }
+  And no duplicate document is created
+```
+
+**SK-8 — Admin create and edit skills**
+
+```gherkin
+As a platform admin
+I want to create and edit skills from the admin UI
+So that I can provision and maintain skills without agent tools
+
+Scenario: Create skill from specialization detail
+  Given I am authenticated as admin
+  And I am on the specialization detail page
+  When I click "Create skill" and submit a valid form
+  Then the skill appears in the skills panel
+  And I can open its detail page
+
+Scenario: Edit skill metadata and rule
+  Given I am authenticated as admin
+  And skill "contract-review" exists
+  When I open the edit page and change description or rule
+  Then changes persist via REST PATCH
+  And the detail page reflects the update
+
+Scenario: Toggle skill enabled state
+  Given a skill is enabled on the specialization skills panel
+  When I toggle the enabled switch off
+  Then the skill is disabled via REST PATCH
+  And the skill is excluded from runtime catalog injection (Phase 3)
+```
+
+**SK-9 — Archive skill (soft removal)**
+
+```gherkin
+As a platform admin
+I want to archive a skill
+So that it is removed from active use without deleting audit history
+
+Scenario: Admin archives a skill
+  Given I am authenticated as admin
+  And skill "contract-review" exists and is not archived
+  When I archive the skill from the admin UI
+  Then REST DELETE (or archive command) soft-removes the skill
+  And the skill no longer appears in the active skills list
+  And the skill no longer appears in runtime catalog injection
+
+Scenario: Archived skill not returned in active queries
+  Given skill "contract-review" is archived
+  When skillsBySpecialization is queried for its specialization
+  Then archived skills are excluded by default
+```
+
+### Phase 3 — Agent consumption stories
+
+**SK-10 — Skill catalog injected for specialization-scoped system agents**
+
+```gherkin
+As the platform
+I want specialization-scoped system agents to receive a skill catalog in their system message
+So that agents know which skills exist before requesting full instructions
+
+Scenario: Agent with specializationId receives catalog
+  Given system agent "Legal researcher" has specializationId "spec-legal"
+  And spec-legal has enabled, non-archived skills "contract-review" and "legal-research"
+  When the agent is invoked
+  Then the system message includes a skill catalog section
+  And each entry shows name and description only (no rule body)
+  And disabled and archived skills are omitted
+
+Scenario: Agent without specializationId receives no catalog
+  Given system agent "Assistant" has no specializationId
+  When the agent is invoked
+  Then the system message contains only the agent's base rule
+  And no skill catalog section is appended
+
+Scenario: Personal agents never receive skill catalog
+  Given a personal agent is invoked
+  When invoke completes
+  Then no skill catalog is injected
+```
+
+**SK-11 — Resolve full skill rule on demand**
+
+```gherkin
+As a system agent performing domain work
+I want to load a skill's full rule when needed
+So that instructions are available without bloating every invoke context
+
+Scenario: resolve-skill returns rule for valid skill
+  Given skill "contract-review" exists for specialization "spec-legal"
+  When resolve_skill is called with { specializationId: "spec-legal", skillName: "contract-review" }
+  Then the tool returns the full rule Markdown body
+  And disabled or archived skills return a clear not-found error
+
+Scenario: resolve-skill rejects unknown skill name
+  Given no skill "nonexistent" exists for the specialization
+  When resolve_skill is called with that skillName
+  Then the tool returns a validation or not-found error
+```
+
+**SK-12 — Skill resolver agent workflow**
+
+```gherkin
+As a specialization worker agent
+I want to delegate to the skill-resolver agent to fetch skill instructions
+So that I follow the two-tier loading pattern consistently
+
+Scenario: Worker uses skill-resolver via use_agent
+  Given system agent "Skill resolver" is seeded with resolve-skill assigned
+  And "Legal worker" needs instructions for "contract-review"
+  When Legal worker calls use_agent("Skill resolver") with skillName in the message
+  Then Skill resolver calls resolve_skill with the agent's specializationId and skillName
+  And returns the full rule to the caller
+
+Scenario: resolve-skill assigned manually by admin
+  Given an admin edits the Skill resolver system agent
+  Then resolve-skill appears in the internal tools picker
+  And assignment is not automatic on other agents
 ```
 
 ---
@@ -431,18 +571,27 @@ Auth: `ProtectedAuthRoute` with `roles={['admin']}`.
 
 ---
 
-## 8. Out of Scope (MVP)
+## 8. Out of Scope
+
+### MVP (delivered)
+
+| Item | Status |
+|------|--------|
+| Read-only admin list + detail | Delivered (Phase 1) |
+
+### Deferred beyond Phase 2 + 3
 
 | Item | Deferred to |
 |------|-------------|
-| Admin create/edit/delete skill UI | Phase 2 |
-| Agent internal tool `create-skill` / `update-skill` | Phase 2 |
+| `update-skill` internal tool | Not planned — admin UI PATCH covers updates |
 | `references/` and `assets/` folders | Phase 4 |
 | Optional SKILL.md frontmatter (`license`, `compatibility`, `metadata`, `allowed-tools`) | Phase 4 |
-| Agents loading skills at runtime | Phase 3 |
 | Skill search / global skill catalog page | Future |
-| Script upload via UI | Phase 2 |
 | Versioning / audit history of skill changes | Future |
+| Personal agent skill loading | Out of scope — system agents only |
+| Auto-assignment of `create-skill` / `resolve-skill` to provisioned agents | Out of scope — manual admin assignment |
+| Full rule auto-injection at invoke (without resolve-skill) | Out of scope — two-tier loading only |
+| Script code injection at runtime | Out of scope — rules only via resolve-skill |
 
 ---
 
@@ -492,6 +641,46 @@ Auth: `ProtectedAuthRoute` with `roles={['admin']}`.
 - [ ] Specialization detail (agents, MCPs) unchanged when skills panel empty
 - [ ] Existing specialization GraphQL queries unaffected
 
+### Phase 2 — Provisioning
+
+**Internal tools:**
+- [ ] `create-skill` registered, system-only, with script upload support
+- [ ] No `update-skill` internal tool in registry
+
+**Admin UI:**
+- [ ] Create skill form on `/specialization/[id]/skills/new`
+- [ ] Edit skill form on `/specialization/[id]/skills/[skillId]/edit`
+- [ ] Enable/disable toggle on skills panel
+- [ ] Archive action removes skill from active list
+
+**Archive:**
+- [ ] Domain `removeSoft` (or equivalent) sets archived/removed state
+- [ ] REST archive endpoint (admin-only)
+- [ ] Active queries exclude archived skills
+
+**E2E:**
+- [ ] Gherkin scenarios SK-7 through SK-9 covered
+
+### Phase 3 — Agent consumption
+
+**Catalog injection:**
+- [ ] Specialization-scoped system agents receive name+description catalog in system message
+- [ ] Agents without `specializationId` receive no catalog
+- [ ] Personal agents receive no catalog
+- [ ] Only enabled, non-archived skills included
+
+**resolve-skill tool:**
+- [ ] Registered in internal tool registry (system-only)
+- [ ] Handler returns full rule for `{ specializationId, skillName }`
+- [ ] Returns error for disabled, archived, or missing skills
+
+**skill-resolver agent:**
+- [ ] Seeded in `systemAgents.json` with rule instructing resolve_skill usage
+- [ ] Admin can assign `resolve-skill` via internal tools picker
+
+**E2E / integration:**
+- [ ] Gherkin scenarios SK-10 through SK-12 covered (unit + integration minimum)
+
 ---
 
 ## 11. Open Questions
@@ -506,7 +695,12 @@ Auth: `ProtectedAuthRoute` with `roles={['admin']}`.
 | OQ-6 | Local storage root path env var name and default? | Engineering | e.g. `SKILL_SCRIPT_STORAGE_PATH=./.data/skill-scripts` |
 | OQ-7 | MVP skill data: manual seed, migration script, or internal tool only? | Product | Seed + optional internal tool stub for Phase 2 |
 | OQ-8 | Max script file size limit? | Engineering | 512 KB per script for MVP |
+| OQ-9 | Admin mutation UI in Phase 2? | Product | **Yes** — create/edit/enable/archive via admin UI |
+| OQ-10 | update-skill internal tool? | Product | **No** — admin REST PATCH only |
+| OQ-11 | Runtime skill loading strategy? | Product | **Two-tier:** catalog (name+description) auto-inject; full rule via skill-resolver + resolve-skill |
+| OQ-12 | Which agents receive catalog? | Product | System agents with `specializationId` set only |
+| OQ-13 | Skill archive mechanism? | Engineering | Soft removal (`removedAt` / status pattern matching other domains) |
 
 ---
 
-*End of PRD — pending architecture (`docs/features/skill/architecture.md`) and user approval before implementation.*
+*End of PRD — Phase 2+3 addendum approved 2026-06-25. Architecture: `docs/features/skill/architecture.md`.*

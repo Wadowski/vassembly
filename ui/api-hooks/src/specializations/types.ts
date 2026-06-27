@@ -26,7 +26,7 @@ export interface SpecializationListItem {
   updatedAt: string;
 }
 
-export interface SpecializationDetailItem extends SpecializationListItem {}
+export type SpecializationDetailItem = SpecializationListItem;
 
 export interface AgentsBySpecializationItem {
   id: string;
