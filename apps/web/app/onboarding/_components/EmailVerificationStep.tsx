@@ -65,7 +65,7 @@ export const EmailVerificationStep = ({
         <Button
           variant="outlined"
           text="Resend email"
-          disabled={isResendDisabled}
+          isDisabled={isResendDisabled}
           onClick={handleResendClick}
         />
       </div>

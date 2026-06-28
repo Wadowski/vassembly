@@ -9,7 +9,7 @@ Feature: User Registration
     And I fill in "Confirm Password" with "SecurePass123!"
     And I click "Create account"
     Then I see "Account created successfully."
-    And I am on "/"
+    And I am on "/onboarding"
 
   Scenario: Show validation error for empty email
     When I navigate to "/register"
@@ -125,4 +125,4 @@ Feature: User Registration
     And I fill in "Confirm Password" with "SecurePass123!"
     And I click "Create account"
     Then I see "Please verify your email to confirm your account."
-    And I am on "/"
+    And I am on "/onboarding"

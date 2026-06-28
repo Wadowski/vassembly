@@ -65,7 +65,7 @@ export const AiIntegrationStep = ({
         <Button
           variant="contained"
           text="Add AI integration"
-          disabled={isLocked}
+          isDisabled={isLocked}
           onClick={handleAddIntegrationClick}
         />
       </div>

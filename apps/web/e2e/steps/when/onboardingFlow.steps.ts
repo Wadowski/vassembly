@@ -10,17 +10,37 @@ import type { WebBddWorld } from '../utils/types';
 
 const { When } = createBdd(bddTest);
 
+const E2E_ONBOARDING_INTEGRATION_NAME = 'E2E Onboarding Integration';
+const E2E_ONBOARDING_API_KEY = 'e2e-onboarding-api-key';
+
+const fillOnboardingAiIntegrationForm = async ({
+  page,
+}: {
+  page: NonNullable<import('@playwright/test').Page>;
+}): Promise<void> => {
+  await page.getByLabel('Name', { exact: true }).fill(E2E_ONBOARDING_INTEGRATION_NAME);
+  await page.getByLabel('API Key', { exact: true }).fill(E2E_ONBOARDING_API_KEY);
+};
+
+const createFirstAiIntegrationDuringOnboarding = async ({
+  page,
+}: {
+  page: NonNullable<import('@playwright/test').Page>;
+}): Promise<void> => {
+  await setupAiIntegrationCreateRoutes({ page });
+  await page.goto('/agents/ai-integrations/create');
+  await fillOnboardingAiIntegrationForm({ page });
+  await page.getByRole('button', { name: /test connection/i }).click();
+  await expect(page.getByText('Connection verified')).toBeVisible({ timeout: 15_000 });
+  await page.getByRole('button', { name: /create integration/i }).click();
+};
+
 When('I create my first AI integration during onboarding', async ({ page }) => {
   if (!page) {
     return;
   }
 
-  await setupAiIntegrationCreateRoutes({ page });
-  await page.goto('/agents/ai-integrations/create');
-  await page.getByLabel('Name', { exact: true }).fill('E2E Onboarding Integration');
-  await page.getByRole('button', { name: /test connection/i }).click();
-  await expect(page.getByText('Connection verified')).toBeVisible({ timeout: 15_000 });
-  await page.getByRole('button', { name: /create integration/i }).click();
+  await createFirstAiIntegrationDuringOnboarding({ page });
 });
 
 When('onboarding completes', async ({ page, world }) => {
@@ -29,11 +49,7 @@ When('onboarding completes', async ({ page, world }) => {
   }
 
   const webWorld = world as WebBddWorld;
-  await setupAiIntegrationCreateRoutes({ page });
-  await page.goto('/agents/ai-integrations/create');
-  await page.getByLabel('Name', { exact: true }).fill('E2E Onboarding Integration');
-  await page.getByRole('button', { name: /test connection/i }).click();
-  await page.getByRole('button', { name: /create integration/i }).click();
+  await createFirstAiIntegrationDuringOnboarding({ page });
   await expect(page).toHaveURL(/\/onboarding/, { timeout: 20_000 });
 
   const returnUrl = webWorld.capturedReturnUrl;
