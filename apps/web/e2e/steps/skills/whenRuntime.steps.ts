@@ -1,5 +1,6 @@
 import { createBdd } from 'playwright-bdd';
 
+import { appendCurrentDateTimeSection } from '@vassembly/constants';
 import { bddTest, requireWorkspaceModule } from '@vassembly/e2e';
 
 import { seedAgent } from '../utils/seedAgent';
@@ -61,7 +62,7 @@ When('the personal agent {string} is invoked', async ({ seed, world }, agentName
 
   webWorld.storedFields = {
     ...(webWorld.storedFields ?? {}),
-    systemMessage: agentResult.data.rule,
+    systemMessage: appendCurrentDateTimeSection({ systemMessage: agentResult.data.rule }),
     lastInvokedAgentName: agentName,
   };
 });

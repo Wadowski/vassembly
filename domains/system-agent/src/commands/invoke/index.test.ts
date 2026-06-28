@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
+import { CURRENT_DATE_TIME_SECTION_HEADING, SYSTEM_AGENT_NAME } from '@vassembly/constants';
 import { NotFoundError, ValidationError } from '@vassembly/errors';
 
 vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
@@ -88,7 +88,9 @@ describe('invoke system agent command', () => {
       message: 'Summarize policy section 4.',
     });
 
-    expect(result.message).toBe(`${AGENT_RULE}\n\nSummarize policy section 4.`);
+    expect(result.message).toContain(AGENT_RULE);
+    expect(result.message).toContain(CURRENT_DATE_TIME_SECTION_HEADING);
+    expect(result.message).toContain('Summarize policy section 4.');
     expect(result.usage?.totalTokens).toBe(15);
     expect(result.metadata?.provider).toBe('openai');
   });
@@ -118,10 +120,12 @@ describe('invoke system agent command', () => {
     expect(invokeSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Run tools',
-        systemMessage: AGENT_RULE,
+        systemMessage: expect.stringContaining(AGENT_RULE),
         internalToolBindings: [{ toolId: 'agent-list', handler }],
       }),
     );
+    const invokeCall = invokeSpy.mock.calls[0]?.[0];
+    expect(invokeCall?.systemMessage).toContain(CURRENT_DATE_TIME_SECTION_HEADING);
   });
 
   it('should throw NotFoundError when system agent does not exist', async () => {
@@ -184,8 +188,13 @@ describe('invoke system agent command', () => {
 
     expect(invokeSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        systemMessage: `${AGENT_RULE}\n\n${catalogSection}`,
+        systemMessage: expect.stringContaining(catalogSection),
       }),
+    );
+    const invokeCall = invokeSpy.mock.calls[0]?.[0];
+    expect(invokeCall?.systemMessage).toContain(CURRENT_DATE_TIME_SECTION_HEADING);
+    expect(invokeCall?.systemMessage?.indexOf(catalogSection)).toBeLessThan(
+      invokeCall?.systemMessage?.indexOf(CURRENT_DATE_TIME_SECTION_HEADING) ?? -1,
     );
   });
 

@@ -8,6 +8,7 @@ import { MCP_TOOL_MAX_ITERATIONS, loadMcpTools } from '../mcp';
 import { assertNotAborted } from '../utils/assertNotAborted';
 import { extractTokenUsageFromMessage } from '../utils/extractTokenUsageFromMessage';
 import { invokeModelWithSignal } from '../utils/invokeModelWithSignal';
+import { stripModelReasoningBlocks } from '../utils/stripModelReasoningBlocks';
 import { runToolCallLoop } from './runToolCallLoop';
 
 import type { AiProviderInvokeParams, AiProviderInvokeResult } from '../types';
@@ -21,11 +22,9 @@ export interface InvokeWithChatModelParams {
 const CONSOLE_LOG_PREFIX = 'client-langchain ::';
 
 const extractMessageContent = (content: unknown): string => {
-  if (typeof content === 'string') {
-    return content;
-  }
+  const rawContent = typeof content === 'string' ? content : String(content);
 
-  return String(content);
+  return stripModelReasoningBlocks(rawContent);
 };
 
 const buildInitialMessages = (invokeParams: AiProviderInvokeParams) => {
