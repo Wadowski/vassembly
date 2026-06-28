@@ -15,15 +15,19 @@ const STEP2_TITLE = 'Create first AI integration';
 const getOnboardingHub = ({ page }: { page: NonNullable<import('@playwright/test').Page> }) =>
   page.getByRole('main');
 
+const getStep1Card = ({ page }: { page: NonNullable<import('@playwright/test').Page> }) =>
+  page.getByRole('article', { name: STEP1_TITLE });
+
 Then('Step 1 shows as pending on the hub', async ({ page }) => {
   if (!page) {
     return;
   }
 
   const hub = getOnboardingHub({ page });
+  const step1Card = getStep1Card({ page });
   await expect(hub.getByText(ONBOARDING_HEADING)).toBeVisible();
-  await expect(hub.getByText(STEP1_TITLE)).toBeVisible();
-  await expect(hub.getByText(/pending/i)).toBeVisible();
+  await expect(step1Card.getByRole('heading', { name: STEP1_TITLE })).toBeVisible();
+  await expect(step1Card.getByText(/pending/i)).toBeVisible();
 });
 
 Then('Step 1 shows as complete on the hub', async ({ page }) => {
@@ -31,9 +35,9 @@ Then('Step 1 shows as complete on the hub', async ({ page }) => {
     return;
   }
 
-  const hub = getOnboardingHub({ page });
-  await expect(hub.getByText(STEP1_TITLE)).toBeVisible();
-  await expect(hub.getByText(/verified/i)).toBeVisible();
+  const step1Card = getStep1Card({ page });
+  await expect(step1Card.getByRole('heading', { name: STEP1_TITLE })).toBeVisible();
+  await expect(step1Card.getByText(/verified/i)).toBeVisible();
 });
 
 Then('Step 2 is locked on the hub', async ({ page }) => {

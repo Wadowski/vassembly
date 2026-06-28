@@ -29,6 +29,7 @@ import { confirmEmailVerification } from "./index";
 import { NotFoundError, WrongParamError } from "@vassembly/errors";
 
 const VALID_USER_ID = "507f1f77bcf86cd799439011";
+const EXPIRED_TOKEN_MESSAGE = "This verification link has expired";
 const INVALID_TOKEN_MESSAGE = "Invalid or expired verification link";
 
 describe("confirmEmailVerification", () => {
@@ -91,7 +92,7 @@ describe("confirmEmailVerification", () => {
 
     await expect(
       confirmEmailVerification({ userId: VALID_USER_ID, token: "plain-secret" }),
-    ).rejects.toThrow(new WrongParamError(INVALID_TOKEN_MESSAGE));
+    ).rejects.toThrow(new WrongParamError(EXPIRED_TOKEN_MESSAGE));
     expect(mockEncode).not.toHaveBeenCalled();
   });
 

@@ -6,6 +6,7 @@ import { userFactory } from '../../model/factories';
 import { USER_ID_VALIDATION_SCHEMA } from '../userIdValidationSchema';
 import type { ConfirmEmailVerificationCommand } from './types';
 
+const EXPIRED_TOKEN_MESSAGE = 'This verification link has expired';
 const INVALID_TOKEN_MESSAGE = 'Invalid or expired verification link';
 
 export const confirmEmailVerification = async ({
@@ -40,7 +41,7 @@ export const confirmEmailVerification = async ({
     !userRecord.emailVerificationExpiresAt ||
     userRecord.emailVerificationExpiresAt <= new Date()
   ) {
-    throw new WrongParamError(INVALID_TOKEN_MESSAGE);
+    throw new WrongParamError(EXPIRED_TOKEN_MESSAGE);
   }
 
   const encodedToken = encode(token);

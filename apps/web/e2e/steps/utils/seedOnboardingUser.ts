@@ -4,7 +4,7 @@ import { seedUser } from '@vassembly/e2e';
 import type { Page } from '@playwright/test';
 import type { SeedContext } from '@vassembly/e2e';
 
-import { E2E_USER_PASSWORD, signInSeededUser } from './auth';
+import { E2E_USER_PASSWORD, getSessionAuthToken, signInSeededUser } from './auth';
 import { type OnboardingUserState, updateUserOnboardingState } from './onboardingUserState';
 
 export interface SeedOnboardingUserParams {
@@ -39,6 +39,7 @@ export const seedAndSignInOnboardingUser = async ({
     state,
   });
   await signInSeededUser({ page, email: user.email });
+  const sessionToken = await getSessionAuthToken({ page });
 
-  return { userId: user.id, email: user.email, token: user.token };
+  return { userId: user.id, email: user.email, token: sessionToken };
 };

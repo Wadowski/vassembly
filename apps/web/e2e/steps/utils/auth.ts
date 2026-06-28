@@ -4,8 +4,26 @@ import { dismissNavigationDrawer } from './settingsPage';
 
 export const E2E_USER_PASSWORD = 'SecurePass123!';
 const LOGIN_API_PATH = '/user/login';
+const AUTH_TOKEN_STORAGE_KEY = 'auth:token';
 const AUTH_READY_TIMEOUT_MS = 45_000;
 const LOGIN_RESPONSE_TIMEOUT_MS = 20_000;
+
+export const getSessionAuthToken = async ({
+  page,
+}: {
+  page: NonNullable<import('@playwright/test').Page>;
+}): Promise<string> => {
+  const token = await page.evaluate(
+    (storageKey) => window.localStorage.getItem(storageKey),
+    AUTH_TOKEN_STORAGE_KEY,
+  );
+
+  if (!token) {
+    throw new Error('Auth token not found in browser session');
+  }
+
+  return token;
+};
 
 const hasStoredAuthTokens = (): boolean => {
   const authToken = window.localStorage.getItem('auth:token');

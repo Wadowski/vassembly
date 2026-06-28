@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useResendVerification, useHttpClient } from '@vassembly/ui-api-hooks';
-import { TooManyRequestsError } from '@vassembly/errors';
+import { CommonError, ErrorTypes, InternalError, TooManyRequestsError } from '@vassembly/errors';
 
 export interface UseResendVerificationResult {
   handleResend: () => Promise<void>;
@@ -48,10 +48,18 @@ export const useResendVerificationHandler = (): UseResendVerificationResult => {
         setSuccessMessage('Verification email sent.');
       }
     } catch (error) {
-      if (error instanceof TooManyRequestsError && error.retryAfterSeconds != null) {
-        setCooldownSeconds(error.retryAfterSeconds);
+      const retryAfterSeconds =
+        error instanceof TooManyRequestsError
+          ? error.retryAfterSeconds
+          : error instanceof CommonError && error.type === ErrorTypes.TOO_MANY_REQUESTS
+            ? (error as TooManyRequestsError).retryAfterSeconds
+            : undefined;
+
+      if (retryAfterSeconds != null) {
+        setCooldownSeconds(retryAfterSeconds);
         return;
       }
+
       setErrorMessage('Something went wrong. Please try again.');
     }
   }, [httpClient]);

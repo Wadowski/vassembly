@@ -19,7 +19,7 @@ const fillOnboardingAiIntegrationForm = async ({
   page: NonNullable<import('@playwright/test').Page>;
 }): Promise<void> => {
   await page.getByLabel('Name', { exact: true }).fill(E2E_ONBOARDING_INTEGRATION_NAME);
-  await page.getByLabel('API Key', { exact: true }).fill(E2E_ONBOARDING_API_KEY);
+  await page.getByLabel('API key', { exact: true }).fill(E2E_ONBOARDING_API_KEY);
 };
 
 const createFirstAiIntegrationDuringOnboarding = async ({
