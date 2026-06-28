@@ -20,6 +20,8 @@ export interface InternalToolContext {
   recordAgentInvokeProgress?: RecordAgentInvokeProgress;
 }
 
+export type CredentialScope = 'platform' | 'user';
+
 export interface AgentInvokeProgressEventInput {
   agentId: string;
   parentAgentId?: string;
@@ -33,6 +35,7 @@ export interface AgentInvokeProgressEventInput {
   integrationName?: string;
   provider?: string;
   model?: string;
+  credentialSource?: CredentialScope;
 }
 
 export type RecordAgentInvokeProgress = (
@@ -59,6 +62,7 @@ export interface RunAgentInvokeWithToolsParams {
   agentType: 'personal' | 'system';
   agentId: string;
   message: string;
+  credentialScope?: CredentialScope;
   connectionOverride?: { integrationCredentialId: string };
   toolContext: InternalToolContext;
 }

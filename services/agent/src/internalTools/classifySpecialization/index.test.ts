@@ -81,7 +81,7 @@ describe('classifySpecialization internal tool handler', () => {
     expect(mockRunAgentInvokeWithTools).not.toHaveBeenCalled();
   });
 
-  it('should return skipped JSON when credential is missing', async () => {
+  it('should classify without user credential using platform scope', async () => {
     mockGetPreferenceByUserId.mockResolvedValue({ data: null });
 
     const result = await classifySpecializationToolHandler(
@@ -89,8 +89,15 @@ describe('classifySpecialization internal tool handler', () => {
       BASE_CONTEXT,
     );
 
-    expect(JSON.parse(result)).toEqual({ type: 'skipped', reason: 'missing_credential' });
-    expect(mockRunAgentInvokeWithTools).not.toHaveBeenCalled();
+    expect(JSON.parse(result)).toEqual({
+      type: 'existing',
+      specializationIds: ['spec-legal'],
+    });
+    expect(mockRunAgentInvokeWithTools).toHaveBeenCalledWith(
+      expect.objectContaining({
+        credentialScope: 'platform',
+      }),
+    );
   });
 
   it('should return existing specialization IDs when classifier matches catalog', async () => {
@@ -109,7 +116,7 @@ describe('classifySpecialization internal tool handler', () => {
     expect(mockRunAgentInvokeWithTools).toHaveBeenCalledWith(
       expect.objectContaining({
         agentId: 'classifier-agent-1',
-        connectionOverride: { integrationCredentialId: 'cred-1' },
+        credentialScope: 'platform',
       }),
     );
   });

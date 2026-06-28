@@ -49,6 +49,13 @@ const config: Config = {
     apiKey: process.env.DEEP_SEEK_AI_API_KEY || '',
     baseURL: process.env.DEEP_SEEK_AI_BASE_URL || '',
   },
+  platformAi: {
+    provider: process.env.PLATFORM_AI_PROVIDER || '',
+    apiKey: process.env.PLATFORM_AI_API_KEY || '',
+    baseUrl: process.env.PLATFORM_AI_BASE_URL || '',
+    defaultModel: process.env.PLATFORM_AI_DEFAULT_MODEL || '',
+    organizationId: process.env.PLATFORM_AI_ORGANIZATION_ID,
+  },
   jwt: {
     secret: process.env.JWT_SECRET || '',
   },

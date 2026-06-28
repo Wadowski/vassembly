@@ -6,6 +6,7 @@ const {
   mockGetById,
   mockGetActiveById,
   mockResolveAndBuildClient,
+  mockResolvePlatformClient,
   mockResolveMcpSlugs,
   mockResolveMcpServerConfigs,
   mockInvoke,
@@ -15,6 +16,7 @@ const {
   mockGetById: vi.fn(),
   mockGetActiveById: vi.fn(),
   mockResolveAndBuildClient: vi.fn(),
+  mockResolvePlatformClient: vi.fn(),
   mockResolveMcpSlugs: vi.fn(),
   mockResolveMcpServerConfigs: vi.fn(),
   mockInvoke: vi.fn(),
@@ -51,6 +53,7 @@ vi.mock('@vassembly/domain-ai-integration', () => ({
   default: {
     commands: {
       resolveAndBuildClient: mockResolveAndBuildClient,
+      resolvePlatformClient: mockResolvePlatformClient,
     },
   },
 }));
@@ -105,9 +108,20 @@ const INTEGRATION_SNAPSHOT = {
   model: 'gpt-4o',
 };
 
+const PLATFORM_INTEGRATION_SNAPSHOT = {
+  integrationName: 'Platform AI',
+  provider: 'gemini',
+  model: 'gemini-2.0-flash',
+};
+
 const RESOLVE_RESULT = {
   client: MODELED_CLIENT,
   integrationSnapshot: INTEGRATION_SNAPSHOT,
+};
+
+const PLATFORM_RESOLVE_RESULT = {
+  client: MODELED_CLIENT,
+  integrationSnapshot: PLATFORM_INTEGRATION_SNAPSHOT,
 };
 
 const INTERNAL_BINDINGS = [
@@ -144,6 +158,7 @@ describe('runAgentInvokeWithTools', () => {
       },
     });
     mockResolveAndBuildClient.mockResolvedValue(RESOLVE_RESULT);
+    mockResolvePlatformClient.mockResolvedValue(PLATFORM_RESOLVE_RESULT);
     mockResolveMcpSlugs.mockResolvedValue({ 'mcp-1': 'example-mcp' });
     mockResolveMcpServerConfigs.mockResolvedValue({
       serverConfigs: MCP_SERVER_CONFIGS,
@@ -375,5 +390,131 @@ describe('runAgentInvokeWithTools', () => {
         model: 'gpt-4o',
       }),
     );
+  });
+
+  describe('credential routing', () => {
+    beforeEach(() => {
+      mockGetActiveById.mockResolvedValue({
+        data: {
+          id: 'system-agent-1',
+          name: 'Task title generator',
+          rule: 'Generate a title.',
+          assignedToolIds: [],
+        },
+      });
+      mockLoadAssignedInternalTools.mockResolvedValue({
+        bindings: [],
+        boundToolIds: [],
+        skippedToolIds: [],
+      });
+    });
+
+    it('should use platform integration snapshot when credentialScope is platform', async () => {
+      mockResolveAndBuildClient.mockRejectedValue(new Error('user credential path must not run'));
+
+      const recordProgress = vi.fn().mockResolvedValue(undefined);
+
+      await runAgentInvokeWithTools({
+        userId: 'user-1',
+        agentType: 'system',
+        agentId: 'system-agent-1',
+        message: 'Generate a title',
+        credentialScope: 'platform',
+        toolContext: {
+          ...TOOL_CONTEXT,
+          recordAgentInvokeProgress: recordProgress,
+        },
+      });
+
+      expect(recordProgress).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          integrationName: 'Platform AI',
+          provider: 'gemini',
+          model: 'gemini-2.0-flash',
+        }),
+      );
+    });
+
+    it('should use user integration snapshot when credentialScope is omitted', async () => {
+      mockResolvePlatformClient.mockRejectedValue(new Error('platform credential path must not run'));
+
+      const recordProgress = vi.fn().mockResolvedValue(undefined);
+
+      await runAgentInvokeWithTools({
+        userId: 'user-1',
+        agentType: 'system',
+        agentId: 'system-agent-1',
+        message: 'Hello',
+        toolContext: {
+          ...TOOL_CONTEXT,
+          recordAgentInvokeProgress: recordProgress,
+        },
+      });
+
+      expect(recordProgress).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          integrationName: 'My OpenAI',
+          provider: 'chatgpt',
+          model: 'gpt-4o',
+        }),
+      );
+    });
+
+    it('should use user integration snapshot when credentialScope is user', async () => {
+      mockResolvePlatformClient.mockRejectedValue(new Error('platform credential path must not run'));
+
+      const recordProgress = vi.fn().mockResolvedValue(undefined);
+
+      await runAgentInvokeWithTools({
+        userId: 'user-1',
+        agentType: 'system',
+        agentId: 'system-agent-1',
+        message: 'Hello',
+        credentialScope: 'user',
+        toolContext: {
+          ...TOOL_CONTEXT,
+          recordAgentInvokeProgress: recordProgress,
+        },
+      });
+
+      expect(recordProgress).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          integrationName: 'My OpenAI',
+          provider: 'chatgpt',
+          model: 'gpt-4o',
+        }),
+      );
+    });
+
+    it('should ignore connectionOverride when credentialScope is platform', async () => {
+      mockResolveAndBuildClient.mockRejectedValue(new Error('user credential path must not run'));
+
+      const recordProgress = vi.fn().mockResolvedValue(undefined);
+
+      await runAgentInvokeWithTools({
+        userId: 'user-1',
+        agentType: 'system',
+        agentId: 'system-agent-1',
+        message: 'Generate a title',
+        credentialScope: 'platform',
+        connectionOverride: { integrationCredentialId: 'user-cred-override' },
+        toolContext: {
+          ...TOOL_CONTEXT,
+          recordAgentInvokeProgress: recordProgress,
+        },
+      });
+
+      expect(recordProgress).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          integrationName: 'Platform AI',
+          provider: 'gemini',
+          model: 'gemini-2.0-flash',
+        }),
+      );
+    });
   });
 });

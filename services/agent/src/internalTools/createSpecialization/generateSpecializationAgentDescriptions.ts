@@ -12,7 +12,6 @@ export interface GenerateSpecializationAgentDescriptionsParams {
   specializationName: string;
   specializationId: string;
   userId: string;
-  connectionOverride: { integrationCredentialId: string };
   toolContext: InternalToolContext;
 }
 
@@ -31,7 +30,6 @@ export const generateSpecializationAgentDescriptions = async ({
   specializationName,
   specializationId,
   userId,
-  connectionOverride,
   toolContext,
 }: GenerateSpecializationAgentDescriptionsParams): Promise<void> => {
   const descriptionGeneratorResult = await systemAgentDomain.queries.getActiveByName({
@@ -53,7 +51,7 @@ export const generateSpecializationAgentDescriptions = async ({
           agentType: 'system',
           agentId: descriptionGeneratorResult.data.id!,
           message: `Agent name: ${agentName}\nSpecialization: ${specializationName}`,
-          connectionOverride,
+          credentialScope: 'platform',
           toolContext,
         });
 

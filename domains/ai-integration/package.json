@@ -23,6 +23,7 @@
     "@vassembly/client-langchain": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
     "@vassembly/commands": "workspace:*",
+    "@vassembly/config": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/mappers": "workspace:*",
     "@vassembly/graphql": "workspace:*",

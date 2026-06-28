@@ -102,8 +102,16 @@ describe('generateTaskTitle handler', () => {
         agentType: 'system',
         agentId: TITLE_GENERATOR_AGENT_ID,
         message: BASE_TASK.description,
-        connectionOverride: { integrationCredentialId: CREDENTIAL_ID },
-        toolContext: {},
+        credentialScope: 'platform',
+        toolContext: expect.objectContaining({
+          userId: USER_ID,
+          taskId: TASK_ID,
+          callerAgentType: 'system',
+          callerAgentId: TITLE_GENERATOR_AGENT_ID,
+          recursionDepth: 0,
+          invocationId: expect.any(String),
+          rootInvokeId: expect.any(String),
+        }),
       });
       expect(mockGetActiveByName).toHaveBeenCalledWith({
         name: TASK_TITLE_GENERATOR_AGENT_NAME,
@@ -177,21 +185,20 @@ describe('generateTaskTitle handler', () => {
       expectAllLogsUseTaskTitleSession();
     });
 
-    it('should skip when credential is missing', async () => {
+    it('should generate title when user has no AI integration', async () => {
       mockGetPreferenceByUserId.mockResolvedValue({ data: null });
 
       await generateTaskTitle({ taskId: TASK_ID, userId: USER_ID });
 
-      expect(mockRunAgentInvokeWithTools).not.toHaveBeenCalled();
-      expect(mockUpdateTask).not.toHaveBeenCalled();
-      expect(findLogCall('task.title.skipped')).toEqual(
-        expect.arrayContaining([
-          'task.title.skipped',
-          expect.objectContaining({
-            data: { reason: 'missing_credential' },
-          }),
-        ]),
+      expect(mockRunAgentInvokeWithTools).toHaveBeenCalledWith(
+        expect.objectContaining({
+          credentialScope: 'platform',
+        }),
       );
+      expect(mockUpdateTask).toHaveBeenCalledWith({
+        id: TASK_ID,
+        title: 'Quarterly board report',
+      });
       expectAllLogsUseTaskTitleSession();
     });
   });

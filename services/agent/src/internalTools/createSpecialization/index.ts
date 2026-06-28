@@ -1,5 +1,4 @@
 import specializationDomain from '@vassembly/domain-specialization';
-import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ValidationError } from '@vassembly/errors';
 
 import { mapMcpsToSpecialization } from './mapMcpsToSpecialization';
@@ -46,51 +45,35 @@ export const createSpecializationToolHandler = async (
       specializationName: name,
     });
 
-    const preference = await systemAgentDomain.queries.getPreferenceByUserId({
+    void mapMcpsToSpecialization({
+      specializationId,
+      specializationName: name,
+      specializationDescription: description,
       userId: context.userId,
-    });
-    const integrationCredentialId = preference.data?.integrationCredentialId;
-
-    if (integrationCredentialId) {
-      void mapMcpsToSpecialization({
+      toolContext: context,
+    }).catch((error: unknown) => {
+      logSpecializationEvent({
+        event: 'specialization.mcp_mapping.failed',
         specializationId,
-        specializationName: name,
-        specializationDescription: description,
         userId: context.userId,
-        connectionOverride: { integrationCredentialId },
+        reason: error instanceof Error ? error.message : String(error),
+      });
+    });
+
+    if (createdAgentIds.length > 0) {
+      void generateSpecializationAgentDescriptions({
+        agentIds: createdAgentIds,
+        specializationName: name,
+        specializationId,
+        userId: context.userId,
         toolContext: context,
       }).catch((error: unknown) => {
         logSpecializationEvent({
-          event: 'specialization.mcp_mapping.failed',
+          event: 'specialization.agent.description.failed',
           specializationId,
           userId: context.userId,
           reason: error instanceof Error ? error.message : String(error),
         });
-      });
-
-      if (createdAgentIds.length > 0) {
-        void generateSpecializationAgentDescriptions({
-          agentIds: createdAgentIds,
-          specializationName: name,
-          specializationId,
-          userId: context.userId,
-          connectionOverride: { integrationCredentialId },
-          toolContext: context,
-        }).catch((error: unknown) => {
-          logSpecializationEvent({
-            event: 'specialization.agent.description.failed',
-            specializationId,
-            userId: context.userId,
-            reason: error instanceof Error ? error.message : String(error),
-          });
-        });
-      }
-    } else {
-      logSpecializationEvent({
-        event: 'specialization.mcp_mapping.skipped',
-        specializationId,
-        userId: context.userId,
-        reason: 'missing_credential',
       });
     }
   }

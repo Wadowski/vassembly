@@ -15,3 +15,5 @@ export type {
   ResolveAndBuildClientParams,
   ResolveAndBuildClientResult,
 } from './resolveAndBuildClient/types';
+export { resolvePlatformClient } from './resolvePlatformClient';
+export type { ResolvePlatformClientResult } from './resolvePlatformClient/types';

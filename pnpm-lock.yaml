@@ -451,6 +451,9 @@ importers:
       '@vassembly/commands':
         specifier: workspace:*
         version: link:../../packages/commands
+      '@vassembly/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@vassembly/errors':
         specifier: workspace:*
         version: link:../../packages/errors

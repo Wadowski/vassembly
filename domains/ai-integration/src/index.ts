@@ -25,5 +25,6 @@ export type {
 } from './queries/getListForUser/types';
 export { AI_INTEGRATION_LIST_ALL_STATUSES } from './queries/getListForUser/types';
 export type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from './commands/resolveAndBuildClient/types';
+export type { ResolvePlatformClientResult } from './commands/resolvePlatformClient/types';
 
 export default aiIntegrationDomain;

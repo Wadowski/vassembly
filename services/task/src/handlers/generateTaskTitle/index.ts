@@ -1,7 +1,10 @@
+import { randomUUID } from 'node:crypto';
+
 import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import taskDomain from '@vassembly/domain-task';
 import { runAgentInvokeWithTools } from '@vassembly/service-agent';
+import type { InternalToolContext } from '@vassembly/service-agent';
 
 import { logTaskTitleEvent } from './logTaskTitleEvent';
 import { normalizeGeneratedTitle } from './normalizeGeneratedTitle';
@@ -30,25 +33,27 @@ export const generateTaskTitle = async ({
       return;
     }
 
-    const preference = await systemAgentDomain.queries.getPreferenceByUserId({ userId });
-    const integrationCredentialId = preference.data?.integrationCredentialId;
-
-    if (!integrationCredentialId) {
-      logTaskTitleEvent({ event: 'task.title.skipped', taskId, userId, reason: 'missing_credential' });
-      return;
-    }
-
     const agentResult = await systemAgentDomain.queries.getActiveByName({
       name: SYSTEM_AGENT_NAME.TaskTitleGenerator,
     });
+
+    const toolContext: InternalToolContext = {
+      userId,
+      taskId,
+      invocationId: randomUUID(),
+      callerAgentType: 'system',
+      callerAgentId: agentResult.data.id!,
+      recursionDepth: 0,
+      rootInvokeId: randomUUID(),
+    };
 
     const invokeResult = await runAgentInvokeWithTools({
       userId,
       agentType: 'system',
       agentId: agentResult.data.id!,
       message: task.description,
-      connectionOverride: { integrationCredentialId },
-      toolContext: {} as Parameters<typeof runAgentInvokeWithTools>[0]['toolContext'],
+      credentialScope: 'platform',
+      toolContext,
     });
 
     const normalized = normalizeGeneratedTitle({ rawOutput: invokeResult.message });

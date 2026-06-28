@@ -113,7 +113,13 @@ describe('createSpecialization internal tool handler', () => {
     expect(mockMapMcpsToSpecialization).toHaveBeenCalledWith(
       expect.objectContaining({
         specializationId: 'spec-1',
-        connectionOverride: { integrationCredentialId: 'cred-1' },
+        specializationName: 'legal',
+        userId: 'user-1',
+      }),
+    );
+    expect(mockMapMcpsToSpecialization).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        connectionOverride: expect.anything(),
       }),
     );
     expect(mockGenerateSpecializationAgentDescriptions).toHaveBeenCalledWith(
