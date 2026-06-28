@@ -48,15 +48,16 @@ export const useResendVerificationHandler = (): UseResendVerificationResult => {
         setSuccessMessage('Verification email sent.');
       }
     } catch (error) {
-      const retryAfterSeconds =
-        error instanceof TooManyRequestsError
-          ? error.retryAfterSeconds
-          : error instanceof CommonError && error.type === ErrorTypes.TOO_MANY_REQUESTS
-            ? (error as TooManyRequestsError).retryAfterSeconds
-            : undefined;
-
-      if (retryAfterSeconds != null) {
-        setCooldownSeconds(retryAfterSeconds);
+      if (
+        error instanceof TooManyRequestsError ||
+        (error instanceof CommonError &&
+          (error.type === ErrorTypes.TOO_MANY_REQUESTS || error.statusCode === 429))
+      ) {
+        const retryAfterSeconds =
+          error instanceof TooManyRequestsError
+            ? error.retryAfterSeconds
+            : (error as TooManyRequestsError).retryAfterSeconds;
+        setCooldownSeconds(retryAfterSeconds ?? 60);
         return;
       }
 

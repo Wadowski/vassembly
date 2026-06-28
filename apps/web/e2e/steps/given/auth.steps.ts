@@ -104,9 +104,20 @@ Given('the network is unavailable', async ({ page }) => {
   }
 
   await page.route('**', (route) => {
+    const url = route.request().url();
+
     if (route.request().resourceType() === 'document') {
       return route.continue();
     }
+
+    if (url.includes('/graphql')) {
+      return route.continue();
+    }
+
+    if (url.includes('/auth') && !url.includes('resend-verification')) {
+      return route.continue();
+    }
+
     return route.abort('internetdisconnected');
   });
 });

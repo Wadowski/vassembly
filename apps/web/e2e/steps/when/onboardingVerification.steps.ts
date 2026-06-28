@@ -1,5 +1,7 @@
 import { createBdd } from 'playwright-bdd';
 
+import { expect } from '@playwright/test';
+
 import { bddTest, getE2eEnvironment } from '@vassembly/e2e';
 
 import { issueVerificationTokenForUser } from '../utils/onboardingUserState';
@@ -14,9 +16,17 @@ const openVerificationLink = async ({
   page: NonNullable<import('@playwright/test').Page>;
   token: string;
 }): Promise<void> => {
+  const verifyResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/auth/verify-email') && response.request().method() === 'POST',
+    { timeout: 20_000 },
+  );
+
   await page.goto(`/verify-email?token=${encodeURIComponent(token)}`, {
     waitUntil: 'domcontentloaded',
   });
+
+  await verifyResponse;
 };
 
 When('I open the email verification link with a valid unexpired token', async ({ page, world }) => {
@@ -73,6 +83,7 @@ When('the user or another session uses the same token again', async ({ page, wor
     throw new Error('Verification token must be set before reuse attempt');
   }
 
+  await expect(page).toHaveURL(/\/onboarding(?:\?|$)/, { timeout: 20_000 });
   await openVerificationLink({ page, token });
 });
 

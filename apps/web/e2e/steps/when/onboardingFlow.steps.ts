@@ -3,8 +3,10 @@ import { createBdd } from 'playwright-bdd';
 import { expect } from '@playwright/test';
 
 import { getE2eEnvironment, bddTest } from '@vassembly/e2e';
+import type { SeedContext } from '@vassembly/e2e';
 
 import { clearBrowserSession, signInSeededUser } from '../utils/auth';
+import { seedFirstAiIntegrationForOnboarding } from '../utils/seedFirstAiIntegrationForOnboarding';
 import { setupAiIntegrationCreateRoutes } from '../utils/setupAiIntegrationCreateRoutes';
 import type { WebBddWorld } from '../utils/types';
 
@@ -22,42 +24,79 @@ const fillOnboardingAiIntegrationForm = async ({
   await page.getByLabel('API key', { exact: true }).fill(E2E_ONBOARDING_API_KEY);
 };
 
+interface CreateFirstAiIntegrationDuringOnboardingParams {
+  page: NonNullable<import('@playwright/test').Page>;
+  context?: SeedContext;
+  userId?: string;
+  capturedReturnUrl?: string | null;
+}
+
 const createFirstAiIntegrationDuringOnboarding = async ({
   page,
-}: {
-  page: NonNullable<import('@playwright/test').Page>;
-}): Promise<void> => {
+  context,
+  userId,
+  capturedReturnUrl,
+}: CreateFirstAiIntegrationDuringOnboardingParams): Promise<void> => {
   await setupAiIntegrationCreateRoutes({ page });
   await page.goto('/agents/ai-integrations/create');
   await fillOnboardingAiIntegrationForm({ page });
   await page.getByRole('button', { name: /test connection/i }).click();
   await expect(page.getByText('Connection verified')).toBeVisible({ timeout: 15_000 });
   await page.getByRole('button', { name: /create integration/i }).click();
-};
+  await expect(page).toHaveURL(/\/onboarding/, { timeout: 20_000 });
 
-When('I create my first AI integration during onboarding', async ({ page }) => {
-  if (!page) {
+  if (!context || !userId) {
     return;
   }
 
-  await createFirstAiIntegrationDuringOnboarding({ page });
-});
+  await seedFirstAiIntegrationForOnboarding({ context, userId });
 
-When('onboarding completes', async ({ page, world }) => {
+  const onboardingUrl = capturedReturnUrl
+    ? `/onboarding?returnUrl=${encodeURIComponent(capturedReturnUrl)}`
+    : '/onboarding';
+
+  await page.goto(onboardingUrl, { waitUntil: 'domcontentloaded' });
+
+  if (capturedReturnUrl?.startsWith('/')) {
+    const escapedPath = capturedReturnUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    await expect(page).toHaveURL(new RegExp(`${escapedPath}(?:\\?.*)?$`), { timeout: 20_000 });
+    return;
+  }
+
+  if (capturedReturnUrl) {
+    await expect(page).toHaveURL(/\/(?:\?.*)?$/, { timeout: 20_000 });
+    return;
+  }
+
+  await expect(page).not.toHaveURL(/\/onboarding(?:\?|$)/, { timeout: 20_000 });
+};
+
+When('I create my first AI integration during onboarding', async ({ page, seed, world }) => {
   if (!page) {
     return;
   }
 
   const webWorld = world as WebBddWorld;
-  await createFirstAiIntegrationDuringOnboarding({ page });
-  await expect(page).toHaveURL(/\/onboarding/, { timeout: 20_000 });
+  await createFirstAiIntegrationDuringOnboarding({
+    page,
+    context: seed,
+    userId: webWorld.auth?.userId,
+    capturedReturnUrl: webWorld.capturedReturnUrl,
+  });
+});
 
-  const returnUrl = webWorld.capturedReturnUrl;
-  if (returnUrl?.startsWith('/')) {
-    await expect(page).toHaveURL(new RegExp(returnUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), {
-      timeout: 20_000,
-    });
+When('onboarding completes', async ({ page, seed, world }) => {
+  if (!page) {
+    return;
   }
+
+  const webWorld = world as WebBddWorld;
+  await createFirstAiIntegrationDuringOnboarding({
+    page,
+    context: seed,
+    userId: webWorld.auth?.userId,
+    capturedReturnUrl: webWorld.capturedReturnUrl,
+  });
 });
 
 When(
