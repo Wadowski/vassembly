@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useResendVerification, useHttpClient } from '@vassembly/ui-api-hooks';
-import { CommonError, ErrorTypes, InternalError, TooManyRequestsError } from '@vassembly/errors';
+import { CommonError, ErrorTypes, TooManyRequestsError } from '@vassembly/errors';
 
 export interface UseResendVerificationResult {
   handleResend: () => Promise<void>;
