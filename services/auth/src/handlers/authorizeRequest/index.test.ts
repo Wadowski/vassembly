@@ -25,7 +25,7 @@ describe("authorizeRequest", () => {
 
     const result = await authorizeRequest({ headers: mockHeaders });
 
-    expect(result).toEqual({ userId: "user-123", role: "user" });
+    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: true });
     expect(authTokenDomain.queries.verify).toHaveBeenCalledWith({
       token: "valid-token",
     });
@@ -82,7 +82,7 @@ describe("authorizeRequest", () => {
 
     const result = await authorizeRequest({ headers: mockHeaders });
 
-    expect(result).toEqual({ userId: "user-123", role: "user" });
+    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: true });
   });
 
   it("trims whitespace from tokens", async () => {

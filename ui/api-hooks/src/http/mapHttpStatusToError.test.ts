@@ -16,6 +16,16 @@ describe('mapHttpStatusToError', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
+  it('should map 429 with retryAfterSeconds when provided', () => {
+    const err = mapHttpStatusToError({
+      status: 429,
+      message: 'slow down',
+      retryAfterSeconds: 42,
+    });
+    expect(err).toBeInstanceOf(TooManyRequestsError);
+    expect((err as TooManyRequestsError).retryAfterSeconds).toBe(42);
+  });
+
   it('should map known 4xx statuses to specific error classes', () => {
     expect(mapHttpStatusToError({ status: 400, message: 'bad' })).toBeInstanceOf(WrongParamError);
     expect(mapHttpStatusToError({ status: 401, message: 'no' })).toBeInstanceOf(UnauthorizedError);

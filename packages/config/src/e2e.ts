@@ -22,6 +22,7 @@ const config: Config = {
     web: {
       port: webPort,
       passwordResetUrl: process.env.AUTH_PASSWORD_RESET_WEB_URL,
+      emailVerificationUrl: process.env.EMAIL_VERIFICATION_WEB_URL ?? `${webOrigin}/verify-email`,
     },
     docs: {
       port: docsPort,
@@ -46,12 +47,22 @@ const config: Config = {
     region: process.env.AWS_REGION || '',
     ses: {
       passwordResetTemplateName: 'reset-password',
+      emailVerificationTemplateName: 'verify-email',
       fromEmail: 'tbd@todo.com',
     },
   },
   deepSeekAi: {
     apiKey: process.env.DEEP_SEEK_AI_API_KEY || '',
     baseURL: process.env.DEEP_SEEK_AI_BASE_URL || '',
+  },
+  platformAi: {
+    provider: process.env.PLATFORM_AI_PROVIDER || 'gemini',
+    // Keep in sync with E2E_STUB_API_KEY in packages/client-langchain/src/providers/createE2eStubProvider.ts
+    apiKey: process.env.PLATFORM_AI_API_KEY || 'e2e-web-test-api-key',
+    baseUrl: process.env.PLATFORM_AI_BASE_URL || '',
+    // Keep in sync with E2E_STUB_MODEL in packages/client-langchain/src/providers/createE2eStubProvider.ts
+    defaultModel: process.env.PLATFORM_AI_DEFAULT_MODEL || 'gemini-2.0-flash',
+    organizationId: process.env.PLATFORM_AI_ORGANIZATION_ID,
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'dev-jwt-secret',

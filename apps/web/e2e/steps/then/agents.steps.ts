@@ -72,7 +72,7 @@ Then('I am still on {string}', async ({ page, world }, path: string) => {
 
   const resolvedPath = resolveWorldPath({ path, world: world as WebBddWorld });
   const escapedPath = resolvedPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  await expect(page).toHaveURL(new RegExp(`${escapedPath}$`));
+  await expect(page).toHaveURL(new RegExp(`${escapedPath}(\\?.*)?$`));
 });
 
 Then('the form shows {string} in the name field', async ({ page }, value: string) => {

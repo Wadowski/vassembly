@@ -5,6 +5,9 @@ import { UnauthorizedError } from '@vassembly/errors';
 import taskService from '@vassembly/service-task';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
+
 interface UserTasksResolverArgs {
   page?: number | null;
   size?: number | null;
@@ -13,10 +16,6 @@ interface UserTasksResolverArgs {
 
 interface TaskResolverArgs {
   id: string;
-}
-
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
 }
 
 export const registerTaskResolvers = (builder: Builder): void => {
@@ -35,6 +34,7 @@ export const registerTaskResolvers = (builder: Builder): void => {
           args: UserTasksResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'userTasks', context });
           const userId = context.authenticatedUserId;
 
           if (userId === undefined) {
@@ -64,6 +64,7 @@ export const registerTaskResolvers = (builder: Builder): void => {
           args: TaskResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'task', context });
           const userId = context.authenticatedUserId;
 
           if (userId === undefined) {

@@ -1,6 +1,6 @@
 import { UnauthorizedError, WrongParamError } from '@vassembly/errors';
 import { defineRoute } from '@vassembly/server';
-import { handlers as authHandlers } from '@vassembly/service-auth';
+import { authorizeProtectedRequest } from '../shared/authorizeProtectedRequest';
 import taskQuestionsService from '@vassembly/service-task-questions';
 
 import { withErrorResponses } from '../errorSchema';
@@ -25,7 +25,7 @@ export const taskSubmitAnswerRoute = defineRoute({
       throw new WrongParamError('Missing question id');
     }
 
-    const authResult = await authHandlers.authorizeRequest({ headers });
+    const authResult = await authorizeProtectedRequest({ headers });
     const userId = authResult.userId;
 
     if (!userId) {

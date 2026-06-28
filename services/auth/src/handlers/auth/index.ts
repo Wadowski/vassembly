@@ -4,6 +4,7 @@ import userDomain from "@vassembly/domain-user";
 import { AUTH_TOKEN_ROLE } from "@vassembly/constants";
 import { InternalError, NotFoundError } from "@vassembly/errors";
 
+import { deriveOnboardingCompleted } from "../../utils/deriveOnboardingCompleted";
 import type { AuthInput, AuthOutput, AuthPublicUser } from "./types";
 
 const mapUserToAuthPublicUser = (user: {
@@ -42,6 +43,7 @@ export const auth = async (input: AuthInput): Promise<AuthOutput> => {
   }
 
   const role = userResult.data.role ?? AUTH_TOKEN_ROLE.USER;
+  const onboardingCompleted = deriveOnboardingCompleted({ user: userResult.data });
 
   const newRefreshToken = await refreshTokenDomain.commands.refresh({ refreshToken });
   if (!newRefreshToken.id || !newRefreshToken.token) {
@@ -53,6 +55,7 @@ export const auth = async (input: AuthInput): Promise<AuthOutput> => {
       userId: verifiedToken.userId,
       refreshTokenId: newRefreshToken.id,
       role,
+      onboardingCompleted,
     },
   });
 

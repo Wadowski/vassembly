@@ -6,6 +6,9 @@ import specializationService from '@vassembly/service-specialization';
 import userDomain from '@vassembly/domain-user';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
+
 interface SpecializationsResolverArgs {
   search?: string | null;
   page?: number | null;
@@ -14,10 +17,6 @@ interface SpecializationsResolverArgs {
 
 interface SpecializationResolverArgs {
   id: string;
-}
-
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
 }
 
 export const registerSpecializationResolvers = (builder: Builder): void => {
@@ -38,6 +37,7 @@ export const registerSpecializationResolvers = (builder: Builder): void => {
           args: SpecializationsResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'specializations', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');
@@ -65,6 +65,7 @@ export const registerSpecializationResolvers = (builder: Builder): void => {
           args: SpecializationResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'specialization', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');

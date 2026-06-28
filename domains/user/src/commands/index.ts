@@ -8,3 +8,8 @@ export * from "./deleteAccount";
 export * from "./update";
 export * from "./remove";
 export * from "./sendResetPasswordEmail";
+export * from "./initiateOnboarding";
+export * from "./completeOnboarding";
+export * from "./requestEmailVerification";
+export * from "./confirmEmailVerification";
+export * from "./sendVerificationEmail";

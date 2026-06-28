@@ -1,9 +1,23 @@
 'use client';
 
-import { useUserAuth } from '@vassembly/ui-user-auth';
+import { useUserAuth, parseOnboardingCompleted } from '@vassembly/ui-user-auth';
 import { useAuth } from '@vassembly/ui-api-hooks';
 import { useEffect, useRef } from 'react';
+import { CommonError, ErrorTypes, UnauthorizedError } from '@vassembly/errors';
+
 import { getTokens, setTokens, clearTokens } from './sessionStorage';
+
+const isAuthFailure = ({ error }: { error: unknown }): boolean => {
+  if (error instanceof UnauthorizedError) {
+    return true;
+  }
+
+  if (error instanceof CommonError) {
+    return error.type === ErrorTypes.UNAUTHORIZED || error.statusCode === 401;
+  }
+
+  return false;
+};
 
 export const SessionBootstrap = () => {
   const { setSession, clearSession, setStatus, setBootstrapLoading } = useUserAuth();
@@ -32,6 +46,11 @@ export const SessionBootstrap = () => {
     }
 
     if (error) {
+      if (!isAuthFailure({ error })) {
+        setBootstrapLoading(false);
+        return;
+      }
+
       clearTokens();
       clearSession();
       setBootstrapLoading(false);
@@ -58,6 +77,7 @@ export const SessionBootstrap = () => {
           lastName: authResponse.user?.lastName,
           verifiedAt: authResponse.user?.verifiedAt ? new Date(authResponse.user.verifiedAt) : undefined,
           role: authResponse.user?.role,
+          onboardingCompleted: parseOnboardingCompleted({ authToken: tokens.authToken }),
         },
       });
     }

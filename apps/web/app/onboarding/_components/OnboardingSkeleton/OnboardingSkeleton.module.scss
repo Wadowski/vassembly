@@ -1,0 +1,64 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  width: 100%;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: $spacing-6;
+}
+
+.layoutSplit {
+  display: grid;
+  gap: $spacing-6;
+  align-items: start;
+
+  @media #{$media-tablet} {
+    grid-template-columns: minmax(14rem, 20rem) minmax(0, 1.6fr);
+    gap: $spacing-8;
+  }
+}
+
+.progressColumn {
+  min-width: 0;
+}
+
+.contentColumn {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  min-width: 0;
+}
+
+.sectionLabel {
+  margin-bottom: $spacing-3;
+}
+
+.stepperSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.stepperRow {
+  display: flex;
+  gap: $spacing-3;
+  align-items: flex-start;
+}
+
+.stepperIcon {
+  flex-shrink: 0;
+}
+
+.stepperText {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  flex: 1;
+}
+
+.cardSkeleton {
+  width: 100%;
+}

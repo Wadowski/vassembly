@@ -2,7 +2,7 @@ import { WrongParamError } from '@vassembly/errors';
 import { defineRoute } from '@vassembly/server';
 import { z } from 'zod';
 
-import { handlers as authHandlers } from '@vassembly/service-auth';
+import { authorizeProtectedRequest } from '../shared/authorizeProtectedRequest';
 import systemAgentService from '@vassembly/service-agent';
 import { withErrorResponses } from '../errorSchema';
 
@@ -43,7 +43,7 @@ export const systemAgentInvokeRoute = defineRoute({
       throw new WrongParamError('Missing system agent id');
     }
 
-    const { userId } = await authHandlers.authorizeRequest({ headers });
+    const { userId } = await authorizeProtectedRequest({ headers });
 
     return systemAgentService.invokeSystemAgent({
       userId,

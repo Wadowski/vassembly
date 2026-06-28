@@ -17,6 +17,7 @@ import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
 
 import type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from '@vassembly/domain-ai-integration';
 import type {
+  CredentialScope,
   RunAgentInvokeWithToolsParams,
   RunAgentInvokeWithToolsResult,
 } from './types';
@@ -28,6 +29,7 @@ interface ResolveCredentialAndClientParams {
   agentType: 'personal' | 'system';
   agentId: string;
   connectionOverride?: { integrationCredentialId: string };
+  credentialScope?: CredentialScope;
 }
 
 interface ResolveCredentialAndClientResult {
@@ -94,7 +96,24 @@ const resolveCredentialAndClient = async ({
   agentType,
   agentId,
   connectionOverride,
+  credentialScope = 'user',
 }: ResolveCredentialAndClientParams): Promise<ResolveCredentialAndClientResult> => {
+  if (credentialScope === 'platform' && agentType !== 'system') {
+    throw new WrongParamError('Platform credential scope requires a system agent');
+  }
+
+  if (credentialScope === 'platform') {
+    const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
+
+    if (agent === null) {
+      throw new NotFoundError('This platform agent is no longer available.', {
+        code: SYSTEM_AGENT_ERROR_CODES.NOT_FOUND,
+      });
+    }
+
+    return aiIntegrationDomain.commands.resolvePlatformClient();
+  }
+
   if (agentType === 'personal') {
     const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
     const credentialId = connectionOverride?.integrationCredentialId ?? agent.integrationCredentialId;
@@ -233,6 +252,7 @@ export const runAgentInvokeWithTools = async (
   const { toolContext } = params;
   const recordProgress = toolContext.recordAgentInvokeProgress;
   const invokeStartTime = Date.now();
+  const credentialSource = params.credentialScope ?? 'user';
 
   await assertNotAborted(toolContext);
 
@@ -241,6 +261,7 @@ export const runAgentInvokeWithTools = async (
     agentType: params.agentType,
     agentId: params.agentId,
     connectionOverride: params.connectionOverride,
+    credentialScope: params.credentialScope,
   });
 
   if (recordProgress) {
@@ -251,6 +272,7 @@ export const runAgentInvokeWithTools = async (
       state: 'started',
       timestamp: new Date(),
       inputMessages: params.message,
+      credentialSource,
       ...integrationSnapshot,
     });
   }
@@ -276,6 +298,7 @@ export const runAgentInvokeWithTools = async (
         duration: Date.now() - invokeStartTime,
         generatedResponse: result.message,
         tokenUsage: mapInvokeUsageToTokenUsage({ usage: result.usage }),
+        credentialSource,
         ...integrationSnapshot,
       });
     }
@@ -289,6 +312,7 @@ export const runAgentInvokeWithTools = async (
         state: 'waiting',
         timestamp: new Date(),
         duration: Date.now() - invokeStartTime,
+        credentialSource,
         ...integrationSnapshot,
       });
     } else if (recordProgress && !(error instanceof ExecutionPausedError)) {
@@ -309,6 +333,7 @@ export const runAgentInvokeWithTools = async (
           type: errorType,
           stackTrace: error instanceof Error ? error.stack : undefined,
         },
+        credentialSource,
         ...integrationSnapshot,
       });
     }

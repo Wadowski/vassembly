@@ -13,6 +13,11 @@ export interface GetUserData {
     firstName?: string;
     lastName?: string;
     verifiedAt?: string | null;
+    onboarding?: {
+      version: number;
+      startedAt?: string | null;
+      completedAt?: string | null;
+    };
   };
 }
 

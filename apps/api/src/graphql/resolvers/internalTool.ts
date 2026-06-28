@@ -4,9 +4,8 @@ import { applyResolvers, defineObjectType, graphQLListType, graphQLType } from '
 import { UnauthorizedError } from '@vassembly/errors';
 import type { Builder } from '@vassembly/graphql';
 
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
-}
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
 
 export const gqlInternalToolSchema = (builder: Builder): void => {
   builder.enumType(InternalToolAccessScope, {
@@ -33,6 +32,7 @@ export const registerInternalToolResolvers = (builder: Builder): void => {
       internalTools: t.field({
         type: graphQLListType('InternalTool'),
         resolve: async (_root: unknown, _args: unknown, context: ApiGraphQLContext) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'internalTools', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required to view internal tools');

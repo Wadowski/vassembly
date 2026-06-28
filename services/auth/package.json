@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "@vassembly/client-aws-ses": "workspace:*",
+    "@vassembly/client-encoder": "workspace:*",
     "@vassembly/constants": "workspace:*",
+    "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/domain-refresh-token": "workspace:*",

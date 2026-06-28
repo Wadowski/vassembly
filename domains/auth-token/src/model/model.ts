@@ -10,6 +10,8 @@ export class AuthTokenModel extends Model {
   userId?: string;
   
   refreshTokenId?: string;
+
+  onboardingCompleted?: boolean;
   
   expiresAt?: Date;
 }

@@ -122,6 +122,7 @@ describe("auth", () => {
         userId: mockVerifiedToken.userId,
         refreshTokenId: mockNewRefreshToken.id,
         role: AUTH_TOKEN_ROLE.ADMIN,
+        onboardingCompleted: true,
       },
     });
     expect(result.user.role).toBe(AUTH_TOKEN_ROLE.ADMIN);
@@ -145,6 +146,7 @@ describe("auth", () => {
         userId: mockVerifiedToken.userId,
         refreshTokenId: mockNewRefreshToken.id,
         role: AUTH_TOKEN_ROLE.USER,
+        onboardingCompleted: true,
       },
     });
   });

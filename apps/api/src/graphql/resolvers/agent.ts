@@ -5,15 +5,14 @@ import { UnauthorizedError } from '@vassembly/errors';
 import agentService from '@vassembly/service-agent';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
+
 interface AgentsListResolverArgs {
   page?: number | null;
   size?: number | null;
   search?: string | null;
   status?: string | null;
-}
-
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
 }
 
 export const registerAgentResolvers = (builder: Builder): void => {
@@ -33,6 +32,7 @@ export const registerAgentResolvers = (builder: Builder): void => {
           args: AgentsListResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'agents', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');

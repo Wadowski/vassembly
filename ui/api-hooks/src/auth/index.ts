@@ -9,3 +9,5 @@ export { useRegister, type RegisterResponse } from './useRegister';
 export { useRefresh } from './useRefresh';
 export { useAuth } from './useAuth';
 export { useLogout } from './useLogout';
+export { useVerifyEmail, type VerifyEmailResponse } from './useVerifyEmail';
+export { useResendVerification, type ResendVerificationResponse } from './useResendVerification';

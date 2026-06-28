@@ -92,6 +92,7 @@ describe("login", () => {
         userId: mockUser.id,
         refreshTokenId: mockRefreshToken.id,
         role: AUTH_TOKEN_ROLE.ADMIN,
+        onboardingCompleted: true,
       },
     });
   });
@@ -106,6 +107,7 @@ describe("login", () => {
         userId: mockUser.id,
         refreshTokenId: mockRefreshToken.id,
         role: AUTH_TOKEN_ROLE.USER,
+        onboardingCompleted: true,
       },
     });
   });
@@ -120,6 +122,7 @@ describe("login", () => {
         userId: mockUser.id,
         refreshTokenId: mockRefreshToken.id,
         role: AUTH_TOKEN_ROLE.USER,
+        onboardingCompleted: true,
       },
     });
   });

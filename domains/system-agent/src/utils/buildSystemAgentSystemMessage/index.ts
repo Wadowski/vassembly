@@ -1,4 +1,4 @@
-import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
+import { appendCurrentDateTimeSection, SYSTEM_AGENT_NAME } from '@vassembly/constants';
 
 import { formatIntentCategoriesSection } from './formatIntentCategoriesSection';
 import { formatIntentRoutingSection } from './formatIntentRoutingSection';
@@ -7,12 +7,14 @@ export interface BuildSystemAgentSystemMessageParams {
   name: string;
   rule: string;
   skillsCatalogSection?: string;
+  now?: Date;
 }
 
 export const buildSystemAgentSystemMessage = ({
   name,
   rule,
   skillsCatalogSection,
+  now,
 }: BuildSystemAgentSystemMessageParams): string => {
   let systemMessage = rule;
 
@@ -26,5 +28,5 @@ export const buildSystemAgentSystemMessage = ({
     systemMessage = `${systemMessage}\n\n${skillsCatalogSection}`;
   }
 
-  return systemMessage;
+  return appendCurrentDateTimeSection({ systemMessage, now });
 };

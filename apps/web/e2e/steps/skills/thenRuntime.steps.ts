@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 
+import { CURRENT_DATE_TIME_SECTION_HEADING } from '@vassembly/constants';
 import { bddTest } from '@vassembly/e2e';
 
 import { SKILL_CATALOG_SECTION_HEADING } from '../utils/skillRuntimeHelpers';
@@ -52,7 +53,8 @@ Then("the system message contains only the agent's base rule", async ({ world })
     throw new Error(`base rule for "${agentName}" is required but not set on world.`);
   }
 
-  expect(systemMessage).toBe(baseRule);
+  expect(systemMessage.startsWith(baseRule)).toBe(true);
+  expect(systemMessage).toContain(CURRENT_DATE_TIME_SECTION_HEADING);
 });
 
 Then('no skill catalog section is appended', async ({ world }) => {

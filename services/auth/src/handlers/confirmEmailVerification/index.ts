@@ -1,0 +1,26 @@
+import userDomain from '@vassembly/domain-user';
+import { CommonError, InternalError } from '@vassembly/errors';
+
+import { checkAndCompleteOnboarding } from '../checkAndCompleteOnboarding';
+import type {
+  ConfirmEmailVerificationInput,
+  ConfirmEmailVerificationOutput,
+} from './types';
+
+export const confirmEmailVerification = async (
+  input: ConfirmEmailVerificationInput,
+): Promise<ConfirmEmailVerificationOutput> => {
+  const { userId, token } = input;
+
+  try {
+    await userDomain.commands.confirmEmailVerification({ userId, token });
+    await checkAndCompleteOnboarding({ userId });
+  } catch (error) {
+    if (error instanceof CommonError) {
+      throw error;
+    }
+    throw new InternalError('Failed to confirm email verification', error);
+  }
+
+  return { success: true };
+};

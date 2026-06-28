@@ -10,7 +10,7 @@ Then('I am on {string}', async ({ page, world }, path: string) => {
 
   const resolvedPath = resolveWorldPath({ path, world });
   const escapedPath = resolvedPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  await expect(page).toHaveURL(new RegExp(`${escapedPath}$`), {
+  await expect(page).toHaveURL(new RegExp(`${escapedPath}(\\?.*)?$`), {
     timeout: 15_000,
   });
 });

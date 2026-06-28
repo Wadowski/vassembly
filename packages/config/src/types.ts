@@ -27,6 +27,14 @@ export interface SkillsConfig {
   scriptStorage: SkillScriptStorageConfig;
 }
 
+export interface PlatformAiConfig {
+  provider: string;
+  apiKey: string;
+  baseUrl: string;
+  defaultModel: string;
+  organizationId?: string;
+}
+
 export interface Config {
   environment: Environment;
   apps: {
@@ -37,7 +45,9 @@ export interface Config {
   redis?: RedisConfig;
   mongoDb: MongoDbConfig;
   aws: AwsConfig;
+  /** @deprecated Superseded by platformAi; no new readers */
   deepSeekAi: DeepSeekAiConfig;
+  platformAi: PlatformAiConfig;
   encoder: EncoderConfig;
   jwt: JwtConfig;
   skills: SkillsConfig;
@@ -64,12 +74,14 @@ export interface SqsConfig {
 export interface SesConfig {
   configurationSetName?: string;
   passwordResetTemplateName: string;
+  emailVerificationTemplateName: string;
   fromEmail: string;
 }
 
 export interface WebConfig {
   port: number;
   passwordResetUrl?: string;
+  emailVerificationUrl?: string;
 }
 
 export interface MongoDbConfig {
@@ -77,6 +89,7 @@ export interface MongoDbConfig {
   database: string;
 }
 
+/** @deprecated Superseded by platformAi; no new readers */
 export interface DeepSeekAiConfig {
   apiKey: string;
   baseURL: string;

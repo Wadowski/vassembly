@@ -9,6 +9,7 @@ import * as userDomain from '@vassembly/domain-user';
 import * as systemAgentDomain from '@vassembly/domain-system-agent';
 
 import { createApiGraphQLContext } from './context';
+import type { ApiGraphQLContext } from './shared/types';
 import { registerAgentResolvers } from './resolvers/agent';
 import { registerAiIntegrationResolvers } from './resolvers/aiIntegration';
 import { registerTaskResolvers } from './resolvers/task';
@@ -52,7 +53,7 @@ const { schema, path } = buildGraphQLConfig({
   path: '/graphql',
 });
 
-export const graphqlConfig: GraphQLConfig<{ authenticatedUserId: string | undefined }> = {
+export const graphqlConfig: GraphQLConfig<ApiGraphQLContext> = {
   schema,
   path,
   context: createApiGraphQLContext,

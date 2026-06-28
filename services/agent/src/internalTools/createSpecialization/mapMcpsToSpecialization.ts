@@ -14,7 +14,6 @@ export interface MapMcpsToSpecializationParams {
   specializationName: string;
   specializationDescription: string;
   userId: string;
-  connectionOverride: { integrationCredentialId: string };
   toolContext: InternalToolContext;
 }
 
@@ -57,7 +56,6 @@ export const mapMcpsToSpecialization = async ({
   specializationName,
   specializationDescription,
   userId,
-  connectionOverride,
   toolContext,
 }: MapMcpsToSpecializationParams): Promise<void> => {
   const startedAt = Date.now();
@@ -96,7 +94,7 @@ export const mapMcpsToSpecialization = async ({
           description: mcp.description,
         })),
       }),
-      connectionOverride,
+      credentialScope: 'platform',
       toolContext,
     });
 

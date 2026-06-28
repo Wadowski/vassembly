@@ -5,14 +5,12 @@ import * as taskProgressDomain from '@vassembly/domain-task-progress';
 import type { ProgressEventResponse } from '@vassembly/domain-task-progress';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
 import { resolveAgentDisplayNames } from './shared/resolveAgentDisplayName';
+import type { ApiGraphQLContext } from '../shared/types';
 
 interface TaskProgressResolverArgs {
   taskId: string;
-}
-
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
 }
 
 const enrichProgressEventsWithAgentNames = async ({
@@ -45,6 +43,7 @@ export const registerTaskProgressResolvers = (builder: Builder): void => {
           args: TaskProgressResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'taskProgress', context });
           const userId = context.authenticatedUserId;
 
           if (userId === undefined) {

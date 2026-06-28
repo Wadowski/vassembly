@@ -69,7 +69,15 @@ export const executeRequest = async <TBody, TResponse>({
     const responseJson = await response.json();
 
     if (!response.ok) {
-      throw mapHttpStatusToError({ status: response.status, message: responseJson.message });
+      const retryAfterHeader = response.headers.get('Retry-After');
+      const parsedRetryAfter = retryAfterHeader != null ? Number.parseInt(retryAfterHeader, 10) : NaN;
+      const retryAfterSeconds = Number.isFinite(parsedRetryAfter) ? parsedRetryAfter : undefined;
+
+      throw mapHttpStatusToError({
+        status: response.status,
+        message: responseJson.message,
+        retryAfterSeconds,
+      });
     }
 
     return responseJson as TResponse;

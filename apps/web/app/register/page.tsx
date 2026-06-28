@@ -16,16 +16,17 @@ function RegisterPageContent() {
       authToken: result.authToken,
       refreshToken: result.refreshToken,
     });
+    router.replace('/onboarding');
   };
 
   return (
     <RegisterForm
       titleId="register-page-title"
       returnUrl={returnUrl}
-      fallbackPath="/"
-      verificationPendingPath="/register/pending"
-      onRedirect={(href) => {
-        router.replace(href);
+      fallbackPath="/onboarding"
+      verificationPendingPath="/onboarding"
+      onRedirect={() => {
+        router.replace('/onboarding');
       }}
       onSuccess={handleRegisterSuccess}
     />

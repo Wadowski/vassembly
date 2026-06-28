@@ -1,3 +1,4 @@
+import { appendCurrentDateTimeSection } from '@vassembly/constants';
 import { UnauthorizedError } from '@vassembly/errors';
 
 import { getModelById } from '../../queries';
@@ -7,14 +8,18 @@ import type { InvokeAgentParams, InvokeAgentResult, ModeledProviderInvokeParams 
 const resolveInvokeParams = (
   params: InvokeAgentParams,
   agentRule: string | undefined,
-): ModeledProviderInvokeParams => ({
-  message: params.message,
-  systemMessage: params.systemMessage ?? agentRule,
-  mcpServerConfigs: params.mcpServerConfigs,
-  internalToolBindings: params.internalToolBindings,
-  signal: params.signal,
-  shouldAbort: params.shouldAbort,
-});
+): ModeledProviderInvokeParams => {
+  const baseSystemMessage = params.systemMessage ?? agentRule ?? '';
+
+  return {
+    message: params.message,
+    systemMessage: appendCurrentDateTimeSection({ systemMessage: baseSystemMessage }),
+    mcpServerConfigs: params.mcpServerConfigs,
+    internalToolBindings: params.internalToolBindings,
+    signal: params.signal,
+    shouldAbort: params.shouldAbort,
+  };
+};
 
 export const invoke = async (params: InvokeAgentParams): Promise<InvokeAgentResult> => {
   const { modeledProviderClient, agentId, userId } = params;

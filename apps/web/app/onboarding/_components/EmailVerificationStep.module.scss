@@ -1,0 +1,36 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.bodyStack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.email {
+  font-weight: 500;
+  color: $color-text-primary;
+}
+
+.footerMessages {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  min-width: 0;
+}
+
+.messageError {
+  color: $color-error-200;
+}
+
+.messageSuccess {
+  color: $color-success-100;
+}
+
+.messageMuted {
+  color: $color-text-secondary;
+}
+
+.footerActions {
+  display: flex;
+  flex-shrink: 0;
+}

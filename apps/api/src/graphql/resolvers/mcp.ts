@@ -5,6 +5,9 @@ import agentService from '@vassembly/service-agent';
 import mcpService from '@vassembly/service-mcp';
 import type { Builder } from '@vassembly/graphql';
 
+import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
+import type { ApiGraphQLContext } from '../shared/types';
+
 interface McpsListResolverArgs {
   page?: number | null;
   size?: number | null;
@@ -28,10 +31,6 @@ interface McpWithAgentsResolverArgs {
   size?: number | null;
 }
 
-interface ApiGraphQLContext {
-  authenticatedUserId?: string;
-}
-
 export const registerMcpResolvers = (builder: Builder): void => {
   applyResolvers({
     builder,
@@ -50,6 +49,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
           args: McpsListResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'mcps', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required to view MCPs');
@@ -78,6 +78,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
           args: { id: string },
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'mcp', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required to view MCP');
@@ -90,6 +91,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
       availableTags: t.field({
         type: 'AvailableTags',
         resolve: async (_root: unknown, _args: unknown, context: ApiGraphQLContext) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'availableTags', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required to view available tags');
@@ -109,6 +111,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
           args: McpConfigurationResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'mcpConfiguration', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Unauthorized');
@@ -128,6 +131,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
           args: UserConfiguredMcpsResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'userConfiguredMcps', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Unauthorized');
@@ -153,6 +157,7 @@ export const registerMcpResolvers = (builder: Builder): void => {
           args: McpWithAgentsResolverArgs,
           context: ApiGraphQLContext,
         ) => {
+          enforceOnboardingCompleteForQuery({ queryName: 'mcpWithAgents', context });
           const userId = context.authenticatedUserId;
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required to view MCP agents');

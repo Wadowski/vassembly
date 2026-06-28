@@ -4,9 +4,12 @@ vi.mock("@vassembly/domain-user");
 vi.mock("@vassembly/domain-refresh-token");
 vi.mock("@vassembly/domain-auth-token");
 
-const { mockCreateUser } = vi.hoisted(() => {
+const { mockCreateUser, mockInitiateOnboarding, mockRequestEmailVerification, mockSendVerificationEmail } = vi.hoisted(() => {
   const mockCreateUser = vi.fn();
-  return { mockCreateUser };
+  const mockInitiateOnboarding = vi.fn();
+  const mockRequestEmailVerification = vi.fn();
+  const mockSendVerificationEmail = vi.fn();
+  return { mockCreateUser, mockInitiateOnboarding, mockRequestEmailVerification, mockSendVerificationEmail };
 });
 
 const { mockCreateRefreshToken } = vi.hoisted(() => {
@@ -23,8 +26,12 @@ vi.mock("@vassembly/domain-user", () => ({
   default: {
     commands: {
       create: mockCreateUser,
+      initiateOnboarding: mockInitiateOnboarding,
+      requestEmailVerification: mockRequestEmailVerification,
+      sendVerificationEmail: mockSendVerificationEmail,
     },
   },
+  buildVerificationUrl: vi.fn(() => "https://app.example.com/verify?token=test-token"),
 }));
 
 vi.mock("@vassembly/domain-refresh-token", () => {
@@ -78,6 +85,9 @@ describe("register", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCreateUser.mockResolvedValue({ data: userData });
+    mockInitiateOnboarding.mockResolvedValue(undefined);
+    mockRequestEmailVerification.mockResolvedValue(undefined);
+    mockSendVerificationEmail.mockResolvedValue(undefined);
     mockCreateRefreshToken.mockResolvedValue(mockRefreshToken);
     mockCreateAuthToken.mockResolvedValue({ token: "auth-token-value" });
   });

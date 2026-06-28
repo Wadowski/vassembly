@@ -9,6 +9,7 @@ export interface AuthUser {
   lastName?: string;
   role?: UserRole;
   verifiedAt?: Date;
+  onboardingCompleted?: boolean;
   /** When true, hide password-change UI for SSO-managed accounts. */
   isSsoOnly?: boolean;
 }

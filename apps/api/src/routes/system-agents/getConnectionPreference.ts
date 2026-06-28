@@ -1,7 +1,7 @@
 import { defineRoute } from '@vassembly/server';
 import { z } from 'zod';
 
-import { handlers as authHandlers } from '@vassembly/service-auth';
+import { authorizeProtectedRequest } from '../shared/authorizeProtectedRequest';
 import systemAgentService from '@vassembly/service-agent';
 import { withErrorResponses } from '../errorSchema';
 
@@ -18,7 +18,7 @@ export const systemAgentGetPreferenceRoute = defineRoute({
     response: withErrorResponses(systemAgentPreferenceResponseSchema),
   },
   handler: async ({ headers }) => {
-    const { userId } = await authHandlers.authorizeRequest({ headers });
+    const { userId } = await authorizeProtectedRequest({ headers });
     const { preference } = await systemAgentService.getConnectionPreference({ userId });
 
     return preference;

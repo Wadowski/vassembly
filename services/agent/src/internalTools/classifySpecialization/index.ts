@@ -75,23 +75,6 @@ export const classifySpecializationToolHandler = async (
     catalogResult.items.map((item) => [item.name.toLowerCase(), item.id]),
   );
 
-  const preference = await systemAgentDomain.queries.getPreferenceByUserId({
-    userId: context.userId,
-  });
-  const integrationCredentialId = preference.data?.integrationCredentialId;
-
-  if (!integrationCredentialId) {
-    logClassificationEvent({
-      event: 'specialization.classification.skipped',
-      taskId,
-      userId: context.userId,
-      reason: 'missing_credential',
-      durationMs: Date.now() - startedAt,
-    });
-
-    return toSkippedResult({ reason: 'missing_credential' });
-  }
-
   const agentResult = await systemAgentDomain.queries.getActiveByName({
     name: SYSTEM_AGENT_NAME.SpecializationClassifier,
   });
@@ -107,7 +90,7 @@ export const classifySpecializationToolHandler = async (
         description: item.description,
       })),
     }),
-    connectionOverride: { integrationCredentialId },
+    credentialScope: 'platform',
     toolContext: context,
   });
 

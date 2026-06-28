@@ -7,4 +7,5 @@ export interface AuthorizeRequestInput {
 export interface AuthorizeRequestOutput {
   userId: string;
   role?: AuthRole;
+  onboardingCompleted: boolean;
 }

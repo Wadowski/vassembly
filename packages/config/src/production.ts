@@ -13,6 +13,7 @@ const config: Config = {
     web: {
       port: 3000,
       passwordResetUrl: process.env.AUTH_PASSWORD_RESET_WEB_URL,
+      emailVerificationUrl: process.env.EMAIL_VERIFICATION_WEB_URL,
     },
     docs: {
       port: 3001,
@@ -40,12 +41,20 @@ const config: Config = {
     region: process.env.AWS_REGION || '',
     ses: {
       passwordResetTemplateName: 'reset-password',
+      emailVerificationTemplateName: 'verify-email',
       fromEmail: 'tbd@todo.com',
     },
   },
   deepSeekAi: {
     apiKey: process.env.DEEP_SEEK_AI_API_KEY || '',
     baseURL: process.env.DEEP_SEEK_AI_BASE_URL || '',
+  },
+  platformAi: {
+    provider: process.env.PLATFORM_AI_PROVIDER || '',
+    apiKey: process.env.PLATFORM_AI_API_KEY || '',
+    baseUrl: process.env.PLATFORM_AI_BASE_URL || '',
+    defaultModel: process.env.PLATFORM_AI_DEFAULT_MODEL || '',
+    organizationId: process.env.PLATFORM_AI_ORGANIZATION_ID,
   },
   jwt: {
     secret: process.env.JWT_SECRET || '',

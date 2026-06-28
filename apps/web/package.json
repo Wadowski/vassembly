@@ -43,6 +43,7 @@
     "@vassembly/ui-reset-password-form": "workspace:*",
     "@vassembly/ui-skeleton": "workspace:*",
     "@vassembly/ui-snackbar": "workspace:*",
+    "@vassembly/ui-stepper": "workspace:*",
     "@vassembly/ui-switch": "workspace:^",
     "@vassembly/ui-table": "workspace:^",
     "@vassembly/ui-tag": "workspace:^",

@@ -1,7 +1,7 @@
 import { initCache } from "@vassembly/cache";
 import { initRedis } from "@vassembly/client-redis";
 import { createServer, routesWithPrefix } from "@vassembly/server";
-import { CacheBackend, config } from "@vassembly/config";
+import { CacheBackend, config, validatePlatformAiConfig } from "@vassembly/config";
 import mcpDomain from "@vassembly/domain-mcp";
 import systemAgentDomain from "@vassembly/domain-system-agent";
 
@@ -37,6 +37,13 @@ const routes = [
 ];
 
 const startApp = async () => {
+  try {
+    validatePlatformAiConfig(config.platformAi);
+  } catch (error) {
+    console.error('platform_ai.config.invalid', error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
+
   if (config.cache.backend === CacheBackend.Redis) {
     await initRedis();
   }

@@ -11,6 +11,9 @@ export { refresh } from "./refresh";
 export { getUser } from "./getUser";
 export { logout } from "./logout";
 export { updateUserProfile } from "./updateUserProfile";
+export { confirmEmailVerification } from "./confirmEmailVerification";
+export { resendEmailVerification } from "./resendEmailVerification";
+export { checkAndCompleteOnboarding } from "./checkAndCompleteOnboarding";
 
 export type { AuthInput, AuthOutput, AuthPublicUser } from "./auth/types";
 export type {
@@ -28,3 +31,12 @@ export type { RefreshInput } from "./refresh/types";
 export type { GetUserInput } from "./getUser/types";
 export type { LogoutInput, LogoutOutput } from "./logout/types";
 export type { UpdateUserProfileInput, UpdateUserProfileOutput } from "./updateUserProfile/types";
+export type {
+  ConfirmEmailVerificationInput,
+  ConfirmEmailVerificationOutput,
+} from "./confirmEmailVerification/types";
+export type {
+  ResendEmailVerificationInput,
+  ResendEmailVerificationOutput,
+} from "./resendEmailVerification/types";
+export type { CheckAndCompleteOnboardingInput } from "./checkAndCompleteOnboarding/types";
