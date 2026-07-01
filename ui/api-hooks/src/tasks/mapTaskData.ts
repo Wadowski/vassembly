@@ -33,6 +33,7 @@ export const toTaskDto = (row: GraphQLTaskRow): TaskDto => ({
   createdAt: row.createdAt ?? '',
   updatedAt: row.updatedAt ?? '',
   specializationIds: row.specializationIds ?? null,
+  skillIdsUsed: row.skillIdsUsed ?? null,
 });
 
 export const mapTaskDetailData = (

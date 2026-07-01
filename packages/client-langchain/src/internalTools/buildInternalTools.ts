@@ -5,9 +5,10 @@ import type { ZodObject, ZodRawShape } from 'zod';
 import { askUserSchema } from './schemas/askUserSchema';
 import { classifySpecializationSchema } from './schemas/classifySpecializationSchema';
 import { createSkillSchema } from './schemas/createSkillSchema';
-import { resolveSkillSchema } from './schemas/resolveSkillSchema';
 import { createSpecializationSchema } from './schemas/createSpecializationSchema';
+import { invokeSkillPlannerSchema } from './schemas/invokeSkillPlannerSchema';
 import { listAgentsSchema } from './schemas/listAgentsSchema';
+import { resolveSkillSchema } from './schemas/resolveSkillSchema';
 import { updateTaskSchema } from './schemas/updateTaskSchema';
 import { useAgentSchema } from './schemas/useAgentSchema';
 import { webPageContentSchema } from './schemas/webPageContentSchema';
@@ -24,6 +25,7 @@ const INTERNAL_TOOL_SCHEMAS: Record<string, ZodObject<ZodRawShape>> = {
   'specialization-create': createSpecializationSchema,
   'skill-create': createSkillSchema,
   'skill-resolve': resolveSkillSchema,
+  'skill-plan': invokeSkillPlannerSchema,
   'web-search': webSearchSchema,
   'web-page-content': webPageContentSchema,
 };

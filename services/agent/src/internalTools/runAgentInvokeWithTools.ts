@@ -46,9 +46,11 @@ interface InvokePersonalAgentParams {
 }
 
 interface InvokeSystemAgentParams {
+  userId: string;
   agentId: string;
   message: string;
   client: ModeledProviderClient;
+  mcpIdsOverride?: string[];
   toolContext: RunAgentInvokeWithToolsParams['toolContext'];
 }
 
@@ -185,9 +187,11 @@ const invokePersonalAgent = async ({
 };
 
 const invokeSystemAgent = async ({
+  userId,
   agentId,
   message,
   client,
+  mcpIdsOverride,
   toolContext,
 }: InvokeSystemAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
@@ -209,11 +213,18 @@ const invokeSystemAgent = async ({
       ? await buildSkillsCatalogSection({ specializationId: agent.specializationId })
       : undefined;
 
+  const mcpIds = mcpIdsOverride ?? [];
+  const { mcpServerConfigs, skippedMcpIds } =
+    mcpIdsOverride !== undefined
+      ? await resolveMcpConfigs({ userId, mcpIds })
+      : { mcpServerConfigs: [], skippedMcpIds: [] };
+
   const result = await systemAgentDomain.commands.invoke({
     modeledProviderClient: client,
     systemAgentId: agentId,
     message,
     internalToolBindings: bindings,
+    mcpServerConfigs: mcpIdsOverride !== undefined ? mcpServerConfigs : undefined,
     signal: toolContext.abortSignal,
     shouldAbort: toolContext.shouldAbort,
     skillsCatalogSection,
@@ -225,8 +236,8 @@ const invokeSystemAgent = async ({
     metadata: {
       model: result.metadata?.model,
       provider: result.metadata?.provider,
-      mcpIdsUsed: [],
-      skippedMcpIds: [],
+      mcpIdsUsed: mcpIdsOverride !== undefined ? mcpIds.filter((id) => !skippedMcpIds.includes(id)) : [],
+      skippedMcpIds: mcpIdsOverride !== undefined ? skippedMcpIds : [],
       internalToolIdsUsed: result.toolUsage?.internalToolIdsUsed ?? [],
       skippedInternalToolIds: skippedToolIds,
       maxUseAgentDepth: MAX_USE_AGENT_DEPTH,
@@ -283,9 +294,11 @@ export const runAgentInvokeWithTools = async (
       params.agentType === 'personal'
         ? await invokePersonalAgent({ ...params, client })
         : await invokeSystemAgent({
+            userId: params.userId,
             agentId: params.agentId,
             message: params.message,
             client,
+            mcpIdsOverride: params.mcpIdsOverride,
             toolContext: params.toolContext,
           });
 

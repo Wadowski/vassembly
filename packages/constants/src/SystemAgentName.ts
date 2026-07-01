@@ -10,4 +10,9 @@ export enum SYSTEM_AGENT_NAME {
   McpSpecializationClassifier = 'MCP specialization classifier',
   SpecializationAgentDescriptionGenerator = 'Specialization agent description generator',
   SkillResolver = 'Skill resolver',
+  TaskPlanner = 'Task planner',
+  SkillPlanner = 'Skill planner',
+  SkillScriptCreatorPython = 'Skill script creator (python)',
+  SkillScriptCreatorJavascript = 'Skill script creator (javascript)',
+  SkillScriptCreatorBash = 'Skill script creator (bash)',
 }

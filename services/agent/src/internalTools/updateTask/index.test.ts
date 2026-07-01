@@ -44,6 +44,19 @@ describe('updateTask internal tool handler', () => {
     ).rejects.toThrow(ValidationError);
   });
 
+  it('should update skillIdsUsed when provided', async () => {
+    const result = await updateTaskToolHandler({
+      taskId: 'task-1',
+      skillIdsUsed: ['skill-1', 'skill-2'],
+    });
+
+    expect(mockUpdateTask).toHaveBeenCalledWith({
+      id: 'task-1',
+      skillIdsUsed: ['skill-1', 'skill-2'],
+    });
+    expect(result).toBe('Updated skillIdsUsed for task task-1');
+  });
+
   it('should throw ValidationError when no update fields are provided', async () => {
     await expect(updateTaskToolHandler({ taskId: 'task-1' })).rejects.toThrow(ValidationError);
   });

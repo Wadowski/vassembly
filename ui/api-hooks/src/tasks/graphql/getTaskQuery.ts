@@ -9,6 +9,7 @@ export const GET_TASK_QUERY = `
       agentAssignedId
       title
       specializationIds
+      skillIdsUsed
       llmResponse
       errorMessage
       errorCode

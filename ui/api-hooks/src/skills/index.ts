@@ -2,7 +2,9 @@ export { GET_SKILL_QUERY } from './GET_SKILL_QUERY';
 export { LIST_SKILLS_BY_SPECIALIZATION_QUERY } from './LIST_SKILLS_BY_SPECIALIZATION_QUERY';
 export { useArchiveSkill } from './useArchiveSkill';
 export { useCreateSkill } from './useCreateSkill';
+export { useLinkedSkills } from './useLinkedSkills';
 export { useSkill } from './useSkill';
+export type { LinkedSkillItem, UseLinkedSkillsArgs, UseLinkedSkillsResult } from './linkedSkillsTypes';
 export { useSkillsBySpecialization } from './useSkillsBySpecialization';
 export { useUpdateSkill } from './useUpdateSkill';
 export type {

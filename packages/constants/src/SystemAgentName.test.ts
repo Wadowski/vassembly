@@ -16,6 +16,11 @@ describe('SYSTEM_AGENT_NAME', () => {
       'MCP specialization classifier',
       'Specialization agent description generator',
       'Skill resolver',
+      'Task planner',
+      'Skill planner',
+      'Skill script creator (python)',
+      'Skill script creator (javascript)',
+      'Skill script creator (bash)',
     ]);
   });
 });

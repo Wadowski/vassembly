@@ -60,4 +60,5 @@ export const mongodbIndexes = async (): Promise<void> => {
   const collection = mongoDb.db.collection(TASK_COLLECTION_NAME);
   await collection.createIndex({ userId: 1, createdAt: -1 });
   await collection.createIndex({ specializationIds: 1 }, { sparse: true });
+  await collection.createIndex({ skillIdsUsed: 1 }, { sparse: true });
 };

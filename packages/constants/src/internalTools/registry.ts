@@ -92,6 +92,14 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     llmToolName: 'resolve_skill',
   }),
   defineInternalTool({
+    domain: 'skill',
+    action: 'plan',
+    description:
+      'Invoke the Skill planner to create a new skill when no existing skill fits the goal',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'invoke_skill_planner',
+  }),
+  defineInternalTool({
     domain: 'web',
     action: 'search',
     description: 'Search the web and return a list of results (title, URL, and snippet)',

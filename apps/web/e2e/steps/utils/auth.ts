@@ -64,7 +64,7 @@ export const signInSeededUser = async ({
         response.ok(),
       { timeout: LOGIN_RESPONSE_TIMEOUT_MS },
     );
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.getByLabel('Password').press('Enter');
     await loginResponse;
     await expect(page).not.toHaveURL(/\/login(?:\?|$)/, { timeout: 10_000 });
     await page.waitForFunction(hasStoredAuthTokens, undefined, { timeout: 10_000 });

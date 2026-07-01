@@ -111,6 +111,7 @@ describe('useTaskDetail', () => {
         createdAt: '2026-05-26T12:00:00.000Z',
         updatedAt: '2026-05-26T12:00:00.000Z',
         specializationIds: null,
+        skillIdsUsed: null,
       };
 
       hoisted.execute.mockResolvedValue({ data: graphQLPayload });

@@ -320,6 +320,35 @@ describe('runAgentInvokeWithTools', () => {
     );
   });
 
+  it('should report MCP ids used when mcpIdsOverride is provided for system agent', async () => {
+    mockGetActiveById.mockResolvedValue({
+      data: {
+        id: 'system-agent-1',
+        name: 'Skill planner',
+        rule: 'Create skills.',
+        assignedToolIds: ['skill-create'],
+      },
+    });
+    mockLoadAssignedInternalTools.mockResolvedValue({
+      bindings: [],
+      boundToolIds: [],
+      skippedToolIds: [],
+    });
+
+    const result = await runAgentInvokeWithTools({
+      userId: 'user-1',
+      agentType: 'system',
+      agentId: 'system-agent-1',
+      message: 'Create skill',
+      credentialScope: 'platform',
+      mcpIdsOverride: ['mcp-1'],
+      toolContext: TOOL_CONTEXT,
+    });
+
+    expect(result.metadata.mcpIdsUsed).toEqual(['mcp-1']);
+    expect(result.metadata.skippedMcpIds).toEqual([]);
+  });
+
   it('should inject skills catalog section for specialization-scoped system agents', async () => {
     mockGetActiveById.mockResolvedValue({
       data: {

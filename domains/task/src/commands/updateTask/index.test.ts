@@ -141,6 +141,23 @@ describe('updateTask task command', () => {
     expect(result.data?.specializationIds).toBeNull();
   });
 
+  it('should return model with skillIdsUsed set when updating skillIdsUsed only', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'task-1',
+        skillIdsUsed: ['skill-1', 'skill-2'],
+      },
+    });
+
+    const result = await updateTask({ id: 'task-1', skillIdsUsed: ['skill-1', 'skill-2'] });
+
+    expect(mockPersist).toHaveBeenCalledWith({
+      id: 'task-1',
+      data: { skillIdsUsed: ['skill-1', 'skill-2'] },
+    });
+    expect(result.data?.skillIdsUsed).toEqual(['skill-1', 'skill-2']);
+  });
+
   it('should throw ValidationError when specializationIds exceeds max 3', async () => {
     await expect(
       updateTask({

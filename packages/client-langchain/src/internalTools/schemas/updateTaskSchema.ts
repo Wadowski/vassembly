@@ -5,4 +5,5 @@ export const updateTaskSchema = z.object({
   title: z.string().min(1).optional(),
   category: z.string().optional(),
   specializationIds: z.array(z.string().min(1)).max(3).optional(),
+  skillIdsUsed: z.array(z.string().min(1)).optional(),
 });

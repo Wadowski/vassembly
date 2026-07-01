@@ -11,14 +11,16 @@ export const UPDATE_TASK_INPUT_SCHEMA = z
     title: z.string().min(1).max(120).optional(),
     category: z.enum(VALID_CATEGORY_SLUGS).nullable().optional(),
     specializationIds: z.array(z.string().min(1)).max(3).nullable().optional(),
+    skillIdsUsed: z.array(z.string().min(1)).nullable().optional(),
   })
   .refine(
     (data) =>
       data.title !== undefined ||
       data.category !== undefined ||
-      data.specializationIds !== undefined,
+      data.specializationIds !== undefined ||
+      data.skillIdsUsed !== undefined,
     {
-      message: 'At least one of title, category, or specializationIds must be provided',
+      message: 'At least one of title, category, specializationIds, or skillIdsUsed must be provided',
     },
   );
 
@@ -27,6 +29,7 @@ export interface UpdateTaskCommandInput {
   title?: string;
   category?: INTENT_CATEGORY_SLUG | null;
   specializationIds?: string[] | null;
+  skillIdsUsed?: string[] | null;
 }
 
 export interface UpdateTaskCommandResult {
