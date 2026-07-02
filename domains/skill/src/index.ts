@@ -21,6 +21,11 @@ export {
 
 export type { SkillListResponse, SkillResponse, SkillScript, SkillScriptLanguage } from './model';
 
+export type {
+  GetActiveRuleByNameParams,
+  GetActiveRuleByNameResult,
+} from './queries';
+
 export {
   getSkillsCollection,
   mongodbIndexes as skillMongodbIndexes,

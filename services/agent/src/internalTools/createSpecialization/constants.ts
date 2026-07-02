@@ -16,4 +16,9 @@ export const SPECIALIZATION_AGENT_RULES: Record<SpecializationAgentRole, string>
     `You review the work output for accuracy, completeness, and quality. Return a structured assessment with any issues or approvals. ${SPECIALIZATION_WEB_SEARCH_GUIDANCE}`,
 };
 
-export const SPECIALIZATION_AGENT_TOOL_IDS: string[] = ['web-search', 'web-page-content'];
+export const SPECIALIZATION_AGENT_TOOL_IDS: string[] = [
+  'web-search',
+  'web-page-content',
+  'skill-resolve',
+  'skill-run-script',
+];

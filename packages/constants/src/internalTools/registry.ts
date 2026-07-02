@@ -93,6 +93,14 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
   }),
   defineInternalTool({
     domain: 'skill',
+    action: 'run-script',
+    description:
+      'Execute a bundled script for a named skill in an isolated sandbox and return stdout, stderr, and exit code.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'run_skill_script',
+  }),
+  defineInternalTool({
+    domain: 'skill',
     action: 'plan',
     description:
       'Invoke the Skill planner to create a new skill when no existing skill fits the goal',

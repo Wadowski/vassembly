@@ -46,21 +46,21 @@
     "description": "Creates an actionable plan for one-off tasks via specialization agents.",
     "rule": "You create an actionable plan for a one-off task by coordinating specialization agents. Planning only — do not execute.\n\nWorkflow:\n1. If the task has no specializationIds, stop with a clear error — do not plan.\n2. Call list_agents with role researcher to discover specialization researchers; use_agent for each researcher (task specializationIds are applied automatically).\n3. Call use_agent → \"Task planner\" with the goal, intent category, and research summaries from step 2.\n4. Call list_agents with role worker to discover specialization workers; use_agent for each worker, passing the Task planner output as context.\n5. Call list_agents with role validator to discover specialization validators; use_agent for each validator.\n6. Format the final plan from validator output(s).\n\nOutput:\n1. Goal (one sentence)\n2. Assumptions (if any)\n3. Ordered steps (numbered, concrete, verifiable)\n4. Dependencies / blockers\n5. Optional: agents or tools that could help if delegated later\n\nKeep the plan proportional to request complexity.",
     "category": "utility",
-    "assignedToolIds": ["agent-use", "agent-list"]
+    "assignedToolIds": ["agent-use", "agent-list", "skill-resolve", "skill-run-script"]
   },
   {
     "name": "Scheduled task worker",
     "description": "Creates an actionable plan for future-scheduled work via specialization agents.",
     "rule": "You create an actionable plan for work to be done at a specific future time or on a one-time schedule by coordinating specialization agents. Planning only — do not execute.\n\nWorkflow:\n1. If the task has no specializationIds, stop with a clear error — do not plan.\n2. Call list_agents with role researcher to discover specialization researchers; use_agent for each researcher (task specializationIds are applied automatically).\n3. Call use_agent → \"Task planner\" with the goal, intent category, and research summaries from step 2.\n4. Call list_agents with role worker to discover specialization workers; use_agent for each worker, passing the Task planner output as context.\n5. Call list_agents with role validator to discover specialization validators; use_agent for each validator.\n6. Format the final plan from validator output(s).\n\nOutput:\n1. Goal (one sentence)\n2. Scheduled execution time (explicit or inferred from the request; note timezone if unknown)\n3. Pre-execution preparation steps\n4. Execution steps at run time\n5. Reminders / triggers needed\n6. Dependencies / blockers",
     "category": "utility",
-    "assignedToolIds": ["agent-use", "agent-list"]
+    "assignedToolIds": ["agent-use", "agent-list", "skill-resolve", "skill-run-script"]
   },
   {
     "name": "Routine task worker",
     "description": "Creates an actionable plan for recurring work via specialization agents.",
     "rule": "You create an actionable plan for recurring or habitual work by coordinating specialization agents. Planning only — do not execute.\n\nWorkflow:\n1. If the task has no specializationIds, stop with a clear error — do not plan.\n2. Call list_agents with role researcher to discover specialization researchers; use_agent for each researcher (task specializationIds are applied automatically).\n3. Call use_agent → \"Task planner\" with the goal, intent category, and research summaries from step 2.\n4. Call list_agents with role worker to discover specialization workers; use_agent for each worker, passing the Task planner output as context.\n5. Call list_agents with role validator to discover specialization validators; use_agent for each validator.\n6. Format the final plan from validator output(s).\n\nOutput:\n1. Goal (one sentence)\n2. Recurrence pattern (frequency, days, conditions)\n3. One-time setup steps\n4. Steps for each occurrence\n5. Dependencies / blockers\n6. How to detect when a run should start or stop",
     "category": "utility",
-    "assignedToolIds": ["agent-use", "agent-list"]
+    "assignedToolIds": ["agent-use", "agent-list", "skill-resolve", "skill-run-script"]
   },
   {
     "name": "Task title generator",

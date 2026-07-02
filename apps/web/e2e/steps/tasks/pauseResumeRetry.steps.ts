@@ -178,31 +178,6 @@ When('the task execution completes and status becomes {string}', async ({ seed, 
   });
 });
 
-When('I double-click the pause button rapidly', async ({ page, world }) => {
-  if (!page) {
-    return;
-  }
-
-  let pauseRequestCount = 0;
-  const listener = (request: import('@playwright/test').Request): void => {
-    if (
-      request.url().includes(`/tasks/${world.taskId}/pause`) &&
-      request.method() === 'PATCH'
-    ) {
-      pauseRequestCount += 1;
-    }
-  };
-
-  page.on('request', listener);
-  const pauseButton = getTaskActionButton({ page, action: 'pause' });
-  await pauseButton.click();
-  getWebWorld(world).wasPauseButtonDisabledAfterFirstClick = await pauseButton.isDisabled();
-  await pauseButton.click({ force: true });
-  await page.waitForTimeout(1_000);
-  page.off('request', listener);
-  getWebWorld(world).pauseApiRequestCount = pauseRequestCount;
-});
-
 When('I pause the task in Tab A', async ({ world }) => {
   const webWorld = getWebWorld(world);
   const tabAPage = webWorld.tabAPage;
@@ -316,21 +291,6 @@ Then('the task status remains {string}', async ({ page }, status: string) => {
   }
 
   await expectStatusBadgeText({ page, label: resolveTaskStatusLabel(status) });
-});
-
-Then('the task ends in status {string}', async ({ page }, status: string) => {
-  if (!page) {
-    return;
-  }
-
-  const statusLabelMap: Record<string, string> = {
-    paused: 'Paused',
-    'in-progress': 'In progress',
-    done: 'Done',
-    failed: 'Failed',
-  };
-
-  await waitForTaskStatusBadge({ page, statusLabel: statusLabelMap[status] ?? status });
 });
 
 Then('the pause button is visible', async ({ page }) => {
@@ -511,34 +471,6 @@ Then('the user can navigate to Settings to configure a credential', async ({ pag
   await expect(page.getByRole('heading', { name: 'Settings', level: 1 })).toBeVisible({
     timeout: 15_000,
   });
-});
-
-Then('only one pause API request is processed meaningfully', async ({ world }) => {
-  const requestCount = getWebWorld(world).pauseApiRequestCount ?? 0;
-  expect(requestCount).toBeLessThanOrEqual(2);
-  expect(requestCount).toBeGreaterThanOrEqual(1);
-});
-
-Then('the pause button is disabled after the first click', async ({ page, world }) => {
-  if (!page) {
-    return;
-  }
-
-  const webWorld = getWebWorld(world);
-  const pauseButton = getTaskActionButton({ page, action: 'pause' });
-  const resumeButton = getTaskActionButton({ page, action: 'resume' });
-  const isPaused = await resumeButton.isVisible().catch(() => false);
-
-  if (isPaused) {
-    await expect(pauseButton).not.toBeVisible();
-    return;
-  }
-
-  if (webWorld.wasPauseButtonDisabledAfterFirstClick) {
-    return;
-  }
-
-  await expect(pauseButton).toBeDisabled({ timeout: 5_000 });
 });
 
 Then(

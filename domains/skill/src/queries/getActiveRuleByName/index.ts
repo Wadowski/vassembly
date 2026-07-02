@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { SKILL_NAME_MAX_LENGTH } from '../../constants';
 import { skillMongodbDao } from '../../clients';
+import { skillFactory } from '../../model';
 
 import type { GetActiveRuleByNameParams, GetActiveRuleByNameResult } from './types';
 
@@ -36,7 +37,14 @@ export const getActiveRuleByName = async (
     throw new NotFoundError(NOT_FOUND_MESSAGE(parsed.data.skillName));
   }
 
-  return { rule: String(row.rule) };
+  const skill = skillFactory.create(row);
+
+  return {
+    skillId: skill.id!,
+    specializationId: skill.specializationId!,
+    rule: skill.rule!,
+    scripts: skill.scripts ?? [],
+  };
 };
 
 export type { GetActiveRuleByNameParams, GetActiveRuleByNameResult } from './types';

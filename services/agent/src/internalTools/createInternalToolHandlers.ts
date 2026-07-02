@@ -1,3 +1,4 @@
+import { runSkillScriptToolHandler } from './runSkillScript';
 import { invokeSkillPlannerToolHandler } from './invokeSkillPlanner';
 import { listAgents } from './listAgents';
 import { askUser } from './askUser';
@@ -27,6 +28,7 @@ export const createInternalToolHandlers = ({
   'specialization-create': (args) => createSpecializationToolHandler(args, toolContext),
   'skill-create': (args) => createSkillToolHandler(args),
   'skill-resolve': (args) => resolveSkillToolHandler(args, toolContext),
+  'skill-run-script': (args) => runSkillScriptToolHandler(args, toolContext),
   'skill-plan': (args) => invokeSkillPlannerToolHandler(args, toolContext),
   'web-search': (args) => webSearch({ args }),
   'web-page-content': (args) => webPageContent({ args }),

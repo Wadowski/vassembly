@@ -10,4 +10,4 @@ export const SKILL_SCRIPT_MAX_COUNT = 10;
 
 export const SKILL_RULE_MAX_LENGTH = 32_000;
 
-export const SKILL_SCRIPT_LANGUAGES = ['python', 'nodejs', 'bash'] as const;
+export const SKILL_SCRIPT_LANGUAGES = ['python', 'nodejs', 'bash', 'terminal'] as const;

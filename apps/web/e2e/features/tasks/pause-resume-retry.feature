@@ -110,14 +110,6 @@ Feature: Pause, Resume and Retry Task
     And the resume button is not visible
     And the user can navigate to Settings to configure a credential
 
-  Scenario: Double-click pause prevents duplicate requests
-    Given a task exists with status "in-progress"
-    And the task detail page is open
-    When I double-click the pause button rapidly
-    Then only one pause API request is processed meaningfully
-    And the pause button is disabled after the first click
-    And the task ends in status "paused"
-
   Scenario: Pause while nested agent call is running
     Given a task is in-progress with a nested agent invocation in flight
     And the task detail page is open

@@ -40,7 +40,7 @@ const UPDATE_DB_SCHEMA = z.object({
     .array(
       z.object({
         filename: z.string().min(1),
-        language: z.enum(['python', 'nodejs', 'bash']),
+        language: z.enum(['python', 'nodejs', 'bash', 'terminal']),
         storageKey: z.string().min(1),
       }),
     )

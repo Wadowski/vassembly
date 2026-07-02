@@ -53,6 +53,7 @@ vi.mock('./generateSpecializationAgentDescriptions', () => ({
 import { createSpecializationToolHandler } from './index';
 
 import type { InternalToolContext } from '../types';
+import { SPECIALIZATION_AGENT_TOOL_IDS } from './constants';
 
 const BASE_CONTEXT: InternalToolContext = {
   userId: 'user-1',
@@ -107,7 +108,7 @@ describe('createSpecialization internal tool handler', () => {
         name: 'Legal researcher',
         category: AgentCategory.Utility,
         specializationId: 'spec-1',
-        assignedToolIds: ['web-search', 'web-page-content'],
+        assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
       }),
     );
     expect(mockMapMcpsToSpecialization).toHaveBeenCalledWith(

@@ -1,4 +1,5 @@
 import { CacheBackend, Environment, type Config } from './types';
+import { buildExecutionConfig } from './buildExecutionConfig';
 
 const parseCacheBackend = (value: string | undefined): CacheBackend => {
   if (value === CacheBackend.Redis) {
@@ -61,6 +62,7 @@ const config: Config = {
       bucketName: process.env.SKILL_SCRIPT_STORAGE_BUCKET || '',
       localRootPath: process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH || './.data/skill-scripts',
     },
+    execution: buildExecutionConfig({ backend: 'local' }),
   },
   services: {
     api: {

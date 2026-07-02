@@ -9,8 +9,10 @@ export { validatePlatformAiConfig } from './validatePlatformAiConfig';
 export type {
   CacheConfig,
   Config,
+  ExecutionConfig,
   PlatformAiConfig,
   RedisConfig,
+  SkillExecutionBackend,
   SkillScriptStorageConfig,
   SkillsConfig,
 } from './types';

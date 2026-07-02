@@ -93,6 +93,14 @@ describe('internal tool registry', () => {
           llmToolName: 'resolve_skill',
         }),
         expect.objectContaining({
+          id: 'skill-run-script',
+          displayName: 'skill - run-script',
+          description:
+            'Execute a bundled script for a named skill in an isolated sandbox and return stdout, stderr, and exit code.',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'run_skill_script',
+        }),
+        expect.objectContaining({
           id: 'skill-plan',
           displayName: 'skill - plan',
           description:
@@ -117,7 +125,7 @@ describe('internal tool registry', () => {
         }),
       ]),
     );
-    expect(tools).toHaveLength(11);
+    expect(tools).toHaveLength(12);
   });
 
   it('should have unique registry ids', () => {
@@ -247,6 +255,7 @@ describe('filtering tools by agent type', () => {
       'skill-create',
       'skill-plan',
       'skill-resolve',
+      'skill-run-script',
       'specialization-classify',
       'specialization-create',
       'task-update',

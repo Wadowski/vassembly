@@ -2,6 +2,8 @@ import skillDomain from '@vassembly/domain-skill';
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ValidationError } from '@vassembly/errors';
 
+import { runAutoScriptsFromRule } from '../runSkillScript';
+
 import type { ResolveSkillToolResult } from './types';
 import type { InternalToolContext } from '../types';
 
@@ -42,13 +44,21 @@ export const resolveSkillToolHandler = async (
     throw new ValidationError('Cannot resolve skill: no specializationId available');
   }
 
-  const { rule } = await skillDomain.queries.getActiveRuleByName({
+  const activeSkill = await skillDomain.queries.getActiveRuleByName({
     specializationId,
     skillName,
   });
 
+  const autoRunResults = await runAutoScriptsFromRule({
+    rule: activeSkill.rule,
+    skillName,
+    scripts: activeSkill.scripts,
+    context,
+  });
+
   return JSON.stringify({
     skillName,
-    rule,
+    rule: activeSkill.rule,
+    ...(autoRunResults.length > 0 ? { autoRunResults } : {}),
   } satisfies ResolveSkillToolResult);
 };
