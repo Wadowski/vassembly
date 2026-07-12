@@ -40,6 +40,7 @@ const schema = z.object({
     .trim()
     .min(1, 'Rule is required.')
     .max(SKILL_RULE_MAX, `Rule must be at most ${SKILL_RULE_MAX} characters.`),
+  usesSkillIds: z.array(z.string().trim().min(1)),
   scripts: z
     .array(scriptSchema)
     .max(SKILL_SCRIPT_MAX_COUNT, `At most ${SKILL_SCRIPT_MAX_COUNT} scripts are allowed.`),
@@ -57,6 +58,7 @@ const toFormValues = (initial?: SkillFormInitialValues): SkillFormInput => ({
   name: initial?.name ?? '',
   description: initial?.description ?? '',
   rule: initial?.rule ?? '',
+  usesSkillIds: initial?.usesSkillIds ?? [],
   scripts: initial?.scripts ?? [],
 });
 

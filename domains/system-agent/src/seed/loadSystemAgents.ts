@@ -63,15 +63,25 @@ const shouldSyncSeedEntry = ({
     right: entry.assignedToolIds,
   });
 
+const isSeedEntryActive = (entry: SystemAgentSeedEntry): boolean => entry._disabled !== true;
+
+const toAgentSeedFields = ({
+  _disabled: _unusedDisabled,
+  ...agentFields
+}: SystemAgentSeedEntry): Omit<SystemAgentSeedEntry, '_disabled'> => agentFields;
+
 export const parseSystemAgentSeedJson = (content: string): SystemAgentSeedEntry[] => {
   const parsed = JSON.parse(content) as unknown;
   return systemAgentSeedSchema.array().parse(parsed);
 };
 
+const getActiveSeedEntries = (entries: SystemAgentSeedEntry[]): SystemAgentSeedEntry[] =>
+  entries.filter(isSeedEntryActive);
+
 export const loadSystemAgents = async (): Promise<LoadSystemAgentsResult> => {
   try {
     const content = await readSystemAgentSeedFile();
-    const seedEntries = parseSystemAgentSeedJson(content);
+    const seedEntries = getActiveSeedEntries(parseSystemAgentSeedJson(content));
 
     const existingRows = (await systemAgentMongodbDao.collection
       .find(ACTIVE_SYSTEM_AGENT_FILTER)
@@ -91,7 +101,7 @@ export const loadSystemAgents = async (): Promise<LoadSystemAgentsResult> => {
     if (newEntries.length > 0) {
       const instances = newEntries.map((entry) =>
         systemAgentFactory.create({
-          ...entry,
+          ...toAgentSeedFields(entry),
           status: SYSTEM_AGENT_DEFAULT_STATUS,
           removedAt: null,
           createdByAdminId: SYSTEM_SEED_ADMIN_ID,

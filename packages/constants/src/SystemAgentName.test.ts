@@ -7,15 +7,20 @@ describe('SYSTEM_AGENT_NAME', () => {
     expect(Object.values(SYSTEM_AGENT_NAME)).toEqual([
       'Assistant',
       'Intent classifier',
-      'Question worker',
+      // 'Question worker', // TEMPORARILY DISABLED — task-category-only-mode
       'Task worker',
-      'Scheduled task worker',
-      'Routine task worker',
+      // 'Scheduled task worker', // TEMPORARILY DISABLED — task-category-only-mode
+      // 'Routine task worker', // TEMPORARILY DISABLED — task-category-only-mode
       'Task title generator',
       'Specialization classifier',
       'MCP specialization classifier',
       'Specialization agent description generator',
       'Skill resolver',
+      'Task planner',
+      'Skill planner',
+      'Skill script creator (python)',
+      'Skill script creator (javascript)',
+      'Skill script creator (bash)',
     ]);
   });
 });

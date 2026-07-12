@@ -30,6 +30,7 @@ export interface TaskResponse {
   createdAt: string;
   updatedAt: string;
   specializationIds?: string[] | null;
+  skillIdsUsed?: string[] | null;
 }
 
 export interface CreateTaskBody {
@@ -58,6 +59,7 @@ export interface TaskDto {
   createdAt: string;
   updatedAt: string;
   specializationIds?: string[] | null;
+  skillIdsUsed?: string[] | null;
 }
 
 export interface UserTasksListResponse {
@@ -91,6 +93,7 @@ export interface GraphQLTaskRow {
   createdAt?: string | null;
   updatedAt?: string | null;
   specializationIds?: string[] | null;
+  skillIdsUsed?: string[] | null;
 }
 
 export interface GraphQLUserTasksListData {

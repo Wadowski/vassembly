@@ -13,6 +13,7 @@ import { SkillDetailSkeleton } from './SkillDetailSkeleton/SkillDetailSkeleton';
 import { SkillNotFoundMessage } from './SkillNotFoundMessage/SkillNotFoundMessage';
 import { SkillRuleSection } from './SkillRuleSection/SkillRuleSection';
 import { SkillScriptsSection } from './SkillScriptsSection/SkillScriptsSection';
+import { SkillUsesSkillsSection } from './SkillUsesSkillsSection';
 import { DETAIL_ERROR_MESSAGE } from './constants';
 import styles from './SkillDetailPage.module.scss';
 import { useSkillDetail } from './useSkillDetail';
@@ -71,6 +72,10 @@ export const SkillDetailPage = (): JSX.Element | null => {
         skill={skill}
       />
       <SkillRuleSection rule={skill.rule} />
+      <SkillUsesSkillsSection
+        specializationId={specializationId}
+        usesSkillIds={skill.usesSkillIds}
+      />
       <SkillScriptsSection
         scripts={skill.scripts}
         activeScript={detail.activeScript}

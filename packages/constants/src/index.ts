@@ -5,6 +5,7 @@ export {
   getIntentCategorySlugs,
   INTENT_CATEGORIES,
   INTENT_CATEGORY_SLUG,
+  normalizeIntentCategorySlug,
 } from './intentCategories';
 export type { IntentCategoryDefinition } from './intentCategories';
 export { COUNTRIES } from './countries';

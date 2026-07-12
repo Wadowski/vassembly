@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const SKILL_SCRIPT_LANGUAGE_VALUES = ['python', 'nodejs', 'bash'] as const;
+const SKILL_SCRIPT_LANGUAGE_VALUES = ['python', 'nodejs', 'bash', 'terminal'] as const;
 
 export const createSkillSchema = z.object({
   specializationId: z.string().min(1),

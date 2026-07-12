@@ -13,6 +13,7 @@ export const GET_SKILL_QUERY = gql`
         filename
         language
       }
+      usesSkillIds
       createdAt
       updatedAt
     }

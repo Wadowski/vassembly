@@ -1,0 +1,22 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  padding: $spacing-1 $spacing-3;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
+}

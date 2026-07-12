@@ -34,6 +34,7 @@ export const SessionBootstrap = () => {
     if (tokens.authToken && tokens.refreshToken) {
       fetch?.({ body: {} });
     } else {
+      clearTokens();
       setStatus(false);
       clearSession();
       setBootstrapLoading(false);

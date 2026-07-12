@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProgressItem } from './ProgressItem';
 import type { ProgressListProps } from '../types';
 import styles from './ProgressList.module.scss';
+
+const RELATIVE_TIME_UPDATE_INTERVAL_MS = 30_000;
 
 export const ProgressList: React.FC<ProgressListProps> = ({
   items,
@@ -10,6 +12,22 @@ export const ProgressList: React.FC<ProgressListProps> = ({
   isLoading = false,
   emptyMessage = 'No progress events yet. Waiting for execution to start...',
 }) => {
+  const [relativeTimeTick, setRelativeTimeTick] = useState(0);
+
+  useEffect(() => {
+    if (items.length === 0) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      setRelativeTimeTick((current) => current + 1);
+    }, RELATIVE_TIME_UPDATE_INTERVAL_MS);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [items.length]);
+
   if (isLoading) {
     return (
       <div
@@ -43,6 +61,7 @@ export const ProgressList: React.FC<ProgressListProps> = ({
           item={item}
           isSelected={selectedEventId === item.id}
           onSelect={(trigger) => onSelectEvent(item.id, trigger)}
+          relativeTimeTick={relativeTimeTick}
         />
       ))}
     </ul>

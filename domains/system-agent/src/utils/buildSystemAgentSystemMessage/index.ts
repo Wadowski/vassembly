@@ -1,7 +1,20 @@
 import { appendCurrentDateTimeSection, SYSTEM_AGENT_NAME } from '@vassembly/constants';
 
+import { formatAssistantOrchestrationSection } from './formatAssistantOrchestrationSection';
 import { formatIntentCategoriesSection } from './formatIntentCategoriesSection';
 import { formatIntentRoutingSection } from './formatIntentRoutingSection';
+import { formatSkillPlannerScriptSection } from './formatSkillPlannerScriptSection';
+import {
+  formatSpecializationResearcherSkillsSection,
+  isSpecializationResearcherAgentName,
+} from './formatSpecializationResearcherSkillsSection';
+import {
+  formatSpecializationWorkerExecutionSection,
+  isSpecializationWorkerAgentName,
+} from './formatSpecializationWorkerExecutionSection';
+import { formatSubagentOutputPolicySection } from './formatSubagentOutputPolicySection';
+import { formatTaskPlannerPlanningSection } from './formatTaskPlannerPlanningSection';
+import { formatTaskWorkerOrchestrationSection } from './formatTaskWorkerOrchestrationSection';
 
 export interface BuildSystemAgentSystemMessageParams {
   name: string;
@@ -16,13 +29,30 @@ export const buildSystemAgentSystemMessage = ({
   skillsCatalogSection,
   now,
 }: BuildSystemAgentSystemMessageParams): string => {
-  let systemMessage = rule;
+  const sections: string[] = [rule];
+
+  if (name !== SYSTEM_AGENT_NAME.Assistant) {
+    sections.push(formatSubagentOutputPolicySection());
+  }
 
   if (name === SYSTEM_AGENT_NAME.IntentClassifier) {
-    systemMessage = `${rule}\n\n${formatIntentCategoriesSection()}`;
+    sections.push(formatIntentCategoriesSection());
   } else if (name === SYSTEM_AGENT_NAME.Assistant) {
-    systemMessage = `${rule}\n\n${formatIntentRoutingSection()}`;
+    sections.push(formatIntentRoutingSection());
+    sections.push(formatAssistantOrchestrationSection());
+  } else if (name === SYSTEM_AGENT_NAME.TaskWorker) {
+    sections.push(formatTaskWorkerOrchestrationSection());
+  } else if (name === SYSTEM_AGENT_NAME.TaskPlanner) {
+    sections.push(formatTaskPlannerPlanningSection());
+  } else if (name === SYSTEM_AGENT_NAME.SkillPlanner) {
+    sections.push(formatSkillPlannerScriptSection());
+  } else if (isSpecializationResearcherAgentName({ name })) {
+    sections.push(formatSpecializationResearcherSkillsSection());
+  } else if (isSpecializationWorkerAgentName({ name })) {
+    sections.push(formatSpecializationWorkerExecutionSection());
   }
+
+  let systemMessage = sections.join('\n\n');
 
   if (skillsCatalogSection) {
     systemMessage = `${systemMessage}\n\n${skillsCatalogSection}`;

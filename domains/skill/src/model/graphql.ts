@@ -33,6 +33,10 @@ export const gqlSkillSchema = (builder: Builder): void => {
         type: graphQLListType('SkillScript'),
         resolve: (parent: { scripts: unknown[] }) => parent.scripts,
       }),
+      usesSkillIds: t.field({
+        type: graphQLListType('String'),
+        resolve: (parent: { usesSkillIds?: string[] }) => parent.usesSkillIds ?? [],
+      }),
       createdAt: t.exposeString('createdAt'),
       updatedAt: t.exposeString('updatedAt'),
     }),

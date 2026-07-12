@@ -9,4 +9,5 @@ export class SkillModel extends Model {
   rule!: string;
   enabled!: boolean;
   scripts!: SkillScript[];
+  usesSkillIds?: string[];
 }

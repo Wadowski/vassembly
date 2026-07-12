@@ -22,6 +22,7 @@ vi.mock('@vassembly/domain-system-agent', () => ({
 }));
 
 import { provisionSpecializationAgents } from './provisionSpecializationAgents';
+import { SPECIALIZATION_AGENT_TOOL_IDS } from './constants';
 
 describe('provisionSpecializationAgents', () => {
   beforeEach(() => {
@@ -39,7 +40,7 @@ describe('provisionSpecializationAgents', () => {
     expect(mockCreateSystemAgent).toHaveBeenCalledTimes(3);
     expect(mockCreateSystemAgent).toHaveBeenCalledWith(
       expect.objectContaining({
-        assignedToolIds: ['web-search', 'web-page-content'],
+        assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
       }),
     );
     expect(mockCreateSystemAgent).toHaveBeenCalledWith(

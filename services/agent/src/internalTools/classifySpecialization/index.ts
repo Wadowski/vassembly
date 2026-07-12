@@ -4,6 +4,7 @@ import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ValidationError } from '@vassembly/errors';
 
 import { runAgentInvokeWithTools } from '../runAgentInvokeWithTools';
+import { resolveTaskId } from '../updateTask/resolveTaskId';
 import { logClassificationEvent } from './logClassificationEvent';
 import { normalizeGeneratedSpecializations } from './normalizeGeneratedSpecializations';
 
@@ -35,7 +36,7 @@ export const classifySpecializationToolHandler = async (
   args: Record<string, unknown>,
   context: InternalToolContext,
 ): Promise<string> => {
-  const taskId = typeof args.taskId === 'string' ? args.taskId : context.taskId;
+  const taskId = resolveTaskId({ args, context });
   const description = typeof args.description === 'string' ? args.description.trim() : '';
 
   if (!taskId) {

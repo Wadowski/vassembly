@@ -12,3 +12,5 @@ export { InternalError } from './InternalError';
 export { TimeoutError } from './TimeoutError';
 export { TooManyRequestsError } from './TooManyRequestsError';
 export type { TooManyRequestsErrorOptions } from './TooManyRequestsError';
+export { resolveRootCause, resolveRootCauseMessage } from './resolveRootCause';
+export type { RootCauseDetails } from './resolveRootCause';

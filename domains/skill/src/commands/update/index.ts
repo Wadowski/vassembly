@@ -11,6 +11,7 @@ import {
   SKILL_DESCRIPTION_SCHEMA,
   SKILL_RULE_SCHEMA,
   SKILL_SCRIPTS_INPUT_SCHEMA,
+  USES_SKILL_IDS_SCHEMA,
 } from '../shared/schemas';
 
 import type { UpdateSkillCommandInput, UpdateSkillCommandResult } from './types';
@@ -22,13 +23,15 @@ const UPDATE_INPUT_SCHEMA = z
     rule: SKILL_RULE_SCHEMA.optional(),
     enabled: z.boolean().optional(),
     scripts: SKILL_SCRIPTS_INPUT_SCHEMA.optional(),
+    usesSkillIds: USES_SKILL_IDS_SCHEMA.optional(),
   })
   .refine(
     (value) =>
       value.description !== undefined ||
       value.rule !== undefined ||
       value.enabled !== undefined ||
-      value.scripts !== undefined,
+      value.scripts !== undefined ||
+      value.usesSkillIds !== undefined,
     { message: 'At least one field must be provided for update' },
   );
 
@@ -40,11 +43,12 @@ const UPDATE_DB_SCHEMA = z.object({
     .array(
       z.object({
         filename: z.string().min(1),
-        language: z.enum(['python', 'nodejs', 'bash']),
+        language: z.enum(['python', 'nodejs', 'bash', 'terminal']),
         storageKey: z.string().min(1),
       }),
     )
     .optional(),
+  usesSkillIds: USES_SKILL_IDS_SCHEMA.optional(),
 });
 
 const validateUpdateInput = validatorFactory(UPDATE_INPUT_SCHEMA);
@@ -105,6 +109,10 @@ export const update = async (
     });
 
     updateData.scripts = persistedScripts;
+  }
+
+  if (parsed.data.usesSkillIds !== undefined) {
+    updateData.usesSkillIds = parsed.data.usesSkillIds;
   }
 
   const result = await persistUpdate({

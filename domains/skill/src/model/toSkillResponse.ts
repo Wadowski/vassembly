@@ -37,6 +37,7 @@ export const toSkillResponse = ({ skill }: ToSkillResponseParams): SkillResponse
       filename: script.filename,
       language: script.language,
     })),
+    usesSkillIds: skill.usesSkillIds ?? [],
     createdAt: toIsoString({ value: skill.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: skill.updatedAt!, fieldName: 'updatedAt' }),
     removedAt: toNullableIsoString(skill.removedAt),

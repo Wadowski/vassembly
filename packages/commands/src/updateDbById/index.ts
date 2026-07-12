@@ -5,8 +5,12 @@ import type { CommonDbCommandGeneratorParams } from "../types";
 import type { UpdateDbHandler } from "./types";
 import { z } from "zod";
 
+const MONGODB_OBJECT_ID_HEX = /^[a-f\d]{24}$/i;
+
 const VALIDATION_SCHEMA = z.object({
-  id: z.string(),
+  id: z.string().regex(MONGODB_OBJECT_ID_HEX, {
+    message: "id must be a 24 character hexadecimal MongoDB ObjectId string",
+  }),
 });
 
 export const updateDbById = <T extends Model>({

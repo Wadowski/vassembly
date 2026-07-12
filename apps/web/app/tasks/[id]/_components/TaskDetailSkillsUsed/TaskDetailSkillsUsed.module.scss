@@ -1,0 +1,35 @@
+@import '@vassembly/theme/src/tokens/index.scss';
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.heading {
+  margin: 0;
+  font-size: $font-size-body-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.tagLink {
+  text-decoration: none;
+  color: inherit;
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+}
+
+.tag {
+  display: inline-flex;
+}

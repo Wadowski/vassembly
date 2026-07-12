@@ -17,6 +17,7 @@ vi.mock('@vassembly/domain-system-agent', () => ({
 }));
 
 import { backfillSpecializationAgentTools } from './backfillSpecializationAgentTools';
+import { SPECIALIZATION_AGENT_TOOL_IDS } from './constants';
 
 describe('backfillSpecializationAgentTools', () => {
   beforeEach(() => {
@@ -50,13 +51,13 @@ describe('backfillSpecializationAgentTools', () => {
 
     const result = await backfillSpecializationAgentTools();
 
-    expect(result.updatedCount).toBe(1);
-    expect(mockUpdateSystemAgent).toHaveBeenCalledTimes(1);
+    expect(result.updatedCount).toBe(2);
+    expect(mockUpdateSystemAgent).toHaveBeenCalledTimes(2);
     expect(mockUpdateSystemAgent).toHaveBeenCalledWith({
       id: 'agent-1',
       updatedByAdminId: 'system-seed-admin',
       data: {
-        assignedToolIds: ['web-search', 'web-page-content'],
+        assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
       },
     });
   });
@@ -67,7 +68,7 @@ describe('backfillSpecializationAgentTools', () => {
         {
           id: 'agent-1',
           specializationId: 'spec-1',
-          assignedToolIds: ['web-search', 'web-page-content'],
+          assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
         },
       ],
       totalCount: 1,

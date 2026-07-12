@@ -64,6 +64,7 @@ export interface RunAgentInvokeWithToolsParams {
   message: string;
   credentialScope?: CredentialScope;
   connectionOverride?: { integrationCredentialId: string };
+  mcpIdsOverride?: string[];
   toolContext: InternalToolContext;
 }
 

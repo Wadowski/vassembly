@@ -12,6 +12,7 @@ import {
   SKILL_NAME_SCHEMA,
   SKILL_RULE_SCHEMA,
   SKILL_SCRIPTS_INPUT_SCHEMA,
+  USES_SKILL_IDS_SCHEMA,
 } from '../shared/schemas';
 
 import type { CreateSkillCommandInput, CreateSkillCommandResult } from './types';
@@ -22,6 +23,7 @@ const CREATE_INPUT_SCHEMA = z.object({
   description: SKILL_DESCRIPTION_SCHEMA,
   rule: SKILL_RULE_SCHEMA,
   scripts: SKILL_SCRIPTS_INPUT_SCHEMA,
+  usesSkillIds: USES_SKILL_IDS_SCHEMA.optional(),
   onDuplicate: z.enum(['error', 'returnExisting']).optional(),
 });
 
@@ -32,6 +34,7 @@ const CREATE_DB_SCHEMA = z.object({
   rule: SKILL_RULE_SCHEMA,
   enabled: z.literal(true),
   scripts: z.array(z.unknown()).default([]),
+  usesSkillIds: USES_SKILL_IDS_SCHEMA,
 });
 
 const validateCreateInput = validatorFactory(CREATE_INPUT_SCHEMA);
@@ -114,6 +117,7 @@ export const create = async (
   const description = parsed.data.description.trim();
   const rule = parsed.data.rule.trim();
   const scripts = parsed.data.scripts ?? [];
+  const usesSkillIds = parsed.data.usesSkillIds ?? [];
 
   const duplicateResult = await handleDuplicate({
     specializationId: parsed.data.specializationId,
@@ -133,6 +137,7 @@ export const create = async (
       rule,
       enabled: true,
       scripts: [],
+      usesSkillIds,
     });
 
     const skillId = created.data.id!;

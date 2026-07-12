@@ -77,6 +77,7 @@ export interface ProgressItemProps {
   item: TimelineItem;
   isSelected: boolean;
   onSelect: (trigger?: HTMLButtonElement | null) => void;
+  relativeTimeTick?: number;
 }
 
 export interface ProgressDetailModalProps {

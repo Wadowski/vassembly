@@ -109,10 +109,25 @@ describe('listAgents internal tool handler', () => {
     expect(agents.every((agent) => agent.agentType === 'personal')).toBe(true);
   });
 
-  it('should return active system and personal agents when caller is system', async () => {
+  it('should return empty list for system callers in task execution without specializationIds', async () => {
     const result = await listAgents({
       args: {},
       context: { ...BASE_CONTEXT, callerAgentType: 'system' },
+    });
+
+    expect(JSON.parse(result)).toEqual([]);
+    expect(mockGetAdminList).not.toHaveBeenCalled();
+    expect(mockGetListForUser).not.toHaveBeenCalled();
+  });
+
+  it('should return active system and personal agents when caller is system outside task execution', async () => {
+    const result = await listAgents({
+      args: {},
+      context: {
+        ...BASE_CONTEXT,
+        taskId: '',
+        callerAgentType: 'system',
+      },
     });
 
     const agents = JSON.parse(result) as Array<Record<string, unknown>>;

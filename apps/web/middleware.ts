@@ -8,13 +8,33 @@ const AUTH_TOKEN_KEY = 'auth-token';
 const ONBOARDING_ROUTE = '/onboarding';
 const ONBOARDING_ALLOWED_ROUTE_SET = new Set<string>(ONBOARDING_ALLOWED_ROUTES);
 
+const isValidAuthToken = (token: string): boolean => {
+  const claims = decodeJwtPayload(token);
+  if (claims === null) {
+    return false;
+  }
+
+  const exp = claims.exp;
+  if (typeof exp === 'number') {
+    return exp * 1000 > Date.now();
+  }
+
+  return true;
+};
+
 export function middleware(request: NextRequest): NextResponse {
   const pathname = request.nextUrl.pathname;
   const authToken = request.cookies.get(AUTH_TOKEN_KEY)?.value;
   const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page));
 
   if (isAuthPage && authToken) {
-    return NextResponse.redirect(new URL('/', request.url));
+    if (isValidAuthToken(authToken)) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    const response = NextResponse.next();
+    response.cookies.delete(AUTH_TOKEN_KEY);
+    return response;
   }
 
   if (authToken) {

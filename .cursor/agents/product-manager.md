@@ -1,6 +1,6 @@
 ---
 name: product-manager
-model: claude-sonnet-4-6[thinking=true,context=200k,effort=low]
+model: claude-sonnet-5[thinking=true,context=300k,effort=medium]
 description: Technical Product Manager specializing in PRD creation. Translates feature descriptions into high-quality Product Requirement Documents for engineers, designers, and QA. Use proactively when working on feature specifications or user story definitions.
 ---
 

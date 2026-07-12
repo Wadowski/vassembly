@@ -14,6 +14,7 @@ import {
 import { resolveMcpSlugs } from '../helpers/resolveMcpSlugs';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
 import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
+import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
 
 import type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from '@vassembly/domain-ai-integration';
 import type {
@@ -46,9 +47,11 @@ interface InvokePersonalAgentParams {
 }
 
 interface InvokeSystemAgentParams {
+  userId: string;
   agentId: string;
   message: string;
   client: ModeledProviderClient;
+  mcpIdsOverride?: string[];
   toolContext: RunAgentInvokeWithToolsParams['toolContext'];
 }
 
@@ -58,11 +61,11 @@ interface BuildSkillsCatalogSectionParams {
 
 const buildSkillsCatalogSection = async ({
   specializationId,
-}: BuildSkillsCatalogSectionParams): Promise<string | undefined> => {
+}: BuildSkillsCatalogSectionParams): Promise<string> => {
   const { items } = await skillDomain.queries.getCatalogBySpecializationId({ specializationId });
 
   if (items.length === 0) {
-    return undefined;
+    return '## Available Skills\n\n(none)';
   }
 
   return formatSkillsCatalogSection({ items });
@@ -185,9 +188,11 @@ const invokePersonalAgent = async ({
 };
 
 const invokeSystemAgent = async ({
+  userId,
   agentId,
   message,
   client,
+  mcpIdsOverride,
   toolContext,
 }: InvokeSystemAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
@@ -205,15 +210,24 @@ const invokeSystemAgent = async ({
   });
 
   const skillsCatalogSection =
-    agent.specializationId !== undefined && agent.specializationId !== null && agent.specializationId !== ''
+    agent.specializationId !== undefined &&
+    agent.specializationId !== null &&
+    agent.specializationId !== ''
       ? await buildSkillsCatalogSection({ specializationId: agent.specializationId })
       : undefined;
+
+  const mcpIds = mcpIdsOverride ?? [];
+  const { mcpServerConfigs, skippedMcpIds } =
+    mcpIdsOverride !== undefined
+      ? await resolveMcpConfigs({ userId, mcpIds })
+      : { mcpServerConfigs: [], skippedMcpIds: [] };
 
   const result = await systemAgentDomain.commands.invoke({
     modeledProviderClient: client,
     systemAgentId: agentId,
     message,
     internalToolBindings: bindings,
+    mcpServerConfigs: mcpIdsOverride !== undefined ? mcpServerConfigs : undefined,
     signal: toolContext.abortSignal,
     shouldAbort: toolContext.shouldAbort,
     skillsCatalogSection,
@@ -225,8 +239,8 @@ const invokeSystemAgent = async ({
     metadata: {
       model: result.metadata?.model,
       provider: result.metadata?.provider,
-      mcpIdsUsed: [],
-      skippedMcpIds: [],
+      mcpIdsUsed: mcpIdsOverride !== undefined ? mcpIds.filter((id) => !skippedMcpIds.includes(id)) : [],
+      skippedMcpIds: mcpIdsOverride !== undefined ? skippedMcpIds : [],
       internalToolIdsUsed: result.toolUsage?.internalToolIdsUsed ?? [],
       skippedInternalToolIds: skippedToolIds,
       maxUseAgentDepth: MAX_USE_AGENT_DEPTH,
@@ -250,9 +264,10 @@ export const runAgentInvokeWithTools = async (
   params: RunAgentInvokeWithToolsParams,
 ): Promise<RunAgentInvokeWithToolsResult> => {
   const { toolContext } = params;
-  const recordProgress = toolContext.recordAgentInvokeProgress;
   const invokeStartTime = Date.now();
   const credentialSource = params.credentialScope ?? 'user';
+  const recordProgress =
+    credentialSource === 'platform' ? undefined : toolContext.recordAgentInvokeProgress;
 
   await assertNotAborted(toolContext);
 
@@ -283,9 +298,11 @@ export const runAgentInvokeWithTools = async (
       params.agentType === 'personal'
         ? await invokePersonalAgent({ ...params, client })
         : await invokeSystemAgent({
+            userId: params.userId,
             agentId: params.agentId,
             message: params.message,
             client,
+            mcpIdsOverride: params.mcpIdsOverride,
             toolContext: params.toolContext,
           });
 
@@ -316,11 +333,7 @@ export const runAgentInvokeWithTools = async (
         ...integrationSnapshot,
       });
     } else if (recordProgress && !(error instanceof ExecutionPausedError)) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      const errorType =
-        error instanceof Error && 'code' in error
-          ? String((error as Error & { code?: string }).code)
-          : undefined;
+      const errorDetails = resolveInvokeErrorDetails(error);
 
       await recordProgress({
         agentId: params.agentId,
@@ -328,11 +341,7 @@ export const runAgentInvokeWithTools = async (
         state: 'failed',
         timestamp: new Date(),
         duration: Date.now() - invokeStartTime,
-        errorDetails: {
-          message: errorMessage,
-          type: errorType,
-          stackTrace: error instanceof Error ? error.stack : undefined,
-        },
+        errorDetails,
         credentialSource,
         ...integrationSnapshot,
       });

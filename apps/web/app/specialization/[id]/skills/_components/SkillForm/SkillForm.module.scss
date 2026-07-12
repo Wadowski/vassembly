@@ -11,7 +11,8 @@
   gap: $spacing-3;
 }
 
-.scriptsSection {
+.scriptsSection,
+.usesSkillsSection {
   display: flex;
   flex-direction: column;
   gap: $spacing-4;

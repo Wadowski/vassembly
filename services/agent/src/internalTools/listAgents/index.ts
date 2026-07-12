@@ -31,8 +31,18 @@ const mapSystemAgentRow = (agent: {
   agentType: 'system',
 });
 
+const isTaskExecutionContext = (taskId: string): boolean => taskId !== '';
+
 export const listAgents = async ({ args, context }: ListAgentsParams): Promise<string> => {
   const specializationIds = resolveSpecializationIds({ args, context });
+
+  if (
+    context.callerAgentType === 'system' &&
+    isTaskExecutionContext(context.taskId) &&
+    specializationIds === undefined
+  ) {
+    return JSON.stringify([]);
+  }
 
   if (specializationIds !== undefined && context.callerAgentType === 'system') {
     const specializationAgents = await listSystemAgentsBySpecializationIds({ specializationIds });

@@ -48,7 +48,8 @@ describe('internal tool registry', () => {
         expect.objectContaining({
           id: 'task-update',
           displayName: 'task - update',
-          description: 'Persist title and/or category for a task by its ID',
+          description:
+            'Persist title, category, specializationIds, or skillIdsUsed for the current task. taskId is optional during task execution — it is taken from execution context.',
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'update_task',
         }),
@@ -93,6 +94,22 @@ describe('internal tool registry', () => {
           llmToolName: 'resolve_skill',
         }),
         expect.objectContaining({
+          id: 'skill-run-script',
+          displayName: 'skill - run-script',
+          description:
+            'Execute a bundled script for a named skill in an isolated sandbox and return stdout, stderr, and exit code.',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'run_skill_script',
+        }),
+        expect.objectContaining({
+          id: 'skill-plan',
+          displayName: 'skill - plan',
+          description:
+            'Invoke the Skill planner to create a new skill when no existing skill fits the goal',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'invoke_skill_planner',
+        }),
+        expect.objectContaining({
           id: 'web-search',
           displayName: 'web - search',
           description: 'Search the web and return a list of results (title, URL, and snippet)',
@@ -109,7 +126,7 @@ describe('internal tool registry', () => {
         }),
       ]),
     );
-    expect(tools).toHaveLength(10);
+    expect(tools).toHaveLength(12);
   });
 
   it('should have unique registry ids', () => {
@@ -237,7 +254,9 @@ describe('filtering tools by agent type', () => {
       'agent-list',
       'agent-use',
       'skill-create',
+      'skill-plan',
       'skill-resolve',
+      'skill-run-script',
       'specialization-classify',
       'specialization-create',
       'task-update',

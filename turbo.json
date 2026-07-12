@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "ui": "tui",
+  "ui": "stream",
   "envMode": "loose",
   "globalDependencies": [
     ".env",
@@ -30,7 +30,15 @@
     "MONGODB_DATABASE",
     "JWT_SECRET",
     "SKILL_SCRIPT_STORAGE_BUCKET",
-    "SKILL_SCRIPT_STORAGE_LOCAL_PATH"
+    "SKILL_SCRIPT_STORAGE_LOCAL_PATH",
+    "SKILLS_EXECUTION_BACKEND",
+    "SKILLS_EXECUTION_STDOUT_MAX_BYTES",
+    "SKILLS_EXECUTION_STDERR_MAX_BYTES",
+    "SKILLS_EXECUTION_MEMORY_LIMIT_MB",
+    "SKILLS_EXECUTION_WORKER_URL",
+    "SKILLS_EXECUTION_CLOUD_WORKER_URL",
+    "SKILLS_EXECUTION_CLOUD_API_KEY",
+    "SKILLS_EXECUTION_WARM_POOL_SIZE"
   ],
   "tasks": {
     "build": {

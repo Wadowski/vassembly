@@ -47,7 +47,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
   defineInternalTool({
     domain: 'task',
     action: 'update',
-    description: 'Persist title and/or category for a task by its ID',
+    description: 'Persist title, category, specializationIds, or skillIdsUsed for the current task. taskId is optional during task execution — it is taken from execution context.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'update_task',
   }),
@@ -90,6 +90,22 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
       'Resolve the full rule text for a named skill in a specialization domain.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'resolve_skill',
+  }),
+  defineInternalTool({
+    domain: 'skill',
+    action: 'run-script',
+    description:
+      'Execute a bundled script for a named skill in an isolated sandbox and return stdout, stderr, and exit code.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'run_skill_script',
+  }),
+  defineInternalTool({
+    domain: 'skill',
+    action: 'plan',
+    description:
+      'Invoke the Skill planner to create a new skill when no existing skill fits the goal',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'invoke_skill_planner',
   }),
   defineInternalTool({
     domain: 'web',

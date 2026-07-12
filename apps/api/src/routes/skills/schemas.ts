@@ -25,6 +25,7 @@ export const CREATE_SKILL_BODY_SCHEMA = z.object({
   description: z.string().trim().min(1).max(SKILL_DESCRIPTION_MAX_LENGTH),
   rule: z.string().trim().min(1).max(SKILL_RULE_MAX_LENGTH),
   scripts: z.array(SKILL_SCRIPT_WRITE_BODY_SCHEMA).max(SKILL_SCRIPT_MAX_COUNT).optional().default([]),
+  usesSkillIds: z.array(z.string().trim().min(1)).optional().default([]),
 });
 
 export const UPDATE_SKILL_BODY_SCHEMA = z
@@ -33,13 +34,15 @@ export const UPDATE_SKILL_BODY_SCHEMA = z
     rule: z.string().trim().min(1).max(SKILL_RULE_MAX_LENGTH).optional(),
     enabled: z.boolean().optional(),
     scripts: z.array(SKILL_SCRIPT_WRITE_BODY_SCHEMA).max(SKILL_SCRIPT_MAX_COUNT).optional(),
+    usesSkillIds: z.array(z.string().trim().min(1)).optional(),
   })
   .refine(
     (value) =>
       value.description !== undefined ||
       value.rule !== undefined ||
       value.enabled !== undefined ||
-      value.scripts !== undefined,
+      value.scripts !== undefined ||
+      value.usesSkillIds !== undefined,
     { message: 'At least one field must be provided' },
   );
 
@@ -56,6 +59,7 @@ export const SKILL_RESPONSE_SCHEMA = z.object({
       language: z.enum(SKILL_SCRIPT_LANGUAGE_VALUES),
     }),
   ),
+  usesSkillIds: z.array(z.string()),
   createdAt: z.string(),
   updatedAt: z.string(),
   removedAt: z.string().nullable(),

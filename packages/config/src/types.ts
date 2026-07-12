@@ -23,8 +23,30 @@ export interface SkillScriptStorageConfig {
   localRootPath?: string;
 }
 
+export type SkillExecutionBackend = 'local' | 'cloud';
+
+export interface SandboxLocalConfig {
+  workerUrl: string;
+}
+
+export interface SandboxCloudConfig {
+  workerUrl: string;
+  apiKey?: string;
+  warmPoolSize: number;
+}
+
+export interface ExecutionConfig {
+  backend: SkillExecutionBackend;
+  stdoutMaxBytes: number;
+  stderrMaxBytes: number;
+  memoryLimitMb: number;
+  local: SandboxLocalConfig;
+  cloud: SandboxCloudConfig;
+}
+
 export interface SkillsConfig {
   scriptStorage: SkillScriptStorageConfig;
+  execution: ExecutionConfig;
 }
 
 export interface PlatformAiConfig {

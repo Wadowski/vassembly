@@ -37,6 +37,7 @@ const buildTaskResponse = (): TaskResponse => ({
   status: TaskStatus.Created,
   agentAssignedId: null,
   specializationIds: null,
+  skillIdsUsed: null,
   title: null,
   category: null,
   llmResponse: null,

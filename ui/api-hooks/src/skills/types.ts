@@ -15,6 +15,7 @@ export interface SkillItem {
   rule: string;
   enabled: boolean;
   scripts: SkillScriptItem[];
+  usesSkillIds: string[];
   createdAt: string;
   updatedAt: string;
   removedAt: string | null;
@@ -40,6 +41,7 @@ export interface CreateSkillInput {
   description: string;
   rule: string;
   scripts?: SkillScriptWriteInput[];
+  usesSkillIds?: string[];
 }
 
 export interface UpdateSkillInput {
@@ -47,6 +49,7 @@ export interface UpdateSkillInput {
   rule?: string;
   enabled?: boolean;
   scripts?: SkillScriptWriteInput[];
+  usesSkillIds?: string[];
 }
 
 export interface SkillFormScriptInput {
@@ -60,6 +63,7 @@ export interface SkillFormInput {
   description: string;
   rule: string;
   scripts: SkillFormScriptInput[];
+  usesSkillIds: string[];
 }
 
 export interface SkillCreateVariables {

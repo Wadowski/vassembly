@@ -1,0 +1,28 @@
+{
+  "name": "@vassembly/client-sandbox",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "worker": "tsx src/local-worker/server.ts",
+    "dev": "tsx watch src/local-worker/server.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.7",
+    "@vassembly/eslint-config": "workspace:*",
+    "@vassembly/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "tsx": "^4.21.0",
+    "typescript": "5.9.2",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "@vassembly/config": "workspace:*",
+    "@vassembly/errors": "workspace:^"
+  }
+}

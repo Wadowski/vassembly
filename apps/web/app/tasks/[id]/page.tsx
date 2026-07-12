@@ -4,6 +4,7 @@ import { ExecutionProgressTracker } from '@vassembly/ui-execution-progress-track
 import { useUserAuth } from '@vassembly/ui-user-auth';
 
 import { LinkedSpecializations } from '../../_components/LinkedSpecializations/LinkedSpecializations';
+import { TaskDetailSkillsUsed } from './_components/TaskDetailSkillsUsed';
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
 import { TaskDetailAiResponse } from './_components/TaskDetailAiResponse/TaskDetailAiResponse';
 import { TaskDetailDescription } from './_components/TaskDetailDescription';
@@ -49,6 +50,10 @@ export default function TaskDetailPage(): JSX.Element {
         <article className={styles.contentColumn}>
           <LinkedSpecializations
             specializationIds={view.task.specializationIds ?? []}
+            isAdmin={isAdmin}
+          />
+          <TaskDetailSkillsUsed
+            skillIds={view.task.skillIdsUsed ?? []}
             isAdmin={isAdmin}
           />
           <TaskDetailAiResponse task={view.task} />

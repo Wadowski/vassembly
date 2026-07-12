@@ -2,9 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { NotFoundError, ValidationError } from '@vassembly/errors';
 
-const { mockGetActiveById, mockGetActiveRuleByName } = vi.hoisted(() => ({
+const { mockGetActiveById, mockGetActiveRuleByName, mockGetActiveRuleById, mockResolveSkillComposition, mockRunAutoScriptsFromRule } = vi.hoisted(() => ({
   mockGetActiveById: vi.fn(),
   mockGetActiveRuleByName: vi.fn(),
+  mockGetActiveRuleById: vi.fn(),
+  mockResolveSkillComposition: vi.fn(),
+  mockRunAutoScriptsFromRule: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-system-agent', () => ({
@@ -19,8 +22,17 @@ vi.mock('@vassembly/domain-skill', () => ({
   default: {
     queries: {
       getActiveRuleByName: mockGetActiveRuleByName,
+      getActiveRuleById: mockGetActiveRuleById,
     },
   },
+}));
+
+vi.mock('./resolveSkillComposition', () => ({
+  resolveSkillComposition: mockResolveSkillComposition,
+}));
+
+vi.mock('../runSkillScript', () => ({
+  runAutoScriptsFromRule: mockRunAutoScriptsFromRule,
 }));
 
 import { resolveSkillToolHandler } from './index';
@@ -47,8 +59,16 @@ describe('resolveSkillToolHandler', () => {
       },
     });
     mockGetActiveRuleByName.mockResolvedValue({
+      skillId: 'skill-1',
       rule: 'Follow the contract checklist.',
+      scripts: [],
     });
+    mockResolveSkillComposition.mockResolvedValue({
+      name: 'contract-review',
+      rule: 'Follow the contract checklist.',
+      scripts: [],
+    });
+    mockRunAutoScriptsFromRule.mockResolvedValue([]);
   });
 
   it('should return JSON with skillName and rule for active skill', async () => {
@@ -65,6 +85,7 @@ describe('resolveSkillToolHandler', () => {
       specializationId: 'spec-1',
       skillName: 'contract-review',
     });
+    expect(mockResolveSkillComposition).toHaveBeenCalledWith({ skillId: 'skill-1' });
   });
 
   it('should use explicit specializationId when provided', async () => {
@@ -133,13 +154,17 @@ describe('resolveSkillToolHandler', () => {
     });
   });
 
-  it('should propagate NotFoundError when skill is missing or inactive', async () => {
+  it('should return skill_not_found JSON when skill is missing or inactive', async () => {
     mockGetActiveRuleByName.mockRejectedValue(
       new NotFoundError('Skill "contract-review" not found or not active'),
     );
 
-    await expect(
-      resolveSkillToolHandler({ skillName: 'contract-review' }, TOOL_CONTEXT),
-    ).rejects.toThrow(NotFoundError);
+    const result = await resolveSkillToolHandler({ skillName: 'contract-review' }, TOOL_CONTEXT);
+
+    expect(JSON.parse(result)).toEqual({
+      error: 'skill_not_found',
+      skillName: 'contract-review',
+      message: 'Skill "contract-review" not found or not active',
+    });
   });
 });

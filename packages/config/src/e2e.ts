@@ -1,4 +1,5 @@
 import { CacheBackend, Environment, type Config } from './types';
+import { buildExecutionConfig } from './buildExecutionConfig';
 
 export const E2E_WEB_PORT = 3001;
 export const E2E_API_PORT = 5001;
@@ -72,6 +73,7 @@ const config: Config = {
       bucketName: process.env.SKILL_SCRIPT_STORAGE_BUCKET || '',
       localRootPath: process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH || './.data/skill-scripts',
     },
+    execution: buildExecutionConfig({ backend: 'local' }),
   },
   services: {
     api: {

@@ -8,6 +8,7 @@ export interface CreateSkillCommandInput {
   description: string;
   rule: string;
   scripts?: SkillScriptInput[];
+  usesSkillIds?: string[];
   onDuplicate?: SkillDuplicateBehavior;
 }
 

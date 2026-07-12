@@ -8,6 +8,7 @@ export interface UpdateSkillCommandInput {
   rule?: string;
   enabled?: boolean;
   scripts?: SkillScriptInput[];
+  usesSkillIds?: string[];
 }
 
 export interface UpdateSkillCommandResult {

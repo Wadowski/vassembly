@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Button } from '@vassembly/ui-button';
 import { Modal } from '@vassembly/ui-modal';
 import { Text } from '@vassembly/ui-text';
 
 import { formatDuration } from '../utils/formatDuration';
-import { formatRelativeTime } from '../utils/formatRelativeTime';
+import { formatLocalDateTime } from '../utils/formatLocalDateTime';
 import { getProgressEventTitle } from '../utils/getProgressEventTitle';
 import { getProviderLabel } from '../utils/getProviderLabel';
 import { TokenUsageWidget } from './TokenUsageWidget';
@@ -36,22 +36,6 @@ const hasIntegrationInfo = (event: ProgressEvent): boolean =>
   Boolean(event.integrationName || event.provider || event.model);
 
 export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen, event, onClose }) => {
-  const [, setRelativeTimeTick] = useState(0);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const intervalId = setInterval(() => {
-      setRelativeTimeTick((current) => current + 1);
-    }, 30_000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [isOpen]);
-
   if (!event) {
     return null;
   }
@@ -92,9 +76,9 @@ export const ProgressDetailModal: React.FC<ProgressDetailModalProps> = ({ isOpen
                 variant="body2"
                 as="dd"
                 className={styles.metadataValue}
-                data-testid="relative-time"
+                data-testid="event-timestamp"
               >
-                started {formatRelativeTime(event.timestamp)}
+                {formatLocalDateTime(event.timestamp)}
               </Text>
             </div>
             <div className={styles.metadataRow}>

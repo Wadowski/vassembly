@@ -11,12 +11,7 @@ import { INTENT_CATEGORY_SLUG } from './types';
 
 describe('INTENT_CATEGORIES registry', () => {
   it('should expose all v1 category slugs', () => {
-    expect(getIntentCategorySlugs()).toEqual([
-      INTENT_CATEGORY_SLUG.Question,
-      INTENT_CATEGORY_SLUG.Task,
-      INTENT_CATEGORY_SLUG.ScheduledTask,
-      INTENT_CATEGORY_SLUG.RoutineTask,
-    ]);
+    expect(getIntentCategorySlugs()).toEqual([INTENT_CATEGORY_SLUG.Task]);
   });
 
   it('should resolve category by slug', () => {

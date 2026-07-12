@@ -1,9 +1,25 @@
 import skillDomain from '@vassembly/domain-skill';
 import systemAgentDomain from '@vassembly/domain-system-agent';
-import { ValidationError } from '@vassembly/errors';
+import { NotFoundError, ValidationError } from '@vassembly/errors';
+
+import { runAutoScriptsFromRule } from '../runSkillScript';
+import { resolveSkillComposition } from './resolveSkillComposition';
 
 import type { ResolveSkillToolResult } from './types';
 import type { InternalToolContext } from '../types';
+
+const buildSkillNotFoundResult = ({
+  skillName,
+  message,
+}: {
+  skillName: string;
+  message: string;
+}): string =>
+  JSON.stringify({
+    error: 'skill_not_found',
+    skillName,
+    message,
+  } satisfies ResolveSkillToolResult);
 
 export const resolveSkillToolHandler = async (
   args: Record<string, unknown>,
@@ -42,13 +58,39 @@ export const resolveSkillToolHandler = async (
     throw new ValidationError('Cannot resolve skill: no specializationId available');
   }
 
-  const { rule } = await skillDomain.queries.getActiveRuleByName({
+  let entry;
+
+  try {
+    entry = await skillDomain.queries.getActiveRuleByName({
+      specializationId,
+      skillName,
+    });
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      return buildSkillNotFoundResult({
+        skillName,
+        message: error.message,
+      });
+    }
+
+    throw error;
+  }
+
+  const { name, rule: composedRule, scripts: allScripts } = await resolveSkillComposition({
+    skillId: entry.skillId,
+  });
+
+  const autoRunResults = await runAutoScriptsFromRule({
+    rule: composedRule,
+    skillName: name,
+    scripts: allScripts,
     specializationId,
-    skillName,
+    context,
   });
 
   return JSON.stringify({
-    skillName,
-    rule,
+    skillName: name,
+    rule: composedRule,
+    ...(autoRunResults.length > 0 ? { autoRunResults } : {}),
   } satisfies ResolveSkillToolResult);
 };

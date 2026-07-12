@@ -8,7 +8,7 @@
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
-    "dev": "docker-compose -p vassembly-e2e-mongo up",
+    "dev": "docker-compose -p vassembly-e2e-mongo up -d && exec sleep infinity",
     "test:watch": "vitest"
   },
   "devDependencies": {

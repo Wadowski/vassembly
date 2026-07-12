@@ -11,6 +11,7 @@ const TASK_FIELDS = [
   'agentAssignedId',
   'title',
   'specializationIds',
+  'skillIdsUsed',
   'llmResponse',
   'errorMessage',
   'errorCode',

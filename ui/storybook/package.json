@@ -3,7 +3,6 @@
   "private": true,
   "scripts": {
     "build": "npm run build-storybook",
-    "dev": "npm run storybook",
     "lint": "eslint . --max-warnings 0",
     "storybook": "storybook dev -p 6006",
     "test": "vitest run",

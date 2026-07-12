@@ -26,6 +26,7 @@ export const toTaskResponse = ({ task }: ToTaskResponseParams): TaskResponse => 
     title: task.title ?? null,
     category: task.category ?? null,
     specializationIds: task.specializationIds ?? null,
+    skillIdsUsed: task.skillIdsUsed ?? null,
     llmResponse: task.llmResponse ?? null,
     errorMessage: task.errorMessage ?? null,
     errorCode: task.errorCode ?? null,

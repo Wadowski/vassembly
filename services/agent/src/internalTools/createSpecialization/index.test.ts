@@ -10,6 +10,7 @@ const {
   mockGetPreferenceByUserId,
   mockMapMcpsToSpecialization,
   mockGenerateSpecializationAgentDescriptions,
+  mockUpdateTask,
 } = vi.hoisted(() => ({
   mockCreateSpecialization: vi.fn(),
   mockGetBySpecializationId: vi.fn(),
@@ -17,12 +18,21 @@ const {
   mockGetPreferenceByUserId: vi.fn(),
   mockMapMcpsToSpecialization: vi.fn(),
   mockGenerateSpecializationAgentDescriptions: vi.fn(),
+  mockUpdateTask: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-specialization', () => ({
   default: {
     commands: {
       create: mockCreateSpecialization,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-task', () => ({
+  default: {
+    commands: {
+      updateTask: mockUpdateTask,
     },
   },
 }));
@@ -53,10 +63,13 @@ vi.mock('./generateSpecializationAgentDescriptions', () => ({
 import { createSpecializationToolHandler } from './index';
 
 import type { InternalToolContext } from '../types';
+import { SPECIALIZATION_AGENT_TOOL_IDS } from './constants';
+
+const TASK_ID = '507f1f77bcf86cd799439011';
 
 const BASE_CONTEXT: InternalToolContext = {
   userId: 'user-1',
-  taskId: 'task-1',
+  taskId: TASK_ID,
   invocationId: 'invocation-1',
   callerAgentId: 'agent-1',
   callerAgentType: 'system',
@@ -67,6 +80,7 @@ const BASE_CONTEXT: InternalToolContext = {
 describe('createSpecialization internal tool handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUpdateTask.mockResolvedValue({ data: { id: TASK_ID } });
     mockCreateSpecialization.mockResolvedValue({ id: 'spec-1', isNew: true });
     mockGetBySpecializationId.mockResolvedValue({ items: [] });
     mockCreateSystemAgent.mockResolvedValue({ data: { id: 'agent-1' } });
@@ -90,6 +104,21 @@ describe('createSpecialization internal tool handler', () => {
     expect(mockMapMcpsToSpecialization).not.toHaveBeenCalled();
   });
 
+  it('should link specialization to task and update context when taskId is present', async () => {
+    const context = { ...BASE_CONTEXT, specializationIds: null };
+
+    await createSpecializationToolHandler(
+      { name: 'legal', description: 'Legal specialization' },
+      context,
+    );
+
+    expect(mockUpdateTask).toHaveBeenCalledWith({
+      id: TASK_ID,
+      specializationIds: ['spec-1'],
+    });
+    expect(context.specializationIds).toEqual(['spec-1']);
+  });
+
   it('should provision agents and fire MCP mapping for new specialization', async () => {
     const result = await createSpecializationToolHandler(
       { name: 'legal', description: 'Legal specialization' },
@@ -107,7 +136,7 @@ describe('createSpecialization internal tool handler', () => {
         name: 'Legal researcher',
         category: AgentCategory.Utility,
         specializationId: 'spec-1',
-        assignedToolIds: ['web-search', 'web-page-content'],
+        assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
       }),
     );
     expect(mockMapMcpsToSpecialization).toHaveBeenCalledWith(

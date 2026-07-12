@@ -68,7 +68,7 @@ describe('invoke system agent command', () => {
 
     expect(result.message).toContain('Classify the input.');
     expect(result.message).toContain('## Categories');
-    expect(result.message).toContain('### question');
+    expect(result.message).toContain('### task');
   });
 
   it('should pass structured invoke params with agent rule as systemMessage', async () => {

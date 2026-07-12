@@ -1,10 +1,13 @@
 'use client';
 
 import type { ChangeEvent, FormEvent } from 'react';
+import { useEffect, useMemo } from 'react';
 
+import { useSkillsBySpecialization } from '@vassembly/ui-api-hooks';
 import { Alert } from '@vassembly/ui-alert';
 import { Button } from '@vassembly/ui-button';
 import { Dropdown } from '@vassembly/ui-dropdown';
+import { MultiSelect } from '@vassembly/ui-multi-select';
 import { Text } from '@vassembly/ui-text';
 import { TextField } from '@vassembly/ui-text-field';
 
@@ -27,11 +30,32 @@ const SUBMIT_LABEL = {
 export const SkillForm = ({
   mode,
   form,
+  specializationId,
+  excludeSkillId,
   isSubmitting = false,
   submitError,
   onSubmit,
   onCancel,
 }: SkillFormProps): JSX.Element => {
+  const { data: skillsData, execute: fetchSkills } = useSkillsBySpecialization();
+
+  useEffect(() => {
+    if (specializationId !== '') {
+      void fetchSkills({ specializationId, size: 200 });
+    }
+  }, [fetchSkills, specializationId]);
+
+  const usesSkillOptions = useMemo(
+    () =>
+      (skillsData?.items ?? [])
+        .filter((skill) => skill.id !== excludeSkillId)
+        .map((skill) => ({
+          value: skill.id,
+          label: skill.name,
+        })),
+    [excludeSkillId, skillsData?.items],
+  );
+
   const handleSubmit = (event: FormEvent): void => {
     event.preventDefault();
 
@@ -83,6 +107,23 @@ export const SkillForm = ({
         onBlur={() => form.blurField('rule')}
       />
       <Text variant="body2">{`${form.ruleCharCount}/${SKILL_RULE_MAX}`}</Text>
+      <section className={styles.usesSkillsSection} aria-label="Uses skills">
+        <Text variant="h3" as="h3">
+          Uses skills
+        </Text>
+        <Text variant="body2">
+          Optional skills this skill composes. Stored by id; names appear in rule directives.
+        </Text>
+        <MultiSelect
+          id="skill-uses-skills"
+          placeholder="Select skills"
+          options={usesSkillOptions}
+          values={form.values.usesSkillIds}
+          isDisabled={isSubmitting}
+          isFullWidth
+          onValuesChange={(values) => form.setField('usesSkillIds', values)}
+        />
+      </section>
       <section className={styles.scriptsSection} aria-label="Scripts">
         <Text variant="h3" as="h3">
           Scripts

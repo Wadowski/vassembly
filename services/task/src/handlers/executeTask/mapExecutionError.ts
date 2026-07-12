@@ -1,4 +1,10 @@
-import { NotFoundError, TimeoutError, ValidationError } from '@vassembly/errors';
+import {
+  CommonError,
+  NotFoundError,
+  TimeoutError,
+  ValidationError,
+  resolveRootCauseMessage,
+} from '@vassembly/errors';
 
 export interface MappedExecutionError {
   errorMessage: string;
@@ -26,8 +32,24 @@ export const mapExecutionError = (error: unknown): MappedExecutionError => {
     return { errorMessage: 'Provider request timed out.', errorCode: 'PROVIDER_TIMEOUT' };
   }
 
+  if (error instanceof CommonError) {
+    return { errorMessage: resolveRootCauseMessage(error), errorCode: error.type };
+  }
+
   if (error instanceof Error) {
-    return { errorMessage: error.message, errorCode: 'PROVIDER_ERROR' };
+    return { errorMessage: resolveRootCauseMessage(error), errorCode: 'PROVIDER_ERROR' };
+  }
+
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as { message: unknown }).message === 'string'
+  ) {
+    return {
+      errorMessage: (error as { message: string }).message,
+      errorCode: 'PROVIDER_ERROR',
+    };
   }
 
   return { errorMessage: 'An unexpected error occurred.', errorCode: 'INTERNAL_ERROR' };
