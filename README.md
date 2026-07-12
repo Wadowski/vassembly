@@ -1,137 +1,118 @@
-TODO: 
-- refresh token - https://gemini.google.com/app/2d2014b9e549eb1b?hl=pl
+# Vassembly
 
-# Turborepo starter
+Vassembly is an AI agent orchestration platform. Users describe work as **tasks**, run them asynchronously with LLM-backed **agents**, and organize capability through **specializations**, **skills**, **system agents**, and **MCP** (Model Context Protocol) integrations.
 
-This Turborepo starter is maintained by the Turborepo core team.
+The platform covers the full lifecycle of AI-assisted work: authentication, credential management, task execution, human-in-the-loop questions, real-time progress, and extensible tool and skill execution.
 
-## Using this example
+## Capabilities
 
-Run the following command:
+- **Tasks** — Create tasks from natural-language input, track execution, pause/resume/retry, and assign agents. Background title generation and real-time progress updates.
+- **Agents** — User-owned agents and a platform catalog of system agents with per-user AI connection preferences.
+- **Skills & specializations** — Reusable skill definitions with script execution, linked to a specialization catalog for domain tagging and classification.
+- **MCP integrations** — Discovery catalog, user configuration, agent assignment, and connection testing.
+- **AI integrations** — Store and test per-user LLM credentials (ChatGPT, Gemini, LM Studio, DeepSeek, and others via LangChain).
+- **Human-in-the-loop** — Task questions let agents pause and ask the user for input before continuing.
+- **Auth & account management** — Registration, login, email verification, password reset, profile settings, onboarding, and account deletion.
 
-```sh
-npx create-turbo@latest
+## Architecture
+
+The repo is a **pnpm + Turborepo** monorepo organized in layers:
+
+| Layer | Location | Role |
+|-------|----------|------|
+| Apps | `apps/` | User-facing surfaces and API gateway |
+| Services | `services/` | Use-case orchestration (transport-agnostic handlers) |
+| Domains | `domains/` | Business logic, models, persistence, GraphQL schema fragments |
+| Packages | `packages/` | Shared infrastructure (DB clients, GraphQL, errors, config, etc.) |
+| UI | `ui/` | Reusable React components, hooks, and Storybook |
+
+**API convention:** GraphQL for reads, REST for commands. The API gateway (`apps/api`) wires Fastify routes and GraphQL resolvers to service handlers; business logic lives in domains and services.
+
+### Apps
+
+| Package | Description |
+|---------|-------------|
+| `@vassembly/web` | Main Next.js product UI |
+| `@vassembly/api` | Fastify REST + GraphQL API gateway |
+| `@vassembly/docs` | Documentation site (Next.js) |
+
+### Domains
+
+`agent`, `ai-integration`, `auth-token`, `mcp`, `refresh-token`, `skill`, `specialization`, `system-agent`, `task`, `task-progress`, `task-questions`, `user`, `user-mcp-config`
+
+### Services
+
+`agent`, `auth`, `mcp`, `skill`, `specialization`, `task`, `task-questions`
+
+## Tech stack
+
+- **TypeScript** 5.9, Node ≥ 18
+- **Frontend:** Next.js 16, React 19, SCSS
+- **Backend:** Fastify 5, GraphQL, Zod
+- **Database:** MongoDB (Atlas Local via Docker for development)
+- **Cache:** In-memory or Redis
+- **AI:** LangChain unified client with multi-provider support
+- **Skill execution:** Sandboxed script runner (Docker / Firecracker backends)
+- **Testing:** Vitest (unit), Playwright BDD (e2e)
+
+## Getting started
+
+### Prerequisites
+
+- Node.js ≥ 18
+- [pnpm](https://pnpm.io/) 9
+- Docker (for local MongoDB)
+
+### Setup
+
+```bash
+pnpm install
+cp .env.example .env   # then fill in required values
+pnpm dev
 ```
 
-## What's inside?
+Key environment variables include `MONGODB_URL`, `JWT_SECRET`, and `PLATFORM_AI_*` for platform-owned background LLM work. See `.env.example` and `turbo.json` (`globalEnv`) for the full list.
 
-This Turborepo includes the following packages/apps:
+### Local MongoDB
 
-### Apps and Packages
+The `@vassembly/client-mongodb` package starts a MongoDB Atlas Local container via Docker Compose on port `27017`:
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@vassembly/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@vassembly/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+pnpm --filter @vassembly/client-mongodb dev
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Development commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start all packages and apps in development mode |
+| `pnpm build` | Build all packages |
+| `pnpm test` | Run unit tests across the workspace |
+| `pnpm lint` | Lint all packages |
+| `pnpm check-types` | Type-check all packages |
+| `pnpm storybook` | Start the UI component Storybook |
+| `pnpm dev:e2e` | Start MongoDB + API + Web with e2e config |
+| `pnpm test:e2e:web` | Run Playwright BDD tests (servers must be running) |
+
+Default local ports: Web `3000`, API `5000`, Docs `3001`. E2E uses Web `3001` and API `5001` — see [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
+
+## Project structure
 
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+vassembly/
+├── apps/          # web, api, docs
+├── domains/       # Business domains (commands, queries, models, persistence)
+├── services/      # Handler orchestration consumed by the API
+├── packages/      # Shared libraries (clients, server, graphql, errors, …)
+├── ui/            # Design system, feature components, Storybook
+├── docs/          # Feature PRDs, architecture docs, E2E guide
+└── scripts/       # One-off migrations
 ```
 
-### Develop
+Feature-level design documents live in [docs/features/](docs/features/).
 
-To develop all apps and packages, run the following command:
+## Further reading
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- [E2E testing guide](docs/E2E_TESTING.md)
+- [Monorepo package categories](.cursor/rules/monorepo-package-categories.mdc)
+- [API calling conventions](.cursor/rules/api-calling-conventions.mdc) — GraphQL for reads, REST for commands

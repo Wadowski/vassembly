@@ -215,6 +215,24 @@ When('I press the Escape key', async ({ page }) => {
   });
 });
 
+When('the progress list shows an event with relative time {string}', async ({ seed, page, world }, relativeTime: string) => {
+  const webWorld = world as WebBddWorld;
+  if (!page) {
+    return;
+  }
+
+  await seedStartedProgressEvent({
+    world: webWorld,
+    seed,
+    timestampOffsetMs: -2 * 60 * 1000,
+  });
+  await reloadTaskDetailPage({ page });
+
+  const timestamp = page.locator('[data-testid="progress-item-timestamp"]').first();
+  await expect(timestamp).toBeVisible();
+  await expect(timestamp).toContainText(relativeTime);
+});
+
 When('the ProgressDetailModal is open showing {string}', async ({ seed, page, world }, relativeTime: string) => {
   const webWorld = world as WebBddWorld;
   if (!page) {
@@ -407,6 +425,21 @@ Then('I see the response JSON formatted in the modal', async ({ page }) => {
   
   const content = await jsonCode.textContent();
   expect(content).toBeTruthy();
+});
+
+Then('the progress list relative time updates to show {string} without manual refresh', async ({ page }, expectedTime: string) => {
+  if (!page) {
+    return;
+  }
+
+  await page.waitForFunction(
+    (expectedTime) => {
+      const timeElement = document.querySelector('[data-testid="progress-item-timestamp"]');
+      return timeElement?.textContent?.includes(expectedTime) ?? false;
+    },
+    expectedTime,
+    { timeout: 70_000 },
+  );
 });
 
 Then('the relative time text updates to show {string} without manual refresh', async ({ page }, expectedTime: string) => {

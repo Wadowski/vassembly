@@ -59,7 +59,7 @@ const findExistingByName = async ({
     return null;
   }
 
-  const rowId = row.id ?? (row as { _id?: string })._id;
+  const rowId = row.id ?? (row as { _id?: { toString(): string } })._id?.toString();
 
   if (!rowId) {
     return null;

@@ -1,6 +1,4 @@
-import { INTENT_CATEGORY_SLUG } from '@vassembly/constants';
-
-const VALID_SLUGS = new Set<string>(Object.values(INTENT_CATEGORY_SLUG));
+import { INTENT_CATEGORY_SLUG, normalizeIntentCategorySlug } from '@vassembly/constants';
 
 export type NormalizeGeneratedCategoryResult =
   | { isValid: true; category: INTENT_CATEGORY_SLUG }
@@ -13,15 +11,17 @@ export interface NormalizeGeneratedCategoryParams {
 export const normalizeGeneratedCategory = ({
   rawOutput,
 }: NormalizeGeneratedCategoryParams): NormalizeGeneratedCategoryResult => {
-  const normalized = rawOutput.trim().split('\n')[0]!.trim().toLowerCase();
+  const firstLine = rawOutput.trim().split('\n')[0]!.trim();
 
-  if (normalized === '') {
+  if (firstLine === '') {
     return { isValid: false, reason: 'empty_output' };
   }
 
-  if (!VALID_SLUGS.has(normalized)) {
+  const category = normalizeIntentCategorySlug(firstLine);
+
+  if (category === null) {
     return { isValid: false, reason: 'invalid_output' };
   }
 
-  return { isValid: true, category: normalized as INTENT_CATEGORY_SLUG };
+  return { isValid: true, category };
 };

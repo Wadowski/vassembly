@@ -116,15 +116,15 @@ describe('useAgent internal tool handler', () => {
         skippedMcpIds: [],
         internalToolIdsUsed: ['agent-list'],
         skippedInternalToolIds: [],
-        maxUseAgentDepth: 2,
+        maxUseAgentDepth: 4,
       },
     });
   });
 
-  it('should return depth error when recursion depth blocks the third delegation', async () => {
+  it('should return depth error when recursion depth blocks delegation', async () => {
     const result = await useAgent({
       args: { name: 'Research Bot', agentPrompt: 'Summarize findings' },
-      context: { ...BASE_CONTEXT, recursionDepth: 2 },
+      context: { ...BASE_CONTEXT, recursionDepth: 4 },
     });
 
     expect(result).toBe('Maximum agent delegation depth reached.');
@@ -167,7 +167,7 @@ describe('useAgent internal tool handler', () => {
           skippedMcpIds: [],
           internalToolIdsUsed: [],
           skippedInternalToolIds: [],
-          maxUseAgentDepth: 2,
+          maxUseAgentDepth: 4,
         },
       }),
     );

@@ -96,7 +96,24 @@ export const startLocalSandboxWorker = ({
   });
 
   server.listen(port);
+
+  server.on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Sandbox worker port ${port} is already in use`);
+    } else {
+      console.error('Sandbox worker failed to start:', error.message);
+    }
+
+    process.exit(1);
+  });
+
   return server;
+};
+
+const shutdownServer = ({ server }: { server: http.Server }): void => {
+  server.close(() => {
+    process.exit(0);
+  });
 };
 
 const DEFAULT_WORKER_PORT = 4010;
@@ -104,5 +121,13 @@ const DEFAULT_WORKER_PORT = 4010;
 const isMainModule = process.argv[1]?.endsWith('server.ts') ?? false;
 
 if (isMainModule) {
-  startLocalSandboxWorker({ port: DEFAULT_WORKER_PORT });
+  const server = startLocalSandboxWorker({ port: DEFAULT_WORKER_PORT });
+
+  process.on('SIGINT', () => {
+    shutdownServer({ server });
+  });
+
+  process.on('SIGTERM', () => {
+    shutdownServer({ server });
+  });
 }

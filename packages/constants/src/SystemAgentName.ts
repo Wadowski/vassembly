@@ -1,10 +1,10 @@
 export enum SYSTEM_AGENT_NAME {
   Assistant = 'Assistant',
   IntentClassifier = 'Intent classifier',
-  QuestionWorker = 'Question worker',
+  // QuestionWorker = 'Question worker', // TEMPORARILY DISABLED — task-category-only-mode
   TaskWorker = 'Task worker',
-  ScheduledTaskWorker = 'Scheduled task worker',
-  RoutineTaskWorker = 'Routine task worker',
+  // ScheduledTaskWorker = 'Scheduled task worker', // TEMPORARILY DISABLED — task-category-only-mode
+  // RoutineTaskWorker = 'Routine task worker', // TEMPORARILY DISABLED — task-category-only-mode
   TaskTitleGenerator = 'Task title generator',
   SpecializationClassifier = 'Specialization classifier',
   McpSpecializationClassifier = 'MCP specialization classifier',

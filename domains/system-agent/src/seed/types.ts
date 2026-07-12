@@ -6,6 +6,7 @@ export interface SystemAgentSeedEntry {
   description?: string;
   category?: AgentCategory;
   assignedToolIds?: string[];
+  _disabled?: boolean;
 }
 
 export interface LoadSystemAgentsResult {

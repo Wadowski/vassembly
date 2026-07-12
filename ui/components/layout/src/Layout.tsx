@@ -48,14 +48,13 @@ export const Layout = ({
   
   const handleLogin = useCallback(() => {
     setIsDrawerOpen(false);
-    const returnUrl = encodeURIComponent(pathname);
-    router.push(`/login?returnUrl=${returnUrl}`);
-  }, [pathname, router]);
+    config.drawer.onLogin();
+  }, [config.drawer]);
   
   const handleRegister = useCallback(() => {
     setIsDrawerOpen(false);
-    router.push('/register');
-  }, [router]);
+    config.drawer.onRegister();
+  }, [config.drawer]);
   
   const handleLogout = useCallback(async () => {
     setIsDrawerOpen(false);

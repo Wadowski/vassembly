@@ -5,6 +5,7 @@ import { ForbiddenError, ValidationError } from '@vassembly/errors';
 
 import { parseRuleDirectives } from './parseRuleDirectives';
 import { resolveActiveSkill } from './resolveActiveSkill';
+import { resolveScriptFilename } from './resolveScriptFilename';
 import { truncateOutput } from './truncateOutput';
 
 import type { InternalToolContext } from '../types';
@@ -60,6 +61,7 @@ const filterAllowlistedEnv = ({
 export const runSkillScriptForContext = async ({
   skillName,
   filename,
+  skillId: skillIdArg,
   specializationId: specializationIdArg,
   input = {},
   env,
@@ -68,6 +70,7 @@ export const runSkillScriptForContext = async ({
 }: RunSkillScriptHandlerParams & { context: InternalToolContext }): Promise<RunSkillScriptToolResult> => {
   const normalizedSkillName = skillName.trim();
   const normalizedFilename = filename.trim();
+  const normalizedSkillId = skillIdArg?.trim() ?? '';
 
   if (!normalizedSkillName) {
     throw new ValidationError('skillName is required');
@@ -77,26 +80,44 @@ export const runSkillScriptForContext = async ({
     throw new ValidationError('filename is required');
   }
 
-  const activeSkill = await resolveActiveSkill({
-    skillName: normalizedSkillName,
-    specializationIdArg,
-    context,
-  });
+  const activeSkill = normalizedSkillId
+    ? await skillDomain.queries.getActiveRuleById({ skillId: normalizedSkillId })
+    : await resolveActiveSkill({
+        skillName: normalizedSkillName,
+        specializationIdArg,
+        context,
+      });
 
   assertSkillAuthorized({
     skillSpecializationId: activeSkill.specializationId,
     context,
   });
 
-  const scriptMeta = activeSkill.scripts.find((entry) => entry.filename === normalizedFilename);
+  const resolvedFilename =
+    activeSkill.scripts.find((entry) => entry.filename === normalizedFilename)?.filename ??
+    resolveScriptFilename({
+      scriptRef: normalizedFilename,
+      scripts: activeSkill.scripts,
+    });
 
-  if (!scriptMeta) {
-    throw new ValidationError(`Script "${normalizedFilename}" not found on skill "${normalizedSkillName}"`);
+  const scriptMeta = resolvedFilename
+    ? activeSkill.scripts.find((entry) => entry.filename === resolvedFilename)
+    : undefined;
+
+  if (!scriptMeta || !resolvedFilename) {
+    const availableScripts =
+      activeSkill.scripts.length > 0
+        ? activeSkill.scripts.map((entry) => entry.filename).join(', ')
+        : 'none';
+
+    throw new ValidationError(
+      `Script "${normalizedFilename}" not found on skill "${normalizedSkillName}". Available scripts: ${availableScripts}`,
+    );
   }
 
   const { content } = await skillDomain.queries.getScriptContent({
     skillId: activeSkill.skillId,
-    filename: normalizedFilename,
+    filename: resolvedFilename,
   });
 
   if (content.length > SKILL_SCRIPT_MAX_SIZE_BYTES) {
@@ -131,7 +152,7 @@ export const runSkillScriptForContext = async ({
 
   return {
     skillName: normalizedSkillName,
-    filename: normalizedFilename,
+    filename: resolvedFilename,
     exitCode: result.exitCode,
     stdout: truncated.stdout,
     stderr: truncated.stderr,
@@ -146,6 +167,7 @@ export const runSkillScriptToolHandler = async (
 ): Promise<string> => {
   const skillName = typeof args.skillName === 'string' ? args.skillName : '';
   const filename = typeof args.filename === 'string' ? args.filename : '';
+  const skillId = typeof args.skillId === 'string' ? args.skillId : undefined;
   const specializationId =
     typeof args.specializationId === 'string' ? args.specializationId : undefined;
   const input =
@@ -167,6 +189,7 @@ export const runSkillScriptToolHandler = async (
   const result = await runSkillScriptForContext({
     skillName,
     filename,
+    skillId,
     specializationId,
     input,
     env,
@@ -180,7 +203,8 @@ export const runSkillScriptToolHandler = async (
 export interface RunAutoScriptsFromRuleParams {
   rule: string;
   skillName: string;
-  scripts: Array<{ filename: string }>;
+  scripts: Array<{ filename: string; skillId: string; skillName: string }>;
+  specializationId?: string;
   context: InternalToolContext;
 }
 
@@ -188,6 +212,7 @@ export const runAutoScriptsFromRule = async ({
   rule,
   skillName,
   scripts,
+  specializationId,
   context,
 }: RunAutoScriptsFromRuleParams): Promise<RunSkillScriptToolResult[]> => {
   const directives = parseRuleDirectives({ rule, skillName, scripts });
@@ -202,6 +227,8 @@ export const runAutoScriptsFromRule = async ({
     const result = await runSkillScriptForContext({
       skillName: directive.skillName,
       filename: directive.filename,
+      skillId: directive.skillId,
+      specializationId,
       context,
     });
     results.push(result);

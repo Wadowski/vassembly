@@ -41,6 +41,7 @@ export const SkillCreatePage = (): JSX.Element => {
             language: script.language,
             content: script.content,
           })),
+          usesSkillIds: form.values.usesSkillIds,
         },
       });
 
@@ -72,6 +73,7 @@ export const SkillCreatePage = (): JSX.Element => {
       <SkillForm
         mode={SkillFormMode.Create}
         form={form}
+        specializationId={specializationId}
         isSubmitting={isLoading}
         submitError={submitError}
         onSubmit={() => {

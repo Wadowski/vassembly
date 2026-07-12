@@ -18,4 +18,5 @@ export const systemAgentSeedSchema = z.object({
   description: z.string().max(SYSTEM_AGENT_DESCRIPTION_MAX_LENGTH).optional(),
   category: z.enum(CATEGORY_VALUES).optional(),
   assignedToolIds: assignedToolIdsCreateSchema,
+  _disabled: z.boolean().optional(),
 });

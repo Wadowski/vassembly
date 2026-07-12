@@ -108,7 +108,7 @@ Task Planner uses existing skills (multi-skill composition allowed), calls `invo
 | **`assignedToolIds`** | `agent-use`, `agent-list`, `user-ask`, `skill-resolve`, `skill-plan`, `task-update` |
 | **Rule outline** | 1) Read goal, intent category, research summaries, skill catalogs. 2) Select/combine skill(s) from catalog — **never invent names**. 3) `resolve_skill` per skill. 4) `invoke_skill_planner` on gaps; replan. 5) `ask_user` round 1: all questions at once; round 2: clarification only; then best-effort plan. 6) `update_task` with `skillIdsUsed`. 7) Return structured plan for workers/validators. Planning only. |
 | **Multi-skill** | Join existing skills or split goal into multiple skills when logic is reusable |
-| **Output sections (Strategy map)** | `task`: Goal, Assumptions, Steps, Dependencies, Referenced skills. `scheduled_task`: + Scheduled time, Pre-execution prep, Reminders. `routine_task`: + Recurrence, Setup, Per-occurrence steps, Start/stop conditions. |
+| **Output sections (Strategy map)** | `task`: Goal, Assumptions, Steps, Dependencies, Referenced skills. `scheduled_task`: + Scheduled time, Pre-execution prep, Reminders. `routine_task`: + Recurrence, Setup, Per-occurrence steps, Start/stop conditions. **Superseded for active `task` flow:** see [`subagent-orchestration/architecture.md`](../subagent-orchestration/architecture.md) — Task Planner now outputs a **subtask list** (one per specialization worker) instead of flat ordered steps; mandatory validator retry loop applies. |
 
 ### 2. Skill Planner
 

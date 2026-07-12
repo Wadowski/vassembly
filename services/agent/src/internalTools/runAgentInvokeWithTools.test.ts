@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
 
 import { WrongParamError, UserInputWaitingError } from '@vassembly/errors';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
   mockGetById,
@@ -12,6 +13,7 @@ const {
   mockInvoke,
   mockLoadAssignedInternalTools,
   mockGetCatalogBySpecializationId,
+  mockSpecializationGetById,
 } = vi.hoisted(() => ({
   mockGetById: vi.fn(),
   mockGetActiveById: vi.fn(),
@@ -22,6 +24,7 @@ const {
   mockInvoke: vi.fn(),
   mockLoadAssignedInternalTools: vi.fn(),
   mockGetCatalogBySpecializationId: vi.fn(),
+  mockSpecializationGetById: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-agent', () => ({
@@ -80,6 +83,14 @@ vi.mock('@vassembly/domain-skill', () => ({
   default: {
     queries: {
       getCatalogBySpecializationId: mockGetCatalogBySpecializationId,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-specialization', () => ({
+  default: {
+    queries: {
+      getById: mockSpecializationGetById,
     },
   },
 }));
@@ -194,7 +205,7 @@ describe('runAgentInvokeWithTools', () => {
     expect(result.metadata.internalToolIdsUsed).toEqual(['agent-list']);
     expect(result.metadata.skippedMcpIds).toEqual([]);
     expect(result.metadata.skippedInternalToolIds).toEqual([]);
-    expect(result.metadata.maxUseAgentDepth).toBe(2);
+    expect(result.metadata.maxUseAgentDepth).toBe(MAX_USE_AGENT_DEPTH);
   });
 
   it('should record started and completed events when progress callback is provided', async () => {
@@ -349,6 +360,41 @@ describe('runAgentInvokeWithTools', () => {
     expect(result.metadata.skippedMcpIds).toEqual([]);
   });
 
+  it('should not inject skill catalog for Task planner agents', async () => {
+    mockGetActiveById.mockResolvedValue({
+      data: {
+        id: 'task-planner-1',
+        name: 'Task planner',
+        rule: 'Plan tasks.',
+        assignedToolIds: [],
+      },
+    });
+    mockLoadAssignedInternalTools.mockResolvedValue({
+      bindings: [],
+      boundToolIds: [],
+      skippedToolIds: [],
+    });
+
+    await runAgentInvokeWithTools({
+      userId: 'user-1',
+      agentType: 'system',
+      agentId: 'task-planner-1',
+      message: 'Plan review',
+      toolContext: {
+        ...TOOL_CONTEXT,
+        specializationIds: ['spec-legal'],
+      },
+    });
+
+    expect(mockSpecializationGetById).not.toHaveBeenCalled();
+    expect(mockGetCatalogBySpecializationId).not.toHaveBeenCalled();
+    expect(mockInvoke).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skillsCatalogSection: undefined,
+      }),
+    );
+  });
+
   it('should inject skills catalog section for specialization-scoped system agents', async () => {
     mockGetActiveById.mockResolvedValue({
       data: {
@@ -382,6 +428,38 @@ describe('runAgentInvokeWithTools', () => {
     expect(mockInvoke).toHaveBeenCalledWith(
       expect.objectContaining({
         skillsCatalogSection: '## Available Skills\n\n- **contract-review**: Review contracts',
+      }),
+    );
+  });
+
+  it('should inject empty skills catalog marker when specialization has no skills', async () => {
+    mockGetActiveById.mockResolvedValue({
+      data: {
+        id: 'system-agent-1',
+        name: 'Legal researcher',
+        rule: 'Research legal topics.',
+        specializationId: 'spec-legal',
+        assignedToolIds: [],
+      },
+    });
+    mockGetCatalogBySpecializationId.mockResolvedValue({ items: [] });
+    mockLoadAssignedInternalTools.mockResolvedValue({
+      bindings: [],
+      boundToolIds: [],
+      skippedToolIds: [],
+    });
+
+    await runAgentInvokeWithTools({
+      userId: 'user-1',
+      agentType: 'system',
+      agentId: 'system-agent-1',
+      message: 'Research topic',
+      toolContext: TOOL_CONTEXT,
+    });
+
+    expect(mockInvoke).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skillsCatalogSection: '## Available Skills\n\n(none)',
       }),
     );
   });
@@ -438,7 +516,7 @@ describe('runAgentInvokeWithTools', () => {
       });
     });
 
-    it('should use platform integration snapshot when credentialScope is platform', async () => {
+    it('should not record progress when credentialScope is platform', async () => {
       mockResolveAndBuildClient.mockRejectedValue(new Error('user credential path must not run'));
 
       const recordProgress = vi.fn().mockResolvedValue(undefined);
@@ -455,14 +533,7 @@ describe('runAgentInvokeWithTools', () => {
         },
       });
 
-      expect(recordProgress).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          integrationName: 'Platform AI',
-          provider: 'gemini',
-          model: 'gemini-2.0-flash',
-        }),
-      );
+      expect(recordProgress).not.toHaveBeenCalled();
     });
 
     it('should use user integration snapshot when credentialScope is omitted', async () => {
@@ -536,14 +607,8 @@ describe('runAgentInvokeWithTools', () => {
         },
       });
 
-      expect(recordProgress).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          integrationName: 'Platform AI',
-          provider: 'gemini',
-          model: 'gemini-2.0-flash',
-        }),
-      );
+      expect(mockResolvePlatformClient).toHaveBeenCalled();
+      expect(recordProgress).not.toHaveBeenCalled();
     });
   });
 });

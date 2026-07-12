@@ -18,6 +18,10 @@ export const getProgressEventTitle = (
   }
 
   if (event.state === 'FAILED') {
+    if (event.errorDetails?.message) {
+      return `Failed: ${event.errorDetails.message}`;
+    }
+
     if (event.errorDetails?.type) {
       return `Failed: ${event.errorDetails.type}`;
     }

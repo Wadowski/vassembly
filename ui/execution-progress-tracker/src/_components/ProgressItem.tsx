@@ -15,7 +15,7 @@ import styles from './ProgressItem.module.scss';
 
 const toProgressItemState = (state: string): string => state.toLowerCase();
 
-export const ProgressItem = React.memo<ProgressItemProps>(({ item, isSelected, onSelect }) => {
+export const ProgressItem = React.memo<ProgressItemProps>(({ item, isSelected, onSelect, relativeTimeTick }) => {
   const rowClassName = isSelected
     ? `${styles.eventRow} ${styles.eventRowActive}`
     : styles.eventRow;
@@ -41,7 +41,7 @@ export const ProgressItem = React.memo<ProgressItemProps>(({ item, isSelected, o
               {detail}
             </Text>
           ) : null}
-          <Text variant="body2" className={styles.eventTimestamp}>
+          <Text variant="body2" className={styles.eventTimestamp} data-testid="progress-item-timestamp">
             {formatRelativeTime(item.timestamp)}
           </Text>
         </div>
@@ -82,7 +82,7 @@ export const ProgressItem = React.memo<ProgressItemProps>(({ item, isSelected, o
             {formatTokens(event.tokenUsage.total)} tokens
           </Text>
         )}
-        <Text variant="body2" className={styles.eventTimestamp}>
+        <Text variant="body2" className={styles.eventTimestamp} data-testid="progress-item-timestamp">
           {formatRelativeTime(item.timestamp)}
         </Text>
       </button>

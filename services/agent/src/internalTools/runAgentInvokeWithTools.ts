@@ -14,6 +14,7 @@ import {
 import { resolveMcpSlugs } from '../helpers/resolveMcpSlugs';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
 import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
+import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
 
 import type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from '@vassembly/domain-ai-integration';
 import type {
@@ -60,11 +61,11 @@ interface BuildSkillsCatalogSectionParams {
 
 const buildSkillsCatalogSection = async ({
   specializationId,
-}: BuildSkillsCatalogSectionParams): Promise<string | undefined> => {
+}: BuildSkillsCatalogSectionParams): Promise<string> => {
   const { items } = await skillDomain.queries.getCatalogBySpecializationId({ specializationId });
 
   if (items.length === 0) {
-    return undefined;
+    return '## Available Skills\n\n(none)';
   }
 
   return formatSkillsCatalogSection({ items });
@@ -209,7 +210,9 @@ const invokeSystemAgent = async ({
   });
 
   const skillsCatalogSection =
-    agent.specializationId !== undefined && agent.specializationId !== null && agent.specializationId !== ''
+    agent.specializationId !== undefined &&
+    agent.specializationId !== null &&
+    agent.specializationId !== ''
       ? await buildSkillsCatalogSection({ specializationId: agent.specializationId })
       : undefined;
 
@@ -261,9 +264,10 @@ export const runAgentInvokeWithTools = async (
   params: RunAgentInvokeWithToolsParams,
 ): Promise<RunAgentInvokeWithToolsResult> => {
   const { toolContext } = params;
-  const recordProgress = toolContext.recordAgentInvokeProgress;
   const invokeStartTime = Date.now();
   const credentialSource = params.credentialScope ?? 'user';
+  const recordProgress =
+    credentialSource === 'platform' ? undefined : toolContext.recordAgentInvokeProgress;
 
   await assertNotAborted(toolContext);
 
@@ -329,11 +333,7 @@ export const runAgentInvokeWithTools = async (
         ...integrationSnapshot,
       });
     } else if (recordProgress && !(error instanceof ExecutionPausedError)) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      const errorType =
-        error instanceof Error && 'code' in error
-          ? String((error as Error & { code?: string }).code)
-          : undefined;
+      const errorDetails = resolveInvokeErrorDetails(error);
 
       await recordProgress({
         agentId: params.agentId,
@@ -341,11 +341,7 @@ export const runAgentInvokeWithTools = async (
         state: 'failed',
         timestamp: new Date(),
         duration: Date.now() - invokeStartTime,
-        errorDetails: {
-          message: errorMessage,
-          type: errorType,
-          stackTrace: error instanceof Error ? error.stack : undefined,
-        },
+        errorDetails,
         credentialSource,
         ...integrationSnapshot,
       });

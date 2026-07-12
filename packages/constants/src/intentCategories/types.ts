@@ -1,8 +1,8 @@
 export enum INTENT_CATEGORY_SLUG {
-  Question = 'question',
+  // Question = 'question', // TEMPORARILY DISABLED — task-category-only-mode
   Task = 'task',
-  ScheduledTask = 'scheduled_task',
-  RoutineTask = 'routine_task',
+  // ScheduledTask = 'scheduled_task', // TEMPORARILY DISABLED — task-category-only-mode
+  // RoutineTask = 'routine_task', // TEMPORARILY DISABLED — task-category-only-mode
 }
 
 export interface IntentCategoryDefinition {

@@ -74,6 +74,7 @@ export const SpecializationSkillListItem = ({
       <div className={styles.actions}>
         <Button
           variant="outlined"
+          size="small"
           text="Edit"
           isDisabled={isUpdating || isArchiving}
           onClick={() => {
@@ -83,7 +84,8 @@ export const SpecializationSkillListItem = ({
         <Button
           variant="outlined"
           color="danger"
-          text={`Archive skill ${skill.name}`}
+          size="small"
+          text={`Archive`}
           aria-label={`Archive skill ${skill.name}`}
           isDisabled={isUpdating || isArchiving}
           onClick={() => {

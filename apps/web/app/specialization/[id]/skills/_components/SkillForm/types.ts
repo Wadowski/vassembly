@@ -12,6 +12,8 @@ export type SkillFormModeValue = (typeof SkillFormMode)[keyof typeof SkillFormMo
 export interface SkillFormProps {
   mode: SkillFormModeValue;
   form: UseSkillFormResult;
+  specializationId: string;
+  excludeSkillId?: string;
   isSubmitting?: boolean;
   submitError?: string;
   onSubmit: () => void;
@@ -22,6 +24,7 @@ export interface SkillFormInitialValues {
   name?: string;
   description?: string;
   rule?: string;
+  usesSkillIds?: string[];
   scripts?: SkillFormScriptInput[];
 }
 

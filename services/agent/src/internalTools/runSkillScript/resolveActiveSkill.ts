@@ -27,6 +27,18 @@ export const resolveActiveSkill = async ({
     });
   }
 
+  const specializationIdFromAgent = await resolveSpecializationId({
+    specializationIdArg,
+    context,
+  });
+
+  if (specializationIdFromAgent) {
+    return skillDomain.queries.getActiveRuleByName({
+      specializationId: specializationIdFromAgent,
+      skillName: normalizedSkillName,
+    });
+  }
+
   const contextSpecializationIds =
     context.specializationIds?.filter(
       (id): id is string => typeof id === 'string' && id.trim().length > 0,
@@ -49,13 +61,14 @@ export const resolveActiveSkill = async ({
     throw new NotFoundError(`Skill "${normalizedSkillName}" not found or not active`);
   }
 
-  const specializationId = await resolveSpecializationId({
-    specializationIdArg,
-    context,
-  });
+  const fallbackSpecializationId = contextSpecializationIds[0] ?? '';
+
+  if (!fallbackSpecializationId) {
+    throw new NotFoundError(`Skill "${normalizedSkillName}" not found or not active`);
+  }
 
   return skillDomain.queries.getActiveRuleByName({
-    specializationId,
+    specializationId: fallbackSpecializationId,
     skillName: normalizedSkillName,
   });
 };

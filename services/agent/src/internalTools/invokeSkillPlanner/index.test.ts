@@ -3,14 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ValidationError } from '@vassembly/errors';
 
 const {
-  mockGetById,
+  mockResolveSpecializationReference,
   mockGetList,
   mockGetCatalogBySpecializationId,
   mockGetActiveByName,
   mockGetModelById,
   mockRunAgentInvokeWithTools,
 } = vi.hoisted(() => ({
-  mockGetById: vi.fn(),
+  mockResolveSpecializationReference: vi.fn(),
   mockGetList: vi.fn(),
   mockGetCatalogBySpecializationId: vi.fn(),
   mockGetActiveByName: vi.fn(),
@@ -18,10 +18,14 @@ const {
   mockRunAgentInvokeWithTools: vi.fn(),
 }));
 
+vi.mock('../resolveSpecializationReference', () => ({
+  resolveSpecializationReference: mockResolveSpecializationReference,
+}));
+
 vi.mock('@vassembly/domain-specialization', () => ({
   default: {
     queries: {
-      getById: mockGetById,
+      getById: vi.fn(),
     },
   },
 }));
@@ -74,8 +78,9 @@ const BASE_CONTEXT: InternalToolContext = {
 describe('invokeSkillPlanner internal tool handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetById.mockResolvedValue({
-      data: { id: 'spec-legal', name: 'Legal', description: 'Legal work' },
+    mockResolveSpecializationReference.mockResolvedValue({
+      id: '674a1b2c3d4e5f6789012345',
+      name: 'Legal',
     });
     mockGetList.mockResolvedValue({
       items: [{ id: 'mcp-1', slug: 'legal-search', name: 'Legal Search', description: 'Search' }],
@@ -106,19 +111,36 @@ describe('invokeSkillPlanner internal tool handler', () => {
 
   it('should return structured JSON with skill metadata when planner succeeds', async () => {
     const result = await invokeSkillPlannerToolHandler(
-      { specializationId: 'spec-legal', goal: 'Review NDAs' },
+      { specializationId: 'legal', goal: 'Review NDAs' },
       BASE_CONTEXT,
     );
 
+    expect(mockResolveSpecializationReference).toHaveBeenCalledWith({
+      specializationRef: 'legal',
+      context: BASE_CONTEXT,
+      preferCallerSpecialization: true,
+    });
     expect(JSON.parse(result)).toEqual({
       skillId: 'skill-1',
       skillName: 'nda-review',
       isNew: true,
-      specializationId: 'spec-legal',
+      specializationId: '674a1b2c3d4e5f6789012345',
     });
   });
 
-  it('should throw ValidationError when specializationId is missing', async () => {
+  it('should resolve specialization from caller context when specializationId is omitted', async () => {
+    await invokeSkillPlannerToolHandler({ goal: 'Review NDAs' }, BASE_CONTEXT);
+
+    expect(mockResolveSpecializationReference).toHaveBeenCalledWith({
+      specializationRef: '',
+      context: BASE_CONTEXT,
+      preferCallerSpecialization: true,
+    });
+  });
+
+  it('should throw ValidationError when specialization cannot be resolved', async () => {
+    mockResolveSpecializationReference.mockRejectedValue(new ValidationError('specializationId is required'));
+
     await expect(
       invokeSkillPlannerToolHandler({ goal: 'Review NDAs' }, BASE_CONTEXT),
     ).rejects.toThrow(ValidationError);
@@ -126,7 +148,7 @@ describe('invokeSkillPlanner internal tool handler', () => {
 
   it('should throw ValidationError when goal is missing', async () => {
     await expect(
-      invokeSkillPlannerToolHandler({ specializationId: 'spec-legal' }, BASE_CONTEXT),
+      invokeSkillPlannerToolHandler({ specializationId: 'legal' }, BASE_CONTEXT),
     ).rejects.toThrow(ValidationError);
   });
 });

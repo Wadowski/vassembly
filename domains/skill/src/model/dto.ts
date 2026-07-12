@@ -15,6 +15,7 @@ export interface SkillResponse {
   rule: string;
   enabled: boolean;
   scripts: SkillScriptResponse[];
+  usesSkillIds: string[];
   createdAt: string;
   updatedAt: string;
   removedAt: string | null;

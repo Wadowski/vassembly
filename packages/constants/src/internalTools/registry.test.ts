@@ -48,7 +48,8 @@ describe('internal tool registry', () => {
         expect.objectContaining({
           id: 'task-update',
           displayName: 'task - update',
-          description: 'Persist title and/or category for a task by its ID',
+          description:
+            'Persist title, category, specializationIds, or skillIdsUsed for the current task. taskId is optional during task execution — it is taken from execution context.',
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'update_task',
         }),

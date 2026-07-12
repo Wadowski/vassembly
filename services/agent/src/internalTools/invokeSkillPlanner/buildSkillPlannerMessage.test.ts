@@ -16,6 +16,8 @@ describe('buildSkillPlannerMessage', () => {
     expect(message).toContain('Review NDAs for risky clauses');
     expect(message).toContain('legal-search (Legal Search)');
     expect(message).toContain('## Available Skills');
+    expect(message).toContain('Script policy:');
+    expect(message).toContain('run_skill_script scripts/<filename>');
     expect(message).toContain('{"skillId":"<id>","isNew":true|false}');
   });
 

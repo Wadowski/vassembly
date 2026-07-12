@@ -63,10 +63,13 @@ export const runTaskSpecializationClassification = async ({
       return;
     }
 
-    await updateTaskToolHandler({
-      taskId,
-      specializationIds: classifyResult.specializationIds,
-    });
+    await updateTaskToolHandler(
+      {
+        taskId,
+        specializationIds: classifyResult.specializationIds,
+      },
+      toolContext,
+    );
     return;
   }
 
@@ -76,8 +79,11 @@ export const runTaskSpecializationClassification = async ({
   );
   const createResult = parseCreateResult(createRaw);
 
-  await updateTaskToolHandler({
-    taskId,
-    specializationIds: [createResult.specializationId],
-  });
+  await updateTaskToolHandler(
+    {
+      taskId,
+      specializationIds: [createResult.specializationId],
+    },
+    toolContext,
+  );
 };

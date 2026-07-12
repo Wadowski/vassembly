@@ -47,7 +47,7 @@ describe("updateDbById", () => {
 
   describe("successful update", () => {
     it("should update and return data when instance is valid", async () => {
-      const id = "test-id-123";
+      const id = "507f1f77bcf86cd799439011";
       const inputData = {
         name: "John Doe Updated",
         email: "john.updated@example.com",
@@ -77,7 +77,7 @@ describe("updateDbById", () => {
     });
 
     it("should handle instances with additional properties", async () => {
-      const id = "test-id-456";
+      const id = "507f1f77bcf86cd799439012";
       const inputData = {
         name: "Jane Smith Updated",
         email: "jane.updated@example.com",
@@ -154,7 +154,7 @@ describe("updateDbById", () => {
     });
 
     it("should propagate dao errors", async () => {
-      const id = "test-id-789";
+      const id = "507f1f77bcf86cd799439013";
       const inputData = {
         name: "John Doe",
         email: "john@example.com",
@@ -179,7 +179,7 @@ describe("updateDbById", () => {
 
   describe("validation schema", () => {
     it("should always call isValid for id since VALIDATION_SCHEMA is built-in", async () => {
-      const id = "test-id-123";
+      const id = "507f1f77bcf86cd799439011";
       const inputData = {
         name: "John Doe Updated",
         email: "john.updated@example.com",
@@ -209,7 +209,7 @@ describe("updateDbById", () => {
     });
 
     it("should not validate data when validationSchema is not provided", async () => {
-      const id = "test-id-123";
+      const id = "507f1f77bcf86cd799439011";
       const inputData = {
         name: "John Doe Updated",
         email: "john.updated@example.com",
@@ -237,7 +237,7 @@ describe("updateDbById", () => {
     });
 
     it("should throw WrongParamError when data fails schema validation", async () => {
-      const id = "test-id-123";
+      const id = "507f1f77bcf86cd799439011";
       const inputData = {
         name: "John Doe Updated",
         email: "john.updated@example.com",
@@ -265,7 +265,7 @@ describe("updateDbById", () => {
     });
 
     it("should complete successfully when data validation passes", async () => {
-      const id = "test-id-123";
+      const id = "507f1f77bcf86cd799439011";
       const inputData = {
         name: "John Doe Updated",
         email: "john.updated@example.com",

@@ -21,7 +21,7 @@ export const createInternalToolHandlers = ({
   toolContext,
 }: CreateInternalToolHandlersParams): InternalToolHandlerMap => ({
   'agent-list': (args) => listAgents({ args, context: toolContext }),
-  'task-update': (args) => updateTaskToolHandler(args),
+  'task-update': (args) => updateTaskToolHandler(args, toolContext),
   'user-ask': (args) => askUser({ args, context: toolContext }),
   'agent-use': (args) => useAgent({ args, context: toolContext }),
   'specialization-classify': (args) => classifySpecializationToolHandler(args, toolContext),

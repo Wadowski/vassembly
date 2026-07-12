@@ -24,6 +24,8 @@ export type { SkillListResponse, SkillResponse, SkillScript, SkillScriptLanguage
 export type {
   GetActiveRuleByNameParams,
   GetActiveRuleByNameResult,
+  GetActiveRuleByIdParams,
+  GetActiveRuleByIdResult,
 } from './queries';
 
 export {

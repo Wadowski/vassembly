@@ -3,7 +3,6 @@ import { createBdd } from 'playwright-bdd';
 import { bddTest } from '@vassembly/e2e';
 
 import { assignInternalToolsToSystemAgent, seedRuntimeSystemAgent } from '../utils/skillRuntimeHelpers';
-import type { WebBddWorld } from '../utils/types';
 
 const { Given } = createBdd(bddTest);
 

@@ -12,6 +12,7 @@ export interface CreateSkillInput {
   description: string;
   rule: string;
   scripts?: SkillScriptWriteInput[];
+  usesSkillIds?: string[];
 }
 
 export interface CreateSkillResult {

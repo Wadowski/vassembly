@@ -72,6 +72,7 @@ export const SkillEditPage = (): JSX.Element => {
         name: skill.name,
         description: skill.description,
         rule: skill.rule,
+        usesSkillIds: skill.usesSkillIds,
         scripts,
       });
       setIsFormReady(true);
@@ -98,6 +99,7 @@ export const SkillEditPage = (): JSX.Element => {
             language: script.language,
             content: script.content,
           })),
+          usesSkillIds: form.values.usesSkillIds,
         },
       });
 
@@ -133,6 +135,8 @@ export const SkillEditPage = (): JSX.Element => {
       <SkillForm
         mode={SkillFormMode.Edit}
         form={form}
+        specializationId={specializationId}
+        excludeSkillId={skillId}
         isSubmitting={isSubmitting}
         submitError={submitError}
         onSubmit={() => {

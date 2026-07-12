@@ -28,6 +28,11 @@ export const buildSkillPlannerMessage = ({
 
   sections.push(
     '',
+    'Script policy:',
+    '- Never embed shell commands or code in the skill rule.',
+    '- Create scripts/ files via Skill script creators for any terminal, bash, Python, or Node.js logic.',
+    '- Reference scripts in the rule with run_skill_script scripts/<filename>.',
+    '',
     'After create_skill succeeds, end your response with a single JSON line:',
     '{"skillId":"<id>","isNew":true|false}',
   );

@@ -29,6 +29,7 @@ export const skillUpdateRoute = defineRoute({
       rule: body.rule,
       enabled: body.enabled,
       scripts: body.scripts,
+      usesSkillIds: body.usesSkillIds,
     });
 
     return skill;

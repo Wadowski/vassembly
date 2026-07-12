@@ -1,6 +1,7 @@
 import specializationDomain from '@vassembly/domain-specialization';
 import { ValidationError } from '@vassembly/errors';
 
+import { syncTaskSpecializationIds } from '../updateTask/syncTaskSpecializationIds';
 import { mapMcpsToSpecialization } from './mapMcpsToSpecialization';
 import { generateSpecializationAgentDescriptions } from './generateSpecializationAgentDescriptions';
 import { logSpecializationEvent } from './logSpecializationEvent';
@@ -76,6 +77,14 @@ export const createSpecializationToolHandler = async (
         });
       });
     }
+  }
+
+  if (context.taskId !== '') {
+    await syncTaskSpecializationIds({
+      taskId: context.taskId,
+      specializationIds: [specializationId],
+      context,
+    });
   }
 
   logSpecializationEvent({

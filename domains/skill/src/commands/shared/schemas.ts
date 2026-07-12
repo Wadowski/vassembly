@@ -29,3 +29,5 @@ export const SKILL_DESCRIPTION_SCHEMA = z
   .max(SKILL_DESCRIPTION_MAX_LENGTH);
 
 export const SKILL_RULE_SCHEMA = z.string().trim().min(1).max(SKILL_RULE_MAX_LENGTH);
+
+export const USES_SKILL_IDS_SCHEMA = z.array(z.string().trim().min(1)).default([]);

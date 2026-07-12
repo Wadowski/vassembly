@@ -1,10 +1,10 @@
 import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
 import mcpDomain from '@vassembly/domain-mcp';
 import skillDomain, { formatSkillsCatalogSection } from '@vassembly/domain-skill';
-import specializationDomain from '@vassembly/domain-specialization';
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ValidationError } from '@vassembly/errors';
 
+import { resolveSpecializationReference } from '../resolveSpecializationReference';
 import { runAgentInvokeWithTools } from '../runAgentInvokeWithTools';
 import { buildSkillPlannerMessage } from './buildSkillPlannerMessage';
 import { parseSkillPlannerResult } from './parseSkillPlannerResult';
@@ -18,19 +18,20 @@ export const invokeSkillPlannerToolHandler = async (
   args: Record<string, unknown>,
   context: InternalToolContext,
 ): Promise<string> => {
-  const specializationId =
+  const specializationRef =
     typeof args.specializationId === 'string' ? args.specializationId.trim() : '';
   const goal = typeof args.goal === 'string' ? args.goal.trim() : '';
-
-  if (!specializationId) {
-    throw new ValidationError('specializationId is required');
-  }
 
   if (!goal) {
     throw new ValidationError('goal is required');
   }
 
-  const specializationResult = await specializationDomain.queries.getById({ id: specializationId });
+  const specialization = await resolveSpecializationReference({
+    specializationRef,
+    context,
+    preferCallerSpecialization: true,
+  });
+  const specializationId = specialization.id;
 
   const mcpListResult = await mcpDomain.queries.getList({
     specializationId,
@@ -55,7 +56,7 @@ export const invokeSkillPlannerToolHandler = async (
     agentType: 'system',
     agentId: agentResult.data.id!,
     message: buildSkillPlannerMessage({
-      specializationName: specializationResult.data.name,
+      specializationName: specialization.name,
       specializationId,
       goal,
       mcpItems: mcpListResult.items.map((item) => ({

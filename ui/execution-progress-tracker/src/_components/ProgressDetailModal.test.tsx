@@ -67,4 +67,18 @@ describe('ProgressDetailModal', () => {
 
     expect(screen.queryByText('AI Integration')).toBeNull();
   });
+
+  it('should render exact local timestamp in metadata', () => {
+    const timestamp = new Date(2026, 5, 15, 14, 30);
+
+    render(
+      <ProgressDetailModal
+        isOpen
+        event={{ ...BASE_EVENT, timestamp }}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('event-timestamp').textContent).toBe('15.06.2026 14:30');
+  });
 });

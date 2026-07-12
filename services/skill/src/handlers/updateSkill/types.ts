@@ -12,6 +12,7 @@ export interface UpdateSkillInput {
   rule?: string;
   enabled?: boolean;
   scripts?: SkillScriptWriteInput[];
+  usesSkillIds?: string[];
 }
 
 export interface UpdateSkillResult {

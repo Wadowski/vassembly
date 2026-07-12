@@ -47,7 +47,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
   defineInternalTool({
     domain: 'task',
     action: 'update',
-    description: 'Persist title and/or category for a task by its ID',
+    description: 'Persist title, category, specializationIds, or skillIdsUsed for the current task. taskId is optional during task execution — it is taken from execution context.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'update_task',
   }),

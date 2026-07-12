@@ -31,10 +31,9 @@ Feature: Real-Time Agent Execution Progress Tracking
   Scenario: Relative timestamps update every 60 seconds
     Given the test skips diagnostic checks
     When I navigate to the task detail page
-    And the ProgressDetailModal is open showing "started 2 minutes ago"
+    And the progress list shows an event with relative time "2 minutes ago"
     And I wait 60 seconds
-    Then the relative time text updates to show "started 3 minutes ago" without manual refresh
-    And the modal remains open
+    Then the progress list relative time updates to show "3 minutes ago" without manual refresh
 
   Scenario: Polling stops when task completes
     When I navigate to the task detail page

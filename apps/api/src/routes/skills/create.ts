@@ -23,6 +23,7 @@ export const skillCreateRoute = defineRoute({
       description: body.description,
       rule: body.rule,
       scripts: body.scripts,
+      usesSkillIds: body.usesSkillIds,
     });
 
     return skill;

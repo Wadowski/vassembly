@@ -9,7 +9,8 @@
     "check-types": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "worker": "tsx src/local-worker/server.ts"
+    "worker": "tsx src/local-worker/server.ts",
+    "dev": "tsx watch src/local-worker/server.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.7",
