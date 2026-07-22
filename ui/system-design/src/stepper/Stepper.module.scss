@@ -1,0 +1,136 @@
+@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';
+
+.root {
+  display: block;
+  width: 100%;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  gap: $spacing-3;
+  min-width: 0;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.iconSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  color: $color-text-secondary;
+  background-color: $color-surface-container;
+  border: 1px solid $color-surface-container-high;
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+}
+
+.connector {
+  flex: 1 1 auto;
+  width: 2px;
+  min-height: $spacing-3;
+  margin: $spacing-1 0;
+  background-color: $color-surface-container-high;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  min-width: 0;
+  padding-bottom: $spacing-4;
+}
+
+.title {
+  color: $color-text-secondary;
+}
+
+.description {
+  display: block;
+  margin: 0;
+  color: $color-text-secondary;
+}
+
+.itemCompleted {
+  .iconSlot {
+    color: $color-success-200;
+    background-color: rgba($color-success-500, 0.32);
+    border: 2px solid rgba($color-success-400, 0.85);
+  }
+
+  .connector {
+    background-color: rgba($color-success-500, 0.9);
+  }
+
+  .title {
+    color: $color-success-100;
+  }
+
+  .description {
+    color: $color-text-secondary;
+  }
+}
+
+.itemCurrent {
+  .iconSlot {
+    color: $color-primary-100;
+    background: linear-gradient(145deg, rgba($color-primary-600, 0.55) 0%, rgba($color-primary-500, 0.4) 100%);
+    border: 2px solid $color-primary-300;
+    box-shadow:
+      0 0 0 1px rgba($color-primary-400, 0.35),
+      0 0 12px rgba($color-primary-500, 0.35);
+  }
+
+  .connector {
+    background-color: rgba($color-primary-400, 0.55);
+  }
+
+  .title {
+    color: $color-text-primary;
+  }
+
+  .description {
+    color: $color-text-secondary;
+  }
+}
+
+.itemUpcoming {
+  .iconSlot {
+    color: $color-text-tertiary;
+    background-color: $color-surface-container-low;
+    border: 1px solid $color-outline-variant;
+  }
+
+  .connector {
+    background-color: $color-outline;
+  }
+
+  .title {
+    color: $color-text-tertiary;
+  }
+
+  .description {
+    color: $color-neutral-80;
+  }
+}

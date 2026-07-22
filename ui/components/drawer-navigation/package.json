@@ -9,14 +9,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@vassembly/theme": "workspace:*",
-    "@vassembly/ui-button": "workspace:*",
-    "@vassembly/ui-icons": "workspace:*",
-    "@vassembly/ui-menu": "workspace:*",
-    "@vassembly/ui-text": "workspace:*",
-    "@vassembly/ui-utils": "workspace:*",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "@vassembly/ui-system-design": "workspace:*"
   },
   "devDependencies": {
     "@storybook/react": "^7.0.0",

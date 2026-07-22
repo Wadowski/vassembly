@@ -1,11 +1,11 @@
 'use client';
 
 import { useGetUser, useUpdateUserProfile, type UpdateUserProfileMutationVariables } from '@vassembly/ui-api-hooks';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { useSnackbar } from '@vassembly/ui-snackbar';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 import { type FormEvent, useState } from 'react';
 import { getValidatorIssues } from '@vassembly/validation';

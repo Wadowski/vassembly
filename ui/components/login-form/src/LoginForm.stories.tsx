@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { GraphQLProvider, HttpClientProvider } from '@vassembly/ui-api-hooks';
-import { SnackbarProvider } from '@vassembly/ui-snackbar';
+import { SnackbarProvider } from '@vassembly/ui-system-design/snackbar';
 import { UserAuthProvider } from '@vassembly/ui-user-auth';
 import { LoginForm } from './LoginForm';
 

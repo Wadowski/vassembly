@@ -2,12 +2,12 @@
 
 import { useMemo } from 'react';
 
-import { Button } from '@vassembly/ui-button';
-import { Dropdown } from '@vassembly/ui-dropdown';
-import { Loader } from '@vassembly/ui-loader';
-import { Table } from '@vassembly/ui-table';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Dropdown } from '@vassembly/ui-system-design/dropdown';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Table } from '@vassembly/ui-system-design/table';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 
 import styles from './styles.module.scss';
 import { AGENT_LIST_STATUS_OPTIONS } from './types';

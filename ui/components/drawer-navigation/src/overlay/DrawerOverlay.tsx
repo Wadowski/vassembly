@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import type { DrawerOpenChangeEvent, DrawerOverlayCloseReason } from '../types';
 import styles from './DrawerOverlay.module.scss';
 

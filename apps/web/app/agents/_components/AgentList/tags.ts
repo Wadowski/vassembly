@@ -1,5 +1,5 @@
 import { AGENT_LIST_ALL_STATUSES, AgentCategory, AgentStatus } from '@vassembly/ui-api-hooks';
-import type { TagVariant } from '@vassembly/ui-tag';
+import type { TagVariant } from '@vassembly/ui-system-design/tag';
 
 import { AGENT_LIST_STATUS_OPTIONS } from './types';
 

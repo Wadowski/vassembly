@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
-import { Text } from '@vassembly/ui-text';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Text } from '@vassembly/ui-system-design/text';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import { FooterCompanyLegalSlot } from './FooterCompanyLegalSlot';
 import { FooterContactSocialSlot } from './FooterContactSocialSlot';
 import styles from './Footer.module.scss';

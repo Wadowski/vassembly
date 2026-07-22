@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { TaskDto } from '@vassembly/ui-api-hooks';
 import { useUserTasks } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { getRequestErrorMessage } from '../agents/getRequestErrorMessage';
 import { SEARCH_DEBOUNCE_MS, TASK_LIST_PAGE_SIZE } from '../_components/TaskList/constants';

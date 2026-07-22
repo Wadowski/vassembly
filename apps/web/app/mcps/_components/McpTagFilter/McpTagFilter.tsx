@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { Button } from '@vassembly/ui-button';
-import { MultiSelect } from '@vassembly/ui-multi-select';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { MultiSelect } from '@vassembly/ui-system-design/multi-select';
+import { Text } from '@vassembly/ui-system-design/text';
 import { useAvailableTags } from '@vassembly/ui-api-hooks';
 
 import styles from './McpTagFilter.module.scss';

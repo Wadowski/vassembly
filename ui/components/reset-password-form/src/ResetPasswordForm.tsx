@@ -1,9 +1,9 @@
 import type { ChangeEvent, FormEvent } from 'react';
-import { ArrowLeftIcon } from '@vassembly/ui-icons';
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { ArrowLeftIcon } from '@vassembly/ui-system-design/icons';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { DEFAULT_RESET_PASSWORD_SUBMIT_LABEL, DEFAULT_RESET_PASSWORD_TITLE } from './constants';
 import styles from './ResetPasswordForm.module.scss';

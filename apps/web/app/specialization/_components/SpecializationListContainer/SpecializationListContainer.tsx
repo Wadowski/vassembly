@@ -2,11 +2,11 @@
 
 import { useMemo } from 'react';
 
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Loader } from '@vassembly/ui-loader';
-import { Pagination } from '@vassembly/ui-pagination';
-import { Text } from '@vassembly/ui-text';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Pagination } from '@vassembly/ui-system-design/pagination';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { SpecializationListEmptyState } from './SpecializationListEmptyState/SpecializationListEmptyState';
 import { SpecializationListItem } from './SpecializationListItem/SpecializationListItem';

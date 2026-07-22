@@ -1,5 +1,5 @@
-import { Text } from '@vassembly/ui-text';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Text } from '@vassembly/ui-system-design/text';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import styles from './Footer.module.scss';
 import type { FooterContactBlockProps, FooterContactField } from './types';
 

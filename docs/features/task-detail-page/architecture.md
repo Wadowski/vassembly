@@ -27,7 +27,7 @@ Product feature: authenticated task owners open `/tasks/[id]` to view full descr
 | Owner-scoped 404 | `domains/agent/src/queries/getModelById/index.ts` | `NotFoundError` for missing **or** `raw.userId !== input.userId` |
 | MongoDB | `domains/task/src/clients/mongodb.ts` | `tasks` collection; index `{ userId: 1, createdAt: -1 }` — add `{ id: 1 }` or rely on `_id` lookup only if perf needed |
 | Error copy | `apps/web/app/agents/getRequestErrorMessage.ts` | Snackbar messages |
-| Design tokens | `@vassembly/theme` | `sectionCard`, spacing, 42rem column (TaskList-aligned) |
+| Design tokens | `@vassembly/ui-system-design/theme` | `sectionCard`, spacing, 42rem column (TaskList-aligned) |
 
 ### Gaps (new work)
 
@@ -290,7 +290,7 @@ Use `getRequestErrorMessage` for snackbar copy.
 | `taskStatusDisplay.ts` | Import; optional extract `TaskStatusBadge` |
 | `TASK_EMPTY_DESCRIPTION_LABEL` | Import |
 | `TaskListItem` status markup | Extract to badge or duplicate minimally once |
-| `@vassembly/ui-button`, `ui-text`, `ui-skeleton`, `ui-snackbar` | Use as in design §10 |
+| `@vassembly/ui-system-design/button`, `ui-text`, `ui-skeleton`, `ui-snackbar` | Use as in design §10 |
 | `Tag` for status | **Do not** default — icon row for list parity |
 
 ### Homepage navigation (small change)

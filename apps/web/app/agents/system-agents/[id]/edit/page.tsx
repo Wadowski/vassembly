@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@vassembly/ui-button';
-import { Loader } from '@vassembly/ui-loader';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { ProtectedAuthRoute } from '../../../../../lib/auth/ProtectedAuthRoute';
 import { AgentEditSkeleton } from '../../../[id]/edit/_components/AgentEditSkeleton';

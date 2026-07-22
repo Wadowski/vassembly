@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { SpecializationListContainer } from './_components/SpecializationListContainer/SpecializationListContainer';
 import styles from './SpecializationsPageView.module.scss';

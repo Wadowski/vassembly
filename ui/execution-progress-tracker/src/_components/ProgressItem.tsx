@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { formatRelativeTime } from '../utils/formatRelativeTime';
 import { formatTokens } from '../utils/formatTokens';

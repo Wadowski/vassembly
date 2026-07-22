@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@vassembly/ui-skeleton';
+import { Skeleton } from '@vassembly/ui-system-design/skeleton';
 
 import { TASK_LIST_SKELETON_COUNT } from './constants';
 import styles from './TaskList.module.scss';

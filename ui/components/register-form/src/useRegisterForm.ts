@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useRegister } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 import { useRegisterFormCompletionEffect } from './useRegisterFormCompletionEffect';
 import { validatePasswordStrength } from './validatePasswordStrength';

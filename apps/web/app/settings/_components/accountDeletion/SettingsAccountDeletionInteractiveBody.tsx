@@ -1,13 +1,13 @@
 'use client';
 
 import { useDeleteAccount } from '@vassembly/ui-api-hooks';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Checkbox } from '@vassembly/ui-checkbox';
-import { Modal } from '@vassembly/ui-modal';
-import { useSnackbar } from '@vassembly/ui-snackbar';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Checkbox } from '@vassembly/ui-system-design/checkbox';
+import { Modal } from '@vassembly/ui-system-design/modal';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 import { validatorFactory } from '@vassembly/validation';
 import { useRouter } from 'next/navigation';

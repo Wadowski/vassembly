@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@vassembly/ui-button';
-import { Modal } from '@vassembly/ui-modal';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Modal } from '@vassembly/ui-system-design/modal';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './styles.module.scss';
 import type { McpUnassignAgentModalProps } from './types';

@@ -5,7 +5,7 @@ import {
   SingleNeutralCircleIcon,
   TeamMeetingChatIcon,
   TimeClockCircleIcon,
-} from '@vassembly/ui-icons';
+} from '@vassembly/ui-system-design/icons';
 
 import { TaskStatus } from '@vassembly/ui-api-hooks';
 

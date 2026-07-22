@@ -1,8 +1,8 @@
 import type { FormEvent } from 'react';
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import styles from './LoginForm.module.scss';
 import { useLoginForm } from './useLoginForm';
 import type { LoginFormProps } from './types';

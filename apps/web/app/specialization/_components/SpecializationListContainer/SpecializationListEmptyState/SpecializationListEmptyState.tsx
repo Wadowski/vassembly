@@ -1,7 +1,7 @@
 'use client';
 
-import { SearchIcon, TagsIcon } from '@vassembly/ui-icons';
-import { Text } from '@vassembly/ui-text';
+import { SearchIcon, TagsIcon } from '@vassembly/ui-system-design/icons';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './SpecializationListEmptyState.module.scss';
 import type { SpecializationListEmptyStateProps } from './types';

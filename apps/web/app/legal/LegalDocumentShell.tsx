@@ -1,4 +1,4 @@
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import type { LegalDocumentShellProps } from './types';
 import styles from './LegalDocumentShell.module.scss';

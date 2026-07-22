@@ -1,7 +1,7 @@
 'use client';
 
-import { AnchorList } from '@vassembly/ui-anchor-list';
-import type { AnchorListItem } from '@vassembly/ui-anchor-list';
+import { AnchorList } from '@vassembly/ui-system-design/anchor-list';
+import type { AnchorListItem } from '@vassembly/ui-system-design/anchor-list';
 
 import { SETTINGS_SECTION_DESCRIPTOR_LIST } from '../sectionAnchors';
 import styles from '../SettingsSections.module.scss';

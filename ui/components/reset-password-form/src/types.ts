@@ -1,7 +1,7 @@
 import type { FormEvent, MutableRefObject } from 'react';
 import type { CommonError } from '@vassembly/errors';
 import type { ResetPasswordResponse } from '@vassembly/ui-api-hooks';
-import type { SnackbarContextValue } from '@vassembly/ui-snackbar';
+import type { SnackbarContextValue } from '@vassembly/ui-system-design/snackbar';
 
 export interface ResetPasswordFormProps {
   token: string;

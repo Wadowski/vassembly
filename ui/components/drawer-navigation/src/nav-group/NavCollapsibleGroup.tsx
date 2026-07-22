@@ -1,5 +1,5 @@
-import { resolveClassName } from '@vassembly/ui-utils';
-import { ArrowDownIcon } from '@vassembly/ui-icons';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
+import { ArrowDownIcon } from '@vassembly/ui-system-design/icons';
 import type { NavGroupItem } from '../types';
 import styles from './NavCollapsibleGroup.module.scss';
 

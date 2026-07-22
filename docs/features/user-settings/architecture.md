@@ -32,14 +32,14 @@ This document defines system architecture, data flow, package boundaries, and ph
 || Web auth shell | `apps/web` | `ProtectedAuthRoute` (`apps/web/lib/auth/ProtectedAuthRoute.tsx`) with `requireAuthenticated`; JWT in `sessionStorage` / `localStorage` patterns | No `app/settings/` route; drawer **Settings** footers expect `onOpenSettings` but `AuthLayout` / `Layout` do not thread it (no-op until wired) |
 || Client data | `@vassembly/ui-api-hooks` | `useGetUser`, `useApolloMutation` available, REST `useFetch` for login | No settings mutations or profile hooks |
 || Auth context | `@vassembly/ui-user-auth` | `UserAuthProvider`, `AuthUser` (`id`, `email`, `firstName`, `lastName`, `role`, `verifiedAt`) | May need `refetch` / `updateLocalUser` after profile save; **role** is `string` — PRD matrix assumes richer roles |
-|| Theme | `@vassembly/theme` | Tokens / CSS variable system | Integrate with local theme preference hook and document attribute/class application on `document` or root |
+|| Theme | `@vassembly/ui-system-design/theme` | Tokens / CSS variable system | Integrate with local theme preference hook and document attribute/class application on `document` or root |
 
 ### What can be reused (~70%)
 
 - Identity and persistence: extend `@vassembly/domain-user` rather than new domain.
 - Orchestration: extend `@vassembly/service-auth` handlers; keep HTTP/GraphQL out of services.
 - GraphQL wiring: extend `apps/api/src/graphql/` and resolvers alongside existing `user` query.
-- UI primitives: `@vassembly/ui-text-field`, `ui-modal`, `ui-switch`, `ui-checkbox`, `ui-radio-button`, `ui-button`, `ui-alert`, `ui-snackbar`, `ui-anchor-list`, `ui-text`, layout/drawer (`@vassembly/ui-components-layout`, drawer navigation).
+- UI primitives: `@vassembly/ui-system-design/text-field`, `ui-modal`, `ui-switch`, `ui-checkbox`, `ui-radio-button`, `ui-button`, `ui-alert`, `ui-snackbar`, `ui-anchor-list`, `ui-text`, layout/drawer (`@vassembly/ui-components-layout`, drawer navigation).
 - Auth gating pattern: `ProtectedAuthRoute` + `UserAuthProvider` (PRD T-1).
 - Form patterns: mirror `ui/components/login-form`, `register-form` (controlled fields, validation, submit loading).
 
@@ -157,7 +157,7 @@ flowchart TB
 || `apps/web/app/settings/page.tsx` | Client page; wraps content with `ProtectedAuthRoute` (`requireAuthenticated={true}`, `redirectPath='/login'` or product default); composes layout sections |
 || `apps/web/app/settings/layout.tsx` (optional) | Shared metadata, suspense boundary, or auth shell if needed |
 
-Design default: **single scrollable page** with anchor IDs; desktop **AnchorList** from `@vassembly/ui-anchor-list`.
+Design default: **single scrollable page** with anchor IDs; desktop **AnchorList** from `@vassembly/ui-system-design/anchor-list`.
 
 ### 2.2 Section components (suggested files)
 
@@ -464,7 +464,7 @@ apps/web
   → @vassembly/ui-* (primitives)
   → @vassembly/ui-api-hooks
   → @vassembly/ui-user-auth
-  → @vassembly/theme
+  → @vassembly/ui-system-design/theme
 
 @vassembly/ui-api-hooks
   → @apollo/client
@@ -502,7 +502,7 @@ apps/api
 || Q-7 | Category names | Central `notificationCategoryRegistry` — single source for UI + analytics enums. |
 || — | GraphQL vs REST mutations | **Default GraphQL** for consistency with `user` query; REST acceptable if explicitly chosen. |
 || — | Display name storage | **Decide in Phase 1** before coding profile (§3.1 Option A vs B). |
-|| — | Theme provider location | Apply in root layout **after** reading persisted preference; coordination with `@vassembly/theme` — document DOM contract in a single `THEME_APPLICATION.md` only if team asks (else inline in web lib). |
+|| — | Theme provider location | Apply in root layout **after** reading persisted preference; coordination with `@vassembly/ui-system-design/theme` — document DOM contract in a single `THEME_APPLICATION.md` only if team asks (else inline in web lib). |
 
 ---
 

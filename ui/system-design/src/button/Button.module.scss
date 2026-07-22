@@ -1,0 +1,340 @@
+@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-2;
+  font-family: $font-family-body;
+  font-weight: $font-weight-semibold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  outline: none;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary-500;
+    outline-offset: 2px;
+  }
+
+  .content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+
+    .buttonLabel {
+      color: inherit;
+    }
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 1em;
+      height: 1em;
+    }
+  }
+}
+
+// Color variants
+.colorPrimary {
+  &.variantContained {
+    background-color: $color-primary-600;
+    color: $color-text-primary;
+    border: 1px solid transparent;
+    box-shadow: $shadow-sm;
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary-700;
+      box-shadow: $shadow-md;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: $color-primary-800;
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline-color: $color-primary-400;
+    }
+  }
+
+  &.variantOutlined {
+    background-color: transparent;
+    color: $color-primary-600;
+    border: 1px solid $color-primary-600;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-primary-600, 0.08);
+      border-color: $color-primary-700;
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-primary-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-primary-400;
+    }
+  }
+
+  &.variantText {
+    background-color: transparent;
+    color: $color-primary-600;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-primary-600, 0.08);
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-primary-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-primary-400;
+    }
+  }
+}
+
+.colorSecondary {
+  &.variantContained {
+    background-color: $color-secondary-600;
+    color: $color-text-primary;
+    border: 1px solid transparent;
+    box-shadow: $shadow-sm;
+
+    &:hover:not(:disabled) {
+      background-color: $color-secondary-700;
+      box-shadow: $shadow-md;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: $color-secondary-800;
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline-color: $color-secondary-400;
+    }
+  }
+
+  &.variantOutlined {
+    background-color: transparent;
+    color: $color-secondary-600;
+    border: 1px solid $color-secondary-600;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-secondary-600, 0.08);
+      border-color: $color-secondary-700;
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-secondary-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-secondary-400;
+    }
+  }
+
+  &.variantText {
+    background-color: transparent;
+    color: $color-secondary-600;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-secondary-600, 0.08);
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-secondary-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-secondary-400;
+    }
+  }
+}
+
+.colorTertiary {
+  &.variantContained {
+    background-color: $color-tertiary-600;
+    color: $color-text-primary;
+    border: 1px solid transparent;
+    box-shadow: $shadow-sm;
+
+    &:hover:not(:disabled) {
+      background-color: $color-tertiary-700;
+      box-shadow: $shadow-md;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: $color-tertiary-800;
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline-color: $color-tertiary-400;
+    }
+  }
+
+  &.variantOutlined {
+    background-color: transparent;
+    color: $color-tertiary-600;
+    border: 1px solid $color-tertiary-600;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-tertiary-600, 0.08);
+      border-color: $color-tertiary-700;
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-tertiary-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-tertiary-400;
+    }
+  }
+
+  &.variantText {
+    background-color: transparent;
+    color: $color-tertiary-600;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-tertiary-600, 0.08);
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-tertiary-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-tertiary-400;
+    }
+  }
+}
+
+.colorDanger {
+  &.variantContained {
+    background-color: $color-error-600;
+    color: $color-text-primary;
+    border: 1px solid transparent;
+    box-shadow: $shadow-sm;
+
+    &:hover:not(:disabled) {
+      background-color: $color-error-700;
+      box-shadow: $shadow-md;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: $color-error-800;
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline-color: $color-error-400;
+    }
+  }
+
+  &.variantOutlined {
+    background-color: transparent;
+    color: $color-error-600;
+    border: 1px solid $color-error-600;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-error-600, 0.08);
+      border-color: $color-error-700;
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-error-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-error-400;
+    }
+  }
+
+  &.variantText {
+    background-color: transparent;
+    color: $color-error-600;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-error-600, 0.08);
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($color-error-600, 0.12);
+    }
+
+    &:focus-visible {
+      outline-color: $color-error-400;
+    }
+  }
+}
+
+// Sizes
+.sizeSmall {
+  padding: $spacing-1 $spacing-3;
+  font-size: $font-size-label-sm;
+  border-radius: $border-radius-button-primary;
+  min-height: 2rem;
+}
+
+.sizeMedium {
+  padding: $spacing-3 $spacing-4;
+  font-size: $font-size-label-md;
+  border-radius: $border-radius-button-primary;
+  min-height: 2.5rem;
+}
+
+.sizeLarge {
+  padding: $spacing-3 $spacing-6;
+  font-size: $font-size-label-lg;
+  border-radius: $border-radius-button-primary;
+  min-height: 3rem;
+}
+
+// States
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+
+  &:hover,
+  &:active {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.loading {
+  pointer-events: none;
+
+  .content {
+    opacity: 0;
+    position: absolute;
+  }
+}
+
+// Full width
+.fullWidth {
+  width: 100%;
+  justify-content: space-between;
+}

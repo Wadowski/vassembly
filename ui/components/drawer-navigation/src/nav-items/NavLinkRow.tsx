@@ -1,5 +1,5 @@
 import type { MouseEvent, ReactNode } from 'react';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import type { DrawerNavigateEvent, NavLinkItem } from '../types';
 import styles from './NavLinkRow.module.scss';
 

@@ -4,9 +4,9 @@ import type { FormEvent } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useInternalTools } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
-import { Tag } from '@vassembly/ui-tag';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Tag } from '@vassembly/ui-system-design/tag';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { InternalToolAssignmentPicker } from '../../InternalToolAssignmentPicker';
 import { filterEligibleInternalTools } from '../../InternalToolAssignmentPicker/filterEligibleInternalTools';

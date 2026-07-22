@@ -3,8 +3,8 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import {
   TASK_NOT_FOUND_DETAIL,

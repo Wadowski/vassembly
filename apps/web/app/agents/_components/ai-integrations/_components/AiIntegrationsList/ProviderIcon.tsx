@@ -1,7 +1,7 @@
 'use client';
 
 import { PROVIDER_LABELS } from '@vassembly/ui-api-hooks';
-import { Tag } from '@vassembly/ui-tag';
+import { Tag } from '@vassembly/ui-system-design/tag';
 
 import styles from './styles.module.scss';
 

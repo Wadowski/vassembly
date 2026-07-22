@@ -2,9 +2,9 @@
 
 import { useCallback, useState } from 'react';
 
-import { Button } from '@vassembly/ui-button';
-import { TextField } from '@vassembly/ui-text-field';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Button } from '@vassembly/ui-system-design/button';
+import { TextField } from '@vassembly/ui-system-design/text-field';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { PASSWORD_KEEP_HINT } from './constants';
 import fieldStyles from './McpConfigField.module.scss';

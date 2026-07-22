@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
 import { useCallback, useRef, useState } from 'react';
 import { useForgotPassword } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { useForgotPasswordFormCompletionEffect } from './useForgotPasswordFormCompletionEffect';
 import { validateForgotPasswordForm } from './validateForgotPasswordForm';

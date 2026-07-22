@@ -23,7 +23,7 @@ This plan incorporates a **librarian catalog pass**: reuse `domains/agent` (user
 | Errors | `@vassembly/errors` | Typed errors → HTTP via `@vassembly/server` error handler |
 | UI hook | `ui/api-hooks/src/systemAgents/useCreateSystemAgent.ts` | `useHttpMutation` with `withAuth: true` |
 | Auth redirect | `apps/web/lib/layout/AuthLayout.tsx` | `/login?returnUrl=...` |
-| Toasts | `@vassembly/ui-snackbar` | Same pattern as agents/settings pages |
+| Toasts | `@vassembly/ui-system-design/snackbar` | Same pattern as agents/settings pages |
 
 ### Gaps (new work)
 

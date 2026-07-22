@@ -1,7 +1,7 @@
 'use client';
 
-import { Skeleton } from '@vassembly/ui-skeleton';
-import { Text } from '@vassembly/ui-text';
+import { Skeleton } from '@vassembly/ui-system-design/skeleton';
+import { Text } from '@vassembly/ui-system-design/text';
 import styles from './styles.module.scss';
 
 export function AgentsSkeleton(): JSX.Element {

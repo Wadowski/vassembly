@@ -1,14 +1,14 @@
 import type { ChangeEvent, FormEvent } from 'react';
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { DEFAULT_FORGOT_PASSWORD_SUBMIT_LABEL, DEFAULT_FORGOT_PASSWORD_SUCCESS_BODY } from './constants';
 import styles from './ForgotPasswordForm.module.scss';
 import { useForgotPasswordForm } from './useForgotPasswordForm';
 import type { ForgotPasswordFormProps } from './types';
-import { ArrowLeftIcon } from '@vassembly/ui-icons';
+import { ArrowLeftIcon } from '@vassembly/ui-system-design/icons';
 
 export const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
   const { title, titleId, className, submitLabel, onSuccess } = props;

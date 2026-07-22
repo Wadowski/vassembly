@@ -11,7 +11,7 @@ import {
   useTaskDetail,
   useTaskQuestions,
 } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { getRequestErrorMessage } from '../../agents/getRequestErrorMessage';
 import { TASK_ANSWER_SUBMIT_ERROR_MESSAGE, TASK_LOAD_ERROR_FALLBACK, TASK_WAITING_NOTIFICATION_MESSAGE } from './constants';

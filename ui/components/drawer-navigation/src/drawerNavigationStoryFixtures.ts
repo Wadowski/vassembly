@@ -1,4 +1,4 @@
-import { HouseIcon, LayoutDashboardIcon, ListBulletsIcon } from '@vassembly/ui-icons';
+import { HouseIcon, LayoutDashboardIcon, ListBulletsIcon } from '@vassembly/ui-system-design/icons';
 import type { DrawerUser, NavSection } from './types';
 
 export const storyNavSections: ReadonlyArray<NavSection> = [

@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@vassembly/ui-button';
-import { LockIcon } from '@vassembly/ui-icons';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { LockIcon } from '@vassembly/ui-system-design/icons';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { OnboardingStepCard } from './OnboardingStepCard';
 import type { OnboardingStepStatus } from './OnboardingStepCard';

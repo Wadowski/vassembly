@@ -23,7 +23,7 @@ vi.mock('@vassembly/ui-api-hooks', () => ({
   useResetPassword: () => h.reset,
 }));
 
-vi.mock('@vassembly/ui-snackbar', () => ({
+vi.mock('@vassembly/ui-system-design/snackbar', () => ({
   useSnackbar: () => ({ show: h.show }),
 }));
 

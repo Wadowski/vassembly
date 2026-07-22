@@ -38,7 +38,7 @@ vi.mock('next/navigation', () => ({
   useParams: (): Record<string, string> => ({}),
 }));
 
-vi.mock('@vassembly/ui-snackbar', () => ({
+vi.mock('@vassembly/ui-system-design/snackbar', () => ({
   SnackbarProvider: ({ children }: { children: unknown }) => children,
   useSnackbar: vi.fn(() => ({
     show: testApiHooksStubs.mockShowSnackbar,

@@ -1,4 +1,4 @@
-import { resolveClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import { RegisterFormFields } from './RegisterFormFields';
 import styles from './RegisterForm.module.scss';
 import type { RegisterFormProps } from './types';

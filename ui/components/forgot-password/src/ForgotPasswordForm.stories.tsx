@@ -2,7 +2,7 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { action } from 'storybook/actions';
 import { HttpClientProvider } from '@vassembly/ui-api-hooks';
-import { SnackbarProvider } from '@vassembly/ui-snackbar';
+import { SnackbarProvider } from '@vassembly/ui-system-design/snackbar';
 import { ForgotPasswordForm } from './ForgotPasswordForm';
 
 const meta: Meta<typeof ForgotPasswordForm> = {

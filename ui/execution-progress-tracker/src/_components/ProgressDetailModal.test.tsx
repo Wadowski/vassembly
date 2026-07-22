@@ -6,7 +6,7 @@ import { ProgressDetailModal } from './ProgressDetailModal';
 
 import type { ProgressEvent } from '../types';
 
-vi.mock('@vassembly/ui-modal', () => ({
+vi.mock('@vassembly/ui-system-design/modal', () => ({
   Modal: ({
     children,
     title,

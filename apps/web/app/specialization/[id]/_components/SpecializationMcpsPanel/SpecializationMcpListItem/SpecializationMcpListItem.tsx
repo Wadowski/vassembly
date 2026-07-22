@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './SpecializationMcpListItem.module.scss';
 import type { SpecializationMcpListItemProps } from './types';

@@ -3,8 +3,8 @@
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback } from 'react';
 
-import { Text } from '@vassembly/ui-text';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Text } from '@vassembly/ui-system-design/text';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { TASK_EMPTY_DESCRIPTION_LABEL } from './constants';
 import { getStatusColor, getStatusIcon, getStatusLabel } from './taskStatusDisplay';

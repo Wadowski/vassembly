@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import styles from './DrawerShell.module.scss';
 
 export interface DrawerShellProps {

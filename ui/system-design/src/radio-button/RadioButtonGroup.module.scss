@@ -1,0 +1,44 @@
+@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.groupLabel {
+  color: $color-text-primary;
+  font-weight: 500;
+}
+
+.optionsList {
+  display: flex;
+  gap: $spacing-3;
+
+  &.vertical {
+    flex-direction: column;
+  }
+
+  &.horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.helperText {
+  color: $color-text-secondary;
+}
+
+.errorText {
+  color: $color-error-500;
+}
+
+.isDisabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.isReadOnly {
+  cursor: default;
+}

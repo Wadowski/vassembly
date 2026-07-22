@@ -2,9 +2,9 @@
 
 import type { ChangeEvent } from 'react';
 
-import { Dropdown } from '@vassembly/ui-dropdown';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
+import { Dropdown } from '@vassembly/ui-system-design/dropdown';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 
 import { SYSTEM_AGENT_CATEGORY_OPTIONS, SYSTEM_AGENT_DESCRIPTION_MAX, SYSTEM_AGENT_RULE_MAX } from './constants';
 import type { SystemAgentFormFieldsProps } from './types';

@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react';
 
 import { useSkillsBySpecialization } from '@vassembly/ui-api-hooks';
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './SkillUsesSkillsSection.module.scss';
 

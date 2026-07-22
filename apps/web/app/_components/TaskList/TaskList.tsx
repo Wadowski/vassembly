@@ -3,8 +3,8 @@
 import type { ChangeEvent } from 'react';
 import { useCallback } from 'react';
 
-import { Button } from '@vassembly/ui-button';
-import { TextField } from '@vassembly/ui-text-field';
+import { Button } from '@vassembly/ui-system-design/button';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 
 import {
   TASK_LOADING_MORE_LABEL,

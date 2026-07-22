@@ -247,7 +247,7 @@ Add **Specializations** as the **last item** in the existing **Workspace** secti
 | `kind` | `link` |
 | `label` | `Specializations` |
 | `href` | `/specialization` |
-| `icon` | `TagsIcon` from `@vassembly/ui-icons` |
+| `icon` | `TagsIcon` from `@vassembly/ui-system-design/icons` |
 | Visibility | Admin role only; hidden for unauthenticated and non-admin users |
 | Active state | `currentPath` starts with `/specialization` |
 
@@ -353,7 +353,7 @@ Persist `?search={query}&page={n}` in the list URL when filters are active. Deta
 | Rule | Value |
 |------|-------|
 | Page size | 20 (`SPECIALIZATION_LIST_PAGE_SIZE`) |
-| Component | `Pagination` from `@vassembly/ui-pagination` |
+| Component | `Pagination` from `@vassembly/ui-system-design/pagination` |
 | `ariaLabel` | `"Specialization list pagination"` |
 | Previous/Next | Inherit accessible labels from `Pagination` component |
 | Range text | `Text variant="body2"`: `Showing {rangeStart}–{rangeEnd} of {total} total` |
@@ -543,20 +543,20 @@ Slot rows separated by `$spacing-4` vertical gap — no divider lines.
 
 | Component | Package / path | Usage |
 |-----------|----------------|-------|
-| `Text` | `@vassembly/ui-text` | All headings, body, captions |
-| `TextField` | `@vassembly/ui-text-field` | Search input |
-| `Pagination` | `@vassembly/ui-pagination` | List footer |
-| `Loader` | `@vassembly/ui-loader` | List/panel loading |
-| `Skeleton` | `@vassembly/ui-skeleton` | Page skeletons |
-| `Alert` | `@vassembly/ui-alert` | Error banners |
-| `Tag` | `@vassembly/ui-tag` | Agent status, not-provisioned |
-| `Button` | `@vassembly/ui-button` | Retry only |
+| `Text` | `@vassembly/ui-system-design/text` | All headings, body, captions |
+| `TextField` | `@vassembly/ui-system-design/text-field` | Search input |
+| `Pagination` | `@vassembly/ui-system-design/pagination` | List footer |
+| `Loader` | `@vassembly/ui-system-design/loader` | List/panel loading |
+| `Skeleton` | `@vassembly/ui-system-design/skeleton` | Page skeletons |
+| `Alert` | `@vassembly/ui-system-design/alert` | Error banners |
+| `Tag` | `@vassembly/ui-system-design/tag` | Agent status, not-provisioned |
+| `Button` | `@vassembly/ui-system-design/button` | Retry only |
 | `ProtectedAuthRoute` | `apps/web/lib/auth/ProtectedAuthRoute.tsx` | Route guard |
 | `useDebouncedValue` | `apps/web/lib/hooks/useDebouncedValue.ts` | Search debounce |
 | `formatRelativeTime` | `apps/web/app/tasks/[id]/lib/formatRelativeTime.ts` | Created dates |
 | `systemAgentEditPath` | `apps/web/app/agents/systemAgentRoutes.ts` | Agent detail links |
 | `getSystemAgentStatusLabel` / `getSystemAgentStatusVariant` | `PlatformAgentsSection/tags.ts` | Agent status tags |
-| `CloseIcon`, `TagsIcon`, `SearchIcon`, `BookOpenTextIcon` | `@vassembly/ui-icons` | Search clear, drawer, empty states |
+| `CloseIcon`, `TagsIcon`, `SearchIcon`, `BookOpenTextIcon` | `@vassembly/ui-system-design/icons` | Search clear, drawer, empty states |
 
 ### 7.2 Adapt from existing (copy + rename)
 
@@ -600,7 +600,7 @@ Slot rows separated by `$spacing-4` vertical gap — no divider lines.
 
 - Co-located `ComponentName.module.scss` per component folder.
 - Page-level: `SpecializationsPageView.module.scss`, `SpecializationDetailPage.module.scss`.
-- Import tokens: `@import '@vassembly/theme/src/tokens/index.scss';`
+- Import tokens: `@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';`
 
 ### 8.2 Recurring layout classes
 

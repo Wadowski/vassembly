@@ -579,10 +579,10 @@ apps/web/app/mcps/
 
 | Schema `type` | Component |
 |---------------|-----------|
-| `text` | `@vassembly/ui-text-field` |
+| `text` | `@vassembly/ui-system-design/text-field` |
 | `password` | `McpSecretField` |
-| `select` | `@vassembly/ui-dropdown` |
-| `checkbox` | `@vassembly/ui-checkbox` |
+| `select` | `@vassembly/ui-system-design/dropdown` |
+| `checkbox` | `@vassembly/ui-system-design/checkbox` |
 
 Empty schema (`fields.length === 0`): message *"This MCP does not require configuration"*; hide Test/Save.
 
@@ -851,7 +851,7 @@ flowchart LR
 | GraphQL | `@vassembly/graphql` + Pothos builder in `apps/api` | Existing |
 | REST | Fastify via `@vassembly/server` `defineRoute` | Existing |
 | Encryption | `@vassembly/client-encoder` AES-256-CBC | Existing |
-| Form UI | `@vassembly/ui-text-field`, `ui-dropdown`, `ui-checkbox`, `ui-button`, `ui-alert`, `ui-tag`, `ui-modal` | Existing |
+| Form UI | `@vassembly/ui-system-design/text-field`, `ui-dropdown`, `ui-checkbox`, `ui-button`, `ui-alert`, `ui-tag`, `ui-modal` | Existing |
 | State management | React `useState` / `useCallback` in page components | Existing (matches AiIntegrationForm) |
 | Auth | JWT via `@vassembly/service-auth` `authorizeRequest` | Existing |
 | Testing | Vitest unit tests per handler/command | Existing |

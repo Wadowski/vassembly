@@ -1,7 +1,7 @@
 'use client';
 
-import { BookOpenTextIcon, SearchIcon } from '@vassembly/ui-icons';
-import { Text } from '@vassembly/ui-text';
+import { BookOpenTextIcon, SearchIcon } from '@vassembly/ui-system-design/icons';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './McpListEmptyState.module.scss';
 import type { McpListEmptyStateProps } from './types';

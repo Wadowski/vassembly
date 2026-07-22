@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { CogIcon, LogoutIcon } from '@vassembly/ui-icons';
-import { resolveClassName } from '@vassembly/ui-utils';
-import { Text } from '@vassembly/ui-text';
-import { Menu, MenuItem } from '@vassembly/ui-menu';
+import { CogIcon, LogoutIcon } from '@vassembly/ui-system-design/icons';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
+import { Text } from '@vassembly/ui-system-design/text';
+import { Menu, MenuItem } from '@vassembly/ui-system-design/menu';
 import type { DrawerUser } from '../types';
 import styles from './DrawerFooterUser.module.scss';
 

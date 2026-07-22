@@ -1,4 +1,4 @@
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 import { FooterContactBlock } from './FooterContactBlock';
 import styles from './Footer.module.scss';
 import type { FooterContactSocialSlotProps } from './types';

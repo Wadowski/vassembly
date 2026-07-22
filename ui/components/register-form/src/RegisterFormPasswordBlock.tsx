@@ -1,4 +1,4 @@
-import { TextField } from '@vassembly/ui-text-field';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import styles from './RegisterForm.module.scss';
 import type { PasswordStrengthResult } from './types';

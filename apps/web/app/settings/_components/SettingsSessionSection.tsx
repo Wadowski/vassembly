@@ -1,9 +1,9 @@
 'use client';
 
 import { useLogout } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
-import { Modal } from '@vassembly/ui-modal';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Modal } from '@vassembly/ui-system-design/modal';
+import { Text } from '@vassembly/ui-system-design/text';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

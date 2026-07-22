@@ -22,8 +22,8 @@ Product feature: authenticated users see their recent tasks below the home-page 
 | API registration | `apps/api/src/graphql/index.ts` | Add `taskDomain.gqlSchema` + `registerTaskResolvers` |
 | React hook | `ui/api-hooks/src/agents/useAgents.ts` | `useApolloLazyQuery`, `fetchPolicy: 'no-cache'` |
 | Debounced search | `apps/web/lib/hooks/useDebouncedValue.ts` | 300ms debounce (match agents) |
-| Skeleton | `@vassembly/ui-skeleton` | `AgentsSkeleton` pattern |
-| Status display | `AgentList/tags.ts` | Map object for variant + label; use icons from `@vassembly/ui-icons` |
+| Skeleton | `@vassembly/ui-system-design/skeleton` | `AgentsSkeleton` pattern |
+| Status display | `AgentList/tags.ts` | Map object for variant + label; use icons from `@vassembly/ui-system-design/icons` |
 | Error toasts | `useSnackbar` + `getRequestErrorMessage` | Agent list pattern |
 | Task create flow | `TaskInputComposer` + `useCreateTask` | Extend with `onCreateSuccess` callback |
 | MongoDB index | `domains/task/src/clients/mongodb.ts` | `{ userId: 1, createdAt: -1 }` already exists |
@@ -65,14 +65,14 @@ Alternative (simpler v1): omit `title` from GraphQL entirely and hide the summar
 | 1 | Pagination strategy | **Offset via `page` + `size` (0-based page), default size 10** | Matches `agents` query across domain/service/GraphQL/hooks; `{ userId, createdAt }` index supports skip/limit; homepage uses **Load More** (client accumulates pages) not page controls |
 | 2 | Search implementation | **Case-insensitive regex on `description` (+ `title` when present)** in domain query | Same as agent list; no Atlas Search needed for MVP; filter built in `domains/task/src/queries/shared/buildTaskSearchFilter.ts` |
 | 3 | Status enum | **Add `TaskStatus.Failed = 'failed'`** | Requirements explicitly list four statuses; UI maps all four; no existing tasks use it until workflow commands exist |
-| 4 | Icon library | **`@vassembly/ui-icons`** (design-system SVG components) | Already used in apps/web; no third-party icon libs |
+| 4 | Icon library | **`@vassembly/ui-system-design/icons`** (design-system SVG components) | Already used in apps/web; no third-party icon libs |
 | 5 | List fetch errors | **Snackbar on error; skeleton only on initial load (`loading && tasks.length === 0`)** | Consistent with agents; failed Load More keeps prior items visible |
 | 6 | Apollo caching | **`fetchPolicy: 'no-cache'`**; accumulated list in React state | Matches `useAgents`; avoids cache merge complexity for append pagination |
 | 7 | Refetch after create | **`onCreateSuccess` callback on `TaskInputComposer`** → homepage resets to page 0 and refetches | Minimal coupling; no global event bus; create stays REST, list stays GraphQL |
 
 ### Status icon mapping
 
-| Status | Icon (`@vassembly/ui-icons`) | Color token (SCSS module) | Label |
+| Status | Icon (`@vassembly/ui-system-design/icons`) | Color token (SCSS module) | Label |
 |--------|------------------------------|---------------------------|-------|
 | `created` | `TimeClockCircleIcon` | `--color-text-secondary` | Created |
 | `in-progress` | `SingleNeutralCircleIcon` | `--color-info` | In progress |
@@ -397,7 +397,7 @@ export interface TaskListProps {
 
 See decision table above. File: `apps/web/app/_components/TaskList/taskStatusDisplay.ts`.
 
-Import icons from `@vassembly/ui-icons`. Colors via SCSS classes in `TaskListItem.module.scss` (e.g. `.statusCreated`, `.statusInProgress`, …) referencing design tokens.
+Import icons from `@vassembly/ui-system-design/icons`. Colors via SCSS classes in `TaskListItem.module.scss` (e.g. `.statusCreated`, `.statusInProgress`, …) referencing design tokens.
 
 ### 7. Frontend: Homepage Integration
 

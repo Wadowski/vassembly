@@ -1,9 +1,9 @@
 'use client';
 
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { CONNECTION_VERIFIED_MESSAGE, NETWORK_ERROR_MESSAGE } from './constants';
 import { McpConfigField } from './McpConfigField';

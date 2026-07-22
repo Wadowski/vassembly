@@ -11,19 +11,13 @@
   },
   "dependencies": {
     "@vassembly/errors": "workspace:*",
-    "@vassembly/theme": "workspace:*",
     "@vassembly/ui-api-hooks": "workspace:*",
-    "@vassembly/ui-button": "workspace:*",
-    "@vassembly/ui-checkbox": "workspace:^",
-    "@vassembly/ui-snackbar": "workspace:*",
-    "@vassembly/ui-text": "workspace:*",
-    "@vassembly/ui-text-field": "workspace:*",
     "@vassembly/ui-user-auth": "workspace:*",
-    "@vassembly/ui-utils": "workspace:*",
     "@vassembly/validation": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@vassembly/ui-system-design": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",

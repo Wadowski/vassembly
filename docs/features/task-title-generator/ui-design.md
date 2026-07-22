@@ -21,7 +21,7 @@ After task creation, an LLM asynchronously writes a short title (≤ 8 words) to
 | **Scannable list hierarchy** | When present, the title is the **primary scan line**; the description becomes supporting context below it. |
 | **Continuity across surfaces** | The same `task.title` string appears in the list card and as the detail H1 — no separate “Summary” section on the detail page. |
 | **Silent failure** | Failed generation looks identical to “not yet generated” — no error styling, no retry affordance in v1. |
-| **No new packages** | `@vassembly/ui-text` only; reuse existing SCSS module patterns. |
+| **No new packages** | `@vassembly/ui-system-design/text` only; reuse existing SCSS module patterns. |
 | **Calm appearance** | Title populates on next fetch/reload/navigation with no entrance animation required. |
 
 **Hierarchy correction (vs. current scaffold)**

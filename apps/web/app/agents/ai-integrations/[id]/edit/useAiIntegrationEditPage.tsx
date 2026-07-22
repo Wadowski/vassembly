@@ -13,7 +13,7 @@ import {
   type TestConnectionResult,
 } from '@vassembly/ui-api-hooks';
 import { useUserAuth } from '@vassembly/ui-user-auth';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { useAiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
 import { getRequestErrorMessage } from '../../../getRequestErrorMessage';

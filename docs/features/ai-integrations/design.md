@@ -124,7 +124,7 @@ Form sits in `surface-container-high` card with `formStack` spacing. Test result
 - Table actions use text buttons with explicit labels (Edit, Test, Delete, Restore)
 - Loader includes `ariaLabel`
 - Filter dropdowns have stable `id` attributes
-- Modal focus trap via `@vassembly/ui-modal`
+- Modal focus trap via `@vassembly/ui-system-design/modal`
 - Password field uses `type="password"` — keys never displayed after entry
 - API key hints on edit show masked suffix only (`apiKeyHint`)
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { TaskStatus } from '@vassembly/ui-api-hooks';
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import pageStyles from '../../TaskDetailPage.module.scss';
 import { MarkdownContent } from './MarkdownContent';

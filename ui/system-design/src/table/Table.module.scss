@@ -1,0 +1,24 @@
+@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: $color-text-primary;
+}
+
+.table th,
+.table td {
+  padding: $spacing-2;
+  text-align: left;
+  border-bottom: 1px solid $color-outline-variant;
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

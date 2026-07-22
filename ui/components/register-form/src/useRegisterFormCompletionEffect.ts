@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 import { useEffect } from 'react';
 import type { CommonError } from '@vassembly/errors';
 import type { SetSessionParams } from '@vassembly/ui-user-auth';
-import type { SnackbarContextValue } from '@vassembly/ui-snackbar';
+import type { SnackbarContextValue } from '@vassembly/ui-system-design/snackbar';
 import { formatRegisterErrorMessage } from './formatRegisterErrorMessage';
 import { mapRegisterUserToAuthUser } from './mapRegisterUserToAuthUser';
 import { resolvePostRegisterTargetUrl } from './resolvePostRegisterTargetUrl';

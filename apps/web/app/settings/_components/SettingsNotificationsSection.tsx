@@ -1,8 +1,8 @@
 'use client';
 
-import { Alert } from '@vassembly/ui-alert';
-import { Switch } from '@vassembly/ui-switch';
-import { Text } from '@vassembly/ui-text';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Switch } from '@vassembly/ui-system-design/switch';
+import { Text } from '@vassembly/ui-system-design/text';
 import { useSearchParams } from 'next/navigation';
 
 import {

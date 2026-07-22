@@ -1,7 +1,7 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Text } from '@vassembly/ui-system-design/text';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { TASK_EMPTY_DESCRIPTION_LABEL } from '../../../_components/TaskList/constants';
 import pageStyles from '../TaskDetailPage.module.scss';

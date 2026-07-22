@@ -1,9 +1,9 @@
 'use client';
 
-import { Checkbox } from '@vassembly/ui-checkbox';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Checkbox } from '@vassembly/ui-system-design/checkbox';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { McpSecretField } from './McpSecretField';
 

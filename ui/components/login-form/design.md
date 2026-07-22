@@ -1,6 +1,6 @@
 # Login Form — UI Design Specification
 
-Design reference for a reusable **Login Form** React package in the Vassembly monorepo. Aligns with **The Synthetic Luminal** (see `.cursor/rules/design.md`) and `@vassembly/theme` tokens.
+Design reference for a reusable **Login Form** React package in the Vassembly monorepo. Aligns with **The Synthetic Luminal** (see `.cursor/rules/design.md`) and `@vassembly/ui-system-design/theme` tokens.
 
 ---
 
@@ -81,7 +81,7 @@ Design reference for a reusable **Login Form** React package in the Vassembly mo
 
 ### 4.4 Email field
 
-- **Component:** `@vassembly/ui-text-field` `TextField`.
+- **Component:** `@vassembly/ui-system-design/text-field` `TextField`.
 - **Props:** `type="email"`, `autoComplete="email"`, `inputMode="email"`, `label="Email"`, `isFullWidth`, `size="large"` (align with button), `variant="outlined"` or `"filled"` per design system default in Storybook.
 - **Typography inside field:** Per Text — `body1` for input value (`$font-size-body-md` 1rem).
 - **Focus:** Existing TextField focus (ghost border primary ~40% + glow) — do not override.
@@ -94,7 +94,7 @@ Design reference for a reusable **Login Form** React package in the Vassembly mo
 
 ### 4.6 Submit button
 
-- **Component:** `@vassembly/ui-button` `Button`.
+- **Component:** `@vassembly/ui-system-design/button` `Button`.
 - **Props:** `color="primary"`, `variant="contained"`, `isFullWidth`, `text="Sign in"` (or product copy), `isLoading` when request in flight, `type="submit"` (parent `<form>`).
 - **Size:** `large` to match large inputs and meet ~44px touch target with padding.
 - **Style:** System primary gradient (135deg, `primary` → `primary` dim / `primary-container` per design.md); `border-radius-button-primary` (pill-leaning, `$border-radius-full` / 1.5rem).
@@ -127,7 +127,7 @@ Design reference for a reusable **Login Form** React package in the Vassembly mo
 7. Gap `spacing-6` before button  
 8. Button  
 
-**Breakpoints** (`@vassembly/theme`):
+**Breakpoints** (`@vassembly/ui-system-design/theme`):
 
 - `375px+` mobile baseline; `768px+` tablet; `1024px+` desktop.  
 - Form stays single column; only padding and `max-width` of the page shell change.
@@ -151,7 +151,7 @@ Design reference for a reusable **Login Form** React package in the Vassembly mo
 
 ## 7. Snackbar Integration
 
-**Packages:** `@vassembly/ui-snackbar` — `SnackbarProvider` + `useSnackbar` (or `SnackbarContext` consumer).
+**Packages:** `@vassembly/ui-system-design/snackbar` — `SnackbarProvider` + `useSnackbar` (or `SnackbarContext` consumer).
 
 | Topic | Spec |
 |--------|------|
@@ -166,7 +166,7 @@ Design reference for a reusable **Login Form** React package in the Vassembly mo
 
 ---
 
-## 8. Color Palette & Typography (source: `@vassembly/theme`)
+## 8. Color Palette & Typography (source: `@vassembly/ui-system-design/theme`)
 
 **Surfaces (dark):**  
 `surface` `#1a1a1e` → `surface-container` `#242428` → `surface-container-high` `#2e2e34` → `surface-container-highest` `#383840` → `surface-variant` (glass) `rgba(36, 36, 40, 0.5)`.
@@ -210,12 +210,12 @@ Design reference for a reusable **Login Form** React package in the Vassembly mo
 
 | Package | Use |
 |---------|-----|
-| `@vassembly/ui-text` | `Text` for any custom copy outside TextField. |
-| `@vassembly/ui-text-field` | Email + password inputs. |
-| `@vassembly/ui-button` | Submit CTA. |
-| `@vassembly/ui-snackbar` | `SnackbarProvider`, `useSnackbar` (or `SnackbarContext`) for error/success toasts. |
-| `@vassembly/ui-loader` | If Button loading needs explicit spinner, align with `Loader` component styling. |
-| `@vassembly/theme` | SCSS tokens: colors, spacing, typography, border-radius, breakpoints. |
+| `@vassembly/ui-system-design/text` | `Text` for any custom copy outside TextField. |
+| `@vassembly/ui-system-design/text-field` | Email + password inputs. |
+| `@vassembly/ui-system-design/button` | Submit CTA. |
+| `@vassembly/ui-system-design/snackbar` | `SnackbarProvider`, `useSnackbar` (or `SnackbarContext`) for error/success toasts. |
+| `@vassembly/ui-system-design/loader` | If Button loading needs explicit spinner, align with `Loader` component styling. |
+| `@vassembly/ui-system-design/theme` | SCSS tokens: colors, spacing, typography, border-radius, breakpoints. |
 | `@vassembly/ui-api-hooks` | `useLogin` — implementation concern; UI states follow §6. |
 | `@vassembly/ui-user-auth` | `setSession` after success; redirect concern (see §11). |
 

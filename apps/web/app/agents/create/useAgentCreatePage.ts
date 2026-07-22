@@ -2,7 +2,7 @@
 
 import type { AgentCategory, AgentFormValues } from '@vassembly/ui-api-hooks';
 import { useHttpClient } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 

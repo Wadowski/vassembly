@@ -1,5 +1,5 @@
-import { Text } from '@vassembly/ui-text';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Text } from '@vassembly/ui-system-design/text';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import { PASSWORD_REQUIREMENT_LABELS, PASSWORD_STRENGTH_LABELS } from './constants';
 import type { PasswordStrengthResult } from './types';
 import styles from './PasswordStrengthIndicator.module.scss';

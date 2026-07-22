@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { NO_CONFIGURATION_MESSAGE } from './constants';
 import styles from './McpDetailPageStates.module.scss';

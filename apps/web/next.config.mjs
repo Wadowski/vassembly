@@ -31,28 +31,17 @@ const nextConfig = {
   },
   transpilePackages: [
     "@vassembly/constants",
-    "@vassembly/theme",
-    "@vassembly/ui-alert",
-    "@vassembly/ui-anchor-list",
+    "@vassembly/ui-system-design",
     "@vassembly/ui-api-hooks",
-    "@vassembly/ui-button",
-    "@vassembly/ui-checkbox",
     "@vassembly/ui-drawer-navigation",
     "@vassembly/ui-footer",
     "@vassembly/ui-header",
-    "@vassembly/ui-icons",
-    "@vassembly/ui-modal",
     "@vassembly/ui-register-form",
     "@vassembly/ui-layout",
     "@vassembly/ui-reset-password-form",
-    "@vassembly/ui-snackbar",
-    "@vassembly/ui-switch",
-    "@vassembly/ui-text",
-    "@vassembly/ui-text-field",
     "@vassembly/ui-user-auth",
-    "@vassembly/ui-utils",
     "@vassembly/validation",
-  ],
+  ]
 };
 
 export default nextConfig;

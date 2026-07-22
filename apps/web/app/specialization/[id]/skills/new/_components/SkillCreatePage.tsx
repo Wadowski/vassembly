@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { ConflictError } from '@vassembly/errors';
 import { useCreateSkill, useSpecialization } from '@vassembly/ui-api-hooks';
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { SkillForm, SkillFormMode, useSkillForm } from '../../_components/SkillForm';
 import styles from './SkillCreatePage.module.scss';

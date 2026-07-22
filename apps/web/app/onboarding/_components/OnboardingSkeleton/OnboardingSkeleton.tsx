@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@vassembly/ui-skeleton';
+import { Skeleton } from '@vassembly/ui-system-design/skeleton';
 
 import styles from './OnboardingSkeleton.module.scss';
 

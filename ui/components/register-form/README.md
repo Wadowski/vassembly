@@ -27,7 +27,7 @@ import { RegisterForm, useRegisterForm } from '@vassembly/ui-register-form';
 import type { RegisterFormProps, RegisterFormSubmitResult, RegisterNavigateFn } from '@vassembly/ui-register-form';
 ```
 
-Transitive dependencies (for example `@vassembly/ui-api-hooks`, `@vassembly/ui-snackbar`, `@vassembly/ui-user-auth`) are resolved when you install the workspace; your app shell should still mount providers those hooks expect (notably the snackbar provider).
+Transitive dependencies (for example `@vassembly/ui-api-hooks`, `@vassembly/ui-system-design/snackbar`, `@vassembly/ui-user-auth`) are resolved when you install the workspace; your app shell should still mount providers those hooks expect (notably the snackbar provider).
 
 ## Usage
 
@@ -175,13 +175,13 @@ App menu:
 ## Styling and theming
 
 - **SCSS modules**: `RegisterForm.module.scss` (section, form, title, password block), `PasswordStrengthIndicator.module.scss` (strength list and level label).
-- **Theme**: Depends on `@vassembly/theme` (via typography/UI primitives).
+- **Theme**: Depends on `@vassembly/ui-system-design/theme` (via typography/UI primitives).
 - **Consistency**: Mirrors login-form patterns; override root appearance with `className` on `RegisterForm`.
 
 ## Accessibility
 
 - Optional `titleId` links the visible **Create Account** heading and `aria-describedby` on email.
-- Text fields use labeled controls from `@vassembly/ui-text-field`.
+- Text fields use labeled controls from `@vassembly/ui-system-design/text-field`.
 - Password strength updates are announced via a polite live region.
 - Submit `Button` uses `aria-busy` and is disabled while loading.
 - Semantic `<form>`; standard Enter-to-submit.
@@ -247,13 +247,13 @@ it('submits form with valid data', async () => {
 **Workspace packages (runtime)**
 
 - `@vassembly/errors` — error typing and classification for message mapping
-- `@vassembly/theme` — design tokens via UI primitives
+- `@vassembly/ui-system-design/theme` — design tokens via UI primitives
 - `@vassembly/ui-api-hooks` — `useRegister` → `POST /user/register`
-- `@vassembly/ui-button` — submit control
-- `@vassembly/ui-snackbar` — user-facing validation and API messages
-- `@vassembly/ui-text`, `@vassembly/ui-text-field` — typography and inputs
+- `@vassembly/ui-system-design/button` — submit control
+- `@vassembly/ui-system-design/snackbar` — user-facing validation and API messages
+- `@vassembly/ui-system-design/text`, `@vassembly/ui-system-design/text-field` — typography and inputs
 - `@vassembly/ui-user-auth` — `useUserAuth`, `AuthUser`, `setSession`
-- `@vassembly/ui-utils` — className helper
+- `@vassembly/ui-system-design/utils` — className helper
 - `@vassembly/validation` — Zod-based `validatorFactory` for the form schema
 - `react`, `react-dom` — **^18**
 - `zod` — schema and refinements
@@ -305,7 +305,7 @@ export default function RegisterPage() {
 | Module not found for `@vassembly/ui-register-form` | Run `pnpm install` at monorepo root; ensure the app lists this package as a workspace dependency. |
 | No redirect after success | Pass `onRedirect` with your router’s `replace`/`push`; otherwise full-page `window.location` is used. |
 | Strength indicator empty in a custom UI | Use `passwordStrength` from `useRegisterForm`; it updates from the password state via `useMemo`. |
-| Snackbars never appear | Mount `@vassembly/ui-snackbar` provider above the form. |
+| Snackbars never appear | Mount `@vassembly/ui-system-design/snackbar` provider above the form. |
 | `returnUrl` always ignored | Only same-origin URLs are accepted; others fall back to `fallbackPath`. |
 
 ## API reference (exports)

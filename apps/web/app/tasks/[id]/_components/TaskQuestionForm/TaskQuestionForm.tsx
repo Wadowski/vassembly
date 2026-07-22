@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import {
   QUESTION_FORM_NAVIGATION_LABEL,

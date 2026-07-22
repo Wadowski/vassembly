@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { useLinkedSkills } from '@vassembly/ui-api-hooks';
-import { Tag } from '@vassembly/ui-tag';
+import { Tag } from '@vassembly/ui-system-design/tag';
 
 import styles from './TaskDetailSkillsUsed.module.scss';
 import type { TaskDetailSkillsUsedProps, TaskDetailSkillsUsedViewProps } from './types';

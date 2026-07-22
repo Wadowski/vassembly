@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { NOT_FOUND_MESSAGE } from '../constants';
 import styles from './SkillNotFoundMessage.module.scss';

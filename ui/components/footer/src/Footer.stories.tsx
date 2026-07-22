@@ -3,7 +3,7 @@ import {
   SocialInstagramMonoIcon,
   SocialTwitterMonoIcon,
   SocialYoutubeMonoIcon,
-} from '@vassembly/ui-icons';
+} from '@vassembly/ui-system-design/icons';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Footer } from './Footer';
 

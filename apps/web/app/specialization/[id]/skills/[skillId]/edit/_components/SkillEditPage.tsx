@@ -5,8 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useSkill, useSpecialization, useUpdateSkill } from '@vassembly/ui-api-hooks';
-import { Loader } from '@vassembly/ui-loader';
-import { Text } from '@vassembly/ui-text';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { fetchSkillScriptContent } from '../../../_components/fetchSkillScriptContent';
 import { SkillForm, SkillFormMode, useSkillForm } from '../../../_components/SkillForm';

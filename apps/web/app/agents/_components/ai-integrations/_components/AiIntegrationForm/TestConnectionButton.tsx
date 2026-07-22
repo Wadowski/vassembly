@@ -1,7 +1,7 @@
 'use client';
 
 import type { TestConnectionResult } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
+import { Button } from '@vassembly/ui-system-design/button';
 
 import styles from './styles.module.scss';
 
