@@ -25,8 +25,6 @@ vi.mock('@vassembly/commands', () => ({
 
 import { updateTask } from './index';
 
-const TASK_ID = '507f1f77bcf86cd799439011';
-
 describe('updateTask task command', () => {
   beforeEach(() => {
     vi.clearAllMocks();

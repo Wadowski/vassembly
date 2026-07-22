@@ -104,11 +104,14 @@ export const useAccordionState = ({
   );
 
   const {
-    defaultValue: _defaultValue,
-    onValueChange: _onValueChange,
-    value: _value,
+    defaultValue,
+    onValueChange,
+    value,
     ...divProps
   } = rest as AccordionMultipleProps;
+  void defaultValue;
+  void onValueChange;
+  void value;
 
   return { contextValue, divProps };
 };

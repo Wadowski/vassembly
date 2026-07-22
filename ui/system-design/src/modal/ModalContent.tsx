@@ -1,9 +1,9 @@
-import { useId } from 'react';
+import { useId, type ReactElement } from 'react';
 import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import styles from './Modal.module.scss';
 import type { ModalContentProps } from './types';
 
-export const ModalContent = (props: ModalContentProps): JSX.Element => {
+export const ModalContent = (props: ModalContentProps): ReactElement => {
   const { children, title, onClose, size = 'md', className, ...rest } = props;
 
   const titleId = useId();

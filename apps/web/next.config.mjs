@@ -41,7 +41,7 @@ const nextConfig = {
     "@vassembly/ui-reset-password-form",
     "@vassembly/ui-user-auth",
     "@vassembly/validation",
-  ]
+  ],
 };
 
 export default nextConfig;

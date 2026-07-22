@@ -483,7 +483,7 @@ apps/web/app/tasks/[id]/
 ### 11.1 SCSS import
 
 ```scss
-@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
 ```
 
 ### 11.2 Spacing (most used)

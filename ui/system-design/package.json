@@ -33,6 +33,7 @@
     "./text": "./src/text/index.ts",
     "./text-field": "./src/text-field/index.ts",
     "./theme/*": "./src/theme/*",
+    "./src/theme/*": "./src/theme/*",
     "./utils": "./src/utils/index.ts"
   },
   "scripts": {

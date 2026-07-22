@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { CommonError, ErrorTypes, InternalError } from '@vassembly/errors';
+import { ErrorTypes, InternalError } from '@vassembly/errors';
 
 import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
 

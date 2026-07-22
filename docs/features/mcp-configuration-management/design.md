@@ -572,7 +572,7 @@ interface McpConfigFormProps {
 
 ### 8.4 Styling conventions
 
-- Import tokens: `@import '@vassembly/ui-system-design/theme/src/tokens/index.scss'`
+- Import tokens: `@import '@vassembly/ui-system-design/src/theme/tokens/index.scss'`
 - CSS Modules per component
 - Reuse classes: `.sectionCard`, `.formStack`, `.toolbarRow` from Settings where applicable (extract to shared `ui-page-layout` if duplication grows)
 - Animations: `300ms–500ms`, `cubic-bezier(0.22, 1, 0.36, 1)`

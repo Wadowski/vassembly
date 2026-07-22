@@ -1,11 +1,11 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, type ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { ModalContent } from './ModalContent';
 import { ModalOverlay } from './ModalOverlay';
 import styles from './Modal.module.scss';
 import type { ModalProps } from './types';
 
-export const Modal = (props: ModalProps): JSX.Element | null => {
+export const Modal = (props: ModalProps): ReactElement | null => {
   const { isOpen, onClose, children, title, className, size = 'md' } = props;
 
   const handleEscape = useCallback((event: KeyboardEvent): void => {

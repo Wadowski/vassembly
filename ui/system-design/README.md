@@ -21,7 +21,7 @@ import { resolveClassName } from '@vassembly/ui-system-design/utils';
 Design tokens in SCSS:
 
 ```scss
-@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
 ```
 
 ## Scripts

@@ -40,16 +40,23 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
       textVariant = 'label',
       className,
       type,
-      disabled,
-      form,
-      formAction,
-      formEncType,
-      formMethod,
-      formNoValidate,
+      disabled: _disabled,
+      form: _form,
+      formAction: _formAction,
+      formEncType: _formEncType,
+      formMethod: _formMethod,
+      formNoValidate: _formNoValidate,
       ...props
     },
     ref,
   ) => {
+    void _disabled;
+    void _form;
+    void _formAction;
+    void _formEncType;
+    void _formMethod;
+    void _formNoValidate;
+
     const Component = as === 'a' ? 'a' : as === Link ? Link : 'button';
     const isButtonDisabled = isDisabled || isLoading;
 
@@ -92,7 +99,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     if (Component === 'button') {
       return (
         <button
-          ref={ref as React.LegacyRef<HTMLButtonElement>}
+          ref={ref as React.Ref<HTMLButtonElement>}
           className={buttonClassName}
           disabled={isButtonDisabled}
           type={type ?? 'button'}
@@ -106,7 +113,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     if (Component === 'a') {
       return (
         <a
-          ref={ref as React.LegacyRef<HTMLAnchorElement>}
+          ref={ref as React.Ref<HTMLAnchorElement>}
           className={buttonClassName}
           aria-disabled={isButtonDisabled}
           {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
@@ -117,7 +124,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     }
 
     return (
-      // @ts-ignore - Next.js Link type mismatch with React 19
+      // @ts-expect-error - Next.js Link type mismatch with React 19
       <Link
         ref={ref as React.Ref<HTMLAnchorElement>}
         className={buttonClassName}

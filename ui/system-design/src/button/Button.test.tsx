@@ -335,7 +335,7 @@ describe('Button', () => {
       const user = userEvent.setup();
       render(<Button text="Focusable" />);
       const button = screen.getByRole('button');
-      button.focus();
+      await user.tab();
       expect(button).toHaveFocus();
     });
 

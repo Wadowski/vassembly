@@ -7,6 +7,7 @@ import {
   useState,
   type KeyboardEvent,
   type MouseEvent,
+  type HTMLAttributes,
   type ReactElement,
 } from 'react';
 import { resolveClassName } from '@vassembly/ui-system-design/utils';
@@ -63,20 +64,21 @@ export const Popover = (props: PopoverProps): JSX.Element => {
       return <>{trigger}</>;
     }
 
-    const element = trigger as ReactElement<any>;
+    const element = trigger as ReactElement<HTMLAttributes<HTMLElement>>;
+    const triggerProps = element.props;
 
     return cloneElement(element, {
       'aria-controls': panelId,
       'aria-expanded': open,
       'aria-haspopup': 'dialog',
       onClick: (event: MouseEvent<HTMLElement>): void => {
-        element.props.onClick?.(event);
+        triggerProps.onClick?.(event);
         if (!event.defaultPrevented) {
           handleTriggerActivate();
         }
       },
       onKeyDown: (event: KeyboardEvent<HTMLElement>): void => {
-        element.props.onKeyDown?.(event);
+        triggerProps.onKeyDown?.(event);
         if (event.defaultPrevented) {
           return;
         }
@@ -85,7 +87,6 @@ export const Popover = (props: PopoverProps): JSX.Element => {
           handleTriggerActivate();
         }
       },
-      ref: (element as ReactElement & { ref?: React.Ref<HTMLElement | null> }).ref,
     });
   };
 

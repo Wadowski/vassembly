@@ -600,7 +600,7 @@ Slot rows separated by `$spacing-4` vertical gap — no divider lines.
 
 - Co-located `ComponentName.module.scss` per component folder.
 - Page-level: `SpecializationsPageView.module.scss`, `SpecializationDetailPage.module.scss`.
-- Import tokens: `@import '@vassembly/ui-system-design/theme/src/tokens/index.scss';`
+- Import tokens: `@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';`
 
 ### 8.2 Recurring layout classes
 
