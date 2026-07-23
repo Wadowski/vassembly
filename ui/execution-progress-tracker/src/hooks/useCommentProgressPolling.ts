@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { POLLING_INTERVAL_MS } from '../constants/polling';
 import { TASK_PROGRESS_BY_COMMENT_QUERY } from '../graphql/taskProgressByCommentQuery';
@@ -25,7 +25,6 @@ export const useCommentProgressPolling = ({
   commentId,
   enabled = true,
 }: UseCommentProgressPollingParams): UseCommentProgressPollingResult => {
-  const [pollRequestCount, setPollRequestCount] = useState(0);
   const { data, error, loading, refetch, stopPolling, startPolling } = useQuery(
     TASK_PROGRESS_BY_COMMENT_QUERY,
     {
@@ -33,9 +32,6 @@ export const useCommentProgressPolling = ({
       pollInterval: enabled ? POLLING_INTERVAL_MS : 0,
       fetchPolicy: 'network-only',
       skip: !enabled,
-      onCompleted: () => {
-        setPollRequestCount((current) => current + 1);
-      },
     },
   );
 
@@ -85,7 +81,6 @@ export const useCommentProgressPolling = ({
     isLoading: loading,
     refetch: async (): Promise<void> => {
       await refetch();
-      setPollRequestCount((current) => current + 1);
     },
   };
 };

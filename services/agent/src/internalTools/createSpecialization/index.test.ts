@@ -70,6 +70,7 @@ const TASK_ID = '507f1f77bcf86cd799439011';
 const BASE_CONTEXT: InternalToolContext = {
   userId: 'user-1',
   taskId: TASK_ID,
+  commentId: 'comment-1',
   invocationId: 'invocation-1',
   callerAgentId: 'agent-1',
   callerAgentType: 'system',

@@ -21,6 +21,7 @@ describe('invocationResumeRegistry', () => {
       answeredQuestions: [
         {
           questionId: 'q-1',
+          commentId: 'comment-1',
           invocationId: 'child-1',
           askedByAgentId: 'agent-1',
           askedByAgentType: 'system',

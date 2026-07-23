@@ -15,7 +15,7 @@ const buildTask = (partial: Partial<TaskListItemDto> = {}): TaskListItemDto => (
   status: partial.status ?? TaskStatus.Created,
   agentAssignedId: partial.agentAssignedId ?? null,
   title: partial.title ?? null,
-  llmResponse: partial.llmResponse ?? null,
+  activeCommentId: partial.activeCommentId ?? null,
   errorMessage: partial.errorMessage ?? null,
   errorCode: partial.errorCode ?? null,
   startedAt: partial.startedAt ?? null,

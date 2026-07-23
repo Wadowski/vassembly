@@ -17,6 +17,7 @@ export const invokePersonalAgent = async (
     toolContext: {
       userId,
       taskId: '',
+      commentId: '',
       invocationId: randomUUID(),
       callerAgentId: agentId,
       callerAgentType: 'personal',

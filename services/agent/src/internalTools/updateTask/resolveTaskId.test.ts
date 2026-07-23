@@ -7,6 +7,7 @@ import type { InternalToolContext } from '../types';
 const BASE_CONTEXT: InternalToolContext = {
   userId: 'user-1',
   taskId: '507f1f77bcf86cd799439011',
+  commentId: 'comment-1',
   invocationId: 'inv-1',
   callerAgentId: 'agent-1',
   callerAgentType: 'system',

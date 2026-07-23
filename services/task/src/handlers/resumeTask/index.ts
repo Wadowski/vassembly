@@ -1,5 +1,4 @@
 import taskDomain, { TaskStatus, toTaskResponse } from '@vassembly/domain-task';
-import taskProgressDomain from '@vassembly/domain-task-progress';
 import { ConflictError, NotFoundError } from '@vassembly/errors';
 import { logger } from '@vassembly/logger';
 

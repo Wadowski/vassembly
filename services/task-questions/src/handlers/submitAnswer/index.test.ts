@@ -73,7 +73,7 @@ describe('submitAnswer handler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetModelById.mockResolvedValue({
-      data: { id: 'task-1', userId: 'user-1' },
+      data: { id: 'task-1', userId: 'user-1', activeCommentId: 'comment-1' },
     });
     mockMarkInProgressFromWaiting.mockResolvedValue({ data: { id: 'task-1' } });
     mockClearBlockedInvocations.mockResolvedValue({ data: { taskId: 'task-1' } });
@@ -111,7 +111,7 @@ describe('submitAnswer handler', () => {
       data: {
         taskId: 'task-1',
         pendingQuestions: [],
-        answeredQuestions: [{ questionId: 'q-1', answer: 'done' }],
+        answeredQuestions: [{ questionId: 'q-1', commentId: 'comment-1', answer: 'done' }],
         blockedInvocations: [{ invocationId: 'child-1' }],
       },
     });
@@ -140,7 +140,7 @@ describe('submitAnswer handler', () => {
       data: {
         taskId: 'task-1',
         pendingQuestions: [],
-        answeredQuestions: [{ questionId: 'q-1', answer: 'done' }],
+        answeredQuestions: [{ questionId: 'q-1', commentId: 'comment-1', answer: 'done' }],
         blockedInvocations: [{ invocationId: 'root-1' }],
       },
     });
@@ -156,6 +156,7 @@ describe('submitAnswer handler', () => {
     expect(mockExecuteTask).toHaveBeenCalledWith({
       taskId: 'task-1',
       userId: 'user-1',
+      commentId: 'comment-1',
       mode: 'resume',
     });
   });

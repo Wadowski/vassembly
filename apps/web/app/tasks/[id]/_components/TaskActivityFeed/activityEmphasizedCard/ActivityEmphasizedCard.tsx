@@ -21,9 +21,9 @@ export interface ActivityEmphasizedCardProps {
 }
 
 const variantClassName: Record<ActivityEmphasizedCardVariant, string> = {
-  user: styles.cardUser,
-  agent: styles.cardAgent,
-  hitl: styles.cardHitl,
+  user: styles.cardUser ?? '',
+  agent: styles.cardAgent ?? '',
+  hitl: styles.cardHitl ?? '',
 };
 
 export const ActivityEmphasizedCard = ({

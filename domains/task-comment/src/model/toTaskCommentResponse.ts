@@ -1,4 +1,4 @@
-import { assertRequiredFields, toIsoString, toNullableIsoString } from '@vassembly/mappers';
+import { assertRequiredFields, toIsoString } from '@vassembly/mappers';
 
 import type { TaskCommentResponse } from './dto';
 import type { TaskCommentModel } from './model';

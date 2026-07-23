@@ -7,9 +7,11 @@ import type { RecordTaskProgressInput, RecordTaskProgressOutput } from './types'
 export const recordTaskProgress = async (
   input: RecordTaskProgressInput
 ): Promise<RecordTaskProgressOutput> => {
-  // Validate required fields
   if (!input.taskId) {
     throw new ValidationError('taskId is required');
+  }
+  if (!input.commentId) {
+    throw new ValidationError('commentId is required');
   }
   if (!input.userId) {
     throw new ValidationError('userId is required');
@@ -21,7 +23,6 @@ export const recordTaskProgress = async (
     throw new ValidationError('state is required');
   }
 
-  // 1. Verify task exists and belongs to user
   const taskResult = await taskDomain.queries.getModelById({ id: input.taskId });
 
   if (!taskResult.data) {
@@ -32,26 +33,24 @@ export const recordTaskProgress = async (
     throw new ForbiddenError('User does not have permission to record progress for this task');
   }
 
-  // 2. Initialize task progress if it doesn't exist (idempotent)
-  let taskProgressResult = await taskProgressDomain.queries.getModelByTaskId({
-    taskId: input.taskId,
+  let taskProgressResult = await taskProgressDomain.queries.getModelByCommentId({
+    commentId: input.commentId,
   });
 
   if (!taskProgressResult.data) {
     await taskProgressDomain.commands.initializeTaskProgress({
       taskId: input.taskId,
       userId: input.userId,
+      commentId: input.commentId,
     });
 
-    // Re-fetch to get the initialized progress
-    taskProgressResult = await taskProgressDomain.queries.getModelByTaskId({
-      taskId: input.taskId,
+    taskProgressResult = await taskProgressDomain.queries.getModelByCommentId({
+      commentId: input.commentId,
     });
   }
 
-  // 3. Record the progress event
   const event = await taskProgressDomain.commands.recordProgressEvent({
-    taskId: input.taskId,
+    commentId: input.commentId,
     agentId: input.agentId,
     parentAgentId: input.parentAgentId,
     state: input.state,

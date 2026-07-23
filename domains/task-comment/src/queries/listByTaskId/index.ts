@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { TASK_COMMENT_COLLECTION_NAME } from '../../clients';
 import { taskCommentFactory } from '../../model';
+import { mapTaskCommentDocument } from '../../model/mapTaskCommentDocument';
 
 import type { TaskCommentModel } from '../../model';
 import type { ListByTaskIdInput, ListByTaskIdResult } from './types';
@@ -27,15 +28,11 @@ export const listByTaskId = async (input: ListByTaskIdInput): Promise<ListByTask
 
   const documents = await cursor.toArray();
 
-  const data: TaskCommentModel[] = documents.map((document) => {
-    const record = document as Record<string, unknown>;
-    const id = record.id ?? (record._id != null ? String(record._id) : undefined);
-
-    return taskCommentFactory.create({
-      ...record,
-      ...(id !== undefined ? { id } : {}),
-    });
-  });
+  const data: TaskCommentModel[] = documents.map((document) =>
+    taskCommentFactory.create(
+      mapTaskCommentDocument({ document: document as Record<string, unknown> }),
+    ),
+  );
 
   return { data };
 };

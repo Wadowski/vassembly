@@ -251,18 +251,18 @@ describe('finalizeTaskProgress', () => {
   });
 
   describe('validation', () => {
-    it('should reject empty taskId', async () => {
+    it('should reject empty commentId', async () => {
       await expect(
         finalizeTaskProgress({
-          taskId: '',
+          commentId: '',
         })
       ).rejects.toThrow();
     });
 
-    it('should reject missing taskId', async () => {
+    it('should reject missing commentId', async () => {
       await expect(
         finalizeTaskProgress({
-          taskId: undefined as unknown as string,
+          commentId: undefined as unknown as string,
         })
       ).rejects.toThrow();
     });

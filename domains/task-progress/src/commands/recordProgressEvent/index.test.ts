@@ -311,10 +311,10 @@ describe('recordProgressEvent', () => {
   });
 
   describe('validation', () => {
-    it('should reject empty taskId', async () => {
+    it('should reject empty commentId', async () => {
       await expect(
         recordProgressEvent({
-          taskId: '',
+          commentId: '',
           agentId: 'agent-123',
           state: ProgressEventState.Started,
         })

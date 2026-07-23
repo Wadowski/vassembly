@@ -1,6 +1,7 @@
 import { applyResolvers, defineObjectType } from '@vassembly/graphql';
 import { UnauthorizedError } from '@vassembly/errors';
 import taskService from '@vassembly/service-task';
+import type { TaskActivityItem } from '@vassembly/service-task';
 import type { Builder } from '@vassembly/graphql';
 
 import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
@@ -46,7 +47,7 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
     fields: (t) => ({
       items: t.field({
         type: ['TaskActivityItem'],
-        resolve: (parent: { items: unknown[] }) => parent.items,
+        resolve: (parent: { items: TaskActivityItem[] }) => parent.items,
       }),
     }),
   });

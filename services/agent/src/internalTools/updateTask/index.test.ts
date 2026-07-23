@@ -43,6 +43,7 @@ describe('updateTask internal tool handler', () => {
     const context: InternalToolContext = {
       userId: 'user-1',
       taskId: TASK_ID,
+      commentId: 'comment-1',
       invocationId: 'inv-1',
       callerAgentId: 'agent-1',
       callerAgentType: 'system',
@@ -69,6 +70,7 @@ describe('updateTask internal tool handler', () => {
     const context: InternalToolContext = {
       userId: 'user-1',
       taskId: TASK_ID,
+      commentId: 'comment-1',
       invocationId: 'inv-1',
       callerAgentId: 'agent-1',
       callerAgentType: 'system',
@@ -95,6 +97,7 @@ describe('updateTask internal tool handler', () => {
     const context: InternalToolContext = {
       userId: 'user-1',
       taskId: TASK_ID,
+      commentId: 'comment-1',
       invocationId: 'inv-1',
       callerAgentId: 'agent-1',
       callerAgentType: 'system',
@@ -118,6 +121,7 @@ describe('updateTask internal tool handler', () => {
     const context: InternalToolContext = {
       userId: 'user-1',
       taskId: TASK_ID,
+      commentId: 'comment-1',
       invocationId: 'inv-1',
       callerAgentId: 'agent-1',
       callerAgentType: 'system',
@@ -143,6 +147,7 @@ describe('updateTask internal tool handler', () => {
     const context: InternalToolContext = {
       userId: 'user-1',
       taskId: TASK_ID,
+      commentId: 'comment-1',
       invocationId: 'inv-1',
       callerAgentId: 'agent-1',
       callerAgentType: 'system',
@@ -167,6 +172,7 @@ describe('updateTask internal tool handler', () => {
     const context: InternalToolContext = {
       userId: 'user-1',
       taskId: TASK_ID,
+      commentId: 'comment-1',
       invocationId: 'inv-1',
       callerAgentId: 'agent-1',
       callerAgentType: 'system',

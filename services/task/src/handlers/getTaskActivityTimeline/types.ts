@@ -97,10 +97,6 @@ export const mapProgressStateToFilterGroup = ({
     [ProgressEventState.Completed]: 'agentFinished',
     [ProgressEventState.Failed]: 'agentFailed',
     [ProgressEventState.Waiting]: 'agentWaiting',
-    started: 'agentStarted',
-    completed: 'agentFinished',
-    failed: 'agentFailed',
-    waiting: 'agentWaiting',
   };
 
   return filterGroupByState[normalized] ?? 'agentStarted';
