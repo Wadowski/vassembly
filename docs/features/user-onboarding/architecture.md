@@ -24,7 +24,7 @@ This document describes how User Onboarding fits the Vassembly monorepo: domains
 | User auth context | `@vassembly/ui-user-auth` | `UserAuthProvider`, `AuthUser` shape (`id`, `email`, `role`, `verifiedAt`) | `AuthUser` missing `onboardingCompleted` |
 | UI hooks | `@vassembly/ui-api-hooks` | `useGetUser` GraphQL, auth REST hooks | No `useVerifyEmail`, `useResendVerification`; `GET_USER_QUERY` missing `onboarding` fields |
 | AI integration create | `apps/web/app/agents/ai-integrations/create/` | `useAiIntegrationCreatePage` redirects to `AI_INTEGRATIONS_LIST_ANCHOR` on success | Must redirect to `/onboarding` instead when user is in onboarding |
-| Stepper UI | `@vassembly/ui-stepper` (`ui/system-design/stepper/`) | Step progress component | Ready to use — no changes needed |
+| Stepper UI | `@vassembly/ui-system-design/stepper` (`ui/system-design/stepper/`) | Step progress component | Ready to use — no changes needed |
 
 ### What can be reused (~85%)
 
@@ -36,7 +36,7 @@ This document describes how User Onboarding fits the Vassembly monorepo: domains
 - `ProtectedAuthRoute` — used unchanged on `/onboarding` to enforce authentication
 - `aiIntegrations(status: "active", page: 1, size: 1)` GraphQL query → reused to derive Step 2 status (no new query)
 - `resolvePostRegisterTargetUrl` same-origin validation → reused for `returnUrl` safety on onboarding completion
-- `@vassembly/ui-stepper` — reused as-is for two-step progress display
+- `@vassembly/ui-system-design/stepper` — reused as-is for two-step progress display
 
 ### What is genuinely new (~15%)
 
@@ -145,7 +145,7 @@ sequenceDiagram
 apps/web (onboarding page + middleware)
   → @vassembly/ui-api-hooks (useVerifyEmail, useResendVerification, useGetUser, useAiIntegrations)
   → @vassembly/ui-user-auth (UserAuthProvider, AuthUser.onboardingCompleted)
-  → @vassembly/ui-stepper (step display)
+  → @vassembly/ui-system-design/stepper (step display)
 
 @vassembly/ui-api-hooks
   → GraphQL: apps/api (extended User type with onboarding)
@@ -654,7 +654,7 @@ apps/web/app/onboarding/
 4. Monitor `onboarding.completedAt` — when set: trigger `useRefresh` (updates JWT), then `router.replace(returnUrl or '/')`
 5. Return step states, email for display, resend handler
 
-**`OnboardingHub.tsx`** — renders two `OnboardingStepCard` instances using `@vassembly/ui-stepper` layout. Step 2 is visually locked when Step 1 is pending.
+**`OnboardingHub.tsx`** — renders two `OnboardingStepCard` instances using `@vassembly/ui-system-design/stepper` layout. Step 2 is visually locked when Step 1 is pending.
 
 **`EmailVerificationStep.tsx`** — calls `useResendVerification` hook; shows countdown (`retryAfter` from 429 response); shows user email.
 
@@ -929,7 +929,7 @@ Phases 1–3 are sequential (backend). Phases 4–5 can start after Phase 3 with
    - Dependencies: Todo 2 (for JWT claim shape)
 
 7. **`apps/web`** — middleware, onboarding page, redirect changes
-   - Changes: Extend `middleware.ts` with onboarding gate (Chain of Responsibility); new `/onboarding` page + `_components/` tree using `@vassembly/ui-stepper`; change `register/page.tsx` post-register redirect to `/onboarding`; change `ai-integrations create` to redirect to `/onboarding` when `onboardingCompleted === false`
+   - Changes: Extend `middleware.ts` with onboarding gate (Chain of Responsibility); new `/onboarding` page + `_components/` tree using `@vassembly/ui-system-design/stepper`; change `register/page.tsx` post-register redirect to `/onboarding`; change `ai-integrations create` to redirect to `/onboarding` when `onboardingCompleted === false`
    - Files: `apps/web/middleware.ts`, `apps/web/app/onboarding/page.tsx`, `apps/web/app/onboarding/_components/**`, `apps/web/app/register/page.tsx`, `apps/web/app/agents/ai-integrations/_components/ai-integrations/_components/createPage/useAiIntegrationCreatePage.tsx`
    - Workflow: tdd-unit-test-writer (middleware + useOnboardingHub) → coder ↔ code-reviewer (max 2) → documentation-writer
    - Dependencies: Todo 5, Todo 6

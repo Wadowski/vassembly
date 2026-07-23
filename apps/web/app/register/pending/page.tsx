@@ -1,5 +1,5 @@
-import { Text } from "@vassembly/ui-text";
-import { Button } from "@vassembly/ui-button";
+import { Text } from "@vassembly/ui-system-design/text";
+import { Button } from "@vassembly/ui-system-design/button";
 
 export default function RegisterPendingPage() {
   return (

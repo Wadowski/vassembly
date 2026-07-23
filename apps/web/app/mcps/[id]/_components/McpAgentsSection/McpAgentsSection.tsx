@@ -1,7 +1,7 @@
 'use client';
 
-import { Loader } from '@vassembly/ui-loader';
-import { Text } from '@vassembly/ui-text';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { McpAgentListItem } from './McpAgentListItem';
 import { McpUnassignAgentModal } from './McpUnassignAgentModal';

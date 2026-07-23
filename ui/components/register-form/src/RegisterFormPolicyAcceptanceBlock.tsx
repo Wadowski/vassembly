@@ -1,8 +1,8 @@
 import type { MouseEvent } from 'react';
-import { Checkbox } from '@vassembly/ui-checkbox';
-import type { CheckboxChecked } from '@vassembly/ui-checkbox';
-import { Text } from '@vassembly/ui-text';
-import { Button } from '@vassembly/ui-button';
+import { Checkbox } from '@vassembly/ui-system-design/checkbox';
+import type { CheckboxChecked } from '@vassembly/ui-system-design/checkbox';
+import { Text } from '@vassembly/ui-system-design/text';
+import { Button } from '@vassembly/ui-system-design/button';
 
 import styles from './RegisterFormPolicyAcceptanceBlock.module.scss';
 

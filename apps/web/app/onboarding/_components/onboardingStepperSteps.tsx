@@ -1,5 +1,5 @@
-import { BulbIcon, SendEmailIcon } from '@vassembly/ui-icons';
-import type { StepperStep } from '@vassembly/ui-stepper';
+import { BulbIcon, SendEmailIcon } from '@vassembly/ui-system-design/icons';
+import type { StepperStep } from '@vassembly/ui-system-design/stepper';
 
 export const ONBOARDING_STEPPER_STEPS: readonly StepperStep[] = [
   {

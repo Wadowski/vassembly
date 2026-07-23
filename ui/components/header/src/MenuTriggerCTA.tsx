@@ -1,5 +1,5 @@
-import { NavigationMenuIcon } from '@vassembly/ui-icons';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { NavigationMenuIcon } from '@vassembly/ui-system-design/icons';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import styles from './MenuTriggerCTA.module.scss';
 import type { MenuTriggerCTAProps } from './types';
 

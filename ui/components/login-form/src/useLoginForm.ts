@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
 import { useCallback, useRef, useState } from 'react';
 import { useLogin } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 import { validateLoginForm } from './validateLoginForm';
 import { useLoginFormCompletionEffect } from './useLoginFormCompletionEffect';

@@ -11,15 +11,15 @@ import {
   useResumeTask,
   useRetryTask,
 } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
-import { useSnackbar } from '@vassembly/ui-snackbar';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
+import { Text } from '@vassembly/ui-system-design/text';
 import {
   ArrowLeftIcon,
   ButtonLoopArrowIcon,
   ButtonPauseIcon,
   ButtonPlayIcon,
-} from '@vassembly/ui-icons';
+} from '@vassembly/ui-system-design/icons';
 
 import { TASK_DETAILS_PAGE_TITLE } from '../constants';
 import pageStyles from '../TaskDetailPage.module.scss';

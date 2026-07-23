@@ -14,7 +14,7 @@ pnpm add @vassembly/ui-footer
 
 ```tsx
 import { Footer } from '@vassembly/ui-footer';
-import { SocialTwitterMonoIcon } from '@vassembly/ui-icons';
+import { SocialTwitterMonoIcon } from '@vassembly/ui-system-design/icons';
 
 export function Example(): JSX.Element {
   return (
@@ -66,8 +66,8 @@ export function Example(): JSX.Element {
 
 ## Design system
 
-- SCSS tokens from `@vassembly/theme` (`colors`, `spacing`, `typography`, `breakpoints`, `shadows`).
-- Typography via `@vassembly/ui-text` (`Text`).
+- SCSS tokens from `@vassembly/ui-system-design/theme` (`colors`, `spacing`, `typography`, `breakpoints`, `shadows`).
+- Typography via `@vassembly/ui-system-design/text` (`Text`).
 - Layout: stacked column on small viewports; multi-column grid from the desktop breakpoint (`$media-desktop`).
 
 ## Accessibility

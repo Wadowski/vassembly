@@ -9,7 +9,7 @@ import {
   useSystemAgents,
   type SystemAgentAdminItem,
 } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { getSystemAgentErrorMessage } from './getSystemAgentErrorMessage';
 import { usePlatformAgentListFilters } from './usePlatformAgentListFilters';

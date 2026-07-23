@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 
 import {

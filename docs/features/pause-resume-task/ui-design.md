@@ -20,7 +20,7 @@ Users need lightweight control over long-running LLM tasks without leaving the T
 | **State-driven visibility** | Only show actions valid for the current `task.status`; never render disabled hidden-state buttons |
 | **Continuity with TaskList** | `paused` badge reuses the same `taskStatusDisplay` mapping as list cards |
 | **Action hierarchy** | Resume is the primary positive action when paused; retry is secondary beside it; pause is a cautious secondary action when running |
-| **No new packages** | `@vassembly/ui-button`, `@vassembly/ui-text`, `@vassembly/ui-icons` only |
+| **No new packages** | `@vassembly/ui-system-design/button`, `@vassembly/ui-system-design/text`, `@vassembly/ui-system-design/icons` only |
 | **Calm when idle** | Status badge update is the primary feedback; snackbars are optional per PRD §8.6 |
 
 **Glass secondary mapping**
@@ -486,10 +486,10 @@ TaskDetailHeader
 
 | UI element | Icon | Package export |
 |------------|------|----------------|
-| Pause button | `ButtonPauseIcon` | `@vassembly/ui-icons` |
-| Resume button | `ButtonPlayIcon` | `@vassembly/ui-icons` |
-| Retry button | `ButtonLoopArrowIcon` | `@vassembly/ui-icons` |
-| Paused status badge | `ButtonStopIcon` | `@vassembly/ui-icons` |
+| Pause button | `ButtonPauseIcon` | `@vassembly/ui-system-design/icons` |
+| Resume button | `ButtonPlayIcon` | `@vassembly/ui-system-design/icons` |
+| Retry button | `ButtonLoopArrowIcon` | `@vassembly/ui-system-design/icons` |
+| Paused status badge | `ButtonStopIcon` | `@vassembly/ui-system-design/icons` |
 
 **Rejected alternatives**
 

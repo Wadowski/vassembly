@@ -5,8 +5,8 @@ import { useCallback } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { Tag } from '@vassembly/ui-tag';
-import { Text } from '@vassembly/ui-text';
+import { Tag } from '@vassembly/ui-system-design/tag';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { McpStatusBadge } from '../McpStatusBadge/McpStatusBadge';
 

@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TaskStatus, TaskType, type TaskDto } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { TASK_LOAD_ERROR_FALLBACK, TASK_NOT_FOUND_MESSAGE } from './constants';
 import { useTaskDetailPage } from './useTaskDetailPage';

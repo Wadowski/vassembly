@@ -5,7 +5,7 @@ import {
   CheckCircleIcon,
   SingleNeutralCircleIcon,
   TimeClockCircleIcon,
-} from '@vassembly/ui-icons';
+} from '@vassembly/ui-system-design/icons';
 
 import { getStatusColor, getStatusIcon, getStatusLabel } from './taskStatusDisplay';
 

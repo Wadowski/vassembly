@@ -1,6 +1,6 @@
 'use client';
 
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { UpdateUserSettingParams, UserSettingsV1 } from './types';

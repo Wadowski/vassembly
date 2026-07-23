@@ -2,7 +2,7 @@ import {
   SystemAgentCategory,
   SystemAgentStatus,
 } from '@vassembly/ui-api-hooks';
-import type { TagVariant } from '@vassembly/ui-tag';
+import type { TagVariant } from '@vassembly/ui-system-design/tag';
 
 const CATEGORY_LABEL: Record<SystemAgentCategory, string> = {
   [SystemAgentCategory.Coding]: 'Coding',

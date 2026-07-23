@@ -1,4 +1,4 @@
-import { resolveClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import styles from './HeaderBrand.module.scss';
 import type { HeaderBrandProps } from './types';
 

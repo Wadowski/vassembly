@@ -1,7 +1,7 @@
 'use client';
 
-import { Pagination } from '@vassembly/ui-pagination';
-import { Text } from '@vassembly/ui-text';
+import { Pagination } from '@vassembly/ui-system-design/pagination';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './PanelListFooter.module.scss';
 

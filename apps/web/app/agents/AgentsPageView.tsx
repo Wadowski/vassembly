@@ -1,7 +1,7 @@
 'use client';
 
 import { useUserAuth } from '@vassembly/ui-user-auth';
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { AgentList } from './_components/AgentList';
 import { AiIntegrationsSection } from './_components/AiIntegrationsSection';

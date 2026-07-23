@@ -438,21 +438,21 @@ Contained in `.sectionCard` with section label **“Details”**.
 | UI area | Package | Component / pattern | Notes |
 |---------|---------|---------------------|-------|
 | Page auth | app | `ProtectedAuthRoute` | `loadingFallback={<TaskDetailSkeleton />}` |
-| Back nav | `@vassembly/ui-button` | `Button variant="text"` | `← Back to tasks` |
-| Headlines / body | `@vassembly/ui-text` | `Text` variants `h1`, `h3`, `body1`, `body2`, `label`, `caption` | |
-| Status (header + metadata) | app shared | Extract `TaskStatusBadge` from TaskList item | Uses `@vassembly/ui-icons` + `taskStatusDisplay` |
-| Status (alt) | `@vassembly/ui-tag` | `Tag` + icon | Only if design switches to pills |
+| Back nav | `@vassembly/ui-system-design/button` | `Button variant="text"` | `← Back to tasks` |
+| Headlines / body | `@vassembly/ui-system-design/text` | `Text` variants `h1`, `h3`, `body1`, `body2`, `label`, `caption` | |
+| Status (header + metadata) | app shared | Extract `TaskStatusBadge` from TaskList item | Uses `@vassembly/ui-system-design/icons` + `taskStatusDisplay` |
+| Status (alt) | `@vassembly/ui-system-design/tag` | `Tag` + icon | Only if design switches to pills |
 | Metadata container | SCSS module | `.sectionCard` | Settings pattern — no `ui-card` package |
-| Description | `@vassembly/ui-text` | `body1` | |
-| Timeline rows | `@vassembly/ui-text` | labels + timestamps | Phase 2; custom SCSS timeline |
-| Timeline (tabular alt) | `@vassembly/ui-table` | `Table` | Use only if >5 homogeneous events in Phase 3 |
-| Page skeleton | `@vassembly/ui-skeleton` | `Skeleton` | |
-| Timeline skeleton | `@vassembly/ui-skeleton` | 2–3 row placeholders | Phase 2 |
-| Errors | `@vassembly/ui-snackbar` | `useSnackbar` | `variant: 'error'` |
-| Inline error | `@vassembly/ui-alert` | `Alert` | Optional beside retry |
-| Retry | `@vassembly/ui-button` | `outlined` / `contained` | |
-| Not found | `@vassembly/ui-text` + `Button` | — | |
-| Breadcrumbs | `@vassembly/ui-breadcrumbs` | — | **Not used** in web app v1 |
+| Description | `@vassembly/ui-system-design/text` | `body1` | |
+| Timeline rows | `@vassembly/ui-system-design/text` | labels + timestamps | Phase 2; custom SCSS timeline |
+| Timeline (tabular alt) | `@vassembly/ui-system-design/table` | `Table` | Use only if >5 homogeneous events in Phase 3 |
+| Page skeleton | `@vassembly/ui-system-design/skeleton` | `Skeleton` | |
+| Timeline skeleton | `@vassembly/ui-system-design/skeleton` | 2–3 row placeholders | Phase 2 |
+| Errors | `@vassembly/ui-system-design/snackbar` | `useSnackbar` | `variant: 'error'` |
+| Inline error | `@vassembly/ui-system-design/alert` | `Alert` | Optional beside retry |
+| Retry | `@vassembly/ui-system-design/button` | `outlined` / `contained` | |
+| Not found | `@vassembly/ui-system-design/text` + `Button` | — | |
+| Breadcrumbs | `@vassembly/ui-system-design/breadcrumbs` | — | **Not used** in web app v1 |
 
 ### 10.1 Suggested file structure
 
@@ -483,7 +483,7 @@ apps/web/app/tasks/[id]/
 ### 11.1 SCSS import
 
 ```scss
-@import '@vassembly/theme/src/tokens/index.scss';
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
 ```
 
 ### 11.2 Spacing (most used)

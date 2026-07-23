@@ -1,0 +1,111 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.radioRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--circle-w);
+  height: var(--circle-h);
+  border-radius: 50%;
+  border: 2px solid $color-outline;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background-color 0.15s, border-color 0.15s;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+
+  &.isChecked {
+    border-color: $color-primary-600;
+  }
+
+  &.stateError {
+    border-color: $color-error-500;
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba($color-error-500, 0.2);
+    }
+  }
+
+  &.stateSuccess {
+    border-color: $color-success-500;
+  }
+}
+
+.sizeSmall {
+  --circle-w: 14px;
+  --circle-h: 14px;
+  --dot-size: 6px;
+}
+
+.sizeMedium {
+  --circle-w: 16px;
+  --circle-h: 16px;
+  --dot-size: 8px;
+}
+
+.sizeLarge {
+  --circle-w: 20px;
+  --circle-h: 20px;
+  --dot-size: 10px;
+}
+
+.dot {
+  display: block;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.15s;
+
+  .isChecked & {
+    background-color: $color-primary-600;
+  }
+
+  .stateError.isChecked & {
+    background-color: $color-error-500;
+  }
+
+  .stateSuccess.isChecked & {
+    background-color: $color-success-500;
+  }
+}
+
+.label {
+  color: $color-text-primary;
+  cursor: pointer;
+}
+
+.helperText {
+  color: $color-text-secondary;
+}
+
+.errorText {
+  color: $color-error-500;
+}
+
+.isDisabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.isReadOnly {
+}

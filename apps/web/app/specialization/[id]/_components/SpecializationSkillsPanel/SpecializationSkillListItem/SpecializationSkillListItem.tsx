@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useArchiveSkill, useUpdateSkill } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
-import { Switch } from '@vassembly/ui-switch';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Switch } from '@vassembly/ui-system-design/switch';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { SkillArchiveDialog } from '../SkillArchiveDialog/SkillArchiveDialog';
 import styles from './SpecializationSkillListItem.module.scss';

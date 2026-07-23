@@ -3,9 +3,9 @@
 import type { ChangeEvent, MouseEvent } from 'react';
 import { useCallback } from 'react';
 
-import { CloseIcon } from '@vassembly/ui-icons';
-import { TextField } from '@vassembly/ui-text-field';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { CloseIcon } from '@vassembly/ui-system-design/icons';
+import { TextField } from '@vassembly/ui-system-design/text-field';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import styles from './SpecializationSearchBar.module.scss';
 

@@ -3,10 +3,10 @@
 import { useCallback, useEffect } from 'react';
 
 import { useAgentsBySpecialization } from '@vassembly/ui-api-hooks';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Loader } from '@vassembly/ui-loader';
-import { Text } from '@vassembly/ui-text';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { PanelListFooter } from '../PanelListFooter/PanelListFooter';
 import { PanelSearchBar } from '../PanelSearchBar/PanelSearchBar';

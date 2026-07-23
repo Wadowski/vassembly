@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import type { SystemAgentAdminItem } from '@vassembly/ui-api-hooks';
 import { SystemAgentStatus } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
-import { Menu, MenuItem } from '@vassembly/ui-menu';
-import { Popover } from '@vassembly/ui-popover';
-import { Tag } from '@vassembly/ui-tag';
-import { Text } from '@vassembly/ui-text';
-import type { ColumnDef } from '@vassembly/ui-table';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Menu, MenuItem } from '@vassembly/ui-system-design/menu';
+import { Popover } from '@vassembly/ui-system-design/popover';
+import { Tag } from '@vassembly/ui-system-design/tag';
+import { Text } from '@vassembly/ui-system-design/text';
+import type { ColumnDef } from '@vassembly/ui-system-design/table';
 
 import styles from './styles.module.scss';
 import {

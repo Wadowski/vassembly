@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { AgentDto } from '@vassembly/ui-api-hooks';
 import { useAgents, useHttpClient } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { getRequestErrorMessage } from '../../getRequestErrorMessage';
 import { AGENT_LIST_PAGE_SIZE, toAgentsListQuery } from './listQuery';

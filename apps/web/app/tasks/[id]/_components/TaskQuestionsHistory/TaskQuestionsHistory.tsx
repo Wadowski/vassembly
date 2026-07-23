@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import pageStyles from '../../TaskDetailPage.module.scss';
 import { QUESTIONS_HISTORY_TITLE } from './constants';

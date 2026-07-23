@@ -9,14 +9,14 @@ import {
   useInvokePersonalAgent,
   type AgentDto,
 } from '@vassembly/ui-api-hooks';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Loader } from '@vassembly/ui-loader';
-import { Modal } from '@vassembly/ui-modal';
-import { Tag } from '@vassembly/ui-tag';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Modal } from '@vassembly/ui-system-design/modal';
+import { Tag } from '@vassembly/ui-system-design/tag';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { ConnectionStatusBadge } from '../ai-integrations/_components/AiIntegrationsList/ConnectionStatusBadge';
 import { getAgentCategoryLabel } from '../AgentList/tags';

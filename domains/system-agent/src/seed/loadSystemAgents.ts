@@ -66,9 +66,12 @@ const shouldSyncSeedEntry = ({
 const isSeedEntryActive = (entry: SystemAgentSeedEntry): boolean => entry._disabled !== true;
 
 const toAgentSeedFields = ({
-  _disabled: _unusedDisabled,
+  _disabled,
   ...agentFields
-}: SystemAgentSeedEntry): Omit<SystemAgentSeedEntry, '_disabled'> => agentFields;
+}: SystemAgentSeedEntry): Omit<SystemAgentSeedEntry, '_disabled'> => {
+  void _disabled;
+  return agentFields;
+};
 
 export const parseSystemAgentSeedJson = (content: string): SystemAgentSeedEntry[] => {
   const parsed = JSON.parse(content) as unknown;

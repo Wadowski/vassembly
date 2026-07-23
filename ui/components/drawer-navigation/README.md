@@ -4,7 +4,7 @@ Drawer and persistent sidebar navigation for the Vassembly design system. Routin
 
 ## Installation
 
-Add the workspace dependency and ensure your app injects theme CSS variables from `@vassembly/theme` if other design-system components require it.
+Add the workspace dependency and ensure your app injects theme CSS variables from `@vassembly/ui-system-design/theme` if other design-system components require it.
 
 ## Usage
 

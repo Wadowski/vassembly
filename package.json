@@ -29,7 +29,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@vassembly/ui-checkbox": "workspace:^",
-    "@vassembly/ui-register-form": "link:ui/components/register-form"
+    "@vassembly/ui-register-form": "link:ui/components/register-form",
+    "@vassembly/ui-system-design": "workspace:*"
   }
 }

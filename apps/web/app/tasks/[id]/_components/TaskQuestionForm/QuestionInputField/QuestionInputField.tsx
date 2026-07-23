@@ -3,10 +3,10 @@
 import { useCallback } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { Button } from '@vassembly/ui-button';
-import { Checkbox } from '@vassembly/ui-checkbox';
-import { Dropdown } from '@vassembly/ui-dropdown';
-import { TextField } from '@vassembly/ui-text-field';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Checkbox } from '@vassembly/ui-system-design/checkbox';
+import { Dropdown } from '@vassembly/ui-system-design/dropdown';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 
 import {
   BOOLEAN_NO_LABEL,

@@ -12,8 +12,8 @@ function getAbsolutePath(value: string) {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const uiPath = resolve(__dirname, '../..');
-const themeTokensPath = resolve(__dirname, '../../system-design/theme/src/tokens');
-const themePackagePath = resolve(__dirname, '../../system-design/theme');
+const themeTokensPath = resolve(__dirname, '../../system-design/src/theme/tokens');
+const themePackagePath = resolve(__dirname, '../../system-design/src/theme');
 
 const config: StorybookConfig = {
   stories: [`${uiPath}/**/src/**/*.stories.@(js|jsx|mjs|ts|tsx)`],
@@ -30,7 +30,7 @@ const config: StorybookConfig = {
     config.resolve.alias['next/navigation'] = join(__dirname, 'mocks/next-navigation.ts');
     config.resolve.alias['next/link'] = join(__dirname, 'mocks/next-link.tsx');
 
-    config.resolve.alias['@vassembly/theme'] = themePackagePath;
+    config.resolve.alias['@vassembly/ui-system-design/theme'] = themePackagePath;
 
     config.module = config.module || {};
     config.module.rules = config.module.rules || [];

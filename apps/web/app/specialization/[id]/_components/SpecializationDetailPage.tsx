@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { UnauthorizedError } from '@vassembly/errors';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
 
 import { SpecializationAgentsPanel } from './SpecializationAgentsPanel/SpecializationAgentsPanel';
 import { SpecializationDetailHeader } from './SpecializationDetailHeader/SpecializationDetailHeader';

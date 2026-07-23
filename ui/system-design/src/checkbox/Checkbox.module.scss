@@ -1,0 +1,116 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.checkboxRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $spacing-2;
+}
+
+.box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--box-w);
+  height: var(--box-h);
+  border-radius: $border-radius-sm;
+  border: 2px solid $color-outline;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background-color 0.15s, border-color 0.15s;
+  margin-top: 2px;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus-ring;
+  }
+
+  &.isChecked,
+  &.isIndeterminate {
+    background-color: $color-primary-600;
+    border-color: $color-primary-600;
+  }
+
+  &.stateError {
+    border-color: $color-error-500;
+
+    &.isChecked,
+    &.isIndeterminate {
+      background-color: $color-error-500;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba($color-error-500, 0.2);
+    }
+  }
+
+  &.stateSuccess {
+    border-color: $color-success-500;
+
+    &.isChecked,
+    &.isIndeterminate {
+      background-color: $color-success-500;
+    }
+  }
+}
+
+.sizeSmall {
+  --box-w: 14px;
+  --box-h: 14px;
+  --icon-size: 10px;
+  --dash-w: 8px;
+  --dash-h: 2px;
+}
+
+.sizeMedium {
+  --box-w: 16px;
+  --box-h: 16px;
+  --icon-size: 12px;
+  --dash-w: 10px;
+  --dash-h: 2px;
+}
+
+.sizeLarge {
+  --box-w: 20px;
+  --box-h: 20px;
+  --icon-size: 14px;
+  --dash-w: 12px;
+  --dash-h: 2.5px;
+}
+
+.icon {
+  display: block;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: $color-neutral-10;
+}
+
+.label {
+  color: $color-text-primary;
+  cursor: pointer;
+}
+
+.helperText {
+  color: $color-text-secondary;
+}
+
+.errorText {
+  color: $color-error-500;
+}
+
+.isDisabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.isReadOnly {
+}

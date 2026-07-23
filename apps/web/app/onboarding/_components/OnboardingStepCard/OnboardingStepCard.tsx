@@ -1,7 +1,7 @@
 'use client';
 
-import { CheckIcon, LockIcon } from '@vassembly/ui-icons';
-import { Text } from '@vassembly/ui-text';
+import { CheckIcon, LockIcon } from '@vassembly/ui-system-design/icons';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import type { OnboardingStepCardProps, OnboardingStepStatus } from './types';
 import styles from './OnboardingStepCard.module.scss';

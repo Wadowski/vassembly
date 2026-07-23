@@ -1,5 +1,5 @@
-import { Button } from '@vassembly/ui-button';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Button } from '@vassembly/ui-system-design/button';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 import styles from './DrawerFooterAuth.module.scss';
 
 export interface DrawerFooterAuthProps {

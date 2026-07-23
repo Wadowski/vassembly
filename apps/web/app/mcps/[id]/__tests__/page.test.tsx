@@ -58,7 +58,7 @@ vi.mock('@vassembly/ui-user-auth', () => ({
   })),
 }));
 
-vi.mock('@vassembly/ui-snackbar', () => ({
+vi.mock('@vassembly/ui-system-design/snackbar', () => ({
   SnackbarProvider: ({ children }: { children: unknown }) => children,
   useSnackbar: vi.fn(() => ({
     show: mockShowSnackbar,
@@ -107,7 +107,7 @@ mockUseDeleteMcpConfiguration.mockImplementation(() => [
   { loading: false, error: null },
 ]);
 
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import McpDetailPage from '../page';
 

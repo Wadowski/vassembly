@@ -36,7 +36,7 @@ Extend the existing MCP catalog page (`apps/web/app/mcps/`) rather than replacin
 | Section card layout | `SettingsSections.module.scss` (`.sectionCard`, `.formStack`) |
 | Password show/hide | `SecurityControlledPasswordField.tsx` |
 | Auth + loading wrapper | `page.tsx` + `ProtectedAuthRoute` + skeleton |
-| Form components | `@vassembly/ui-text-field`, `ui-dropdown`, `ui-checkbox`, `ui-button`, `ui-alert`, `ui-tag`, `ui-loader` |
+| Form components | `@vassembly/ui-system-design/text-field`, `ui-dropdown`, `ui-checkbox`, `ui-button`, `ui-alert`, `ui-tag`, `ui-loader` |
 
 ---
 
@@ -360,7 +360,7 @@ flowchart TD
 └─────────────────────────────────────────────┘
 ```
 
-- Modal: `@vassembly/ui-modal`
+- Modal: `@vassembly/ui-system-design/modal`
 - Primary: "Keep editing" (closes modal)
 - Destructive secondary: "Discard" (navigate away)
 
@@ -380,7 +380,7 @@ flowchart TD
 
 ### 5.1 List card status badge
 
-Use `@vassembly/ui-tag`:
+Use `@vassembly/ui-system-design/tag`:
 
 | Status | Tag variant | Label | Icon (optional) |
 |--------|-------------|-------|-----------------|
@@ -572,7 +572,7 @@ interface McpConfigFormProps {
 
 ### 8.4 Styling conventions
 
-- Import tokens: `@import '@vassembly/theme/src/tokens/index.scss'`
+- Import tokens: `@import '@vassembly/ui-system-design/src/theme/tokens/index.scss'`
 - CSS Modules per component
 - Reuse classes: `.sectionCard`, `.formStack`, `.toolbarRow` from Settings where applicable (extract to shared `ui-page-layout` if duplication grows)
 - Animations: `300ms–500ms`, `cubic-bezier(0.22, 1, 0.36, 1)`

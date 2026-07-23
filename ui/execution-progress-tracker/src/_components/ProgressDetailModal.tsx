@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Button } from '@vassembly/ui-button';
-import { Modal } from '@vassembly/ui-modal';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Modal } from '@vassembly/ui-system-design/modal';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { formatDuration } from '../utils/formatDuration';
 import { formatLocalDateTime } from '../utils/formatLocalDateTime';

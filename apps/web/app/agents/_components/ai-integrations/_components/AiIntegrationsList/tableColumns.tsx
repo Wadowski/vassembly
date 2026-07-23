@@ -1,7 +1,7 @@
 import type { AiIntegrationCredentialDto } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
-import type { ColumnDef } from '@vassembly/ui-table';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
+import type { ColumnDef } from '@vassembly/ui-system-design/table';
 
 import styles from './styles.module.scss';
 import { AgentUsageBadge } from './AgentUsageBadge';

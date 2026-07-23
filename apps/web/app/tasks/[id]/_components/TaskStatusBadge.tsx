@@ -1,7 +1,7 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
-import { resolveClassName } from '@vassembly/ui-utils';
+import { Text } from '@vassembly/ui-system-design/text';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import { getStatusColor, getStatusIcon, getStatusLabel } from '../../../_components/TaskList/taskStatusDisplay';
 import { STATUS_COLOR_CLASS_MAP } from '../../../_components/TaskList/taskStatusStyles';

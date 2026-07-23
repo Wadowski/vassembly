@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { formatRelativeTime } from '../utils/formatRelativeTime';
 import { formatTokens } from '../utils/formatTokens';
@@ -16,6 +16,7 @@ import styles from './ProgressItem.module.scss';
 const toProgressItemState = (state: string): string => state.toLowerCase();
 
 export const ProgressItem = React.memo<ProgressItemProps>(({ item, isSelected, onSelect, relativeTimeTick }) => {
+  void relativeTimeTick;
   const rowClassName = isSelected
     ? `${styles.eventRow} ${styles.eventRowActive}`
     : styles.eventRow;

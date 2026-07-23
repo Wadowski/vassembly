@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { UnauthorizedError } from '@vassembly/errors';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
 
 import { SkillDetailHeader } from './SkillDetailHeader/SkillDetailHeader';
 import { SkillDetailSkeleton } from './SkillDetailSkeleton/SkillDetailSkeleton';

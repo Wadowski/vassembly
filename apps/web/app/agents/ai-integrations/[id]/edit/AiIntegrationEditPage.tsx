@@ -1,10 +1,10 @@
 'use client';
 
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
 import { ExecutionProgressTracker } from '@vassembly/ui-execution-progress-tracker';
-import { Loader } from '@vassembly/ui-loader';
-import { Text } from '@vassembly/ui-text';
+import { Loader } from '@vassembly/ui-system-design/loader';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../aiIntegrationRoutes';
 import { AiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';

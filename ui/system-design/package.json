@@ -1,0 +1,72 @@
+{
+  "name": "@vassembly/ui-system-design",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "sideEffects": [
+    "**/*.scss"
+  ],
+  "exports": {
+    "./accordion": "./src/accordion/index.ts",
+    "./alert": "./src/alert/index.ts",
+    "./anchor-list": "./src/anchor-list/index.ts",
+    "./breadcrumbs": "./src/breadcrumbs/index.ts",
+    "./button": "./src/button/index.ts",
+    "./carousel": "./src/carousel/index.ts",
+    "./checkbox": "./src/checkbox/index.ts",
+    "./dropdown": "./src/dropdown/index.ts",
+    "./icons": "./src/icons/index.tsx",
+    "./loader": "./src/loader/index.ts",
+    "./menu": "./src/menu/index.ts",
+    "./modal": "./src/modal/index.ts",
+    "./multi-select": "./src/multi-select/index.ts",
+    "./pagination": "./src/pagination/index.ts",
+    "./popover": "./src/popover/index.ts",
+    "./radio-button": "./src/radio-button/index.ts",
+    "./skeleton": "./src/skeleton/index.ts",
+    "./snackbar": "./src/snackbar/index.ts",
+    "./stepper": "./src/stepper/index.ts",
+    "./switch": "./src/switch/index.ts",
+    "./table": "./src/table/index.ts",
+    "./tabs": "./src/tabs/index.ts",
+    "./tag": "./src/tag/index.ts",
+    "./text": "./src/text/index.ts",
+    "./text-field": "./src/text-field/index.ts",
+    "./theme/*": "./src/theme/*",
+    "./src/theme/*": "./src/theme/*",
+    "./utils": "./src/utils/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^7.0.0",
+    "@storybook/addon-interactions": "^7.0.0",
+    "@storybook/addon-links": "^7.0.0",
+    "@storybook/react": "^7.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "@types/node": "^22.19.7",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.1",
+    "@vassembly/eslint-config": "workspace:*",
+    "@vassembly/typescript-config": "workspace:*",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^9.39.1",
+    "next": "16.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sass": "^1.69.0",
+    "typescript": "5.9.2",
+    "vite": "5.4.21",
+    "vitest": "^2.0.0"
+  }
+}

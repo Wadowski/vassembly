@@ -6,9 +6,9 @@ import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javasc
 import python from 'react-syntax-highlighter/dist/esm/languages/prism/python';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Skeleton } from '@vassembly/ui-skeleton';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Skeleton } from '@vassembly/ui-system-design/skeleton';
 
 import { LANGUAGE_MAP } from '../../constants';
 import styles from './SkillCodeViewer.module.scss';

@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
-import { Button } from '@vassembly/ui-button';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 import { RegisterFormPasswordBlock } from './RegisterFormPasswordBlock';
 import { RegisterFormPolicyAcceptanceBlock } from './RegisterFormPolicyAcceptanceBlock';
 import styles from './RegisterForm.module.scss';

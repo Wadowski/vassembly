@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 import { useEffect } from 'react';
 import { CommonError, ErrorTypes } from '@vassembly/errors';
 import type { ForgotPasswordResponse } from '@vassembly/ui-api-hooks';
-import type { SnackbarContextValue } from '@vassembly/ui-snackbar';
+import type { SnackbarContextValue } from '@vassembly/ui-system-design/snackbar';
 
 import { FORGOT_PASSWORD_SUCCESS_SNACKBAR_FALLBACK } from './constants';
 import { formatForgotPasswordErrorMessage } from './formatForgotPasswordErrorMessage';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './SkillScriptList.module.scss';
 import type { SkillScriptListProps } from '../../types';

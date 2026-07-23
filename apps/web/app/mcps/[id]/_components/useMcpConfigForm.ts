@@ -13,7 +13,7 @@ import {
   useTestMcpConnection,
   useUpdateMcpConfiguration,
 } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { buildInitialFieldValues } from './buildInitialFieldValues';
 import { buildSubmitFieldValues } from './buildSubmitFieldValues';

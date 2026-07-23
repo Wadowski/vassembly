@@ -183,7 +183,7 @@ Map `@vassembly/errors` in the gateway error handler where other routes do; typi
 
 ### 3b. Components (`app/agents/_components/`)
 
-- **`AgentList.tsx`** — Table (`@vassembly/ui-table` if fits), search input, status filter, pagination (`@vassembly/ui-pagination`), row actions (edit, delete, restore as applicable).
+- **`AgentList.tsx`** — Table (`@vassembly/ui-system-design/table` if fits), search input, status filter, pagination (`@vassembly/ui-system-design/pagination`), row actions (edit, delete, restore as applicable).
 - **`AgentForm.tsx`** — Fields: name, category, description, rule; submit/create vs update modes.
 - **`AgentDeleteDialog.tsx`**, **`AgentRestoreDialog.tsx`** — Confirmations; call delete/restore hooks.
 - **Validation** — Zod or shared schema mirroring API (max lengths, required fields).

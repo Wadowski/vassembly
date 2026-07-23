@@ -124,7 +124,7 @@ describe('useAgent internal tool handler', () => {
   it('should return depth error when recursion depth blocks delegation', async () => {
     const result = await useAgent({
       args: { name: 'Research Bot', agentPrompt: 'Summarize findings' },
-      context: { ...BASE_CONTEXT, recursionDepth: 4 },
+      context: { ...BASE_CONTEXT, recursionDepth: 10 },
     });
 
     expect(result).toBe('Maximum agent delegation depth reached.');

@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { AiIntegrationsList } from '../ai-integrations/_components/AiIntegrationsList';
 import styles from './styles.module.scss';

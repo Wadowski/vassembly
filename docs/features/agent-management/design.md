@@ -72,7 +72,7 @@
 
 - **Implementation note:** Main app drawer sections today are defined in `MAIN_LAYOUT_PRESET` (`Workspace` → Home). **Agents** should be added as a **nav row** in the same section (below Home) or a new **“Library” / “Tools”** section placed **below Workspace**, **only rendered when `isAuthenticated`** (extend `AuthLayout` / drawer `sections` merge — same pattern as passing `isAuthenticated`, `user`, callbacks).
 - **Active state:** Any route under **`/agents`** (`/agents`, `/agents/create`, `/agents/:id/edit`) highlights **Agents** with existing nav active styles (contrast + optional primary glow).
-- **Icon:** Prefer a **bot / workflow** icon from `@vassembly/ui-icons` if available; else **gear / layers** icon consistent with “configuration” — document final choice in implementation PR.
+- **Icon:** Prefer a **bot / workflow** icon from `@vassembly/ui-system-design/icons` if available; else **gear / layers** icon consistent with “configuration” — document final choice in implementation PR.
 
 ---
 
@@ -417,7 +417,7 @@ flowchart TD
 3. **Search** applies to **name + description only** (no rule) — reflect in placeholder copy.
 4. **Forms:** client validation matches **max lengths**; **submit disabled** when invalid; **restore** path before edits when `removedAt` set.
 5. **last-write-wins:** no optimistic UI conflict UI — optional subtle note in docs only if product wants.
-6. Reuse **`@vassembly/ui-text`**, layout, theme tokens, and existing **toast** primitive if present; otherwise implement toast per §10.
+6. Reuse **`@vassembly/ui-system-design/text`**, layout, theme tokens, and existing **toast** primitive if present; otherwise implement toast per §10.
 
 ---
 

@@ -11,7 +11,7 @@ import {
   useTestConnection,
   type AiIntegrationCredentialDto,
 } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { useDebouncedValue } from '../../../../../../lib/hooks/useDebouncedValue';
 import { getRequestErrorMessage } from '../../../../getRequestErrorMessage';

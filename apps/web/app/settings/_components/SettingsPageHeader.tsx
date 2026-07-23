@@ -1,4 +1,4 @@
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from '../SettingsSections.module.scss';
 

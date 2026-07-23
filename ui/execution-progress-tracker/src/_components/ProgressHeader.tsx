@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { formatDuration } from '../utils/formatDuration';
 import type { ProgressHeaderProps } from '../types';

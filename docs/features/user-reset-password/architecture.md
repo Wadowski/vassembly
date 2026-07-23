@@ -15,7 +15,7 @@
 | `@vassembly/ui-login-form` | Email + password; links to `/forgot-password` and `/register`; `useLogin` + completion effect pattern. |
 | `@vassembly/ui-forgot-password` | Email-only; `useForgotPassword` → `POST /user/forgot-password`; snackbar errors/success (constants in package). |
 | `@vassembly/ui-register-form` | Password + confirm + **strength** (`validatePasswordStrength`, etc.) — reuse rules/UX for “new password” on reset screen. |
-| System design primitives | `@vassembly/ui-button`, `@vassembly/ui-text-field`, `@vassembly/ui-text`, `@vassembly/ui-snackbar`, `@vassembly/ui-icons`, `@vassembly/ui-utils`. |
+| System design primitives | `@vassembly/ui-system-design/button`, `@vassembly/ui-system-design/text-field`, `@vassembly/ui-system-design/text`, `@vassembly/ui-system-design/snackbar`, `@vassembly/ui-system-design/icons`, `@vassembly/ui-system-design/utils`. |
 
 ### API and services (current gap)
 

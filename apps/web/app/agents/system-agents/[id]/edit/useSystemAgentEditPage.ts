@@ -8,7 +8,7 @@ import {
   type SystemAgentAdminItem,
   type SystemAgentFormInput,
 } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 import { useParams, useRouter } from 'next/navigation';
 
 import {

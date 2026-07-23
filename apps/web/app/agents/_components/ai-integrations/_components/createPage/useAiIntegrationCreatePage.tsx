@@ -12,9 +12,9 @@ import {
 
 import { useAiIntegrationForm } from '../AiIntegrationForm/useAiIntegrationForm';
 import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../../aiIntegrationRoutes';
-import { Text } from '@vassembly/ui-text';
-import { useSnackbar } from '@vassembly/ui-snackbar';
-import { Button } from '@vassembly/ui-button';
+import { Text } from '@vassembly/ui-system-design/text';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
+import { Button } from '@vassembly/ui-system-design/button';
 import { useUserAuth } from '@vassembly/ui-user-auth';
 
 import styles from '../AiIntegrationsList/styles.module.scss';

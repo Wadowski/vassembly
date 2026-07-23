@@ -1606,7 +1606,7 @@ apps/web
   └─ depends on: @vassembly/ui-execution-progress-tracker, @vassembly/ui-api-hooks
 
 ui/execution-progress-tracker
-  └─ depends on: @vassembly/ui-button, @vassembly/ui-alert, @apollo/client, react
+  └─ depends on: @vassembly/ui-system-design/button, @vassembly/ui-system-design/alert, @apollo/client, react
 
 services/task
   └─ depends on: @vassembly/domain-task-progress, @vassembly/domain-task

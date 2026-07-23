@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react';
 
-import { Dropdown } from '@vassembly/ui-dropdown';
-import { Tag } from '@vassembly/ui-tag';
-import { Text } from '@vassembly/ui-text';
+import { Dropdown } from '@vassembly/ui-system-design/dropdown';
+import { Tag } from '@vassembly/ui-system-design/tag';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import {
   INTERNAL_TOOL_PICKER_HELPER_TEXT,

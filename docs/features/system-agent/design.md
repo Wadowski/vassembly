@@ -277,11 +277,11 @@ flowchart TD
 ||-----------|--------|------------|
 || `Card` / grid layout | `@vassembly/ui-card` | Platform Agents card display |
 || `TextField`, `Dropdown` | system-design | Form fields |
-|| `Tag` | `@vassembly/ui-tag` | Category, status, Platform Agent badge |
-|| `Modal` | `@vassembly/ui-modal` | Archive, restore, invoke, create, edit, test invoke |
-|| `Snackbar` | `@vassembly/ui-snackbar` | All success/error toasts |
-|| `Alert` | `@vassembly/ui-alert` | Invoke blocking states, errors |
-|| `Loader` | `@vassembly/ui-loader` | Section/form loading |
+|| `Tag` | `@vassembly/ui-system-design/tag` | Category, status, Platform Agent badge |
+|| `Modal` | `@vassembly/ui-system-design/modal` | Archive, restore, invoke, create, edit, test invoke |
+|| `Snackbar` | `@vassembly/ui-system-design/snackbar` | All success/error toasts |
+|| `Alert` | `@vassembly/ui-system-design/alert` | Invoke blocking states, errors |
+|| `Loader` | `@vassembly/ui-system-design/loader` | Section/form loading |
 || `IntegrationCredentialPicker` | `agents/_components/` | **Extend** with `label`, `helperText`, `manageHref` props for settings + admin override |
 || `ConnectionStatusBadge` | ai-integrations | Show status beside selected preference |
 || `Button` (with dropdown menu) | system-design | Admin actions menu on cards |
@@ -578,8 +578,8 @@ Align with existing `sectionCard`, `toolbarRow`, `filtersGroup` SCSS from `apps/
 || Asset | Path |
 ||-------|------|
 || Card layout | `@vassembly/ui-card` |
-|| Modal shell | `@vassembly/ui-modal` |
-|| Snackbar | `@vassembly/ui-snackbar` |
+|| Modal shell | `@vassembly/ui-system-design/modal` |
+|| Snackbar | `@vassembly/ui-system-design/snackbar` |
 || TextField, Dropdown, Button, Text, Alert, Loader, Tag | system-design packages |
 || `sectionCard` / toolbar layout | `agents/_components/*/styles.module.scss` |
 || `ConnectionStatusBadge` | `ai-integrations/.../ConnectionStatusBadge.tsx` |

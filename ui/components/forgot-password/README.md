@@ -2,7 +2,7 @@
 
 ## Overview
 
-`@vassembly/ui-forgot-password` provides a **forgot-password** flow for the Vassembly monorepo: an email-only form, client-side validation, integration with the forgot-password HTTP API via [`@vassembly/ui-api-hooks`](../../api-hooks/), and **success/error feedback** through [`@vassembly/ui-snackbar`](../../system-design/snackbar/). The UI is split so [`ForgotPasswordForm`](#component-api--forgotpasswordform) stays presentational while [`useForgotPasswordForm`](#hook-api--useforgotpasswordform) owns state, submission, and side effects (including a **completion effect** that maps API results to snackbars and optional `onSuccess`).
+`@vassembly/ui-forgot-password` provides a **forgot-password** flow for the Vassembly monorepo: an email-only form, client-side validation, integration with the forgot-password HTTP API via [`@vassembly/ui-api-hooks`](../../api-hooks/), and **success/error feedback** through [`@vassembly/ui-system-design/snackbar`](../../system-design/snackbar/). The UI is split so [`ForgotPasswordForm`](#component-api--forgotpasswordform) stays presentational while [`useForgotPasswordForm`](#hook-api--useforgotpasswordform) owns state, submission, and side effects (including a **completion effect** that maps API results to snackbars and optional `onSuccess`).
 
 ## Installation
 
@@ -22,13 +22,13 @@ Then install from the repo root (e.g. `pnpm install`). The form **must** be rend
 
 - **react** / **react-dom**: Component and hook runtime.
 - **zod**: Email schema in [`validateForgotPasswordForm.ts`](./src/validateForgotPasswordForm.ts).
-- **@vassembly/ui-button**, **@vassembly/ui-text**, **@vassembly/ui-text-field**: Submit button, headings, and email field.
-- **@vassembly/ui-snackbar**: `useSnackbar` for validation errors, API success, and API/transport errors.
-- **@vassembly/ui-utils**: `resolveClassName` for optional root `className`.
+- **@vassembly/ui-system-design/button**, **@vassembly/ui-system-design/text**, **@vassembly/ui-system-design/text-field**: Submit button, headings, and email field.
+- **@vassembly/ui-system-design/snackbar**: `useSnackbar` for validation errors, API success, and API/transport errors.
+- **@vassembly/ui-system-design/utils**: `resolveClassName` for optional root `className`.
 - **@vassembly/ui-api-hooks**: `useForgotPassword` and `HttpClientProvider` for the forgot-password request.
 - **@vassembly/validation**: `validatorFactory` wrapping the Zod schema.
 - **@vassembly/errors**: `CommonError` and `ErrorTypes` in the completion effect and error formatting.
-- **@vassembly/theme**: Theme/tokens (via the UI primitives above).
+- **@vassembly/ui-system-design/theme**: Theme/tokens (via the UI primitives above).
 
 ## Component API — `ForgotPasswordForm`
 
@@ -116,8 +116,8 @@ Together with the [success snackbar fallback](./src/constants.ts) (“If an acco
 ## Styling
 
 - **CSS Module:** [`ForgotPasswordForm.module.scss`](./src/ForgotPasswordForm.module.scss) — layout for container, form, title, and success message.
-- **Root class:** `className` is merged with the module `container` via `resolveClassName` from [`@vassembly/ui-utils`](../../system-design/utils).
-- **Theme:** Colors and typography come from **Vassembly UI** primitives ([`@vassembly/ui-text`](../../system-design/text/), [`@vassembly/ui-text-field`](../../system-design/text-field/), [`@vassembly/ui-button`](../../system-design/button/)) and [`@vassembly/theme`](../../system-design/theme) where those components use tokens.
+- **Root class:** `className` is merged with the module `container` via `resolveClassName` from [`@vassembly/ui-system-design/utils`](../../system-design/utils).
+- **Theme:** Colors and typography come from **Vassembly UI** primitives ([`@vassembly/ui-system-design/text`](../../system-design/text/), [`@vassembly/ui-system-design/text-field`](../../system-design/text-field/), [`@vassembly/ui-system-design/button`](../../system-design/button/)) and [`@vassembly/ui-system-design/theme`](../../system-design/theme) where those components use tokens.
 
 ## Examples
 
@@ -125,7 +125,7 @@ Together with the [success snackbar fallback](./src/constants.ts) (“If an acco
 
 ```tsx
 import { HttpClientProvider } from '@vassembly/ui-api-hooks';
-import { SnackbarProvider } from '@vassembly/ui-snackbar';
+import { SnackbarProvider } from '@vassembly/ui-system-design/snackbar';
 import { ForgotPasswordForm } from '@vassembly/ui-forgot-password';
 
 export function ForgotPasswordPage() {
@@ -147,7 +147,7 @@ export function ForgotPasswordPage() {
 ```tsx
 import { FormEvent } from 'react';
 import { HttpClientProvider } from '@vassembly/ui-api-hooks';
-import { SnackbarProvider } from '@vassembly/ui-snackbar';
+import { SnackbarProvider } from '@vassembly/ui-system-design/snackbar';
 import { useForgotPasswordForm } from '@vassembly/ui-forgot-password';
 
 function CustomForgotForm() {
@@ -215,13 +215,13 @@ Stories live in [`ForgotPasswordForm.stories.tsx`](./src/ForgotPasswordForm.stor
 | Package | Role |
 |---------|------|
 | [`@vassembly/ui-api-hooks`](../../api-hooks/) | `useForgotPassword`, `HttpClientProvider` |
-| [`@vassembly/ui-snackbar`](../../system-design/snackbar/) | `SnackbarProvider`, `useSnackbar` |
-| [`@vassembly/ui-button`](../../system-design/button/) | Submit button |
-| [`@vassembly/ui-text`](../../system-design/text/) | Title and success text |
-| [`@vassembly/ui-text-field`](../../system-design/text-field/) | Email field |
-| [`@vassembly/ui-utils`](../../system-design/utils) | `resolveClassName` |
+| [`@vassembly/ui-system-design/snackbar`](../../system-design/snackbar/) | `SnackbarProvider`, `useSnackbar` |
+| [`@vassembly/ui-system-design/button`](../../system-design/button/) | Submit button |
+| [`@vassembly/ui-system-design/text`](../../system-design/text/) | Title and success text |
+| [`@vassembly/ui-system-design/text-field`](../../system-design/text-field/) | Email field |
+| [`@vassembly/ui-system-design/utils`](../../system-design/utils) | `resolveClassName` |
 | [`@vassembly/validation`](../../../packages/validation) | `validatorFactory` + Zod |
-| [`@vassembly/theme`](../../system-design/theme) | Theming (via UI primitives) |
+| [`@vassembly/ui-system-design/theme`](../../system-design/theme) | Theming (via UI primitives) |
 | [`@vassembly/errors`](../../../packages/errors) | `CommonError`, `ErrorTypes` in completion/error handling |
 
 ## Public API summary

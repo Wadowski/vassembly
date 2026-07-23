@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 
 import type { McpWithAgentsAgent } from '@vassembly/ui-api-hooks';
 import { useMcpWithAgents, useUnassignMcpFromAgent } from '@vassembly/ui-api-hooks';
-import { useSnackbar } from '@vassembly/ui-snackbar';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 import { useRouter } from 'next/navigation';
 
 import type { McpAgentsSectionProps, McpAgentsUnassignTarget } from './types';

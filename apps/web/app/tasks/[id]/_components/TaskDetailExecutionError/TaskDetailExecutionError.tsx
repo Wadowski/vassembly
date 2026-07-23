@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { TaskStatus } from '@vassembly/ui-api-hooks';
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import {
   TASK_EXECUTION_SETTINGS_PATH,

@@ -78,10 +78,10 @@ Top to bottom:
 
 | Control | Component | Notes |
 |--------|-----------|--------|
-| Short text | `@vassembly/ui-text-field` (`TextField`) | Labels always visible; placeholders not sole label. |
+| Short text | `@vassembly/ui-system-design/text-field` (`TextField`) | Labels always visible; placeholders not sole label. |
 | Password | `TextField` + **show/hide** affordance if supported; else native `type="password"` with visible label | Announce toggle for SR. |
-| Toggle (on/off) | `@vassembly/ui-switch` (`Switch`) | One primary label; helper `Text` `body2` muted below if needed. |
-| Multi-step confirm | `Checkbox` from `@vassembly/ui-checkbox` for acknowledgments | Required for account deletion. |
+| Toggle (on/off) | `@vassembly/ui-system-design/switch` (`Switch`) | One primary label; helper `Text` `body2` muted below if needed. |
+| Multi-step confirm | `Checkbox` from `@vassembly/ui-system-design/checkbox` for acknowledgments | Required for account deletion. |
 
 ### 3.3 Buttons
 
@@ -97,13 +97,13 @@ Use **`isLoading`** during submit; **`isFullWidth`** on mobile for primary save 
 ### 3.4 Feedback: success, error, loading
 
 - **Inline field errors:** `TextField` error state (error token + helper text); focus first invalid field on submit.
-- **Section / form errors (API):** **`Alert`** (`@vassembly/ui-alert`) above the action row, non-dismiss auto for validation; dismissible for informational recoverable errors.
-- **Transient success:** **`Snackbar`** (`@vassembly/ui-snackbar`) — short copy: “Profile saved” / “Password updated” / “Preferences saved on this device”; respect reduced motion.
-- **Blocking operations:** Inline on button via `isLoading`; optionally **`Loader`** (`@vassembly/ui-loader`) in modal body for deletion pending state.
+- **Section / form errors (API):** **`Alert`** (`@vassembly/ui-system-design/alert`) above the action row, non-dismiss auto for validation; dismissible for informational recoverable errors.
+- **Transient success:** **`Snackbar`** (`@vassembly/ui-system-design/snackbar`) — short copy: “Profile saved” / “Password updated” / “Preferences saved on this device”; respect reduced motion.
+- **Blocking operations:** Inline on button via `isLoading`; optionally **`Loader`** (`@vassembly/ui-system-design/loader`) in modal body for deletion pending state.
 
 ### 3.5 Confirmation dialogs
 
-- **Account deletion:** `@vassembly/ui-modal` (`Modal`) — focus trap, `aria-modal="true"`, return focus to triggering control on close.
+- **Account deletion:** `@vassembly/ui-system-design/modal` (`Modal`) — focus trap, `aria-modal="true"`, return focus to triggering control on close.
 - **Sign-out (recommended on shared devices):** optional second-step confirm modal **or** destructive-styled confirm; PRD open question Q-6—**design default:** confirm dialog on floor/shared context (can be user setting later—out of MVP).
 
 ---
@@ -282,7 +282,7 @@ Use **`isLoading`** during submit; **`isFullWidth`** on mobile for primary save 
 
 ### 8.4 Icons
 
-- Use `@vassembly/ui-icons` sparingly: **section headers** optional (user, shield, bell, eye, palette, globe, trash); **always** pair with text labels—icons are decorative unless `aria-hidden`.
+- Use `@vassembly/ui-system-design/icons` sparingly: **section headers** optional (user, shield, bell, eye, palette, globe, trash); **always** pair with text labels—icons are decorative unless `aria-hidden`.
 
 ### 8.5 Danger zone
 
@@ -456,18 +456,18 @@ Use **`isLoading`** during submit; **`isFullWidth`** on mobile for primary save 
 
 | UI need | Package / component |
 |--------|----------------------|
-| Page text, labels, titles | `@vassembly/ui-text` (`Text`) |
-| Primary/secondary/danger actions | `@vassembly/ui-button` (`Button`) — `danger`, `isLoading`, `size` |
-| Text inputs, password | `@vassembly/ui-text-field` (`TextField`) |
-| Toggles | `@vassembly/ui-switch` (`Switch`) |
-| Checkboxes (deletion ack) | `@vassembly/ui-checkbox` (`Checkbox`) |
-| Delete / sign-out confirm | `@vassembly/ui-modal` (`Modal`) |
-| Toasts | `@vassembly/ui-snackbar` (`Snackbar`) |
-| Inline banners | `@vassembly/ui-alert` (`Alert`) |
-| Section jump (desktop) | `@vassembly/ui-anchor-list` (`AnchorList`) — `size="large"` for touch |
+| Page text, labels, titles | `@vassembly/ui-system-design/text` (`Text`) |
+| Primary/secondary/danger actions | `@vassembly/ui-system-design/button` (`Button`) — `danger`, `isLoading`, `size` |
+| Text inputs, password | `@vassembly/ui-system-design/text-field` (`TextField`) |
+| Toggles | `@vassembly/ui-system-design/switch` (`Switch`) |
+| Checkboxes (deletion ack) | `@vassembly/ui-system-design/checkbox` (`Checkbox`) |
+| Delete / sign-out confirm | `@vassembly/ui-system-design/modal` (`Modal`) |
+| Toasts | `@vassembly/ui-system-design/snackbar` (`Snackbar`) |
+| Inline banners | `@vassembly/ui-system-design/alert` (`Alert`) |
+| Section jump (desktop) | `@vassembly/ui-system-design/anchor-list` (`AnchorList`) — `size="large"` for touch |
 | Optional top-level grouping | `@vassembly/ui-tabs` (`Tabs`) — keep tab count small |
-| Long mobile sections | `@vassembly/ui-accordion` (`Accordion`) — optional |
-| Loading body | `@vassembly/ui-loader` (`Loader`) |
+| Long mobile sections | `@vassembly/ui-system-design/accordion` (`Accordion`) — optional |
+| Loading body | `@vassembly/ui-system-design/loader` (`Loader`) |
 | Shell | `@vassembly/ui-components-layout` (`Layout`) + drawer/header as today |
 
 **Engineering alignment**

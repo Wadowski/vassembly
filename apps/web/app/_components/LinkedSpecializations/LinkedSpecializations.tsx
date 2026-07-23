@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { useLinkedSpecializations } from '@vassembly/ui-api-hooks';
-import { Tag } from '@vassembly/ui-tag';
+import { Tag } from '@vassembly/ui-system-design/tag';
 
 import styles from './LinkedSpecializations.module.scss';
 import type { LinkedSpecializationsProps, LinkedSpecializationsViewProps } from './types';

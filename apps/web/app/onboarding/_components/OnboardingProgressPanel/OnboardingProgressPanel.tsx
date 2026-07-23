@@ -1,6 +1,6 @@
 'use client';
 
-import { Stepper } from '@vassembly/ui-stepper';
+import { Stepper } from '@vassembly/ui-system-design/stepper';
 
 import { ONBOARDING_STEPPER_STEPS } from '../onboardingStepperSteps';
 import type { OnboardingProgressPanelProps } from './types';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { McpListContainer } from './_components/McpListContainer/McpListContainer';
 import { YourMcpsSection } from './_components/YourMcpsSection/YourMcpsSection';

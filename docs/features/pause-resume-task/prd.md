@@ -508,7 +508,7 @@ Task query continues to return status including new `paused` value. Clients add 
 - Action buttons sit **immediately to the left** of `TaskStatusBadge`.
 - At most two action buttons are visible at any time (pause only when in-progress; resume + retry when paused; retry only when failed).
 - Use existing `Button` component with icon variant.
-- **Pause icon:** `ButtonPauseIcon` from `@vassembly/ui-icons` (already exists, unused for tasks).
+- **Pause icon:** `ButtonPauseIcon` from `@vassembly/ui-system-design/icons` (already exists, unused for tasks).
 - **Resume icon:** Use design-system play/resume icon consistent with existing icon set (Architect/design to confirm exact icon export).
 - **Retry icon:** Use design-system refresh/retry icon consistent with existing icon set (Architect/design to confirm exact icon export).
 
@@ -790,7 +790,7 @@ The following decisions are **deferred to the Architect** for the architecture d
 | **OQ-3** | Orphaned `started` progress events on pause | Leave as-is vs. write `failed` with reason `paused` for the in-flight step. PRD allows orphaned `started`; architect may prefer explicit failure event. |
 | **OQ-4** | Resume implementation detail | How `executeTask` skips completed steps — re-enter agent graph at checkpoint vs. re-invoke root agent with accumulated context. Checkpoint is last `completed` event; execution strategy is architectural. |
 | **OQ-5** | `pausedAt` timestamp field | Useful for display and debugging. Not required for checkpoint logic. Confirm add to `TaskModel` or derive from `updatedAt`. |
-| **OQ-6** | Resume and retry icon components | Confirm which `@vassembly/ui-icons` exports to use for the resume and retry buttons. |
+| **OQ-6** | Resume and retry icon components | Confirm which `@vassembly/ui-system-design/icons` exports to use for the resume and retry buttons. |
 | **OQ-7** | Concurrent resume + pause ordering | If user clicks resume then pause quickly, define lock/serialization on taskId in service layer. |
 
 ---

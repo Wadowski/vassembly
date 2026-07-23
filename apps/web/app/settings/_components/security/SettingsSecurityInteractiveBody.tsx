@@ -3,10 +3,10 @@
 import type { FormEvent } from 'react';
 
 import { useChangePassword } from '@vassembly/ui-api-hooks';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { useSnackbar } from '@vassembly/ui-snackbar';
-import { Text } from '@vassembly/ui-text';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
+import { Text } from '@vassembly/ui-system-design/text';
 import { useState } from 'react';
 import { getValidatorIssues } from '@vassembly/validation';
 

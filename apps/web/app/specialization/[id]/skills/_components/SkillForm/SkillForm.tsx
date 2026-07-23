@@ -4,12 +4,12 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { useEffect, useMemo } from 'react';
 
 import { useSkillsBySpecialization } from '@vassembly/ui-api-hooks';
-import { Alert } from '@vassembly/ui-alert';
-import { Button } from '@vassembly/ui-button';
-import { Dropdown } from '@vassembly/ui-dropdown';
-import { MultiSelect } from '@vassembly/ui-multi-select';
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
+import { Alert } from '@vassembly/ui-system-design/alert';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Dropdown } from '@vassembly/ui-system-design/dropdown';
+import { MultiSelect } from '@vassembly/ui-system-design/multi-select';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 
 import {
   SKILL_DESCRIPTION_MAX,

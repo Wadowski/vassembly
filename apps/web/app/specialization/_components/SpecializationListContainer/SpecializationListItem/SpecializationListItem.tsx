@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import { formatRelativeTime } from '../../../../tasks/[id]/lib/formatRelativeTime';
 import { SPECIALIZATION_LIST_QUERY_STORAGE_KEY } from '../../../constants';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import type { TaskQuestionHistoryItemProps } from '../types';
 import styles from './TaskQuestionHistoryItem.module.scss';

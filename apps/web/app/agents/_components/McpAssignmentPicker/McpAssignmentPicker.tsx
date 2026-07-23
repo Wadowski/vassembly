@@ -2,10 +2,10 @@
 
 import { useMemo } from 'react';
 
-import { Button } from '@vassembly/ui-button';
-import { Dropdown } from '@vassembly/ui-dropdown';
-import { Tag } from '@vassembly/ui-tag';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Dropdown } from '@vassembly/ui-system-design/dropdown';
+import { Tag } from '@vassembly/ui-system-design/tag';
+import { Text } from '@vassembly/ui-system-design/text';
 import { useRouter } from 'next/navigation';
 
 import { AGENT_MAX_ASSIGNED_MCPS, MCP_MANAGE_HREF } from './constants';

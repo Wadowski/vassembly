@@ -36,7 +36,7 @@ vi.mock('@vassembly/ui-user-auth', () => ({
   useUserAuth: () => ({ setSession: h.setSession }),
 }));
 
-vi.mock('@vassembly/ui-snackbar', () => ({
+vi.mock('@vassembly/ui-system-design/snackbar', () => ({
   useSnackbar: () => ({ show: h.show }),
 }));
 

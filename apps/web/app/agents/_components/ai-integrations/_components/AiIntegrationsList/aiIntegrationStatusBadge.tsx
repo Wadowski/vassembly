@@ -1,7 +1,7 @@
 'use client';
 
-import { Tag } from '@vassembly/ui-tag';
-import { Text } from '@vassembly/ui-text';
+import { Tag } from '@vassembly/ui-system-design/tag';
+import { Text } from '@vassembly/ui-system-design/text';
 
 import styles from './styles.module.scss';
 

@@ -7,7 +7,7 @@ import {
   SocialTwitterColorIcon,
   TagsIcon,
   TeamMeetingChatIcon,
-} from '@vassembly/ui-icons';
+} from '@vassembly/ui-system-design/icons';
 import type { LayoutPreset } from '../types';
 
 const noop = (): void => {};

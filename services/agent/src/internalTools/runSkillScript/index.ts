@@ -9,7 +9,7 @@ import { resolveScriptFilename } from './resolveScriptFilename';
 import { truncateOutput } from './truncateOutput';
 
 import type { InternalToolContext } from '../types';
-import type { RunSkillScriptHandlerParams, RunSkillScriptToolResult } from './types';
+import type { RunSkillScriptHandlerParams, RunSkillScriptToolResult, ScriptWithOwnership } from './types';
 
 const ALLOWED_ENV_KEYS = new Set([
   'SKILL_INPUT_PATH',
@@ -203,7 +203,7 @@ export const runSkillScriptToolHandler = async (
 export interface RunAutoScriptsFromRuleParams {
   rule: string;
   skillName: string;
-  scripts: Array<{ filename: string; skillId: string; skillName: string }>;
+  scripts: ScriptWithOwnership[];
   specializationId?: string;
   context: InternalToolContext;
 }

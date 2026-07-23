@@ -1,7 +1,7 @@
 'use client';
 
-import { Text } from '@vassembly/ui-text';
-import { TextField } from '@vassembly/ui-text-field';
+import { Text } from '@vassembly/ui-system-design/text';
+import { TextField } from '@vassembly/ui-system-design/text-field';
 import { useState } from 'react';
 
 import styles from '../../SettingsSections.module.scss';

@@ -1,6 +1,6 @@
 'use client';
 
-import { resolveClassName } from '@vassembly/ui-utils';
+import { resolveClassName } from '@vassembly/ui-system-design/utils';
 
 import styles from './McpStatusBadge.module.scss';
 import type { McpStatusBadgeProps } from './types';

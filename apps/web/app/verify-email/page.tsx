@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { CommonError } from '@vassembly/errors';
 import { useHttpClient } from '@vassembly/ui-api-hooks';
-import { Text } from '@vassembly/ui-text';
-import { Button } from '@vassembly/ui-button';
+import { Text } from '@vassembly/ui-system-design/text';
+import { Button } from '@vassembly/ui-system-design/button';
 
 import { ProtectedAuthRoute } from '../../lib/auth/ProtectedAuthRoute';
 import { setTokens } from '../../lib/auth/sessionStorage';

@@ -1,9 +1,9 @@
 'use client';
 
 import { PROVIDER_LABELS } from '@vassembly/ui-api-hooks';
-import { Button } from '@vassembly/ui-button';
-import { Dropdown } from '@vassembly/ui-dropdown';
-import { Text } from '@vassembly/ui-text';
+import { Button } from '@vassembly/ui-system-design/button';
+import { Dropdown } from '@vassembly/ui-system-design/dropdown';
+import { Text } from '@vassembly/ui-system-design/text';
 import { useRouter } from 'next/navigation';
 
 import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../aiIntegrationRoutes';
