@@ -1,8 +1,10 @@
 import taskDomain, { TaskStatus, toTaskResponse } from '@vassembly/domain-task';
+import taskProgressDomain from '@vassembly/domain-task-progress';
 import { ConflictError, NotFoundError } from '@vassembly/errors';
 import { logger } from '@vassembly/logger';
 
 import { executeTask, TaskExecutionMode } from '../executeTask';
+import { resolveActiveCommentId } from '../executeTask/resolveActiveCommentId';
 
 import type { ResumeTaskHandlerInput, ResumeTaskHandlerOutput } from './types';
 
@@ -28,10 +30,12 @@ export const resumeTask = async ({
   }
 
   const result = await taskDomain.commands.resumeTask({ taskId });
+  const commentId = await resolveActiveCommentId({ taskId });
 
   void executeTask({
     taskId,
     userId,
+    commentId,
     mode: TaskExecutionMode.Resume,
   }).catch((error: unknown) => {
     logger('task.execute.unhandled', {

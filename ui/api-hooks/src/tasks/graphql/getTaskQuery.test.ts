@@ -12,7 +12,7 @@ const TASK_FIELDS = [
   'title',
   'specializationIds',
   'skillIdsUsed',
-  'llmResponse',
+  'activeCommentId',
   'errorMessage',
   'errorCode',
   'startedAt',

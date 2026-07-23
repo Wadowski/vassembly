@@ -6,6 +6,7 @@ export type AgentType = 'personal' | 'system';
 
 export interface PendingQuestion {
   questionId: string;
+  commentId: string;
   invocationId: string;
   askedByAgentId: string;
   askedByAgentType: AgentType;

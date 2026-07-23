@@ -1,0 +1,22 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  min-width: 12rem;
+  max-width: 20rem;
+  width: 100%;
+  padding-bottom: $spacing-2;
+  border-bottom: 1px solid $color-outline-variant;
+}
+
+.multiSelect {
+  width: 100%;
+}
+
+@media #{$media-mobile-only} {
+  .filter {
+    max-width: none;
+  }
+}

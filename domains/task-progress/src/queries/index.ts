@@ -1,5 +1,8 @@
-export { getTaskProgressByTaskId } from './getTaskProgressByTaskId';
-export type { GetTaskProgressByTaskIdInput } from './getTaskProgressByTaskId/types';
+export { getTaskProgressByCommentId } from './getTaskProgressByCommentId';
+export type { GetTaskProgressByCommentIdInput } from './getTaskProgressByCommentId/types';
 
-export { getModelByTaskId } from './getModelByTaskId';
-export type { GetModelByTaskIdInput } from './getModelByTaskId';
+export { getModelByCommentId } from './getModelByCommentId';
+export type { GetModelByCommentIdInput } from './getModelByCommentId';
+
+export { listByTaskId } from './listByTaskId';
+export type { ListByTaskIdInput } from './listByTaskId/types';

@@ -1,7 +1,7 @@
 import type { ErrorDetails, TokenUsage } from '../../model';
 
 export interface RecordProgressEventInput {
-  taskId: string;
+  commentId: string;
   agentId: string;
   state: 'started' | 'completed' | 'failed' | 'waiting';
   timestamp?: Date;

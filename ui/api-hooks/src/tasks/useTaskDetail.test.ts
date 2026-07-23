@@ -101,7 +101,7 @@ describe('useTaskDetail', () => {
         status: TaskStatus.Created,
         agentAssignedId: null,
         title: 'Quarterly review',
-        llmResponse: null,
+        activeCommentId: null,
         errorMessage: null,
         errorCode: null,
         startedAt: null,

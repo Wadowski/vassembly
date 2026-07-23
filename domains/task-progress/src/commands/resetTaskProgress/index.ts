@@ -7,7 +7,7 @@ import { TASK_PROGRESS_COLLECTION_NAME } from '../../clients';
 import type { ResetTaskProgressInput } from './types';
 
 const VALIDATION_SCHEMA = z.object({
-  taskId: z.string().min(1),
+  commentId: z.string().min(1),
 });
 
 export const resetTaskProgress = async (input: ResetTaskProgressInput): Promise<void> => {
@@ -16,7 +16,7 @@ export const resetTaskProgress = async (input: ResetTaskProgressInput): Promise<
   const collection = mongoDb.db.collection(TASK_PROGRESS_COLLECTION_NAME);
 
   await collection.updateOne(
-    { taskId: validated.taskId },
+    { commentId: validated.commentId },
     {
       $unset: {
         completedAt: 1,

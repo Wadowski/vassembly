@@ -16,6 +16,10 @@ const {
   mockLogger: vi.fn(),
 }));
 
+vi.mock('../executeTask/resolveActiveCommentId', () => ({
+  resolveActiveCommentId: vi.fn().mockResolvedValue('comment-1'),
+}));
+
 vi.mock('../executeTask', () => ({
   executeTask: mockExecuteTask,
   TaskExecutionMode: {
@@ -162,6 +166,7 @@ describe('resumeTask handler', () => {
     expect(mockExecuteTask).toHaveBeenCalledWith({
       taskId: 'task-1',
       userId: 'user-1',
+      commentId: 'comment-1',
       mode: 'resume',
     });
   });
@@ -186,6 +191,7 @@ describe('resumeTask handler', () => {
     expect(mockExecuteTask).toHaveBeenCalledWith({
       taskId: 'task-1',
       userId: 'user-1',
+      commentId: 'comment-1',
       mode: 'resume',
     });
   });

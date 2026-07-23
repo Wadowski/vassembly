@@ -11,7 +11,7 @@ import { mapTaskProgressDocument } from '../../model/mapTaskProgressDocument';
 import type { FinalizeTaskProgressInput } from './types';
 
 const VALIDATION_SCHEMA = z.object({
-  taskId: z.string().min(1),
+  commentId: z.string().min(1),
 });
 
 export const finalizeTaskProgress = async (
@@ -21,10 +21,10 @@ export const finalizeTaskProgress = async (
 
   const collection = mongoDb.db.collection(TASK_PROGRESS_COLLECTION_NAME);
 
-  const taskProgress = await collection.findOne({ taskId: validated.taskId });
+  const taskProgress = await collection.findOne({ commentId: validated.commentId });
 
   if (!taskProgress) {
-    throw new NotFoundError(`Task progress not found for taskId: ${validated.taskId}`);
+    throw new NotFoundError(`Task progress not found for commentId: ${validated.commentId}`);
   }
 
   const taskProgressData = taskProgress as Record<string, unknown>;
@@ -59,7 +59,7 @@ export const finalizeTaskProgress = async (
   }
 
   const updatedDocument = await collection.findOneAndUpdate(
-    { taskId: validated.taskId },
+    { commentId: validated.commentId },
     {
       $set: {
         completedAt: now,
@@ -75,7 +75,7 @@ export const finalizeTaskProgress = async (
   );
 
   if (!updatedDocument) {
-    throw new NotFoundError(`Task progress not found for taskId: ${validated.taskId}`);
+    throw new NotFoundError(`Task progress not found for commentId: ${validated.commentId}`);
   }
 
   return taskProgressFactory.create(

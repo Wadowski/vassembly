@@ -3,6 +3,7 @@ import type { ErrorDetails, ProgressEventModel, TokenUsage } from '@vassembly/do
 export interface RecordTaskProgressInput {
   taskId: string;
   userId: string;
+  commentId: string;
   agentId: string;
   parentAgentId?: string;
   state: 'started' | 'completed' | 'failed' | 'waiting';

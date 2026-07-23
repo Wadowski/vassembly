@@ -43,7 +43,7 @@ const buildTask = (partial: Partial<TaskDto> = {}): TaskDto => ({
   status: partial.status ?? TaskStatus.InProgress,
   agentAssignedId: partial.agentAssignedId ?? null,
   title: partial.title ?? 'Quarterly review',
-  llmResponse: partial.llmResponse ?? null,
+  activeCommentId: partial.activeCommentId ?? null,
   errorMessage: partial.errorMessage ?? null,
   errorCode: partial.errorCode ?? null,
   startedAt: partial.startedAt ?? '2026-03-12T15:46:00.000Z',
@@ -251,7 +251,7 @@ describe('useTaskDetailPage', () => {
 
     try {
       const inProgressTask = buildTask({ status: TaskStatus.InProgress });
-      const doneTask = buildTask({ status: TaskStatus.Done, llmResponse: 'Done output' });
+      const doneTask = buildTask({ status: TaskStatus.Done, activeCommentId: 'comment-1' });
       mockFetch.mockResolvedValueOnce(inProgressTask).mockResolvedValue(doneTask);
 
       const { result } = renderHook(() => useTaskDetailPage());
@@ -280,7 +280,7 @@ describe('useTaskDetailPage', () => {
     vi.useFakeTimers();
 
     try {
-      mockFetch.mockResolvedValue(buildTask({ status: TaskStatus.Done, llmResponse: 'result' }));
+      mockFetch.mockResolvedValue(buildTask({ status: TaskStatus.Done, activeCommentId: 'comment-1' }));
 
       renderHook(() => useTaskDetailPage());
 

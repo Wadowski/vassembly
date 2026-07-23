@@ -28,7 +28,7 @@ describe('resetTaskProgress', () => {
         modifiedCount: 1,
       });
 
-      await resetTaskProgress({ taskId: 'task-123' });
+      await resetTaskProgress({ commentId: 'comment-123' });
 
       const callArgs = mockCollection.updateOne.mock.calls[0];
       expect(callArgs).toBeDefined();
@@ -42,7 +42,7 @@ describe('resetTaskProgress', () => {
         modifiedCount: 1,
       });
 
-      await resetTaskProgress({ taskId: 'task-123' });
+      await resetTaskProgress({ commentId: 'comment-123' });
 
       const callArgs = mockCollection.updateOne.mock.calls[0];
       expect(callArgs).toBeDefined();
@@ -55,7 +55,7 @@ describe('resetTaskProgress', () => {
         modifiedCount: 1,
       });
 
-      await resetTaskProgress({ taskId: 'task-123' });
+      await resetTaskProgress({ commentId: 'comment-123' });
 
       const callArgs = mockCollection.updateOne.mock.calls[0];
       expect(callArgs).toBeDefined();
@@ -86,7 +86,7 @@ describe('resetTaskProgress', () => {
 
       await expect(
         resetTaskProgress({
-          taskId: 'task-123',
+          commentId: 'comment-123',
         })
       ).rejects.toThrow('MongoDB connection error');
     });

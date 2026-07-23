@@ -13,7 +13,7 @@ export interface TaskResponse {
   category: INTENT_CATEGORY_SLUG | null;
   specializationIds: string[] | null;
   skillIdsUsed: string[] | null;
-  llmResponse: string | null;
+  activeCommentId: string | null;
   errorMessage: string | null;
   errorCode: string | null;
   startedAt: string | null;

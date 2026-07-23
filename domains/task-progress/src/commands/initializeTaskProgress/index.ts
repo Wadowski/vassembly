@@ -12,6 +12,7 @@ import type { InitializeTaskProgressInput } from './types';
 const VALIDATION_SCHEMA = z.object({
   taskId: z.string().min(1),
   userId: z.string().min(1),
+  commentId: z.string().min(1),
 });
 
 export const initializeTaskProgress = async (
@@ -23,8 +24,7 @@ export const initializeTaskProgress = async (
 
   const collection = mongoDb.db.collection(TASK_PROGRESS_COLLECTION_NAME);
   const existing = await collection.findOne({
-    taskId: validated.taskId,
-    userId: validated.userId,
+    commentId: validated.commentId,
   });
 
   if (existing) {
@@ -35,6 +35,7 @@ export const initializeTaskProgress = async (
   const newDoc = {
     taskId: validated.taskId,
     userId: validated.userId,
+    commentId: validated.commentId,
     createdAt: now,
     startedAt: now,
     completedAt: null,
