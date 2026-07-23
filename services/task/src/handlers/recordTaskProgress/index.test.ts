@@ -9,9 +9,9 @@ const { mockGetModelById: mockTaskGetModelById } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
 }));
 
-const { mockGetModelByTaskId, mockInitializeTaskProgress, mockRecordProgressEvent } = vi.hoisted(
+const { mockGetModelByCommentId, mockInitializeTaskProgress, mockRecordProgressEvent } = vi.hoisted(
   () => ({
-    mockGetModelByTaskId: vi.fn(),
+    mockGetModelByCommentId: vi.fn(),
     mockInitializeTaskProgress: vi.fn(),
     mockRecordProgressEvent: vi.fn(),
   })
@@ -28,7 +28,7 @@ vi.mock('@vassembly/domain-task', () => ({
 vi.mock('@vassembly/domain-task-progress', () => ({
   default: {
     queries: {
-      getModelByTaskId: mockGetModelByTaskId,
+      getModelByCommentId: mockGetModelByCommentId,
     },
     commands: {
       initializeTaskProgress: mockInitializeTaskProgress,
@@ -50,6 +50,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: '',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -61,6 +62,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: '',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -72,6 +74,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: '',
           state: 'started',
         })
@@ -83,6 +86,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: '' as RecordTaskProgressInput['state'],
         })
@@ -98,6 +102,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'nonexistent',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -117,6 +122,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -136,6 +142,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -153,7 +160,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -161,6 +168,7 @@ describe('recordTaskProgress handler', () => {
       const result = await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'started' as const,
       });
@@ -182,18 +190,20 @@ describe('recordTaskProgress handler', () => {
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
 
-      mockGetModelByTaskId.mockResolvedValueOnce({ data: null });
+      mockGetModelByCommentId.mockResolvedValueOnce({ data: null });
       mockInitializeTaskProgress.mockResolvedValue({
         id: 'progress123',
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         events: [],
       });
-      mockGetModelByTaskId.mockResolvedValueOnce({
+      mockGetModelByCommentId.mockResolvedValueOnce({
         data: {
           id: 'progress123',
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           events: [],
         },
       });
@@ -202,6 +212,7 @@ describe('recordTaskProgress handler', () => {
       const result = await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'started' as const,
       });
@@ -209,6 +220,7 @@ describe('recordTaskProgress handler', () => {
       expect(mockInitializeTaskProgress).toHaveBeenCalledWith({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
       });
       expect(result).toEqual(mockEvent);
     });
@@ -225,11 +237,12 @@ describe('recordTaskProgress handler', () => {
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
 
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: {
           id: 'progress123',
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           events: [],
         },
       });
@@ -238,6 +251,7 @@ describe('recordTaskProgress handler', () => {
       const result = await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'started' as const,
       });
@@ -251,16 +265,18 @@ describe('recordTaskProgress handler', () => {
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
 
-      mockGetModelByTaskId.mockResolvedValueOnce({ data: null });
+      mockGetModelByCommentId.mockResolvedValueOnce({ data: null });
       mockInitializeTaskProgress.mockResolvedValue({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         events: [],
       });
-      mockGetModelByTaskId.mockResolvedValueOnce({
+      mockGetModelByCommentId.mockResolvedValueOnce({
         data: {
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           events: [],
         },
       });
@@ -276,6 +292,7 @@ describe('recordTaskProgress handler', () => {
       await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'started' as const,
       });
@@ -283,6 +300,7 @@ describe('recordTaskProgress handler', () => {
       expect(mockInitializeTaskProgress).toHaveBeenCalledWith({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
       });
     });
   });
@@ -299,7 +317,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -307,13 +325,14 @@ describe('recordTaskProgress handler', () => {
       const result = await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'started' as const,
       });
 
       expect(mockRecordProgressEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          taskId: 'task123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -337,7 +356,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { id: 'progress123', taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -345,6 +364,7 @@ describe('recordTaskProgress handler', () => {
       const result = await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'completed' as const,
         timestamp: now,
@@ -355,7 +375,7 @@ describe('recordTaskProgress handler', () => {
       });
 
       expect(mockRecordProgressEvent).toHaveBeenCalledWith({
-        taskId: 'task123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'completed' as ProgressEventModel['state'],
         timestamp: now,
@@ -385,7 +405,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { id: 'progress123', taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -393,6 +413,7 @@ describe('recordTaskProgress handler', () => {
       const result = await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'failed' as const,
         errorDetails: {
@@ -426,7 +447,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { id: 'progress123', taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -434,13 +455,14 @@ describe('recordTaskProgress handler', () => {
       await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'started' as const,
       });
 
       expect(mockRecordProgressEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          taskId: 'task123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
           timestamp: expect.any(Date),
@@ -460,7 +482,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { id: 'progress123', taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -468,6 +490,7 @@ describe('recordTaskProgress handler', () => {
       await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: 'started' as const,
         timestamp: customTimestamp,
@@ -491,6 +514,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -501,7 +525,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockRejectedValue(
@@ -512,6 +536,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -522,7 +547,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValueOnce({ data: null });
+      mockGetModelByCommentId.mockResolvedValueOnce({ data: null });
       mockInitializeTaskProgress.mockRejectedValue(
         new Error('MongoDB error')
       );
@@ -531,6 +556,7 @@ describe('recordTaskProgress handler', () => {
         recordTaskProgress({
           taskId: 'task123',
           userId: 'user123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'started',
         })
@@ -552,7 +578,7 @@ describe('recordTaskProgress handler', () => {
       mockTaskGetModelById.mockResolvedValue({
         data: { id: 'task123', userId: 'user123', status: 'in-progress' },
       });
-      mockGetModelByTaskId.mockResolvedValue({
+      mockGetModelByCommentId.mockResolvedValue({
         data: { taskId: 'task123', userId: 'user123', events: [] },
       });
       mockRecordProgressEvent.mockResolvedValue(mockEvent);
@@ -560,6 +586,7 @@ describe('recordTaskProgress handler', () => {
       const result = await recordTaskProgress({
         taskId: 'task123',
         userId: 'user123',
+        commentId: 'comment-123',
         agentId: 'TestAgent',
         state: 'completed' as const,
         duration: 2500,

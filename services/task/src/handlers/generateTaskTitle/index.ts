@@ -40,6 +40,7 @@ export const generateTaskTitle = async ({
     const toolContext: InternalToolContext = {
       userId,
       taskId,
+      commentId: '',
       invocationId: randomUUID(),
       callerAgentType: 'system',
       callerAgentId: agentResult.data.id!,

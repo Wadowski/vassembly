@@ -40,7 +40,7 @@ const buildTaskResponse = (): TaskResponse => ({
   skillIdsUsed: null,
   title: null,
   category: null,
-  llmResponse: null,
+  activeCommentId: null,
   errorMessage: null,
   errorCode: null,
   startedAt: null,

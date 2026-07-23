@@ -1,13 +1,14 @@
-import { randomUUID } from 'node:crypto';
-
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import taskDomain, { TaskStatus } from '@vassembly/domain-task';
+import taskCommentDomain from '@vassembly/domain-task-comment';
 import taskProgressDomain from '@vassembly/domain-task-progress';
 import taskQuestionsDomain from '@vassembly/domain-task-questions';
 import { ExecutionPausedError, UserInputWaitingError } from '@vassembly/errors';
 import { runAgentInvokeWithTools } from '@vassembly/service-agent';
+import { randomUUID } from 'node:crypto';
 
 import { executionRegistry } from '../../executionRegistry';
+import { buildConversationMessage } from './buildConversationMessage';
 import { buildResumeMessage } from './buildResumeMessage';
 import { createRecordAgentInvokeProgress } from './createRecordAgentInvokeProgress';
 import { logTaskTransition } from './logTaskTransition';
@@ -25,6 +26,7 @@ export { TaskExecutionMode } from './types';
 export const executeTask = async ({
   taskId,
   userId,
+  commentId,
   mode = TaskExecutionMode.Fresh,
 }: ExecuteTaskParams): Promise<void> => {
   const startedAt = Date.now();
@@ -51,7 +53,7 @@ export const executeTask = async ({
     }
 
     if (mode === TaskExecutionMode.Fresh) {
-      await taskDomain.commands.markInProgress({ taskId });
+      await taskDomain.commands.markInProgress({ taskId, activeCommentId: commentId });
     }
 
     const preference = await systemAgentDomain.queries.getPreferenceByUserId({ userId });
@@ -73,13 +75,15 @@ export const executeTask = async ({
       return;
     }
 
-    let message = task.description!;
+    let message = await buildConversationMessage({ taskId });
 
-    if (mode === TaskExecutionMode.Resume) {
-      const progressResult = await taskProgressDomain.queries.getModelByTaskId({ taskId });
+    if (mode === TaskExecutionMode.Resume || mode === TaskExecutionMode.Retry) {
+      const progressResult = await taskProgressDomain.queries.getModelByCommentId({ commentId });
       const events = progressResult.data?.events ?? [];
       const questionsResult = await taskQuestionsDomain.queries.getTaskQuestions({ taskId });
-      const answeredQuestions = questionsResult.data?.answeredQuestions ?? [];
+      const answeredQuestions = (questionsResult.data?.answeredQuestions ?? []).filter(
+        (question) => question.commentId === commentId,
+      );
       message = buildResumeMessage({
         description: task.description!,
         events,
@@ -99,6 +103,7 @@ export const executeTask = async ({
       toolContext: {
         userId,
         taskId,
+        commentId,
         invocationId: rootInvocationId,
         callerAgentId: task.agentAssignedId,
         callerAgentType: 'system',
@@ -110,13 +115,17 @@ export const executeTask = async ({
           const currentTask = await taskDomain.queries.getModelById({ id: taskId });
           return currentTask.data?.status === TaskStatus.Paused;
         },
-        recordAgentInvokeProgress: createRecordAgentInvokeProgress({ taskId, userId }),
+        recordAgentInvokeProgress: createRecordAgentInvokeProgress({ taskId, userId, commentId }),
       },
     });
 
-    await taskProgressDomain.commands.finalizeTaskProgress({ taskId });
+    await taskProgressDomain.commands.finalizeTaskProgress({ commentId });
 
-    await taskDomain.commands.complete({ taskId, llmResponse: invokeResult.message });
+    await taskCommentDomain.commands.setAgentResponse({
+      commentId,
+      agentResponse: invokeResult.message,
+    });
+    await taskDomain.commands.complete({ taskId });
     logTaskTransition({
       event: 'task.status.done',
       taskId,
@@ -154,7 +163,7 @@ export const executeTask = async ({
     }
 
     try {
-      await taskProgressDomain.commands.finalizeTaskProgress({ taskId });
+      await taskProgressDomain.commands.finalizeTaskProgress({ commentId });
     } catch {
       // Silently fail if progress recording fails during error handling
     }

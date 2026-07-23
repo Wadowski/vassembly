@@ -27,6 +27,7 @@ describe('recordQuestions command', () => {
 
     const result = await recordQuestions({
       taskId: 'task-1',
+      commentId: 'comment-1',
       invocationId: 'inv-1',
       askedByAgentId: 'agent-1',
       askedByAgentType: 'system',
@@ -41,6 +42,7 @@ describe('recordQuestions command', () => {
     await expect(
       recordQuestions({
         taskId: 'task-1',
+        commentId: 'comment-1',
         invocationId: 'inv-1',
         askedByAgentId: 'agent-1',
         askedByAgentType: 'system',

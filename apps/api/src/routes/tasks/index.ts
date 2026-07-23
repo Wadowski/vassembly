@@ -7,8 +7,11 @@ import { taskResumeRoute } from './resumeTask';
 import { taskRetryRoute } from './retryTask';
 import { taskSubmitAnswerRoute } from './submitAnswer';
 
+import { taskSubmitCommentRoute } from './submitTaskComment';
+
 export const routes: RouteDefinition[] = [
   taskCreateRoute,
+  taskSubmitCommentRoute,
   taskGetQuestionsRoute,
   taskPauseRoute,
   taskResumeRoute,

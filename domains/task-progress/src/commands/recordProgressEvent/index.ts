@@ -9,7 +9,7 @@ import { ProgressEventModel, ProgressEventState } from '../../model';
 import type { RecordProgressEventInput } from './types';
 
 const VALIDATION_SCHEMA = z.object({
-  taskId: z.string().min(1),
+  commentId: z.string().min(1),
   agentId: z.string().min(1),
   state: z.nativeEnum(ProgressEventState),
   timestamp: z.date().optional(),
@@ -60,12 +60,12 @@ export const recordProgressEvent = async (
   };
 
   const result = await collection.updateOne(
-    { taskId: validated.taskId },
+    { commentId: validated.commentId },
     { $push: { events: newEvent } } as unknown as Parameters<typeof collection.updateOne>[1]
   );
 
   if (result.matchedCount === 0) {
-    throw new NotFoundError(`Task progress not found for taskId: ${validated.taskId}`);
+    throw new NotFoundError(`Task progress not found for commentId: ${validated.commentId}`);
   }
 
   return newEvent;

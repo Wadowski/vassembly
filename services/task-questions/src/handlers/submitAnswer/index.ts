@@ -54,16 +54,21 @@ export const submitAnswer = async ({
   await taskQuestionsDomain.commands.clearBlockedInvocations({ taskId });
 
   if (rootWasBlocked) {
-    void taskService.executeTask({
-      taskId,
-      userId,
-      mode: taskService.TaskExecutionMode.Resume,
-    }).catch((error: unknown) => {
-      logger('task.execute.unhandled', {
-        meta: { sessionId: 'TASK_EXECUTION', taskId, userId },
-        data: { error: error instanceof Error ? error.message : String(error) },
+    const commentId = task.activeCommentId ?? answeredQuestions[0]?.commentId;
+
+    if (commentId) {
+      void taskService.executeTask({
+        taskId,
+        userId,
+        commentId,
+        mode: taskService.TaskExecutionMode.Resume,
+      }).catch((error: unknown) => {
+        logger('task.execute.unhandled', {
+          meta: { sessionId: 'TASK_EXECUTION', taskId, userId },
+          data: { error: error instanceof Error ? error.message : String(error) },
+        });
       });
-    });
+    }
   }
 
   const refreshedResult = await taskQuestionsDomain.queries.getTaskQuestions({ taskId });

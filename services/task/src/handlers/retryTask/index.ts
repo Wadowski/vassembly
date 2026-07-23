@@ -4,6 +4,7 @@ import { ConflictError, NotFoundError } from '@vassembly/errors';
 import { logger } from '@vassembly/logger';
 
 import { executeTask, TaskExecutionMode } from '../executeTask';
+import { resolveActiveCommentId } from '../executeTask/resolveActiveCommentId';
 
 import type { RetryTaskHandlerInput, RetryTaskHandlerOutput } from './types';
 
@@ -22,8 +23,10 @@ export const retryTask = async ({
     throw new ConflictError('Task is not paused or failed', { code: 'TASK_NOT_RETRYABLE' });
   }
 
+  const commentId = await resolveActiveCommentId({ taskId });
+
   try {
-    await taskProgressDomain.commands.resetTaskProgress({ taskId });
+    await taskProgressDomain.commands.resetTaskProgress({ commentId });
   } catch (error: unknown) {
     logger('task.retry.resetProgress.failed', {
       meta: { sessionId: 'TASK_EXECUTION', taskId, userId },
@@ -36,6 +39,7 @@ export const retryTask = async ({
   void executeTask({
     taskId,
     userId,
+    commentId,
     mode: TaskExecutionMode.Retry,
   }).catch((error: unknown) => {
     logger('task.execute.unhandled', {

@@ -109,7 +109,7 @@ describe('useUserTasks', () => {
             status: TaskStatus.Created,
             agentAssignedId: null,
             title: null,
-            llmResponse: null,
+            activeCommentId: null,
             errorMessage: null,
             errorCode: null,
             startedAt: null,

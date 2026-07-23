@@ -1,18 +1,21 @@
 'use client';
 
-import { ExecutionProgressTracker } from '@vassembly/ui-execution-progress-tracker';
+import { useCallback, useState } from 'react';
+
 import { useUserAuth } from '@vassembly/ui-user-auth';
+import type { SubmitTaskCommentResponse } from '@vassembly/ui-api-hooks';
 
 import { LinkedSpecializations } from '../../_components/LinkedSpecializations/LinkedSpecializations';
 import { TaskDetailSkillsUsed } from './_components/TaskDetailSkillsUsed';
 import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
-import { TaskDetailAiResponse } from './_components/TaskDetailAiResponse/TaskDetailAiResponse';
+import { TaskActivityFeed } from './_components/TaskActivityFeed/TaskActivityFeed';
+import { TaskCommentComposer } from './_components/TaskCommentComposer/TaskCommentComposer';
 import { TaskDetailDescription } from './_components/TaskDetailDescription';
 import { TaskDetailExecutionError } from './_components/TaskDetailExecutionError/TaskDetailExecutionError';
 import { TaskDetailError } from './_components/TaskDetailError';
 import { TaskDetailHeader } from './_components/TaskDetailHeader';
+import { TaskExecutionStatistics } from './_components/TaskExecutionStatistics/TaskExecutionStatistics';
 import { TaskQuestionForm } from './_components/TaskQuestionForm';
-import { TaskQuestionsHistory } from './_components/TaskQuestionsHistory';
 import styles from './TaskDetailPage.module.scss';
 import { TaskDetailSkeleton } from './TaskDetailSkeleton';
 import { useTaskDetailPage } from './useTaskDetailPage';
@@ -28,6 +31,14 @@ export default function TaskDetailPage(): JSX.Element {
     handleAnswerSubmitted,
     handleSubmitError,
   } = useTaskDetailPage();
+
+  const [pendingUserComment, setPendingUserComment] = useState<
+    SubmitTaskCommentResponse['comment'] | null
+  >(null);
+
+  const handleTaskUpdated = useCallback((): void => {
+    void refetchTask();
+  }, [refetchTask]);
 
   const body =
     view.phase === 'loading' ? (
@@ -56,21 +67,31 @@ export default function TaskDetailPage(): JSX.Element {
             skillIds={view.task.skillIdsUsed ?? []}
             isAdmin={isAdmin}
           />
-          <TaskDetailAiResponse task={view.task} />
           <TaskDetailDescription description={view.task.description} />
-          {taskQuestions !== undefined && taskQuestions.answeredQuestions.length > 0 ? (
-            <TaskQuestionsHistory questions={taskQuestions.answeredQuestions} />
-          ) : null}
-          <TaskDetailExecutionError task={view.task} />
-          <ExecutionProgressTracker
+          <TaskCommentComposer
             taskId={view.task.id}
             taskStatus={view.task.status}
-            hasAssignedAgent={view.task.agentAssignedId !== null}
-            answeredQuestions={taskQuestions?.answeredQuestions}
-            onTaskCompleted={() => {
+            onSubmitted={(response) => {
+              setPendingUserComment(response.comment);
               void refetchTask();
             }}
           />
+          <TaskActivityFeed
+            taskId={view.task.id}
+            taskStatus={view.task.status}
+            activeCommentId={view.task.activeCommentId}
+            pendingUserComment={pendingUserComment}
+            onPendingUserCommentSynced={() => {
+              setPendingUserComment(null);
+            }}
+            onTaskUpdated={handleTaskUpdated}
+          />
+          <TaskExecutionStatistics
+            taskId={view.task.id}
+            commentId={view.task.activeCommentId}
+            taskStatus={view.task.status}
+          />
+          <TaskDetailExecutionError task={view.task} />
         </article>
       </main>
     );

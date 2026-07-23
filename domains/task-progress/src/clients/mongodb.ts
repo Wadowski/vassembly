@@ -10,7 +10,8 @@ export const taskProgressMongodbDao = MongoDbDAO<TaskProgressModel>({
 
 export const mongodbIndexes = async (): Promise<void> => {
   const collection = mongoDb.db.collection(TASK_PROGRESS_COLLECTION_NAME);
-  await collection.createIndex({ taskId: 1, userId: 1 }, { name: 'idx_taskId_userId' });
+  await collection.createIndex({ commentId: 1 }, { unique: true, name: 'idx_commentId_unique' });
+  await collection.createIndex({ taskId: 1, createdAt: 1 }, { name: 'idx_taskId_createdAt' });
   await collection.createIndex(
     { userId: 1, createdAt: -1 },
     { name: 'idx_userId_createdAt' }

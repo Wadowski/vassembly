@@ -5,14 +5,14 @@ import {
   UnauthorizedError,
 } from '@vassembly/errors';
 
-const { mockGetTaskProgressByTaskId, mockResolveAgentDisplayNames } = vi.hoisted(() => ({
-  mockGetTaskProgressByTaskId: vi.fn(),
+const { mockGetTaskProgressByCommentId, mockResolveAgentDisplayNames } = vi.hoisted(() => ({
+  mockGetTaskProgressByCommentId: vi.fn(),
   mockResolveAgentDisplayNames: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-task-progress', () => ({
   queries: {
-    getTaskProgressByTaskId: mockGetTaskProgressByTaskId,
+    getTaskProgressByCommentId: mockGetTaskProgressByCommentId,
   },
 }));
 
@@ -24,6 +24,7 @@ import { registerTaskProgressResolvers } from './taskProgress';
 
 interface TaskProgressResolverArgs {
   taskId: string;
+  commentId: string;
 }
 
 interface ApiGraphQLContext {
@@ -151,11 +152,11 @@ describe('TaskProgress Resolver', () => {
         },
       };
 
-      mockGetTaskProgressByTaskId.mockResolvedValue(mockData);
+      mockGetTaskProgressByCommentId.mockResolvedValue(mockData);
 
       const result = await resolver(
         undefined,
-        { taskId: 'task-123' },
+        { taskId: 'task-123', commentId: 'comment-123' },
         { authenticatedUserId: 'user-456' }
       );
 
@@ -199,11 +200,11 @@ describe('TaskProgress Resolver', () => {
         },
       };
 
-      mockGetTaskProgressByTaskId.mockResolvedValue(mockData);
+      mockGetTaskProgressByCommentId.mockResolvedValue(mockData);
 
       const result = await resolver(
         undefined,
-        { taskId: 'task-123' },
+        { taskId: 'task-123', commentId: 'comment-123' },
         { authenticatedUserId: 'user-456' }
       );
 
@@ -256,11 +257,11 @@ describe('TaskProgress Resolver', () => {
         },
       };
 
-      mockGetTaskProgressByTaskId.mockResolvedValue(mockData);
+      mockGetTaskProgressByCommentId.mockResolvedValue(mockData);
 
       const result = await resolver(
         undefined,
-        { taskId: 'task-123' },
+        { taskId: 'task-123', commentId: 'comment-123' },
         { authenticatedUserId: 'user-456' }
       );
 
@@ -276,19 +277,19 @@ describe('TaskProgress Resolver', () => {
       const resolver = captureTaskProgressResolverFn();
 
       await expect(
-        resolver(undefined, { taskId: 'task-123' }, { authenticatedUserId: undefined })
+        resolver(undefined, { taskId: 'task-123', commentId: 'comment-123' }, { authenticatedUserId: undefined })
       ).rejects.toThrow(UnauthorizedError);
     });
 
     it('should throw NotFoundError when task progress does not exist', async () => {
       const resolver = captureTaskProgressResolverFn();
 
-      mockGetTaskProgressByTaskId.mockResolvedValue({ data: null });
+      mockGetTaskProgressByCommentId.mockResolvedValue({ data: null });
 
       await expect(
         resolver(
           undefined,
-          { taskId: 'task-123' },
+          { taskId: 'task-123', commentId: 'comment-123' },
           { authenticatedUserId: 'user-456' }
         )
       ).rejects.toThrow(NotFoundError);
@@ -310,16 +311,17 @@ describe('TaskProgress Resolver', () => {
         },
       };
 
-      mockGetTaskProgressByTaskId.mockResolvedValue(mockData);
+      mockGetTaskProgressByCommentId.mockResolvedValue(mockData);
 
       await resolver(
         undefined,
-        { taskId: 'task-123' },
+        { taskId: 'task-123', commentId: 'comment-123' },
         { authenticatedUserId: 'user-456' }
       );
 
-      expect(mockGetTaskProgressByTaskId).toHaveBeenCalledWith({
+      expect(mockGetTaskProgressByCommentId).toHaveBeenCalledWith({
         taskId: 'task-123',
+        commentId: 'comment-123',
         userId: 'user-456',
       });
     });
@@ -341,11 +343,11 @@ describe('TaskProgress Resolver', () => {
         },
       };
 
-      mockGetTaskProgressByTaskId.mockResolvedValue(mockData);
+      mockGetTaskProgressByCommentId.mockResolvedValue(mockData);
 
       const result = await resolver(
         undefined,
-        { taskId: 'task-123' },
+        { taskId: 'task-123', commentId: 'comment-123' },
         { authenticatedUserId: 'user-456' }
       );
 
@@ -376,11 +378,11 @@ describe('TaskProgress Resolver', () => {
         },
       };
 
-      mockGetTaskProgressByTaskId.mockResolvedValue(mockData);
+      mockGetTaskProgressByCommentId.mockResolvedValue(mockData);
 
       const result = await resolver(
         undefined,
-        { taskId: 'task-123' },
+        { taskId: 'task-123', commentId: 'comment-123' },
         { authenticatedUserId: 'user-456' }
       );
 
@@ -417,11 +419,11 @@ describe('TaskProgress Resolver', () => {
         },
       };
 
-      mockGetTaskProgressByTaskId.mockResolvedValue(mockData);
+      mockGetTaskProgressByCommentId.mockResolvedValue(mockData);
 
       const result = await resolver(
         undefined,
-        { taskId: 'task-123' },
+        { taskId: 'task-123', commentId: 'comment-123' },
         { authenticatedUserId: 'user-456' }
       );
 

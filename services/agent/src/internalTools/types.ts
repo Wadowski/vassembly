@@ -6,6 +6,7 @@ export interface InternalToolBinding {
 export interface InternalToolContext {
   userId: string;
   taskId: string;
+  commentId: string;
   invocationId: string;
   callerAgentType: 'personal' | 'system';
   callerAgentId: string;

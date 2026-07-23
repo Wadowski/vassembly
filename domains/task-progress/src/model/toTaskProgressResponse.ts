@@ -6,6 +6,7 @@ import type { TaskProgressModel, ProgressEventModel } from './model';
 const REQUIRED_FIELDS = [
   'id',
   'taskId',
+  'commentId',
   'startedAt',
   'totalDuration',
   'totalTokens',
@@ -46,6 +47,7 @@ export const toTaskProgressResponse = ({
   return {
     id: taskProgress.id!,
     taskId: taskProgress.taskId!,
+    commentId: taskProgress.commentId!,
     startedAt: toIsoString({
       value: taskProgress.startedAt!,
       fieldName: 'startedAt',

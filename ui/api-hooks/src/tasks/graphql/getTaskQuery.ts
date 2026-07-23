@@ -10,7 +10,7 @@ export const GET_TASK_QUERY = `
       title
       specializationIds
       skillIdsUsed
-      llmResponse
+      activeCommentId
       errorMessage
       errorCode
       startedAt

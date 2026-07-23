@@ -23,7 +23,7 @@ export const gqlTaskSchema = (builder: Builder): void => {
         nullable: true,
         resolve: (parent: { skillIdsUsed?: string[] | null }) => parent.skillIdsUsed ?? null,
       }),
-      llmResponse: t.exposeString('llmResponse', { nullable: true }),
+      activeCommentId: t.exposeString('activeCommentId', { nullable: true }),
       errorMessage: t.exposeString('errorMessage', { nullable: true }),
       errorCode: t.exposeString('errorCode', { nullable: true }),
       startedAt: t.exposeString('startedAt', { nullable: true }),

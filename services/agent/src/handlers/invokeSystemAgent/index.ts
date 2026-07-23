@@ -36,6 +36,7 @@ export const invokeSystemAgent = async (
     toolContext: {
       userId,
       taskId: '',
+      commentId: '',
       invocationId: randomUUID(),
       callerAgentId: systemAgentId,
       callerAgentType: 'system',

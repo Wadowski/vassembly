@@ -17,19 +17,20 @@ export const recordProgressEvent = async (
     throw new ForbiddenError('User does not have permission to record progress for this task');
   }
 
-  const taskProgressResult = await taskProgressDomain.queries.getModelByTaskId({
-    taskId: input.taskId,
+  const taskProgressResult = await taskProgressDomain.queries.getModelByCommentId({
+    commentId: input.commentId,
   });
 
   if (!taskProgressResult.data) {
     await taskProgressDomain.commands.initializeTaskProgress({
       taskId: input.taskId,
       userId: input.userId,
+      commentId: input.commentId,
     });
   }
 
   await taskProgressDomain.commands.recordProgressEvent({
-    taskId: input.taskId,
+    commentId: input.commentId,
     agentId: input.agentId,
     parentAgentId: input.parentAgentId,
     state: input.state,

@@ -32,7 +32,7 @@ describe('finalizeTaskProgress', () => {
 
       mockCollection.findOne.mockResolvedValue({
         _id: 'mongo-id',
-        taskId: 'task-123',
+        commentId: 'comment-123',
         userId: 'user-456',
         events: [
           {
@@ -50,7 +50,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       mockCollection.findOneAndUpdate.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         userId: 'user-456',
         completedAt: now,
         totalDuration: 5000,
@@ -58,7 +58,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       const result = await finalizeTaskProgress({
-        taskId: 'task-123',
+        commentId: 'comment-123',
       });
 
       expect(result.completedAt).toBeDefined();
@@ -73,17 +73,17 @@ describe('finalizeTaskProgress', () => {
     it('should set completedAt when finalizing', async () => {
       mockCollection.findOne.mockResolvedValue({
         _id: 'mongo-id',
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [],
       });
 
       mockCollection.findOneAndUpdate.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         completedAt: new Date(),
       });
 
       const result = await finalizeTaskProgress({
-        taskId: 'task-123',
+        commentId: 'comment-123',
       });
 
       expect(result.completedAt).toBeDefined();
@@ -94,7 +94,7 @@ describe('finalizeTaskProgress', () => {
       const endTime = new Date('2026-06-15T10:00:10Z');
 
       mockCollection.findOne.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [
           {
             agentName: 'Agent1',
@@ -110,12 +110,12 @@ describe('finalizeTaskProgress', () => {
       });
 
       mockCollection.findOneAndUpdate.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         totalDuration: 10000,
       });
 
       const result = await finalizeTaskProgress({
-        taskId: 'task-123',
+        commentId: 'comment-123',
       });
 
       expect(result.totalDuration).toBe(10000);
@@ -123,7 +123,7 @@ describe('finalizeTaskProgress', () => {
 
     it('should aggregate token usage across all events', async () => {
       mockCollection.findOne.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [
           {
             agentName: 'Agent1',
@@ -141,7 +141,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       mockCollection.findOneAndUpdate.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         totalTokens: {
           input: 450,
           output: 225,
@@ -150,7 +150,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       const result = await finalizeTaskProgress({
-        taskId: 'task-123',
+        commentId: 'comment-123',
       });
 
       expect(result.totalTokens).toEqual({
@@ -162,7 +162,7 @@ describe('finalizeTaskProgress', () => {
 
     it('should handle events with missing tokenUsage gracefully', async () => {
       mockCollection.findOne.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [
           {
             agentName: 'Agent1',
@@ -181,7 +181,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       mockCollection.findOneAndUpdate.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         totalTokens: {
           input: 100,
           output: 50,
@@ -190,7 +190,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       const result = await finalizeTaskProgress({
-        taskId: 'task-123',
+        commentId: 'comment-123',
       });
 
       expect(result.totalTokens).toEqual({
@@ -202,19 +202,19 @@ describe('finalizeTaskProgress', () => {
 
     it('should set completedAt timestamp correctly', async () => {
       mockCollection.findOne.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [],
       });
 
       const beforeCall = new Date();
       const completedAtDate = new Date();
       mockCollection.findOneAndUpdate.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         completedAt: completedAtDate,
       });
 
       const result = await finalizeTaskProgress({
-        taskId: 'task-123',
+        commentId: 'comment-123',
       });
 
       const afterCall = new Date();
@@ -227,12 +227,12 @@ describe('finalizeTaskProgress', () => {
 
     it('should handle empty events array', async () => {
       mockCollection.findOne.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [],
       });
 
       mockCollection.findOneAndUpdate.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         totalDuration: 0,
         totalTokens: {
           input: 0,
@@ -242,7 +242,7 @@ describe('finalizeTaskProgress', () => {
       });
 
       const result = await finalizeTaskProgress({
-        taskId: 'task-123',
+        commentId: 'comment-123',
       });
 
       expect(result.totalDuration).toBe(0);
@@ -251,18 +251,18 @@ describe('finalizeTaskProgress', () => {
   });
 
   describe('validation', () => {
-    it('should reject empty taskId', async () => {
+    it('should reject empty commentId', async () => {
       await expect(
         finalizeTaskProgress({
-          taskId: '',
+          commentId: '',
         })
       ).rejects.toThrow();
     });
 
-    it('should reject missing taskId', async () => {
+    it('should reject missing commentId', async () => {
       await expect(
         finalizeTaskProgress({
-          taskId: undefined as unknown as string,
+          commentId: undefined as unknown as string,
         })
       ).rejects.toThrow();
     });
@@ -274,7 +274,7 @@ describe('finalizeTaskProgress', () => {
 
       await expect(
         finalizeTaskProgress({
-          taskId: 'nonexistent-task',
+          commentId: 'nonexistent-comment',
         })
       ).rejects.toThrow(NotFoundError);
     });
@@ -284,14 +284,14 @@ describe('finalizeTaskProgress', () => {
 
       await expect(
         finalizeTaskProgress({
-          taskId: 'task-456',
+          commentId: 'comment-456',
         })
-      ).rejects.toThrow('Task progress not found for taskId: task-456');
+      ).rejects.toThrow('Task progress not found for commentId: comment-456');
     });
 
     it('should throw NotFoundError if findOneAndUpdate returns null', async () => {
       mockCollection.findOne.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [],
       });
 
@@ -299,7 +299,7 @@ describe('finalizeTaskProgress', () => {
 
       await expect(
         finalizeTaskProgress({
-          taskId: 'task-123',
+          commentId: 'comment-123',
         })
       ).rejects.toThrow(NotFoundError);
     });
@@ -309,14 +309,14 @@ describe('finalizeTaskProgress', () => {
 
       await expect(
         finalizeTaskProgress({
-          taskId: 'task-123',
+          commentId: 'comment-123',
         })
       ).rejects.toThrow('MongoDB connection error');
     });
 
     it('should propagate MongoDB findOneAndUpdate errors', async () => {
       mockCollection.findOne.mockResolvedValue({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         events: [],
       });
 
@@ -324,7 +324,7 @@ describe('finalizeTaskProgress', () => {
 
       await expect(
         finalizeTaskProgress({
-          taskId: 'task-123',
+          commentId: 'comment-123',
         })
       ).rejects.toThrow('Update failed');
     });

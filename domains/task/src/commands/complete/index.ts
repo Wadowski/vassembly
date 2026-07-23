@@ -9,13 +9,12 @@ import type { CompleteTaskCommandInput, CompleteTaskCommandResult } from './type
 
 const COMPLETE_INPUT_SCHEMA = z.object({
   taskId: z.string().min(1),
-  llmResponse: z.string().max(5000, 'Response exceeds 5000 characters'),
 });
 
 const COMPLETE_DB_SCHEMA = z.object({
   status: z.literal(TaskStatus.Done),
-  llmResponse: z.string().max(5000),
   completedAt: z.date(),
+  activeCommentId: z.null().optional(),
 });
 
 const persistComplete = updateDbById<TaskModel>({
@@ -26,9 +25,8 @@ const persistComplete = updateDbById<TaskModel>({
 
 export const complete = async ({
   taskId,
-  llmResponse,
 }: CompleteTaskCommandInput): Promise<CompleteTaskCommandResult> => {
-  const parsed = COMPLETE_INPUT_SCHEMA.safeParse({ taskId, llmResponse });
+  const parsed = COMPLETE_INPUT_SCHEMA.safeParse({ taskId });
 
   if (!parsed.success) {
     throw new ValidationError(parsed.error.message);
@@ -38,8 +36,8 @@ export const complete = async ({
     id: parsed.data.taskId,
     data: {
       status: TaskStatus.Done,
-      llmResponse: parsed.data.llmResponse,
       completedAt: new Date(),
+      activeCommentId: null,
     },
   });
 };

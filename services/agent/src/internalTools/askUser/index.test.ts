@@ -30,6 +30,7 @@ import type { InternalToolContext } from '../types';
 const BASE_CONTEXT: InternalToolContext = {
   userId: 'user-1',
   taskId: 'task-1',
+  commentId: 'comment-1',
   invocationId: 'invocation-1',
   callerAgentId: 'agent-1',
   callerAgentType: 'system',
@@ -55,6 +56,7 @@ describe('askUser internal tool handler', () => {
     expect(mockRecordQuestions).toHaveBeenCalledWith(
       expect.objectContaining({
         taskId: 'task-1',
+  commentId: 'comment-1',
         invocationId: 'invocation-1',
         askedByAgentId: 'agent-1',
         askedByAgentType: 'system',

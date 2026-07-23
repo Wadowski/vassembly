@@ -26,6 +26,7 @@ export const askUser = async ({ args, context }: AskUserParams): Promise<never> 
   try {
     await taskQuestionsDomain.commands.recordQuestions({
       taskId,
+      commentId: context.commentId,
       invocationId,
       askedByAgentId: callerAgentId,
       askedByAgentType: callerAgentType,

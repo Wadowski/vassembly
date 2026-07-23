@@ -2,12 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ValidationError, WrongParamError } from '@vassembly/errors';
 
-const { mockCreate, mockGetActiveByName, mockExecuteTask, mockGenerateTaskTitle, mockGenerateTaskCategory } = vi.hoisted(() => ({
+const { mockCreate, mockGetActiveByName, mockExecuteTask, mockGenerateTaskTitle, mockGenerateTaskCategory, mockCommentCreate, mockInitProgress, mockMarkInProgress } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
   mockGetActiveByName: vi.fn(),
   mockExecuteTask: vi.fn(),
   mockGenerateTaskTitle: vi.fn(),
   mockGenerateTaskCategory: vi.fn(),
+  mockCommentCreate: vi.fn(),
+  mockInitProgress: vi.fn(),
+  mockMarkInProgress: vi.fn(),
 }));
 
 vi.mock('../executeTask', () => ({
@@ -34,10 +37,27 @@ vi.mock('@vassembly/domain-system-agent', () => ({
   },
 }));
 
+vi.mock('@vassembly/domain-task-comment', () => ({
+  default: {
+    commands: {
+      create: mockCommentCreate,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-task-progress', () => ({
+  default: {
+    commands: {
+      initializeTaskProgress: mockInitProgress,
+    },
+  },
+}));
+
 vi.mock('@vassembly/domain-task', () => ({
   default: {
     commands: {
       create: mockCreate,
+      markInProgress: mockMarkInProgress,
     },
   },
   toTaskResponse: ({ task }: { task: Record<string, unknown> }) => ({
@@ -48,7 +68,7 @@ vi.mock('@vassembly/domain-task', () => ({
     status: task.status as 'in-progress',
     agentAssignedId: (task.agentAssignedId ?? null) as string | null,
     title: null,
-    llmResponse: null,
+    activeCommentId: null,
     errorMessage: null,
     errorCode: null,
     startedAt: task.startedAt ? (task.startedAt as Date).toISOString() : null,
@@ -73,6 +93,11 @@ describe('createTask handler', () => {
     mockGetActiveByName.mockResolvedValue({
       data: { id: ASSISTANT_AGENT_ID },
     });
+    mockCommentCreate.mockResolvedValue({
+      data: { id: 'comment-1', userText: BODY.description },
+    });
+    mockInitProgress.mockResolvedValue(undefined);
+    mockMarkInProgress.mockResolvedValue(undefined);
     mockExecuteTask.mockResolvedValue(undefined);
     mockGenerateTaskTitle.mockResolvedValue(undefined);
     mockGenerateTaskCategory.mockResolvedValue(undefined);
@@ -105,7 +130,7 @@ describe('createTask handler', () => {
       status: 'in-progress',
       agentAssignedId: ASSISTANT_AGENT_ID,
       title: null,
-      llmResponse: null,
+      activeCommentId: null,
       errorMessage: null,
       errorCode: null,
       startedAt: null,
@@ -174,6 +199,11 @@ describe('createTask handler', () => {
     expect(mockExecuteTask).toHaveBeenCalledWith({
       taskId: 'task-async',
       userId: 'user-auth',
+      commentId: 'comment-1',
+    });
+    expect(mockMarkInProgress).toHaveBeenCalledWith({
+      taskId: 'task-async',
+      activeCommentId: 'comment-1',
     });
   });
 });

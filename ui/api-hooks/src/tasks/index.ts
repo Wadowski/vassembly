@@ -2,6 +2,9 @@ export { useCreateTask } from './useCreateTask';
 export { usePauseTask } from './http/usePauseTask';
 export { useResumeTask } from './http/useResumeTask';
 export { useRetryTask } from './http/useRetryTask';
+export { useSubmitTaskComment } from './http/useSubmitTaskComment';
+export type { SubmitTaskCommentResponse } from './http/useSubmitTaskComment';
+export { useTaskActivityTimeline } from './useTaskActivityTimeline';
 export { useTaskDetail } from './useTaskDetail';
 export { useUserTasks } from './useUserTasks';
 export {
@@ -36,4 +39,8 @@ export type {
   UserTasksListQuery,
   UserTasksListResponse,
 } from './types';
+export type {
+  TaskActivityFilterGroup,
+  TaskActivityItemDto,
+} from './mapTaskActivityTimeline';
 export { TaskStatus, TaskType } from './types';

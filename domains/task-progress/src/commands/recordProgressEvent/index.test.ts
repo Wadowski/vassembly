@@ -32,7 +32,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Started,
       });
@@ -43,7 +43,7 @@ describe('recordProgressEvent', () => {
       expect(result.timestamp).toBeDefined();
       expect(result.id).toBeDefined();
       expect(mockCollection.updateOne).toHaveBeenCalledWith(
-        { taskId: 'task-123' },
+        { commentId: 'comment-123' },
         expect.objectContaining({
           $push: expect.objectContaining({
             events: expect.any(Object),
@@ -59,7 +59,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Completed,
         duration: 5000,
@@ -82,7 +82,7 @@ describe('recordProgressEvent', () => {
       };
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Failed,
         errorDetails,
@@ -101,7 +101,7 @@ describe('recordProgressEvent', () => {
       const tokenUsage = { input: 100, output: 50, total: 150 };
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Completed,
         tokenUsage,
@@ -117,7 +117,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Started,
         integrationName: 'My OpenAI',
@@ -137,7 +137,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         parentAgentId: 'parent-agent-1',
         state: ProgressEventState.Started,
@@ -156,7 +156,7 @@ describe('recordProgressEvent', () => {
       const generatedResponse = JSON.stringify({ result: 'test result' });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Completed,
         inputMessages,
@@ -176,7 +176,7 @@ describe('recordProgressEvent', () => {
       const customTimestamp = new Date('2026-06-15T10:00:00Z');
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Started,
         timestamp: customTimestamp,
@@ -192,7 +192,7 @@ describe('recordProgressEvent', () => {
       });
 
       await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Started,
       });
@@ -209,14 +209,14 @@ describe('recordProgressEvent', () => {
       });
 
       const startedEvent = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Started,
       });
       expect(startedEvent.state).toBe(ProgressEventState.Started);
 
       const completedEvent = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Completed,
         duration: 1000,
@@ -224,7 +224,7 @@ describe('recordProgressEvent', () => {
       expect(completedEvent.state).toBe(ProgressEventState.Completed);
 
       const failedEvent = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Failed,
         errorDetails: { message: 'test error' },
@@ -241,7 +241,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Started,
       });
@@ -256,7 +256,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Started,
       });
@@ -271,7 +271,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Completed,
       });
@@ -286,7 +286,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Completed,
       });
@@ -301,7 +301,7 @@ describe('recordProgressEvent', () => {
       });
 
       const result = await recordProgressEvent({
-        taskId: 'task-123',
+        commentId: 'comment-123',
         agentId: 'agent-123',
         state: ProgressEventState.Completed,
       });
@@ -311,10 +311,10 @@ describe('recordProgressEvent', () => {
   });
 
   describe('validation', () => {
-    it('should reject empty taskId', async () => {
+    it('should reject empty commentId', async () => {
       await expect(
         recordProgressEvent({
-          taskId: '',
+          commentId: '',
           agentId: 'agent-123',
           state: ProgressEventState.Started,
         })
@@ -324,7 +324,7 @@ describe('recordProgressEvent', () => {
     it('should reject empty agentId', async () => {
       await expect(
         recordProgressEvent({
-          taskId: 'task-123',
+          commentId: 'comment-123',
           agentId: '',
           state: ProgressEventState.Started,
         })
@@ -334,7 +334,7 @@ describe('recordProgressEvent', () => {
     it('should reject invalid state', async () => {
       await expect(
         recordProgressEvent({
-          taskId: 'task-123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: 'invalid-state' as unknown as ProgressEventState,
         })
@@ -351,7 +351,7 @@ describe('recordProgressEvent', () => {
 
       await expect(
         recordProgressEvent({
-          taskId: 'nonexistent-task',
+          commentId: 'nonexistent-comment',
           agentId: 'agent-123',
           state: ProgressEventState.Started,
         })
@@ -363,7 +363,7 @@ describe('recordProgressEvent', () => {
 
       await expect(
         recordProgressEvent({
-          taskId: 'task-123',
+          commentId: 'comment-123',
           agentId: 'agent-123',
           state: ProgressEventState.Started,
         })
@@ -378,11 +378,11 @@ describe('recordProgressEvent', () => {
 
       await expect(
         recordProgressEvent({
-          taskId: 'task-456',
+          commentId: 'comment-456',
           agentId: 'agent-123',
           state: ProgressEventState.Started,
         })
-      ).rejects.toThrow('Task progress not found for taskId: task-456');
+      ).rejects.toThrow('Task progress not found for commentId: comment-456');
     });
   });
 });

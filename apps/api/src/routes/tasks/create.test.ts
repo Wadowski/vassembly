@@ -20,7 +20,7 @@ const TASK_RESPONSE = {
   status: 'created' as const,
   agentAssignedId: null,
   title: null,
-  llmResponse: null,
+  activeCommentId: null,
   errorMessage: null,
   errorCode: null,
   startedAt: null,

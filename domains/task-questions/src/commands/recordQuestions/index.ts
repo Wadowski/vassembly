@@ -17,6 +17,7 @@ const QUESTION_INPUT_SCHEMA = z.object({
 
 const VALIDATION_SCHEMA = z.object({
   taskId: z.string().min(1),
+  commentId: z.string().min(1),
   invocationId: z.string().min(1),
   askedByAgentId: z.string().min(1),
   askedByAgentType: z.enum(['personal', 'system']),
@@ -41,6 +42,7 @@ export const recordQuestions = async (
   const askedAt = new Date();
   const pendingQuestions = parsed.data.questions.map((question) => ({
     questionId: question.questionId ?? randomUUID(),
+    commentId: parsed.data.commentId,
     invocationId: parsed.data.invocationId,
     askedByAgentId: parsed.data.askedByAgentId,
     askedByAgentType: parsed.data.askedByAgentType,

@@ -40,6 +40,7 @@ export const runTaskSpecializationClassification = async ({
   const toolContext: InternalToolContext = {
     userId,
     taskId,
+    commentId: '',
     invocationId: randomUUID(),
     callerAgentId: '',
     callerAgentType: 'system',

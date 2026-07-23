@@ -5,6 +5,7 @@ export const gqlTaskQuestionsSchema = (builder: Builder): void => {
   defineObjectType(builder, 'PendingQuestion', {
     fields: (t) => ({
       questionId: t.exposeString('questionId'),
+      commentId: t.exposeString('commentId'),
       invocationId: t.exposeString('invocationId'),
       askedByAgentId: t.exposeString('askedByAgentId'),
       askedByAgentType: t.exposeString('askedByAgentType'),
@@ -18,6 +19,7 @@ export const gqlTaskQuestionsSchema = (builder: Builder): void => {
   defineObjectType(builder, 'AnsweredQuestion', {
     fields: (t) => ({
       questionId: t.exposeString('questionId'),
+      commentId: t.exposeString('commentId'),
       invocationId: t.exposeString('invocationId'),
       askedByAgentId: t.exposeString('askedByAgentId'),
       askedByAgentType: t.exposeString('askedByAgentType'),

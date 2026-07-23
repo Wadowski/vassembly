@@ -8,6 +8,7 @@ export const gqlTaskProgressSchema = (builder: Builder): void => {
     name: 'TaskProgress',
     fields: (t) => ({
       taskId: t.exposeString('taskId'),
+      commentId: t.exposeString('commentId'),
       startedAt: t.exposeString('startedAt'),
       completedAt: t.exposeString('completedAt', { nullable: true }),
       totalDuration: t.exposeInt('totalDuration'),

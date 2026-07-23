@@ -7,10 +7,12 @@ export enum TaskExecutionMode {
 export interface ExecuteTaskParams {
   taskId: string;
   userId: string;
+  commentId: string;
   mode?: TaskExecutionMode;
 }
 
 export interface CreateRecordAgentInvokeProgressParams {
   taskId: string;
   userId: string;
+  commentId: string;
 }

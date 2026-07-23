@@ -16,6 +16,10 @@ const {
   mockLogger: vi.fn(),
 }));
 
+vi.mock('../executeTask/resolveActiveCommentId', () => ({
+  resolveActiveCommentId: vi.fn().mockResolvedValue('comment-1'),
+}));
+
 vi.mock('../executeTask', () => ({
   executeTask: mockExecuteTask,
   TaskExecutionMode: {
@@ -193,11 +197,12 @@ describe('retryTask handler', () => {
 
     await retryTask({ userId: 'user-1', taskId: 'task-1' });
 
-    expect(mockResetTaskProgress).toHaveBeenCalledWith({ taskId: 'task-1' });
+    expect(mockResetTaskProgress).toHaveBeenCalledWith({ commentId: 'comment-1' });
     expect(mockExecuteTask).toHaveBeenCalledTimes(1);
     expect(mockExecuteTask).toHaveBeenCalledWith({
       taskId: 'task-1',
       userId: 'user-1',
+      commentId: 'comment-1',
       mode: 'retry',
     });
   });

@@ -23,10 +23,12 @@
     "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
+    "@vassembly/domain-task-comment": "workspace:*",
     "@vassembly/domain-task-progress": "workspace:*",
     "@vassembly/domain-task-questions": "workspace:*",
     "@vassembly/service-agent": "workspace:*",
     "@vassembly/errors": "workspace:*",
-    "@vassembly/logger": "workspace:*"
+    "@vassembly/logger": "workspace:*",
+    "@vassembly/mappers": "workspace:*"
   }
 }

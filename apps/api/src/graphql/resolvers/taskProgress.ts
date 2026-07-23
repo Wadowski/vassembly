@@ -9,8 +9,9 @@ import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCo
 import { resolveAgentDisplayNames } from './shared/resolveAgentDisplayName';
 import type { ApiGraphQLContext } from '../shared/types';
 
-interface TaskProgressResolverArgs {
+interface TaskProgressByCommentResolverArgs {
   taskId: string;
+  commentId: string;
 }
 
 const enrichProgressEventsWithAgentNames = async ({
@@ -33,25 +34,27 @@ export const registerTaskProgressResolvers = (builder: Builder): void => {
   applyResolvers({
     builder,
     queries: (t) => ({
-      taskProgress: t.field({
+      taskProgressByComment: t.field({
         type: 'TaskProgress',
         args: {
           taskId: t.arg.id({ required: true }),
+          commentId: t.arg.id({ required: true }),
         },
         resolve: async (
           _root: unknown,
-          args: TaskProgressResolverArgs,
+          args: TaskProgressByCommentResolverArgs,
           context: ApiGraphQLContext,
         ) => {
-          enforceOnboardingCompleteForQuery({ queryName: 'taskProgress', context });
+          enforceOnboardingCompleteForQuery({ queryName: 'taskProgressByComment', context });
           const userId = context.authenticatedUserId;
 
           if (userId === undefined) {
             throw new UnauthorizedError('Authentication required');
           }
 
-          const result = await taskProgressDomain.queries.getTaskProgressByTaskId({
+          const result = await taskProgressDomain.queries.getTaskProgressByCommentId({
             taskId: args.taskId,
+            commentId: args.commentId,
             userId,
           });
 

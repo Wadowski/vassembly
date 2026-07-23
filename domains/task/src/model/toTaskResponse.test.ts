@@ -98,13 +98,13 @@ describe('toTaskResponse', () => {
     const response = toTaskResponse({
       task: buildTask({
         status: TaskStatus.Done,
-        llmResponse: 'AI output',
+        activeCommentId: 'comment-1',
         startedAt: new Date('2026-06-04T10:00:00.000Z'),
         completedAt: new Date('2026-06-04T10:01:00.000Z'),
       }),
     });
 
-    expect(response.llmResponse).toBe('AI output');
+    expect(response.activeCommentId).toBe('comment-1');
     expect(response.startedAt).toBe('2026-06-04T10:00:00.000Z');
     expect(response.completedAt).toBe('2026-06-04T10:01:00.000Z');
     expect(response.errorMessage).toBeNull();

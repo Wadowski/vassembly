@@ -9,11 +9,13 @@ import type { MarkInProgressCommandInput, MarkInProgressCommandResult } from './
 
 const MARK_IN_PROGRESS_INPUT_SCHEMA = z.object({
   taskId: z.string().min(1),
+  activeCommentId: z.string().min(1).optional(),
 });
 
 const MARK_IN_PROGRESS_DB_SCHEMA = z.object({
   status: z.literal(TaskStatus.InProgress),
   startedAt: z.date(),
+  activeCommentId: z.string().min(1).optional(),
 });
 
 const persistMarkInProgress = updateDbById<TaskModel>({
@@ -24,8 +26,9 @@ const persistMarkInProgress = updateDbById<TaskModel>({
 
 export const markInProgress = async ({
   taskId,
+  activeCommentId,
 }: MarkInProgressCommandInput): Promise<MarkInProgressCommandResult> => {
-  const parsed = MARK_IN_PROGRESS_INPUT_SCHEMA.safeParse({ taskId });
+  const parsed = MARK_IN_PROGRESS_INPUT_SCHEMA.safeParse({ taskId, activeCommentId });
 
   if (!parsed.success) {
     throw new ValidationError(parsed.error.message);
@@ -36,6 +39,9 @@ export const markInProgress = async ({
     data: {
       status: TaskStatus.InProgress,
       startedAt: new Date(),
+      ...(parsed.data.activeCommentId !== undefined
+        ? { activeCommentId: parsed.data.activeCommentId }
+        : {}),
     },
   });
 };

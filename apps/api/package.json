@@ -37,6 +37,7 @@
     "@vassembly/domain-skill": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
+    "@vassembly/domain-task-comment": "workspace:*",
     "@vassembly/domain-task-progress": "workspace:*",
     "@vassembly/domain-task-questions": "workspace:*",
     "@vassembly/domain-user": "workspace:*",

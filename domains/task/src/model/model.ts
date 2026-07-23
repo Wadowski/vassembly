@@ -34,7 +34,7 @@ export class TaskModel extends Model {
 
   skillIdsUsed?: string[] | null;
 
-  llmResponse?: string | null;
+  activeCommentId?: string | null;
 
   errorMessage?: string | null;
 

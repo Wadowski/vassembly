@@ -39,6 +39,8 @@ export interface ProgressEventModel {
 export class TaskProgressModel extends Model {
   taskId?: string;
 
+  commentId?: string;
+
   userId?: string;
 
   startedAt?: Date;

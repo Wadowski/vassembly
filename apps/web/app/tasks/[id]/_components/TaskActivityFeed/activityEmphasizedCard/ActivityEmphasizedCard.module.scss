@@ -1,0 +1,61 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.card {
+  list-style: none;
+  border-radius: $border-radius-lg;
+  padding: $spacing-4 $spacing-5;
+  background-color: $color-surface-container-high;
+  border: 1px solid $color-outline-variant;
+  box-shadow: $shadow-sm;
+}
+
+.cardUser {
+  border-left: 3px solid $color-primary;
+}
+
+.cardAgent {
+  border-left: 3px solid $color-secondary;
+}
+
+.cardHitl {
+  border-left: 3px solid $color-warning;
+}
+
+.label {
+  display: block;
+  margin-bottom: $spacing-2;
+  color: $color-primary-dim;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-tracked;
+  font-size: $font-size-label-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  color: $color-text-primary;
+}
+
+.stats {
+  color: $color-text-secondary;
+}
+
+.questionLabel {
+  margin-top: $spacing-1;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.markdown {
+  overflow: hidden;
+  color: $color-text-primary;
+}
+
+.markdownClamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}

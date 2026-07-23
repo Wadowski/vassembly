@@ -20,6 +20,7 @@ export interface ProgressEventResponse {
 export interface TaskProgressResponse {
   id: string;
   taskId: string;
+  commentId: string;
   startedAt: string;
   completedAt: string | null;
   totalDuration: number;

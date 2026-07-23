@@ -6,11 +6,13 @@ import type { CreateRecordAgentInvokeProgressParams } from './types';
 export const createRecordAgentInvokeProgress = ({
   taskId,
   userId,
+  commentId,
 }: CreateRecordAgentInvokeProgressParams) => {
   return async (input: AgentInvokeProgressEventInput): Promise<void> => {
     await recordProgressEvent({
       taskId,
       userId,
+      commentId,
       agentId: input.agentId,
       parentAgentId: input.parentAgentId,
       state: input.state,

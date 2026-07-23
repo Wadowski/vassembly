@@ -14,6 +14,7 @@ export interface RecordQuestionInput {
 
 export interface RecordQuestionsCommandInput {
   taskId: string;
+  commentId: string;
   invocationId: string;
   askedByAgentId: string;
   askedByAgentType: AgentType;

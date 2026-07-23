@@ -1,3 +1,3 @@
 export interface ResetTaskProgressInput {
-  taskId: string;
+  commentId: string;
 }

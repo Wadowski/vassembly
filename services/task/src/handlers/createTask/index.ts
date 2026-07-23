@@ -1,6 +1,8 @@
 import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import taskDomain, { toTaskResponse } from '@vassembly/domain-task';
+import taskCommentDomain from '@vassembly/domain-task-comment';
+import taskProgressDomain from '@vassembly/domain-task-progress';
 import { logger } from '@vassembly/logger';
 
 import { executeTask } from '../executeTask';
@@ -20,8 +22,26 @@ export const createTask = async ({ userId, body }: CreateTaskHandlerInput): Prom
     agentAssignedId: assistant.data.id!,
   });
 
+  const taskId = result.data.id!;
+
+  const commentResult = await taskCommentDomain.commands.create({
+    taskId,
+    userId,
+    userText: body.description,
+  });
+
+  const commentId = commentResult.data.id!;
+
+  await taskDomain.commands.markInProgress({ taskId, activeCommentId: commentId });
+
+  await taskProgressDomain.commands.initializeTaskProgress({
+    taskId,
+    userId,
+    commentId,
+  });
+
   logger('task.status.in_progress', {
-    meta: { sessionId: 'TASK_EXECUTION', taskId: result.data.id, userId },
+    meta: { sessionId: 'TASK_EXECUTION', taskId, userId },
     data: {
       previousStatus: null,
       newStatus: 'in_progress',
@@ -33,31 +53,32 @@ export const createTask = async ({ userId, body }: CreateTaskHandlerInput): Prom
   };
 
   void executeTask({
-    taskId: result.data.id!,
+    taskId,
     userId,
+    commentId,
   }).catch((error: unknown) => {
     logger('task.execute.unhandled', {
-      meta: { sessionId: 'TASK_EXECUTION', taskId: result.data.id, userId },
+      meta: { sessionId: 'TASK_EXECUTION', taskId, userId },
       data: { error: error instanceof Error ? error.message : String(error) },
     });
   });
 
   void generateTaskTitle({
-    taskId: result.data.id!,
+    taskId,
     userId,
   }).catch((error: unknown) => {
     logger('task.title.unhandled', {
-      meta: { sessionId: 'TASK_TITLE_GENERATION', taskId: result.data.id, userId },
+      meta: { sessionId: 'TASK_TITLE_GENERATION', taskId, userId },
       data: { error: error instanceof Error ? error.message : String(error) },
     });
   });
 
   void generateTaskCategory({
-    taskId: result.data.id!,
+    taskId,
     userId,
   }).catch((error: unknown) => {
     logger('task.category.unhandled', {
-      meta: { sessionId: 'TASK_CATEGORY_GENERATION', taskId: result.data.id, userId },
+      meta: { sessionId: 'TASK_CATEGORY_GENERATION', taskId, userId },
       data: { error: error instanceof Error ? error.message : String(error) },
     });
   });

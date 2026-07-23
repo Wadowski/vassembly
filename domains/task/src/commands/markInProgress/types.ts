@@ -1,5 +1,6 @@
 export interface MarkInProgressCommandInput {
   taskId: string;
+  activeCommentId?: string;
 }
 
 import type { TaskModel } from '../../model';

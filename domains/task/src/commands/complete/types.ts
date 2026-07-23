@@ -1,6 +1,5 @@
 export interface CompleteTaskCommandInput {
   taskId: string;
-  llmResponse: string;
 }
 
 import type { TaskModel } from '../../model';

@@ -20,7 +20,7 @@ export interface TaskResponse {
   status: TaskStatus;
   agentAssignedId: string | null;
   title: string | null;
-  llmResponse: string | null;
+  activeCommentId: string | null;
   errorMessage: string | null;
   errorCode: string | null;
   startedAt: string | null;
@@ -49,7 +49,7 @@ export interface TaskDto {
   status: TaskStatus;
   agentAssignedId: string | null;
   title: string | null;
-  llmResponse: string | null;
+  activeCommentId: string | null;
   errorMessage: string | null;
   errorCode: string | null;
   startedAt: string | null;
@@ -83,7 +83,7 @@ export interface GraphQLTaskRow {
   status?: string | null;
   agentAssignedId?: string | null;
   title?: string | null;
-  llmResponse?: string | null;
+  activeCommentId?: string | null;
   errorMessage?: string | null;
   errorCode?: string | null;
   startedAt?: string | null;
