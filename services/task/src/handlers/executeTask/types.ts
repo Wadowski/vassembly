@@ -16,3 +16,9 @@ export interface CreateRecordAgentInvokeProgressParams {
   userId: string;
   commentId: string;
 }
+
+export interface CreateRecordMcpUsageEventParams {
+  taskId: string;
+  userId: string;
+  commentId: string;
+}

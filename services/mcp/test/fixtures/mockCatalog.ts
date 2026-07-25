@@ -2,7 +2,7 @@ import type { McpListItemResponse } from '@vassembly/domain-mcp';
 
 const buildCatalogEntry = (
   overrides: Partial<McpListItemResponse> & Pick<McpListItemResponse, 'id' | 'slug' | 'name'>,
-): McpListItemResponse => ({
+): McpListItemResponse & { serverUrl?: string | null } => ({
   description: 'Test MCP',
   tags: ['test'],
   iconPath: '/mcps/test.svg',
@@ -14,15 +14,13 @@ const buildCatalogEntry = (
   ...overrides,
 });
 
-export const mockGmailCatalogEntry = buildCatalogEntry({
-  id: 'mcp-gmail',
-  slug: 'google-workspace-mcp',
-  name: 'Gmail',
+export const mockWikipediaCatalogEntry = buildCatalogEntry({
+  id: 'mcp-wikipedia',
+  slug: 'wikipedia-mcp',
+  name: 'Wikipedia',
+  serverUrl: 'http://localhost:4110/mcp',
   configSchema: {
-    fields: [
-      { key: 'clientId', label: 'Client ID', type: 'text', required: true },
-      { key: 'clientSecret', label: 'Secret', type: 'password', required: true },
-    ],
+    fields: [],
   },
 });
 
@@ -30,6 +28,7 @@ export const mockBraveCatalogEntry = buildCatalogEntry({
   id: 'mcp-brave',
   slug: 'brave-search-mcp',
   name: 'Brave',
+  serverUrl: 'http://localhost:4109/mcp',
   configSchema: {
     fields: [{ key: 'apiKey', label: 'API Key', type: 'password', required: true }],
   },
@@ -46,7 +45,7 @@ export const buildSimpleFieldCatalogEntry = (id: string): McpListItemResponse =>
   });
 
 export const TEST_MCP_CATALOG: Record<string, McpListItemResponse> = {
-  'mcp-gmail': mockGmailCatalogEntry,
+  'mcp-wikipedia': mockWikipediaCatalogEntry,
   'mcp-brave': mockBraveCatalogEntry,
   'mcp-nonexistent': buildCatalogEntry({
     id: 'mcp-nonexistent',

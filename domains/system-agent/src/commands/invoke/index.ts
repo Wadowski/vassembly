@@ -40,6 +40,7 @@ export const invoke = async (
     internalToolBindings: params.internalToolBindings,
     signal: params.signal,
     shouldAbort: params.shouldAbort,
+    recordMcpToolCall: params.recordMcpToolCall,
   });
 
   return {

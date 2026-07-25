@@ -26,6 +26,20 @@ export interface ModeledProviderInvokeParams {
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
+  recordMcpToolCall?: (input: {
+    phase: 'started';
+    mcpId: string;
+    toolName: string;
+    args: Record<string, unknown>;
+    startedAt: Date;
+  } | {
+    phase: 'completed';
+    eventId: string;
+    status: 'success' | 'error';
+    endedAt: Date;
+    durationMs: number;
+    errorMessage?: string;
+  }) => Promise<string | void>;
 }
 
 export interface ModeledProviderClient {
@@ -52,6 +66,7 @@ export interface InvokeSystemAgentParams {
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
+  recordMcpToolCall?: ModeledProviderInvokeParams['recordMcpToolCall'];
   skillsCatalogSection?: string;
 }
 

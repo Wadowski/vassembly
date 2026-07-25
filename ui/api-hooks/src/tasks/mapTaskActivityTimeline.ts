@@ -5,7 +5,8 @@ export type TaskActivityFilterGroup =
   | 'agentStarted'
   | 'agentFinished'
   | 'agentFailed'
-  | 'agentWaiting';
+  | 'agentWaiting'
+  | 'mcpUsage';
 
 export interface TaskActivityItemDto {
   kind: string;
@@ -33,6 +34,13 @@ export interface TaskActivityItemDto {
   integrationName?: string | null;
   provider?: string | null;
   model?: string | null;
+  usageEventId?: string | null;
+  mcpId?: string | null;
+  mcpName?: string | null;
+  toolName?: string | null;
+  status?: string | null;
+  durationMs?: number | null;
+  errorMessage?: string | null;
 }
 
 export interface GraphQLTaskActivityTimelineData {

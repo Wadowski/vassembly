@@ -1,53 +1,373 @@
 [
   {
-    "slug": "google-workspace-mcp",
-    "name": "Gmail MCP",
-    "description": "Complete email management, calendar, documents, sheets, slides, forms, and chat integration",
-    "tags": ["productivity", "email", "google-workspace", "calendar", "documents"],
-    "iconPath": "/mcps/gmail.svg",
-    "documentationUrl": "https://glama.ai/mcp/servers/taylorwilsdon/google_workspace_mcp",
-    "repositoryUrl": "https://github.com/taylorwilsdon/google_workspace_mcp",
+    "slug": "github-mcp",
+    "name": "GitHub MCP",
+    "category": "dev-tools",
+    "transport": "stdio-wrapped",
+    "description": "Search repositories, manage issues and pull requests, and interact with GitHub",
+    "tags": [
+      "dev-tools",
+      "github",
+      "git",
+      "issues",
+      "pull-requests"
+    ],
+    "documentationUrl": "https://github.com/github/github-mcp-server",
+    "repositoryUrl": "https://github.com/github/github-mcp-server",
     "configSchema": {
       "fields": [
         {
-          "key": "clientId",
-          "label": "Client ID",
-          "type": "text",
-          "required": true
-        },
-        {
-          "key": "clientSecret",
-          "label": "Client Secret",
+          "key": "personalAccessToken",
+          "label": "Personal Access Token",
           "type": "password",
-          "required": true
-        },
-        {
-          "key": "scopes",
-          "label": "Access Level",
-          "type": "select",
+          "description": "Your GitHub personal access token",
           "required": true,
-          "options": [
-            { "value": "readonly", "label": "Read only" },
-            { "value": "full", "label": "Full access" }
-          ]
-        },
-        {
-          "key": "acceptTerms",
-          "label": "I accept the provider terms",
-          "type": "checkbox",
-          "required": true
+          "placeholder": "Enter your personal access token"
         }
       ]
-    }
+    },
+    "iconPath": "/mcps/github-mcp.png"
+  },
+  {
+    "slug": "context7",
+    "name": "Context7",
+    "category": "dev-tools",
+    "transport": "native-http",
+    "description": "Up-to-date documentation and code examples for libraries and frameworks",
+    "tags": [
+      "dev-tools",
+      "documentation",
+      "context",
+      "libraries"
+    ],
+    "documentationUrl": "https://github.com/upstash/context7",
+    "repositoryUrl": "https://github.com/upstash/context7",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Context7 API key (optional)",
+          "required": false,
+          "placeholder": "Enter your api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/context7.png"
+  },
+  {
+    "slug": "playwright-mcp",
+    "name": "Playwright MCP",
+    "category": "browser-automation",
+    "transport": "stdio-wrapped",
+    "description": "Browser automation and web scraping using Microsoft Playwright",
+    "tags": [
+      "browser",
+      "automation",
+      "playwright",
+      "testing"
+    ],
+    "documentationUrl": "https://github.com/microsoft/playwright-mcp",
+    "repositoryUrl": "https://github.com/microsoft/playwright-mcp",
+    "configSchema": {
+      "fields": []
+    },
+    "iconPath": "/mcps/playwright-mcp.png"
+  },
+  {
+    "slug": "puppeteer-mcp",
+    "name": "Puppeteer MCP",
+    "category": "browser-automation",
+    "transport": "stdio-wrapped",
+    "description": "Browser automation and web scraping using Puppeteer",
+    "tags": [
+      "browser",
+      "automation",
+      "puppeteer",
+      "scraping"
+    ],
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "configSchema": {
+      "fields": []
+    },
+    "iconPath": "/mcps/puppeteer-mcp.png"
+  },
+  {
+    "slug": "chrome-devtools-mcp",
+    "name": "Chrome DevTools MCP",
+    "category": "browser-automation",
+    "transport": "native-http",
+    "description": "Debug and inspect web pages using Chrome DevTools Protocol",
+    "tags": [
+      "browser",
+      "devtools",
+      "chrome",
+      "debugging"
+    ],
+    "documentationUrl": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "repositoryUrl": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "configSchema": {
+      "fields": []
+    },
+    "iconPath": "/mcps/chrome-devtools-mcp.png"
+  },
+  {
+    "slug": "mongodb-mcp",
+    "name": "MongoDB MCP",
+    "category": "database",
+    "transport": "stdio-wrapped",
+    "description": "Query and manage MongoDB databases and collections",
+    "tags": [
+      "database",
+      "mongodb",
+      "nosql",
+      "data"
+    ],
+    "documentationUrl": "https://github.com/mongodb-labs/mcp-server-mongodb",
+    "repositoryUrl": "https://github.com/mongodb-labs/mcp-server-mongodb",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "connectionUri",
+          "label": "Connection URI",
+          "type": "password",
+          "description": "Your MongoDB connection string",
+          "required": true,
+          "placeholder": "Enter your connection uri"
+        }
+      ]
+    },
+    "iconPath": "/mcps/mongodb-mcp.png"
+  },
+  {
+    "slug": "redis-mcp",
+    "name": "Redis MCP",
+    "category": "database",
+    "transport": "stdio-wrapped",
+    "description": "Interact with Redis key-value stores and caches",
+    "tags": [
+      "database",
+      "redis",
+      "cache",
+      "key-value"
+    ],
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/redis",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "connectionUrl",
+          "label": "Connection URL",
+          "type": "password",
+          "description": "Your Redis connection URL",
+          "required": true,
+          "placeholder": "Enter your connection url"
+        }
+      ]
+    },
+    "iconPath": "/mcps/redis-mcp.png"
+  },
+  {
+    "slug": "docker-mcp",
+    "name": "Docker MCP",
+    "category": "cloud-infra",
+    "transport": "stdio-wrapped",
+    "description": "Manage Docker containers, images, and networks",
+    "tags": [
+      "cloud-infra",
+      "docker",
+      "containers",
+      "devops"
+    ],
+    "documentationUrl": "https://github.com/docker/mcp-server-docker",
+    "repositoryUrl": "https://github.com/docker/mcp-server-docker",
+    "configSchema": {
+      "fields": []
+    },
+    "iconPath": "/mcps/docker-mcp.png"
+  },
+  {
+    "slug": "aws-mcp",
+    "name": "AWS MCP",
+    "category": "cloud-infra",
+    "transport": "stdio-wrapped",
+    "description": "Interact with AWS services and cloud infrastructure",
+    "tags": [
+      "cloud-infra",
+      "aws",
+      "cloud",
+      "infrastructure"
+    ],
+    "documentationUrl": "https://github.com/awslabs/mcp",
+    "repositoryUrl": "https://github.com/awslabs/mcp",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "accessKeyId",
+          "label": "Access Key ID",
+          "type": "password",
+          "description": "Your AWS access key ID",
+          "required": true,
+          "placeholder": "Enter your access key id"
+        },
+        {
+          "key": "secretAccessKey",
+          "label": "Secret Access Key",
+          "type": "password",
+          "description": "Your AWS secret access key",
+          "required": true,
+          "placeholder": "Enter your secret access key"
+        },
+        {
+          "key": "region",
+          "label": "Region",
+          "type": "text",
+          "description": "AWS region (e.g. us-east-1)",
+          "required": true,
+          "placeholder": "us-east-1"
+        }
+      ]
+    },
+    "iconPath": "/mcps/aws-mcp.png"
+  },
+  {
+    "slug": "vercel-mcp",
+    "name": "Vercel MCP",
+    "category": "cloud-infra",
+    "transport": "native-http",
+    "description": "Deploy and manage Vercel projects and deployments",
+    "tags": [
+      "cloud-infra",
+      "vercel",
+      "deployment",
+      "hosting"
+    ],
+    "documentationUrl": "https://github.com/vercel/mcp-server-vercel",
+    "repositoryUrl": "https://github.com/vercel/mcp-server-vercel",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiToken",
+          "label": "API Token",
+          "type": "password",
+          "description": "Your Vercel API token",
+          "required": true,
+          "placeholder": "Enter your api token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/vercel-mcp.png"
+  },
+  {
+    "slug": "terraform-mcp",
+    "name": "Terraform MCP",
+    "category": "cloud-infra",
+    "transport": "stdio-wrapped",
+    "description": "Manage infrastructure as code with Terraform Cloud",
+    "tags": [
+      "cloud-infra",
+      "terraform",
+      "iac",
+      "infrastructure"
+    ],
+    "documentationUrl": "https://github.com/hashicorp/terraform-mcp-server",
+    "repositoryUrl": "https://github.com/hashicorp/terraform-mcp-server",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "terraformCloudToken",
+          "label": "Terraform Cloud Token",
+          "type": "password",
+          "description": "Your Terraform Cloud API token",
+          "required": true,
+          "placeholder": "Enter your terraform cloud token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/terraform-mcp.png"
+  },
+  {
+    "slug": "sentry-mcp",
+    "name": "Sentry MCP",
+    "category": "security-monitoring",
+    "transport": "stdio-wrapped",
+    "description": "Monitor errors and performance issues with Sentry",
+    "tags": [
+      "monitoring",
+      "sentry",
+      "errors",
+      "observability"
+    ],
+    "documentationUrl": "https://github.com/getsentry/sentry-mcp",
+    "repositoryUrl": "https://github.com/getsentry/sentry-mcp",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "authToken",
+          "label": "Auth Token",
+          "type": "password",
+          "description": "Your Sentry auth token",
+          "required": true,
+          "placeholder": "Enter your auth token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/sentry-mcp.png"
+  },
+  {
+    "slug": "datadog-mcp",
+    "name": "Datadog MCP",
+    "category": "security-monitoring",
+    "transport": "native-http",
+    "description": "Query metrics, logs, and monitors from Datadog",
+    "tags": [
+      "monitoring",
+      "datadog",
+      "metrics",
+      "observability"
+    ],
+    "documentationUrl": "https://github.com/DataDog/mcp-server-datadog",
+    "repositoryUrl": "https://github.com/DataDog/mcp-server-datadog",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Datadog API key",
+          "required": true,
+          "placeholder": "Enter your api key"
+        },
+        {
+          "key": "applicationKey",
+          "label": "Application Key",
+          "type": "password",
+          "description": "Your Datadog application key",
+          "required": true,
+          "placeholder": "Enter your application key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/datadog-mcp.png"
   },
   {
     "slug": "brave-search-mcp",
     "name": "Brave Search MCP",
-    "description": "Comprehensive search capabilities including web search, local business search, image search, video search, news search, and AI-powered summarization",
-    "tags": ["search", "web", "ai-summary", "news", "images"],
-    "iconPath": "/mcps/brave-search.svg",
-    "documentationUrl": "https://glama.ai/mcp/servers/brave/brave-search-mcp-server",
+    "category": "search",
+    "transport": "stdio-wrapped",
+    "description": "Web search, news, images, and AI-powered summarization via Brave Search",
+    "tags": [
+      "search",
+      "web",
+      "ai-summary",
+      "news",
+      "images"
+    ],
+    "documentationUrl": "https://github.com/brave/brave-search-mcp-server",
     "repositoryUrl": "https://github.com/brave/brave-search-mcp-server",
+    "dockerImage": "ghcr.io/onprem-ai/mcp-key-proxy:latest",
     "configSchema": {
       "fields": [
         {
@@ -56,73 +376,587 @@
           "type": "password",
           "description": "Your Brave Search API key",
           "required": true,
-          "placeholder": "Enter your Brave Search API key"
-        },
-        {
-          "key": "transport",
-          "label": "Transport Mode",
-          "type": "select",
-          "description": "Transport mode for MCP server",
-          "defaultValue": "stdio",
-          "options": [
-            { "value": "stdio", "label": "STDIO (Default)" },
-            { "value": "http", "label": "HTTP" }
-          ]
-        },
-        {
-          "key": "port",
-          "label": "Port",
-          "type": "text",
-          "description": "HTTP server port (default: 8000)",
-          "placeholder": "8000",
-          "pattern": "^[0-9]{1,5}$"
-        },
-        {
-          "key": "host",
-          "label": "Host",
-          "type": "text",
-          "description": "HTTP server host (default: 0.0.0.0)",
-          "placeholder": "0.0.0.0"
-        },
-        {
-          "key": "logLevel",
-          "label": "Log Level",
-          "type": "select",
-          "description": "Desired logging level",
-          "defaultValue": "info",
-          "options": [
-            { "value": "debug", "label": "Debug" },
-            { "value": "info", "label": "Info" },
-            { "value": "notice", "label": "Notice" },
-            { "value": "warning", "label": "Warning" },
-            { "value": "error", "label": "Error" },
-            { "value": "critical", "label": "Critical" },
-            { "value": "alert", "label": "Alert" },
-            { "value": "emergency", "label": "Emergency" }
-          ]
-        },
-        {
-          "key": "enabledTools",
-          "label": "Enabled Tools",
-          "type": "text",
-          "description": "Space-separated whitelist of tools to enable (e.g., \"brave_web_search brave_news_search\")",
-          "placeholder": "Leave empty to enable all tools"
-        },
-        {
-          "key": "disabledTools",
-          "label": "Disabled Tools",
-          "type": "text",
-          "description": "Space-separated blacklist of tools to disable (e.g., \"brave_image_search\")",
-          "placeholder": "Leave empty to disable no tools"
-        },
-        {
-          "key": "stateless",
-          "label": "Stateless Mode",
-          "type": "checkbox",
-          "description": "HTTP stateless mode (recommended for Amazon Bedrock)",
-          "defaultValue": true
+          "placeholder": "Enter your api key"
         }
       ]
-    }
+    },
+    "iconPath": "/mcps/brave-search-mcp.png"
+  },
+  {
+    "slug": "firecrawl-mcp",
+    "name": "Firecrawl MCP",
+    "category": "search",
+    "transport": "native-http",
+    "description": "Crawl and scrape websites with Firecrawl for AI-ready content",
+    "tags": [
+      "search",
+      "crawling",
+      "scraping",
+      "web"
+    ],
+    "documentationUrl": "https://github.com/mendableai/firecrawl-mcp-server",
+    "repositoryUrl": "https://github.com/mendableai/firecrawl-mcp-server",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Firecrawl API key",
+          "required": true,
+          "placeholder": "Enter your api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/firecrawl-mcp.png"
+  },
+  {
+    "slug": "wikipedia-mcp",
+    "name": "Wikipedia MCP",
+    "category": "search",
+    "transport": "stdio-wrapped",
+    "description": "Search and retrieve articles from Wikipedia",
+    "tags": [
+      "search",
+      "knowledge",
+      "wikipedia"
+    ],
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/wikipedia",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "dockerImage": "vassembly/mcp-wikipedia-mcp:local",
+    "configSchema": {
+      "fields": []
+    },
+    "iconPath": "/mcps/wikipedia-mcp.png"
+  },
+  {
+    "slug": "pubmed-mcp",
+    "name": "PubMed MCP",
+    "category": "search",
+    "transport": "stdio-wrapped",
+    "description": "Search biomedical literature from the PubMed database",
+    "tags": [
+      "search",
+      "research",
+      "pubmed",
+      "biomedical"
+    ],
+    "documentationUrl": "https://github.com/JackKuo666/PubMed-MCP-Server",
+    "repositoryUrl": "https://github.com/JackKuo666/PubMed-MCP-Server",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "ncbiApiKey",
+          "label": "NCBI API Key",
+          "type": "password",
+          "description": "Your NCBI API key (optional)",
+          "required": false,
+          "placeholder": "Enter your ncbi api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/pubmed-mcp.png"
+  },
+  {
+    "slug": "arxiv-mcp",
+    "name": "ArXiv MCP",
+    "category": "search",
+    "transport": "stdio-wrapped",
+    "description": "Search and retrieve academic papers from arXiv",
+    "tags": [
+      "search",
+      "research",
+      "arxiv",
+      "academic"
+    ],
+    "documentationUrl": "https://github.com/blazickjp/arxiv-mcp-server",
+    "repositoryUrl": "https://github.com/blazickjp/arxiv-mcp-server",
+    "configSchema": {
+      "fields": []
+    },
+    "iconPath": "/mcps/arxiv-mcp.png"
+  },
+  {
+    "slug": "google-search-mcp",
+    "name": "Google Search MCP",
+    "category": "search",
+    "transport": "stdio-wrapped",
+    "description": "Perform web searches using the Google Custom Search API",
+    "tags": [
+      "search",
+      "google",
+      "web"
+    ],
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Google API key",
+          "required": true,
+          "placeholder": "Enter your api key"
+        },
+        {
+          "key": "searchEngineId",
+          "label": "Search Engine ID",
+          "type": "text",
+          "description": "Your Google Custom Search Engine ID",
+          "required": true,
+          "placeholder": "Enter your search engine ID"
+        }
+      ]
+    },
+    "iconPath": "/mcps/google-search-mcp.png"
+  },
+  {
+    "slug": "notion-mcp",
+    "name": "Notion MCP",
+    "category": "knowledge",
+    "transport": "native-http",
+    "description": "Read and write Notion pages, databases, and workspaces",
+    "tags": [
+      "knowledge",
+      "notion",
+      "notes",
+      "productivity"
+    ],
+    "documentationUrl": "https://github.com/makenotion/notion-mcp-server",
+    "repositoryUrl": "https://github.com/makenotion/notion-mcp-server",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "integrationToken",
+          "label": "Integration Token",
+          "type": "password",
+          "description": "Your Notion integration token",
+          "required": true,
+          "placeholder": "Enter your integration token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/notion-mcp.png"
+  },
+  {
+    "slug": "obsidian-mcp",
+    "name": "Obsidian MCP",
+    "category": "knowledge",
+    "transport": "stdio-wrapped",
+    "description": "Access and manage your Obsidian vault notes and files",
+    "tags": [
+      "knowledge",
+      "obsidian",
+      "notes",
+      "markdown"
+    ],
+    "documentationUrl": "https://github.com/calmwave/mcp-obsidian",
+    "repositoryUrl": "https://github.com/calmwave/mcp-obsidian",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Obsidian Local REST API key",
+          "required": true,
+          "placeholder": "Enter your api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/obsidian-mcp.png"
+  },
+  {
+    "slug": "granola-mcp",
+    "name": "Granola MCP",
+    "category": "knowledge",
+    "transport": "native-http",
+    "description": "Access meeting notes and transcripts from Granola",
+    "tags": [
+      "knowledge",
+      "granola",
+      "meetings",
+      "notes"
+    ],
+    "documentationUrl": "https://granola.ai",
+    "repositoryUrl": "https://granola.ai",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiToken",
+          "label": "API Token",
+          "type": "password",
+          "description": "Your Granola API token",
+          "required": true,
+          "placeholder": "Enter your api token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/granola-mcp.png"
+  },
+  {
+    "slug": "discord-mcp",
+    "name": "Discord MCP",
+    "category": "communication",
+    "transport": "stdio-wrapped",
+    "description": "Send messages and manage Discord servers and channels",
+    "tags": [
+      "communication",
+      "discord",
+      "chat",
+      "messaging"
+    ],
+    "documentationUrl": "https://github.com/discord/mcp-server-discord",
+    "repositoryUrl": "https://github.com/discord/mcp-server-discord",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "botToken",
+          "label": "Bot Token",
+          "type": "password",
+          "description": "Your Discord bot token",
+          "required": true,
+          "placeholder": "Enter your bot token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/discord-mcp.png"
+  },
+  {
+    "slug": "gmail-mcp",
+    "name": "Gmail MCP",
+    "category": "communication",
+    "transport": "native-http",
+    "description": "Read, send, and manage Gmail messages and threads",
+    "tags": [
+      "communication",
+      "gmail",
+      "email",
+      "google"
+    ],
+    "documentationUrl": "https://github.com/google/mcp-server-gmail",
+    "repositoryUrl": "https://github.com/google/mcp-server-gmail",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "accessToken",
+          "label": "Access Token",
+          "type": "password",
+          "description": "Your Gmail OAuth access token (MVP)",
+          "required": true,
+          "placeholder": "Enter your access token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/gmail-mcp.png"
+  },
+  {
+    "slug": "google-calendar-mcp",
+    "name": "Google Calendar MCP",
+    "category": "productivity",
+    "transport": "native-http",
+    "description": "View and manage Google Calendar events and schedules",
+    "tags": [
+      "productivity",
+      "calendar",
+      "google",
+      "scheduling"
+    ],
+    "documentationUrl": "https://github.com/google/mcp-server-gcal",
+    "repositoryUrl": "https://github.com/google/mcp-server-gcal",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "accessToken",
+          "label": "Access Token",
+          "type": "password",
+          "description": "Your Google Calendar OAuth access token (MVP)",
+          "required": true,
+          "placeholder": "Enter your access token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/google-calendar-mcp.png"
+  },
+  {
+    "slug": "todoist-mcp",
+    "name": "Todoist MCP",
+    "category": "productivity",
+    "transport": "stdio-wrapped",
+    "description": "Manage tasks, projects, and labels in Todoist",
+    "tags": [
+      "productivity",
+      "todoist",
+      "tasks",
+      "todo"
+    ],
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiToken",
+          "label": "API Token",
+          "type": "password",
+          "description": "Your Todoist API token",
+          "required": true,
+          "placeholder": "Enter your api token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/todoist-mcp.png"
+  },
+  {
+    "slug": "linear-mcp",
+    "name": "Linear MCP",
+    "category": "productivity",
+    "transport": "native-http",
+    "description": "Manage issues, projects, and workflows in Linear",
+    "tags": [
+      "productivity",
+      "linear",
+      "issues",
+      "project-management"
+    ],
+    "documentationUrl": "https://github.com/linear/mcp-server-linear",
+    "repositoryUrl": "https://github.com/linear/mcp-server-linear",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Linear API key",
+          "required": true,
+          "placeholder": "Enter your api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/linear-mcp.png"
+  },
+  {
+    "slug": "stripe-mcp",
+    "name": "Stripe MCP",
+    "category": "finance",
+    "transport": "native-http",
+    "description": "Manage payments, customers, and subscriptions with Stripe",
+    "tags": [
+      "finance",
+      "stripe",
+      "payments",
+      "billing"
+    ],
+    "documentationUrl": "https://github.com/stripe/mcp-server-stripe",
+    "repositoryUrl": "https://github.com/stripe/mcp-server-stripe",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "restrictedApiKey",
+          "label": "Restricted API Key",
+          "type": "password",
+          "description": "Your Stripe restricted API key",
+          "required": true,
+          "placeholder": "Enter your restricted api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/stripe-mcp.png"
+  },
+  {
+    "slug": "figma-mcp",
+    "name": "Figma MCP",
+    "category": "design",
+    "transport": "native-http",
+    "description": "Access Figma designs, components, and design tokens",
+    "tags": [
+      "design",
+      "figma",
+      "ui",
+      "components"
+    ],
+    "documentationUrl": "https://github.com/figma/mcp-server-figma",
+    "repositoryUrl": "https://github.com/figma/mcp-server-figma",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "personalAccessToken",
+          "label": "Personal Access Token",
+          "type": "password",
+          "description": "Your Figma personal access token",
+          "required": true,
+          "placeholder": "Enter your personal access token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/figma-mcp.png"
+  },
+  {
+    "slug": "google-sheets-mcp",
+    "name": "Google Sheets MCP",
+    "category": "design",
+    "transport": "native-http",
+    "description": "Read and write data in Google Sheets spreadsheets",
+    "tags": [
+      "design",
+      "google-sheets",
+      "spreadsheets",
+      "data"
+    ],
+    "documentationUrl": "https://github.com/google/mcp-server-gsheets",
+    "repositoryUrl": "https://github.com/google/mcp-server-gsheets",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "accessToken",
+          "label": "Access Token",
+          "type": "password",
+          "description": "Your Google Sheets OAuth access token (MVP)",
+          "required": true,
+          "placeholder": "Enter your access token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/google-sheets-mcp.png"
+  },
+  {
+    "slug": "canva-mcp",
+    "name": "Canva MCP",
+    "category": "design",
+    "transport": "native-http",
+    "description": "Create and manage Canva designs and templates",
+    "tags": [
+      "design",
+      "canva",
+      "graphics",
+      "templates"
+    ],
+    "documentationUrl": "https://github.com/canva/mcp-server-canva",
+    "repositoryUrl": "https://github.com/canva/mcp-server-canva",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "accessToken",
+          "label": "Access Token",
+          "type": "password",
+          "description": "Your Canva OAuth access token (MVP)",
+          "required": true,
+          "placeholder": "Enter your access token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/canva-mcp.png"
+  },
+  {
+    "slug": "home-assistant-mcp",
+    "name": "Home Assistant MCP",
+    "category": "iot-geo",
+    "transport": "native-http",
+    "description": "Control smart home devices and automations via Home Assistant",
+    "tags": [
+      "iot-geo",
+      "home-assistant",
+      "smart-home",
+      "automation"
+    ],
+    "documentationUrl": "https://github.com/home-assistant/mcp-server-homeassistant",
+    "repositoryUrl": "https://github.com/home-assistant/mcp-server-homeassistant",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "longLivedAccessToken",
+          "label": "Long-Lived Access Token",
+          "type": "password",
+          "description": "Your Home Assistant long-lived access token",
+          "required": true,
+          "placeholder": "Enter your long-lived access token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/home-assistant-mcp.png"
+  },
+  {
+    "slug": "google-maps-mcp",
+    "name": "Google Maps MCP",
+    "category": "iot-geo",
+    "transport": "stdio-wrapped",
+    "description": "Search places, get directions, and access location data via Google Maps",
+    "tags": [
+      "iot-geo",
+      "google-maps",
+      "location",
+      "navigation"
+    ],
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your Google Maps API key",
+          "required": true,
+          "placeholder": "Enter your api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/google-maps-mcp.png"
+  },
+  {
+    "slug": "openweather-mcp",
+    "name": "OpenWeather MCP",
+    "category": "iot-geo",
+    "transport": "stdio-wrapped",
+    "description": "Get current weather forecasts and historical weather data",
+    "tags": [
+      "iot-geo",
+      "weather",
+      "forecast",
+      "openweather"
+    ],
+    "documentationUrl": "https://openweathermap.org/api",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "apiKey",
+          "label": "API Key",
+          "type": "password",
+          "description": "Your OpenWeather API key",
+          "required": true,
+          "placeholder": "Enter your api key"
+        }
+      ]
+    },
+    "iconPath": "/mcps/openweather-mcp.png"
+  },
+  {
+    "slug": "spotify-mcp",
+    "name": "Spotify MCP",
+    "category": "iot-geo",
+    "transport": "native-http",
+    "description": "Search music, manage playlists, and control playback on Spotify",
+    "tags": [
+      "iot-geo",
+      "spotify",
+      "music",
+      "playback"
+    ],
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "configSchema": {
+      "fields": [
+        {
+          "key": "accessToken",
+          "label": "Access Token",
+          "type": "password",
+          "description": "Your Spotify OAuth access token (MVP)",
+          "required": true,
+          "placeholder": "Enter your access token"
+        }
+      ]
+    },
+    "iconPath": "/mcps/spotify-mcp.png"
   }
 ]

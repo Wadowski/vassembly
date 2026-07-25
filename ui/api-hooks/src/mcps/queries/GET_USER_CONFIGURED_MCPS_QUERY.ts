@@ -7,6 +7,7 @@ export const GET_USER_CONFIGURED_MCPS_QUERY = gql`
         id
         mcpId
         status
+        enabled
         lastTestedAt
         updatedAt
         createdAt

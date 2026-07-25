@@ -1,6 +1,7 @@
 import { init as initMongoDb } from '@vassembly/client-mongodb';
 import { mongodbIndexes as agentMongodbIndexes } from '@vassembly/domain-agent';
 import { mongodbIndexes as aiIntegrationMongodbIndexes } from '@vassembly/domain-ai-integration';
+import { mongodbIndexes as mcpUsageMongodbIndexes } from '@vassembly/domain-mcp-usage';
 import { mongodbIndexes as mcpMongodbIndexes } from '@vassembly/domain-mcp';
 import { mongodbIndexes as skillMongodbIndexes } from '@vassembly/domain-skill';
 import { mongodbIndexes as specializationMongodbIndexes } from '@vassembly/domain-specialization';
@@ -52,6 +53,7 @@ export const getApiMongoIndexFunctions = (): Array<() => Promise<void>> => [
   taskMongodbIndexes,
   taskCommentMongodbIndexes,
   mcpMongodbIndexes,
+  mcpUsageMongodbIndexes,
   setupUserMcpConfigIndexes,
   taskProgressMongodbIndexes,
   taskQuestionsMongodbIndexes,

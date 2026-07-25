@@ -8,7 +8,12 @@ export {
   updateTaskToolHandler,
 } from './internalTools';
 
-export type { AgentInvokeProgressEventInput, InternalToolContext } from './internalTools';
+export type {
+  AgentInvokeProgressEventInput,
+  InternalToolContext,
+  RecordMcpUsageEvent,
+  RecordMcpUsageEventInput,
+} from './internalTools';
 export type { ClassifySpecializationResult } from './internalTools/classifySpecialization/types';
 export type { CreateSpecializationToolResult } from './internalTools/createSpecialization/types';
 

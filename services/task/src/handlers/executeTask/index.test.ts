@@ -67,6 +67,10 @@ vi.mock('./buildConversationMessage', () => ({
   buildConversationMessage: vi.fn().mockResolvedValue('Summarize report'),
 }));
 
+vi.mock('./createRecordMcpUsageEvent', () => ({
+  createRecordMcpUsageEvent: vi.fn().mockReturnValue(vi.fn()),
+}));
+
 vi.mock('@vassembly/domain-task-progress', () => ({
   default: {
     commands: { finalizeTaskProgress: mockFinalizeTaskProgress },

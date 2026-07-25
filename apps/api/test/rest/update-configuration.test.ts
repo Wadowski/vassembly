@@ -7,6 +7,7 @@ const MOCK_UPDATED_CONFIGURATION = {
   userId: 'user-123',
   mcpId: 'gmail',
   status: 'configured',
+  enabled: true,
   fieldValues: [{ key: 'apiKey', hasSecret: true }],
   createdAt: '2026-06-08T12:00:00.000Z',
   updatedAt: '2026-06-08T13:00:00.000Z',

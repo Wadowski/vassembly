@@ -12,6 +12,8 @@ export const GET_MCP_QUERY = gql`
       documentationUrl
       repositoryUrl
       configurationStatus
+      enabled
+      requiresConfiguration
       agentUsageCount
       specializationIds
       configSchema {

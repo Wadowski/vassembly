@@ -1,5 +1,6 @@
 import { CacheBackend, Environment, type Config } from './types';
 import { buildExecutionConfig } from './buildExecutionConfig';
+import { buildMcpServersConfig } from './buildMcpServersConfig';
 
 const parseCacheBackend = (value: string | undefined): CacheBackend => {
   if (value === CacheBackend.Redis) {
@@ -64,6 +65,7 @@ const config: Config = {
     },
     execution: buildExecutionConfig({ backend: 'local' }),
   },
+  mcpServers: buildMcpServersConfig(),
   services: {
     api: {
       port: 5000,

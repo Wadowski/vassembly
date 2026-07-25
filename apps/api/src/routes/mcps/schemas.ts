@@ -10,6 +10,7 @@ export const mcpConfigurationResponseSchema = z.object({
   userId: z.string(),
   mcpId: z.string(),
   status: z.string(),
+  enabled: z.boolean(),
   fieldValues: z.array(
     z.object({
       key: z.string(),

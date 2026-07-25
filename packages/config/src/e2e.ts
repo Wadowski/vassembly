@@ -1,5 +1,6 @@
 import { CacheBackend, Environment, type Config } from './types';
 import { buildExecutionConfig } from './buildExecutionConfig';
+import { buildMcpServersConfig } from './buildMcpServersConfig';
 
 export const E2E_WEB_PORT = 3001;
 export const E2E_API_PORT = 5001;
@@ -75,6 +76,7 @@ const config: Config = {
     },
     execution: buildExecutionConfig({ backend: 'local' }),
   },
+  mcpServers: buildMcpServersConfig(),
   services: {
     api: {
       port: apiPort,

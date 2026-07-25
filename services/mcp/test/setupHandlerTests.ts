@@ -13,13 +13,13 @@ beforeEach((context) => {
   currentTestName = context.task.name;
 });
 
-const seedGmailConfigForUser123 = (): void => {
+const seedBraveConfigForUser123 = (): void => {
   inMemoryUserMcpConfigDao.seed({
     model: {
       id: 'config-auth-seed',
       userId: 'user-123',
-      mcpId: 'mcp-gmail',
-      fieldValues: { clientId: 'abc', clientSecret: 'enc:secret' },
+      mcpId: 'mcp-brave',
+      fieldValues: { apiKey: 'enc:secret' },
       status: 'configured',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -27,8 +27,9 @@ const seedGmailConfigForUser123 = (): void => {
   });
 };
 
-const { mockGetById } = vi.hoisted(() => ({
+const { mockGetById, mockGetModelById } = vi.hoisted(() => ({
   mockGetById: vi.fn(),
+  mockGetModelById: vi.fn(),
 }));
 
 vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
@@ -50,11 +51,21 @@ vi.mock('@vassembly/client-encoder', () => ({
   decode: (encoded: string): string => encoded.replace(/^enc:/, ''),
 }));
 
+vi.mock('@vassembly/client-langchain', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vassembly/client-langchain')>();
+
+  return {
+    ...actual,
+    testMcpConnection: vi.fn(),
+  };
+});
+
 vi.mock('@vassembly/domain-mcp', () => ({
   default: {
     queries: {
       getList: vi.fn(),
       getById: mockGetById,
+      getModelById: mockGetModelById,
     },
   },
   McpConfigurationStatus: {
@@ -74,10 +85,20 @@ mockGetById.mockImplementation(async ({ id }: { id: string }) => {
   return { data: entry };
 });
 
+mockGetModelById.mockImplementation(async ({ id }: { id: string }) => {
+  const entry = TEST_MCP_CATALOG[id];
+
+  if (!entry) {
+    throw new NotFoundError(`MCP not found: ${id}`);
+  }
+
+  return { data: entry };
+});
+
 export const resetHandlerTestStores = (): void => {
   inMemoryUserMcpConfigDao.reset();
 
   if (currentTestName === 'should reject test from an unauthorized user') {
-    seedGmailConfigForUser123();
+    seedBraveConfigForUser123();
   }
 };

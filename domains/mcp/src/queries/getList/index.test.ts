@@ -54,55 +54,55 @@ describe('getList mcp query', () => {
     });
 
     it('should return next page of MCPs when page is 1 and size is 20', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
       const result = await getList({ page: 1, size: 20 });
 
-      expect(result.items).toHaveLength(5);
+      expect(result.items).toHaveLength(20);
       expect(result.page).toBe(1);
       expect(result.size).toBe(20);
     });
 
     it('should return remaining MCPs on the last page', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
-      const result = await getList({ page: 1, size: 20 });
+      const result = await getList({ page: 2, size: 20 });
 
       expect(result.items.length).toBeGreaterThan(0);
       expect(result.items.length).toBeLessThanOrEqual(20);
-      expect(result.total).toBe(25);
+      expect(result.total).toBe(45);
     });
 
     it('should return empty items when page is beyond available results', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
       const result = await getList({ page: 5, size: 20 });
 
       expect(result.items).toEqual([]);
-      expect(result.total).toBe(25);
+      expect(result.total).toBe(45);
     });
   });
 
   describe('search', () => {
     it('should match MCPs by name when search term matches name', async () => {
-      const result = await getList({ search: 'gmail' });
+      const result = await getList({ search: 'wikipedia' });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.name).toBe('Gmail MCP');
+      expect(result.items[0]?.name).toBe('Wikipedia MCP');
     });
 
     it('should match MCPs by description when search term matches description', async () => {
-      const result = await getList({ search: 'email' });
+      const result = await getList({ search: 'articles' });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.name).toBe('Gmail MCP');
+      expect(result.items[0]?.name).toBe('Wikipedia MCP');
     });
 
     it('should match MCPs case-insensitively when search term uses different casing', async () => {
-      const result = await getList({ search: 'GMAIL' });
+      const result = await getList({ search: 'WIKIPEDIA' });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.name).toBe('Gmail MCP');
+      expect(result.items[0]?.name).toBe('Wikipedia MCP');
     });
 
     it('should return no MCPs when search term matches nothing', async () => {
@@ -113,7 +113,7 @@ describe('getList mcp query', () => {
     });
 
     it('should return all MCPs when search is empty', async () => {
-      const result = await getList({ search: '' });
+      const result = await getList({ search: '', size: SEED_MCPS.length });
 
       expect(result.items).toHaveLength(SEED_MCPS.length);
       expect(result.total).toBe(SEED_MCPS.length);
@@ -122,19 +122,20 @@ describe('getList mcp query', () => {
 
   describe('tag filter', () => {
     it('should return only MCPs with selected tag when one tag is provided', async () => {
-      const result = await getList({ tags: ['email'] });
+      const result = await getList({ tags: ['wikipedia'], size: SEED_MCPS.length });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.tags).toContain('email');
+      expect(result.items[0]?.tags).toContain('wikipedia');
     });
 
     it('should return MCPs matching any selected tag when multiple tags are provided', async () => {
-      const result = await getList({ tags: ['search', 'email'] });
+      const result = await getList({ tags: ['search', 'knowledge'], size: SEED_MCPS.length });
 
-      expect(result.items).toHaveLength(2);
-      expect(result.items.map((item) => item.slug).sort()).toEqual(
-        ['brave-search-mcp', 'google-workspace-mcp'].sort(),
-      );
+      const expectedSlugs = SEED_MCPS.filter((entry) =>
+        entry.tags.some((tag) => tag === 'search' || tag === 'knowledge'),
+      ).map((entry) => entry.slug);
+
+      expect(result.items.map((item) => item.slug).sort()).toEqual(expectedSlugs.sort());
     });
 
     it('should return no MCPs when tag filter matches nothing', async () => {
@@ -145,7 +146,7 @@ describe('getList mcp query', () => {
     });
 
     it('should return all MCPs when tags filter is empty', async () => {
-      const result = await getList({ tags: [] });
+      const result = await getList({ tags: [], size: SEED_MCPS.length });
 
       expect(result.items).toHaveLength(SEED_MCPS.length);
       expect(result.total).toBe(SEED_MCPS.length);
@@ -154,7 +155,7 @@ describe('getList mcp query', () => {
 
   describe('combined filters', () => {
     it('should apply search, tag filter, and pagination together', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
       const result = await getList({
         search: 'MCP',
@@ -175,12 +176,13 @@ describe('getList mcp query', () => {
 
   describe('sorting', () => {
     it('should return MCPs sorted by name ascending', async () => {
-      const result = await getList({});
+      const result = await getList({ size: SEED_MCPS.length });
 
       const names = result.items.map((item) => item.name);
-      expect(names).toEqual([...names].sort((left, right) => left.localeCompare(right)));
-      expect(names[0]).toBe('Brave Search MCP');
-      expect(names[names.length - 1]).toBe('Gmail MCP');
+      const sortedNames = [...names].sort((left, right) => left.localeCompare(right));
+      expect(names).toEqual(sortedNames);
+      expect(names[0]).toBe('ArXiv MCP');
+      expect(names[names.length - 1]).toBe('Wikipedia MCP');
     });
   });
 
@@ -199,7 +201,7 @@ describe('getList mcp query', () => {
     });
 
     it('should return correct total count for filtered results', async () => {
-      const result = await getList({ search: 'search', tags: ['search'] });
+      const result = await getList({ search: 'brave', tags: ['search'] });
 
       expect(result.total).toBe(1);
       expect(result.items).toHaveLength(1);

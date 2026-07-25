@@ -13,6 +13,7 @@ import { ProtectedAuthRoute } from '../../../lib/auth/ProtectedAuthRoute';
 
 import { EmptySchemaMessage } from './_components/EmptySchemaMessage';
 import { McpAgentsSection } from './_components/McpAgentsSection';
+import { McpUsageHistorySection } from './_components/McpUsageHistorySection';
 import { McpConfigForm } from './_components/McpConfigForm';
 import { McpDetailHeader } from './_components/McpDetailHeader';
 import { McpDetailSkeleton } from './_components/McpDetailSkeleton';
@@ -79,6 +80,7 @@ export default function McpDetailPage(): JSX.Element {
           <EmptySchemaMessage />
         )}
         {isConfigured ? <McpAgentsSection mcpId={mcpId} mcpName={mcp.name} /> : null}
+        {isConfigured ? <McpUsageHistorySection mcpId={mcpId} /> : null}
       </main>
     );
   })();

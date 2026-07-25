@@ -5,6 +5,7 @@ import { deleteMcpConfigurationRoute } from './deleteConfiguration';
 import { testMcpConfigurationRoute } from './testConfiguration';
 import { unassignMcpFromAgentRoute } from './unassignAgent';
 import { updateMcpConfigurationRoute } from './updateConfiguration';
+import { setMcpEnabledRoute } from './setEnabled';
 
 export {
   createMcpConfigurationBodySchema,
@@ -20,9 +21,11 @@ export {
   updateMcpConfigurationRoute,
 } from './updateConfiguration';
 export { unassignMcpFromAgentRoute } from './unassignAgent';
+export { setMcpEnabledRoute } from './setEnabled';
 
 export const mcpConfigurationRoutes: RouteDefinition[] = [
   unassignMcpFromAgentRoute,
+  setMcpEnabledRoute,
   createMcpConfigurationRoute,
   updateMcpConfigurationRoute,
   deleteMcpConfigurationRoute,

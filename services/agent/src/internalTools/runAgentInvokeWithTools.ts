@@ -11,7 +11,7 @@ import {
   WrongParamError,
 } from '@vassembly/errors';
 
-import { resolveMcpSlugs } from '../helpers/resolveMcpSlugs';
+import { resolveMcpRuntimeMetadata } from '../helpers/resolveMcpRuntimeMetadata';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
 import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
 import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
@@ -19,6 +19,7 @@ import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
 import type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from '@vassembly/domain-ai-integration';
 import type {
   CredentialScope,
+  RecordMcpUsageEvent,
   RunAgentInvokeWithToolsParams,
   RunAgentInvokeWithToolsResult,
 } from './types';
@@ -82,10 +83,14 @@ const resolveMcpConfigs = async ({
     return { mcpServerConfigs: [], skippedMcpIds: [] };
   }
 
-  const slugByMcpId = await resolveMcpSlugs({ mcpIds });
+  const metadataByMcpId = await resolveMcpRuntimeMetadata({ mcpIds });
   const configsResult = await userMcpConfigDomain.commands.resolveMcpServerConfigs({
     userId,
-    mcpConfigs: mcpIds.map((id) => ({ mcpId: id, slug: slugByMcpId[id] ?? '' })),
+    mcpConfigs: mcpIds.map((id) => ({
+      mcpId: id,
+      slug: metadataByMcpId[id]?.slug ?? '',
+      serverUrl: metadataByMcpId[id]?.serverUrl,
+    })),
   });
 
   return {
@@ -145,6 +150,33 @@ const resolveCredentialAndClient = async ({
   });
 };
 
+const buildRecordMcpToolCall = ({
+  recordMcpUsageEvent,
+  toolContext,
+}: {
+  recordMcpUsageEvent?: RecordMcpUsageEvent;
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'];
+}) => {
+  if (!recordMcpUsageEvent) {
+    return undefined;
+  }
+
+  return async (
+    input: Parameters<RecordMcpUsageEvent>[0],
+  ): Promise<string | void> => {
+    if (input.phase === 'started') {
+      return recordMcpUsageEvent({
+        ...input,
+        agentId: toolContext.callerAgentId,
+        invocationId: toolContext.invocationId,
+        rootInvokeId: toolContext.rootInvokeId,
+      });
+    }
+
+    return recordMcpUsageEvent(input);
+  };
+};
+
 const invokePersonalAgent = async ({
   userId,
   agentId,
@@ -153,6 +185,10 @@ const invokePersonalAgent = async ({
   toolContext,
 }: InvokePersonalAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
+  const recordMcpToolCall = buildRecordMcpToolCall({
+    recordMcpUsageEvent: toolContext.recordMcpUsageEvent,
+    toolContext,
+  });
 
   const mcpIds = agent.assignedMcpIds ?? [];
   const assignedToolIds = agent.assignedToolIds ?? [];
@@ -172,6 +208,7 @@ const invokePersonalAgent = async ({
     internalToolBindings: bindings,
     signal: toolContext.abortSignal,
     shouldAbort: toolContext.shouldAbort,
+    recordMcpToolCall,
   });
 
   return {
@@ -196,6 +233,10 @@ const invokeSystemAgent = async ({
   toolContext,
 }: InvokeSystemAgentParams): Promise<RunAgentInvokeWithToolsResult> => {
   const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
+  const recordMcpToolCall = buildRecordMcpToolCall({
+    recordMcpUsageEvent: toolContext.recordMcpUsageEvent,
+    toolContext,
+  });
 
   if (agent === null) {
     throw new NotFoundError('This platform agent is no longer available.', {
@@ -230,6 +271,7 @@ const invokeSystemAgent = async ({
     mcpServerConfigs: mcpIdsOverride !== undefined ? mcpServerConfigs : undefined,
     signal: toolContext.abortSignal,
     shouldAbort: toolContext.shouldAbort,
+    recordMcpToolCall,
     skillsCatalogSection,
   });
 

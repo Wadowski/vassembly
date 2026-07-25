@@ -3,8 +3,13 @@ import type { McpConfigurationStatus, McpListItem as McpListItemDto } from '@vas
 import type { McpStatusBadgeVariant } from '../McpStatusBadge/types';
 
 export interface McpListItemProps {
-  mcp: McpListItemDto & { configurationStatus?: McpConfigurationStatus };
+  mcp: McpListItemDto & {
+    configurationStatus?: McpConfigurationStatus;
+    enabled?: boolean;
+    requiresConfiguration?: boolean;
+  };
   statusBadge?: McpStatusBadgeVariant;
   iconSize?: number;
-  isTitleAriaHidden?: boolean;
+  isToggleLoading?: boolean;
+  onToggleEnabled?: (params: { mcpId: string; enabled: boolean }) => Promise<boolean>;
 }

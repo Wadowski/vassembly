@@ -20,6 +20,7 @@ import { registerTaskQuestionsResolvers } from './resolvers/taskQuestions';
 import { registerUserResolvers } from './resolvers/user';
 import { registerSystemAgentResolvers } from './resolvers/systemAgent';
 import { registerMcpResolvers, gqlMcpSchema } from './resolvers/mcp';
+import { registerMcpUsageResolvers } from './resolvers/mcpUsage';
 import { registerSpecializationResolvers } from './resolvers/specialization';
 import { registerSkillResolvers } from './resolvers/skill';
 import {
@@ -48,6 +49,7 @@ registerTaskActivityResolvers(builder);
 registerTaskProgressResolvers(builder);
 registerTaskQuestionsResolvers(builder);
 registerMcpResolvers(builder);
+registerMcpUsageResolvers(builder);
 registerSpecializationResolvers(builder);
 registerSkillResolvers(builder);
 registerInternalToolResolvers(builder);

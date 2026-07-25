@@ -108,7 +108,7 @@ describe('loadMcps seed loader', () => {
     it('should insert all seed MCPs on first load when collection is empty', async () => {
       const result = await loadMcps();
 
-      expect(result.insertedCount).toBe(2);
+      expect(result.insertedCount).toBe(VALID_SEED_ENTRIES.length);
       expect(result.skippedCount).toBe(0);
     });
 

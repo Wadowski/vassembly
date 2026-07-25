@@ -90,11 +90,13 @@ const invokeModel = async ({
   });
 
   let mcpTools: Awaited<ReturnType<typeof loadMcpTools>>['tools'] = [];
+  let toolNameToServerName: Map<string, string> | undefined;
   let close: () => Promise<void> = async () => undefined;
 
   if (mcpServerConfigs.length > 0) {
     const loadedMcpTools = await loadMcpTools({ serverConfigs: mcpServerConfigs });
     mcpTools = loadedMcpTools.tools;
+    toolNameToServerName = loadedMcpTools.toolNameToServerName;
     close = loadedMcpTools.close;
   }
 
@@ -118,6 +120,8 @@ const invokeModel = async ({
       maxIterations: MCP_TOOL_MAX_ITERATIONS,
       signal: invokeParams.signal,
       shouldAbort: invokeParams.shouldAbort,
+      toolNameToServerName,
+      recordMcpToolCall: invokeParams.recordMcpToolCall,
     });
 
     return {

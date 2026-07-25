@@ -78,6 +78,15 @@ export class UserModel extends Model {
 - Export both as lowercase camelCase (e.g., `userFactory`, `userTranslationFactory`)
 - **Important:** Strip sensitive fields (passwords, API keys) in the factory `create()` method, not in mappers
 
+#### Model construction in factories
+
+Commands and queries must **not** build a model and then assign more fields unconditionally right after. Put the full shape in the factory instead.
+
+- **Forbidden:** `const model = factory.create({ ... }); model.enabled = true; model.status = 'active';` when those assignments always run on that path
+- **Preferred:** `factory.createNew({ ..., enabled: true, status: 'active' })` or a dedicated factory method (`withEnabled`, `createForEnable`, etc.) that returns a complete model in one call
+- **Acceptable:** Conditional mutation only when the branch logic cannot be expressed as a single factory entry point (e.g. merging encrypted field values after schema-specific encryption in the command)
+- **Updates:** Derive updated models via factory helpers (e.g. `withEnabled({ model, enabled })`) that pass a complete document/field set into `fromPersistence` / `create`, not `toModel` + manual field assignment
+
 ```typescript
 import { factory, translationFactory } from "@vassembly/model";
 import { UserModel } from "./model";

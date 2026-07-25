@@ -86,6 +86,14 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       vi.fn().mockResolvedValue(undefined),
       { loading: false, error: null },
     ] as const),
+    useMcpUsageHistory: vi.fn(() => ({
+      items: [],
+      total: 0,
+      page: 0,
+      size: 20,
+      loading: false,
+      error: undefined,
+    })),
     ...createSpecializationHooksMock(),
   };
 });

@@ -16,6 +16,9 @@ export { useSaveMcpConfiguration } from './useSaveMcpConfiguration';
 export { useUpdateMcpConfiguration } from './useUpdateMcpConfiguration';
 export { useDeleteMcpConfiguration } from './useDeleteMcpConfiguration';
 export { useTestMcpConnection } from './useTestMcpConnection';
+export { useSetMcpEnabled } from './useSetMcpEnabled';
+export { useMcpUsageHistory } from './useMcpUsageHistory';
+export { GET_MCP_USAGE_HISTORY_QUERY } from './queries/GET_MCP_USAGE_HISTORY_QUERY';
 export { useAvailableTags } from './useAvailableTags';
 export type {
   McpListItem,
@@ -30,6 +33,8 @@ export type {
   DeleteConfigInput,
   TestConnectionInput,
   TestConnectionResult,
+  SetMcpEnabledInput,
+  SetMcpEnabledResponse,
   McpConfiguration,
   McpConfigurationStatus,
   McpConfigSchemaField,
@@ -40,4 +45,5 @@ export type {
   McpWithAgentsAgent,
   UseMcpWithAgentsResult,
 } from './types';
+export type { UseMcpUsageHistoryResult, McpUsageHistoryItem } from './useMcpUsageHistory';
 export type { UseAvailableTagsResult } from './useAvailableTags';

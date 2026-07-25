@@ -8,7 +8,7 @@ const {
   mockGetActiveById,
   mockResolveAndBuildClient,
   mockResolvePlatformClient,
-  mockResolveMcpSlugs,
+  mockResolveMcpRuntimeMetadata,
   mockResolveMcpServerConfigs,
   mockInvoke,
   mockLoadAssignedInternalTools,
@@ -19,7 +19,7 @@ const {
   mockGetActiveById: vi.fn(),
   mockResolveAndBuildClient: vi.fn(),
   mockResolvePlatformClient: vi.fn(),
-  mockResolveMcpSlugs: vi.fn(),
+  mockResolveMcpRuntimeMetadata: vi.fn(),
   mockResolveMcpServerConfigs: vi.fn(),
   mockInvoke: vi.fn(),
   mockLoadAssignedInternalTools: vi.fn(),
@@ -69,8 +69,8 @@ vi.mock('@vassembly/domain-user-mcp-config', () => ({
   },
 }));
 
-vi.mock('../helpers/resolveMcpSlugs', () => ({
-  resolveMcpSlugs: mockResolveMcpSlugs,
+vi.mock('../helpers/resolveMcpRuntimeMetadata', () => ({
+  resolveMcpRuntimeMetadata: mockResolveMcpRuntimeMetadata,
 }));
 
 vi.mock('./loadAssignedInternalTools', () => ({
@@ -171,7 +171,12 @@ describe('runAgentInvokeWithTools', () => {
     });
     mockResolveAndBuildClient.mockResolvedValue(RESOLVE_RESULT);
     mockResolvePlatformClient.mockResolvedValue(PLATFORM_RESOLVE_RESULT);
-    mockResolveMcpSlugs.mockResolvedValue({ 'mcp-1': 'example-mcp' });
+    mockResolveMcpRuntimeMetadata.mockResolvedValue({
+      'mcp-1': {
+        slug: 'example-mcp',
+        serverUrl: 'http://localhost:4109/mcp',
+      },
+    });
     mockResolveMcpServerConfigs.mockResolvedValue({
       serverConfigs: MCP_SERVER_CONFIGS,
       skippedMcpIds: [],

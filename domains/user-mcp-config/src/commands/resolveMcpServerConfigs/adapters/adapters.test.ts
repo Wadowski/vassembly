@@ -1,43 +1,48 @@
 import { describe, it, expect } from 'vitest';
+import { MCP_SLUG } from '@vassembly/constants';
 
-import { braveSearchMcpRuntimeAdapter } from './brave-search-mcp';
-import { googleWorkspaceMcpRuntimeAdapter } from './google-workspace-mcp';
+import { getMcpRuntimeAdapter } from './index';
 
 describe('MCP runtime adapters', () => {
-  it('should map brave search config to stdio server config', () => {
-    const result = braveSearchMcpRuntimeAdapter.toServerConfig({
+  it('should map brave search config to HTTP server config with x-api-key header', () => {
+    const adapter = getMcpRuntimeAdapter({ slug: MCP_SLUG.BraveSearchMcp });
+    const result = adapter.toServerConfig({
       mcpId: 'mcp-brave',
       fieldValues: { apiKey: 'brave-key' },
+      serverUrl: 'http://localhost:4109/mcp',
     });
 
     expect(result).toEqual({
       serverName: 'mcp-brave',
-      transport: 'stdio',
-      command: 'npx',
-      args: ['-y', '@brave/brave-search-mcp-server', '--transport', 'stdio'],
-      env: { BRAVE_API_KEY: 'brave-key' },
+      transport: 'http',
+      url: 'http://localhost:4109/mcp',
+      headers: { 'x-api-key': 'brave-key' },
     });
   });
 
-  it('should map google workspace config to stdio server config', () => {
-    const result = googleWorkspaceMcpRuntimeAdapter.toServerConfig({
-      mcpId: 'mcp-google',
-      fieldValues: {
-        clientId: 'client-id',
-        clientSecret: 'client-secret',
-        scopes: 'full',
-      },
+  it('should map wikipedia config to HTTP server config without headers', () => {
+    const adapter = getMcpRuntimeAdapter({ slug: MCP_SLUG.WikipediaMcp });
+    const result = adapter.toServerConfig({
+      mcpId: 'mcp-wikipedia',
+      fieldValues: {},
+      serverUrl: 'http://localhost:4110/mcp',
     });
 
     expect(result).toEqual({
-      serverName: 'mcp-google',
-      transport: 'stdio',
-      command: 'uvx',
-      args: ['workspace-mcp', '--tool-tier', 'complete'],
-      env: {
-        GOOGLE_OAUTH_CLIENT_ID: 'client-id',
-        GOOGLE_OAUTH_CLIENT_SECRET: 'client-secret',
-      },
+      serverName: 'mcp-wikipedia',
+      transport: 'http',
+      url: 'http://localhost:4110/mcp',
     });
+  });
+
+  it('should return null when serverUrl is missing', () => {
+    const adapter = getMcpRuntimeAdapter({ slug: MCP_SLUG.WikipediaMcp });
+    const result = adapter.toServerConfig({
+      mcpId: 'mcp-wikipedia',
+      fieldValues: {},
+      serverUrl: null,
+    });
+
+    expect(result).toBeNull();
   });
 });

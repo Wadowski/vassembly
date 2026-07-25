@@ -10,7 +10,7 @@ export interface McpServerConfig {
 
 export interface ResolveMcpServerConfigsParams {
   userId: string;
-  mcpConfigs: Array<{ mcpId: string; slug: string }>;
+  mcpConfigs: Array<{ mcpId: string; slug: string; serverUrl?: string | null }>;
 }
 
 export interface ResolveMcpServerConfigsResult {

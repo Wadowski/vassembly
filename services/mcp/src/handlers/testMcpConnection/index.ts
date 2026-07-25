@@ -1,3 +1,4 @@
+import { config } from '@vassembly/config';
 import { userMcpConfigDomain } from '@vassembly/domain-user-mcp-config';
 import { McpConfigFieldType } from '@vassembly/domain-user-mcp-config';
 import mcpDomain from '@vassembly/domain-mcp';
@@ -53,12 +54,14 @@ export const testMcpConnection = async (
     throw new UnauthorizedError('Unauthorized');
   }
 
-  const mcpResult = await mcpDomain.queries.getById({ id: input.mcpId });
+  const mcpResult = await mcpDomain.queries.getModelById({ id: input.mcpId });
   const mcp = mcpResult.data;
 
   if (!mcp.configSchema) {
     throw new NotFoundError('MCP not found');
   }
+
+  const serverUrl = mcp.serverUrl ?? config.mcpServers.serverUrls[mcp.slug] ?? null;
 
   const existingConfig = await userMcpConfigDomain.queries.getConfigByMcpId({
     mcpId: input.mcpId,
@@ -92,6 +95,7 @@ export const testMcpConnection = async (
       fieldValues,
       schema: mcp.configSchema,
       mcpSlug: mcp.slug,
+      serverUrl,
     });
 
     return { success: result.success, error: result.error };

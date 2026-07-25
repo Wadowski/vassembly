@@ -16,7 +16,7 @@ interface GraphQLUserConfiguredMcpsData {
  * Fetches all MCPs configured by the current user, sorted by most recently updated.
  */
 export function useUserConfiguredMcps(): UseUserConfiguredMcpsResult {
-  const { data, isLoading, error } = useApolloQuery<GraphQLUserConfiguredMcpsData>(
+  const { data, isLoading, error, refetch } = useApolloQuery<GraphQLUserConfiguredMcpsData>(
     GET_USER_CONFIGURED_MCPS_QUERY,
     {
       withAuth: true,
@@ -39,5 +39,8 @@ export function useUserConfiguredMcps(): UseUserConfiguredMcpsResult {
     data: mappedData,
     loading: isLoading,
     error,
+    refetch: () => {
+      void refetch();
+    },
   };
 }

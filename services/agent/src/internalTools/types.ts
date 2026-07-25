@@ -19,6 +19,7 @@ export interface InternalToolContext {
   abortSignal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
   recordAgentInvokeProgress?: RecordAgentInvokeProgress;
+  recordMcpUsageEvent?: RecordMcpUsageEvent;
 }
 
 export type CredentialScope = 'platform' | 'user';
@@ -42,6 +43,34 @@ export interface AgentInvokeProgressEventInput {
 export type RecordAgentInvokeProgress = (
   input: AgentInvokeProgressEventInput,
 ) => Promise<void>;
+
+export interface McpUsageEventStartedInput {
+  phase: 'started';
+  mcpId: string;
+  toolName: string;
+  args: Record<string, unknown>;
+  startedAt: Date;
+  agentId?: string;
+  invocationId?: string;
+  rootInvokeId?: string;
+}
+
+export interface McpUsageEventCompletedInput {
+  phase: 'completed';
+  eventId: string;
+  status: 'success' | 'error';
+  endedAt: Date;
+  durationMs: number;
+  errorMessage?: string;
+}
+
+export type RecordMcpUsageEventInput =
+  | McpUsageEventStartedInput
+  | McpUsageEventCompletedInput;
+
+export type RecordMcpUsageEvent = (
+  input: RecordMcpUsageEventInput,
+) => Promise<string | void>;
 
 export type InternalToolHandler = (args: Record<string, unknown>) => Promise<string>;
 

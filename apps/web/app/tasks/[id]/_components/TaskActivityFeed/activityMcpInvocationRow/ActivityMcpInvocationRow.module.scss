@@ -1,0 +1,27 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+  list-style: none;
+}
+
+.label {
+  font-weight: 600;
+}
+
+.meta,
+.agent,
+.duration {
+  color: var(--color-text-secondary, #666);
+}
+
+.separator {
+  color: var(--color-text-secondary, #666);
+}
+
+.error {
+  width: 100%;
+  color: var(--color-danger, #c00);
+}

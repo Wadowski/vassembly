@@ -10,12 +10,17 @@ export type {
   CacheConfig,
   Config,
   ExecutionConfig,
+  McpProxyKind,
+  McpServerContainerConfig,
+  McpServersConfig,
+  McpTransport,
   PlatformAiConfig,
   RedisConfig,
   SkillExecutionBackend,
   SkillScriptStorageConfig,
   SkillsConfig,
 } from './types';
+export { buildMcpServersConfig } from './buildMcpServersConfig';
 
 const CONFIG_MAP = {
   [Environment.Development]: developmentConfig,

@@ -9,6 +9,7 @@ import {
   extractTokenUsageFromMessage,
   mergeTokenUsage,
 } from '../utils/extractTokenUsageFromMessage';
+import type { RecordMcpToolCall } from '../mcp/recordMcpToolCall';
 import type { AiProviderInvokeResult } from '../types';
 
 export interface RunToolCallLoopParams {
@@ -18,6 +19,8 @@ export interface RunToolCallLoopParams {
   maxIterations: number;
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
+  toolNameToServerName?: Map<string, string>;
+  recordMcpToolCall?: RecordMcpToolCall;
 }
 
 export interface RunToolCallLoopResult {
@@ -50,6 +53,88 @@ const serializeToolContent = (content: unknown): string => {
   return JSON.stringify(content);
 };
 
+const CONSOLE_LOG_PREFIX = 'client-langchain ::';
+
+const logRecordingFailure = (error: unknown): void => {
+  console.error(`${CONSOLE_LOG_PREFIX} MCP usage recording failed`, error);
+};
+
+const invokeToolWithRecording = async ({
+  tool,
+  toolCall,
+  toolNameToServerName,
+  recordMcpToolCall,
+}: {
+  tool: DynamicStructuredTool;
+  toolCall: { name: string; args: Record<string, unknown>; id?: string };
+  toolNameToServerName?: Map<string, string>;
+  recordMcpToolCall?: RecordMcpToolCall;
+}): Promise<unknown> => {
+  const mcpId = toolNameToServerName?.get(toolCall.name);
+  const startedAt = new Date();
+  let eventId: string | undefined;
+
+  if (mcpId && recordMcpToolCall) {
+    try {
+      const result = await recordMcpToolCall({
+        phase: 'started',
+        mcpId,
+        toolName: toolCall.name,
+        args: toolCall.args,
+        startedAt,
+      });
+
+      if (typeof result === 'string') {
+        eventId = result;
+      }
+    } catch (error: unknown) {
+      logRecordingFailure(error);
+    }
+  }
+
+  try {
+    const toolContent = await tool.invoke(toolCall.args);
+
+    if (mcpId && recordMcpToolCall && eventId) {
+      const endedAt = new Date();
+
+      try {
+        await recordMcpToolCall({
+          phase: 'completed',
+          eventId,
+          status: 'success',
+          endedAt,
+          durationMs: endedAt.getTime() - startedAt.getTime(),
+        });
+      } catch (error: unknown) {
+        logRecordingFailure(error);
+      }
+    }
+
+    return toolContent;
+  } catch (error: unknown) {
+    if (mcpId && recordMcpToolCall && eventId) {
+      const endedAt = new Date();
+      const errorMessage = error instanceof Error ? error.message : String(error);
+
+      try {
+        await recordMcpToolCall({
+          phase: 'completed',
+          eventId,
+          status: 'error',
+          endedAt,
+          durationMs: endedAt.getTime() - startedAt.getTime(),
+          errorMessage,
+        });
+      } catch (recordError: unknown) {
+        logRecordingFailure(recordError);
+      }
+    }
+
+    throw error;
+  }
+};
+
 export const runToolCallLoop = async ({
   model,
   tools,
@@ -57,6 +142,8 @@ export const runToolCallLoop = async ({
   maxIterations,
   signal,
   shouldAbort,
+  toolNameToServerName,
+  recordMcpToolCall,
 }: RunToolCallLoopParams): Promise<RunToolCallLoopResult> => {
   const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
   const modelWithTools =
@@ -95,7 +182,12 @@ export const runToolCallLoop = async ({
         const tool = toolsByName[toolCall.name];
         if (tool) {
           recordExecutedTool(toolCall.name);
-          const toolContent = await tool.invoke(toolCall.args);
+          const toolContent = await invokeToolWithRecording({
+            tool,
+            toolCall,
+            toolNameToServerName,
+            recordMcpToolCall,
+          });
           return new ToolMessage({
             content: serializeToolContent(toolContent),
             tool_call_id: toolCall.id ?? `${toolCall.name}-${iteration}`,

@@ -8,6 +8,7 @@ const MOCK_MASKED_CONFIGURATION = {
   userId: 'user-123',
   mcpId: 'gmail',
   status: 'configured',
+  enabled: true,
   fieldValues: [
     { key: 'apiKey', hasSecret: true },
     { key: 'refreshToken', hasSecret: true },

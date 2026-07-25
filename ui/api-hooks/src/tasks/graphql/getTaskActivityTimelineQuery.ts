@@ -35,6 +35,13 @@ export const GET_TASK_ACTIVITY_TIMELINE_QUERY = `
         integrationName
         provider
         model
+        usageEventId
+        mcpId
+        mcpName
+        toolName
+        status
+        durationMs
+        errorMessage
       }
     }
   }

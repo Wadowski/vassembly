@@ -13,6 +13,8 @@ export const GET_MCPS_QUERY = gql`
         documentationUrl
         repositoryUrl
       configurationStatus
+      enabled
+      requiresConfiguration
       agentUsageCount
       createdAt
         updatedAt

@@ -18,6 +18,8 @@ export type {
   LoadAssignedInternalToolsParams,
   LoadAssignedInternalToolsResult,
   RecordAgentInvokeProgress,
+  RecordMcpUsageEvent,
+  RecordMcpUsageEventInput,
   RunAgentInvokeWithToolsParams,
   RunAgentInvokeWithToolsResult,
 } from './types';

@@ -1,3 +1,4 @@
+export { MCP_SLUG, getMcpSlugs } from './mcpSlugs';
 export { AUTH_TOKEN_ROLE } from './authTokenRole';
 export { SYSTEM_AGENT_NAME } from './SystemAgentName';
 export {

@@ -45,6 +45,8 @@ export interface McpWithConfigurationStatus {
   documentationUrl?: string;
   repositoryUrl?: string;
   configurationStatus: McpConfigurationStatus;
+  enabled: boolean;
+  requiresConfiguration: boolean;
   agentUsageCount?: number;
   specializationIds?: string[];
   createdAt: string;
@@ -92,6 +94,7 @@ export interface UserConfiguredMcpItem {
   id: string;
   mcpId: string;
   status: string;
+  enabled: boolean;
   lastTestedAt?: string;
   updatedAt: string;
   createdAt: string;
@@ -128,6 +131,7 @@ export interface UseUserConfiguredMcpsResult {
   };
   loading: boolean;
   error?: CommonError;
+  refetch?: () => void;
 }
 
 export interface McpConfigurationMutationState {
@@ -160,11 +164,22 @@ export interface TestConnectionResult {
   error?: string;
 }
 
+export interface SetMcpEnabledInput {
+  mcpId: string;
+  enabled: boolean;
+}
+
+export interface SetMcpEnabledResponse {
+  mcpId: string;
+  enabled: boolean;
+}
+
 export interface SaveMcpConfigurationResponse {
   id: string;
   userId: string;
   mcpId: string;
   status: string;
+  enabled: boolean;
   fieldValues: McpConfigurationFieldValue[];
   createdAt: string;
   updatedAt: string;

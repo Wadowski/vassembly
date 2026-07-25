@@ -4,6 +4,7 @@ import { Skeleton } from '@vassembly/ui-system-design/skeleton';
 import { Text } from '@vassembly/ui-system-design/text';
 
 import { McpListItem } from '../McpListItem/McpListItem';
+import { useMcpEnableToggle } from '../hooks/useMcpEnableToggle';
 
 import { YOUR_MCPS_EMPTY_MESSAGE } from './constants';
 import styles from './YourMcpsSection.module.scss';
@@ -14,6 +15,7 @@ import { useYourMcpsSection } from './useYourMcpsSection';
  */
 export const YourMcpsSection = (): JSX.Element | null => {
   const section = useYourMcpsSection();
+  const { toggleMcpEnabled, togglingMcpId } = useMcpEnableToggle();
 
   if (section.loading) {
     return (
@@ -37,7 +39,14 @@ export const YourMcpsSection = (): JSX.Element | null => {
       ) : (
         <div className={styles.grid} data-testid="your-mcps-grid" data-columns="3">
           {section.configuredMcps.map((mcp) => (
-            <McpListItem key={mcp.id} mcp={mcp} statusBadge="configured" iconSize={section.iconSize} />
+            <McpListItem
+              key={mcp.id}
+              mcp={mcp}
+              statusBadge="configured"
+              iconSize={section.iconSize}
+              isToggleLoading={togglingMcpId === mcp.id}
+              onToggleEnabled={toggleMcpEnabled}
+            />
           ))}
         </div>
       )}

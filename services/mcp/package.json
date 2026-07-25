@@ -19,9 +19,13 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/config": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
     "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/domain-mcp-usage": "workspace:*",
+    "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-user-mcp-config": "workspace:*",
+    "@vassembly/domain-task": "workspace:*",
     "@vassembly/errors": "workspace:*"
   }
 }

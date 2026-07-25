@@ -106,6 +106,7 @@ export class UserMcpConfigDAO {
       mcpId: model.mcpId,
       fieldValues: model.fieldValues,
       status: model.status,
+      enabled: model.enabled ?? true,
       lastTestedAt: model.lastTestedAt,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,

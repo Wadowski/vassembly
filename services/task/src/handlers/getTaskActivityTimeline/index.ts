@@ -1,9 +1,11 @@
 import taskDomain from '@vassembly/domain-task';
 import taskCommentDomain from '@vassembly/domain-task-comment';
+import mcpUsageDomain from '@vassembly/domain-mcp-usage';
 import taskQuestionsDomain from '@vassembly/domain-task-questions';
 import { NotFoundError } from '@vassembly/errors';
 import { toIsoString } from '@vassembly/mappers';
 
+import { mapMcpUsageEventsToTimelineItems } from './mapMcpUsageEventsToTimelineItems';
 import { mapProgressStateToFilterGroup } from './types';
 import { aggregateProgressStats } from './aggregateProgressStats';
 import { resolveCommentProgress } from './resolveCommentProgress';
@@ -39,6 +41,7 @@ export const getTaskActivityTimeline = async ({
 
   const commentsResult = await taskCommentDomain.queries.listByTaskId({ taskId });
   const questionsResult = await taskQuestionsDomain.queries.getTaskQuestions({ taskId });
+  const mcpUsageResult = await mcpUsageDomain.queries.getModelsByTaskId({ taskId });
   const answeredQuestions = questionsResult.data?.answeredQuestions ?? [];
 
   const items: TaskActivityItem[] = [];
@@ -128,6 +131,12 @@ export const getTaskActivityTimeline = async ({
       });
     }
   }
+
+  items.push(
+    ...mapMcpUsageEventsToTimelineItems({
+      events: mcpUsageResult.data,
+    }),
+  );
 
   return {
     items: sortTimelineItems(items),

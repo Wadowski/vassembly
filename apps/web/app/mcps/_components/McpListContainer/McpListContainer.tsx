@@ -9,6 +9,7 @@ import { Text } from '@vassembly/ui-system-design/text';
 
 import { McpListEmptyState } from '../McpListEmptyState/McpListEmptyState';
 import { McpListItem } from '../McpListItem/McpListItem';
+import { useMcpEnableToggle } from '../hooks/useMcpEnableToggle';
 
 import { McpSearchBar } from '../McpSearchBar/McpSearchBar';
 import { McpTagFilter } from '../McpTagFilter/McpTagFilter';
@@ -20,7 +21,8 @@ import { useMcpListWithStatus } from './useMcpListWithStatus';
  * Discover section with search, filters, pagination, and configuration status badges.
  */
 export const McpListContainer = (): JSX.Element => {
-  const { list, itemsWithStatus, configuredMcpIds } = useMcpListWithStatus();
+  const { list, itemsWithStatus } = useMcpListWithStatus();
+  const { toggleMcpEnabled, togglingMcpId } = useMcpEnableToggle();
 
   const emptyState = useMemo(() => {
     if (list.isFilteredEmpty) {
@@ -64,7 +66,8 @@ export const McpListContainer = (): JSX.Element => {
               <McpListItem
                 key={mcp.id}
                 mcp={mcp}
-                isTitleAriaHidden={configuredMcpIds.has(mcp.id)}
+                isToggleLoading={togglingMcpId === mcp.id}
+                onToggleEnabled={toggleMcpEnabled}
               />
             ))}
           </div>

@@ -29,6 +29,7 @@ export interface ModeledProviderInvokeParams {
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
+  recordMcpToolCall?: AiProviderInvokeParams['recordMcpToolCall'];
 }
 
 export interface ModeledProviderClient {
@@ -65,6 +66,7 @@ export const getModeledProviderClient = (
         internalToolBindings: messageOrParams.internalToolBindings,
         signal: messageOrParams.signal,
         shouldAbort: messageOrParams.shouldAbort,
+        recordMcpToolCall: messageOrParams.recordMcpToolCall,
       });
     },
   };
