@@ -5,7 +5,6 @@ import { MAX_TASK_ACTIVITY_MCP_EVENTS } from '../../constants';
 import { mcpUsageEventFactory } from '../../model/factories';
 import { mapMcpUsageEventDocument } from '../../model/mapMcpUsageEventDocument';
 
-import type { McpUsageEventModel } from '../../model';
 import type { GetModelsByTaskIdParams, GetModelsByTaskIdResult } from './types';
 
 export const getModelsByTaskId = async ({

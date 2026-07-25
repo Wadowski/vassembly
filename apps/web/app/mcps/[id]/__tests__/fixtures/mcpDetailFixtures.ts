@@ -12,6 +12,8 @@ export const MOCK_MCP_WITH_FULL_SCHEMA: McpDetail = {
   documentationUrl: 'https://docs.example.com/gmail-mcp',
   repositoryUrl: 'https://github.com/example/gmail-mcp',
   configurationStatus: 'pending',
+  enabled: false,
+  requiresConfiguration: true,
   configSchema: {
     fields: [
       {

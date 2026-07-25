@@ -46,3 +46,4 @@ export type {
   UseMcpWithAgentsResult,
 } from './types';
 export type { UseMcpUsageHistoryResult, McpUsageHistoryItem } from './useMcpUsageHistory';
+export type { UseAvailableTagsResult } from './useAvailableTags';
