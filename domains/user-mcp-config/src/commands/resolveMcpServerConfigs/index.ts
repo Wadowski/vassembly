@@ -21,6 +21,11 @@ export const resolveMcpServerConfigs = async (
       continue;
     }
 
+    if (!config.enabled) {
+      skippedMcpIds.push(mcpId);
+      continue;
+    }
+
     const decodedFieldValues = decodeEncryptedFieldValues(config.fieldValues ?? {});
     const adapter = getMcpRuntimeAdapter({ slug });
     const serverConfig = adapter.toServerConfig({

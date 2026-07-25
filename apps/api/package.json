@@ -32,6 +32,7 @@
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-agent": "workspace:*",
     "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/domain-mcp-usage": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
     "@vassembly/domain-specialization": "workspace:*",
     "@vassembly/domain-skill": "workspace:*",

@@ -15,8 +15,8 @@
     "test:e2e:web:ci": "dotenv -e .env -e .env.e2e -o -- turbo run test:e2e:ci --filter=@vassembly/web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "mcp-servers:up": "docker compose -f apps/mcp-servers/docker-compose.yml up -d --build",
-    "mcp-servers:down": "docker compose -f apps/mcp-servers/docker-compose.yml down",
+    "mcp-servers:up": "docker-compose -f apps/mcp-servers/docker-compose.yml up --build",
+    "mcp-servers:down": "docker-compose -f apps/mcp-servers/docker-compose.yml down",
     "clean-install": "rm -rf node_modules && rm -rf **/**/node_modules && rm -rf **/**/.turbo && pnpm install --force"
   },
   "devDependencies": {

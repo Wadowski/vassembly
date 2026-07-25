@@ -12,7 +12,7 @@ This document defines the target architecture for a self-hosted **MCP server pla
 - The agent runtime **never spawns child processes** and **never reads `process.env` for MCP settings**. All configuration flows through `@vassembly/config`; only the monorepo **root** `.env` / `.env.example` exist — no per-app or per-package env files.
 - `McpModel` (domain-mcp) gains internal-only ops metadata (`serverUrl`, `transport`, `dockerImage`, `category`). `serverUrl` is **never** serialized to any DTO, GraphQL type, or REST response.
 - `configSchema` holds **user credentials only**. Platform/ops settings (log level, enabled/disabled tools, stateless mode) live in `@vassembly/config` → passed to containers at compose startup via root `.env` substitution.
-- All 35 servers are seeded via one-off migration script (`scripts/migrateMcpServerUrls.ts`). AWS/Lambda deployment is designed but deferred.
+- Spike MCP slugs are defined in `@vassembly/constants` (`MCP_SLUG` enum). `serverUrl` is resolved at runtime from `@vassembly/config` when not set on the catalog document. AWS/Lambda deployment is designed but deferred.
 
 ## 2. As-Is vs To-Be
 
@@ -406,7 +406,6 @@ User credentials (`GITHUB_PERSONAL_ACCESS_TOKEN`, `BRAVE_API_KEY`, etc.) are **n
 | Consumer | Reads from config | Never reads |
 |---|---|---|
 | `services/agent` | `config.mcpServers.serverUrls` (fallback if catalog `serverUrl` null) | `process.env` |
-| `scripts/migrateMcpServerUrls.ts` | `config.mcpServers.serverUrls` | `process.env` |
 | `domains/user-mcp-config` adapters | Receives `serverUrl`/`transport` from service layer | `process.env`, `@vassembly/config` |
 | `apps/mcp-servers` compose | Root `.env` vars (loaded into `@vassembly/config` first; compose reads same root `.env` for `${VAR}` substitution) | Own `.env` file |
 | `domains/mcp` seed | Static metadata only; no URLs | `process.env` |
@@ -433,7 +432,7 @@ export class McpModel extends Model {
 
   /** INTERNAL ONLY — never expose via dto.ts / GraphQL / REST. */
   transport!: McpTransportValue;
-  /** INTERNAL ONLY — set by migration script from @vassembly/config. */
+  /** INTERNAL ONLY — optional override; runtime falls back to @vassembly/config when null. */
   serverUrl?: string | null;
   /** INTERNAL ONLY — ops metadata for apps/mcp-servers. */
   dockerImage?: string | null;
@@ -488,19 +487,11 @@ For **stdio-wrapped** MCPs using `mcp-key-proxy`, the domain adapter maps `field
 
 ## 10. Seed Strategy
 
-- `domains/mcp/seed/mcps.json` — 35 entries, environment-agnostic (no `serverUrl`).
-- `serverUrl` is set **only** by `scripts/migrateMcpServerUrls.ts`, reading from `config.mcpServers.serverUrls`.
+- `domains/mcp/seed/mcps.json` — spike entries (expand to 35), environment-agnostic (no `serverUrl`).
 - Boot-time `loadMcps()` stays insert-only for empty collections.
+- `serverUrl` is optional on catalog documents; `services/agent` resolves from `config.mcpServers.serverUrls[slug]` when null.
 
-## 11. Migration Script Spec — `scripts/migrateMcpServerUrls.ts`
-
-Unchanged from prior spec except:
-
-- Imports `config` from `@vassembly/config` for `serverUrls` — never reads `process.env` directly.
-- `REMOVED_SLUGS = ['google-workspace-mcp']`.
-- Upserts 35 catalog entries with `serverUrl` from config.
-
-## 12. Runtime Adapter Pattern (Strategy)
+## 11. Runtime Adapter Pattern (Strategy)
 
 **All MCPs use the same header-based credential delivery.** The `CREDENTIAL_MAPPINGS` table drives a generic adapter:
 
@@ -527,26 +518,25 @@ Both `kind` values produce `{ transport: 'http', url: serverUrl, headers }`. For
 
 `testMcpConnection` adapters remain lightweight mocks (decision #6).
 
-## 13. Internal `serverUrl` Access Path
+## 12. Internal `serverUrl` Access Path
 
 Unchanged: `services/agent` calls `mcpDomain.queries.getModelById` (internal), threads `serverUrl` + `transport` into `resolveMcpServerConfigs`. Falls back to `config.mcpServers.serverUrls[slug]` if catalog field is null.
 
-## 14. Phased Implementation Work Packages
+## 13. Phased Implementation Work Packages
 
-1. **`packages/constants`** — `MCP_SLUGS` (35 entries).
+1. **`packages/constants`** — `MCP_SLUG` enum (spike: 2 entries; expand to 35).
 2. **`packages/config`** — `McpServersConfig` (including `proxies` per slug), `buildMcpServersConfig`, dev/prod wiring, root `.env.example` updates. **No per-app env files.**
 3. **`domains/mcp`** — model changes, 35-entry seed, transport enum (`native-http` | `stdio-wrapped`).
 4. **`domains/user-mcp-config`** — unified header-based `CREDENTIAL_MAPPINGS` + generic adapter; delete legacy adapters.
 5. **`services/agent`** — thread `serverUrl`/`transport` via `getModelById`.
-6. **`apps/mcp-servers`** — thin wrapper images (`mcp-key-proxy`, `mcpproxy-go`), 35 MCP Dockerfiles, `docker-compose.yml`. **No custom proxy code.**
-7. **`scripts/migrateMcpServerUrls.ts`** — reads config, upserts catalog.
-8. **READMEs** — document root `.env` → `@vassembly/config` → compose flow; proxy selection per MCP.
+6. **`apps/mcp-servers`** — thin wrapper images (`mcp-key-proxy`, `mcpproxy-go`), MCP Dockerfiles, `docker-compose.yml`. **No custom proxy code.**
+7. **READMEs** — document root `.env` → `@vassembly/config` → compose flow; proxy selection per MCP.
 
-Suggested order: `1 → 2 → (3, 6 in parallel) → 4 → 5 → 7 → 8`.
+Suggested order: `1 → 2 → (3, 6 in parallel) → 4 → 5 → 7`.
 
 **Spike before full rollout:** integrate one `mcp-key-proxy` MCP (e.g. `brave-search-mcp`) and one `mcpproxy-go` MCP (e.g. `wikipedia-mcp`) end-to-end to validate multi-tenant header flow before generating all 35 Dockerfiles.
 
-## 15. Risks and Mitigations
+## 14. Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |---|---|---|

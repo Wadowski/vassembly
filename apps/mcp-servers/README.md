@@ -18,8 +18,4 @@ Platform settings (`MCP_HOST`, `MCP_PROXY_POOL_SIZE`, ports) are loaded via `@va
 
 User credentials are **not** stored in container env — they are sent per-request as HTTP headers from the agent runtime.
 
-After starting containers, run the migration script to set catalog `serverUrl` values:
-
-```bash
-pnpm migrate:mcp-server-urls
-```
+`serverUrl` for agent runtime is resolved from `@vassembly/config` (`config.mcpServers.serverUrls`) when not set on the catalog document.

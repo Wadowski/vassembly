@@ -9,15 +9,58 @@ export interface ToUserMcpConfigDtoParams {
   configSchema?: McpConfigSchema;
 }
 
+export interface CreateNewUserMcpConfigModelParams {
+  userId: string;
+  mcpId: string;
+  fieldValues: Record<string, string | boolean>;
+  id: string;
+  lastTestedAt?: Date;
+  enabled?: boolean;
+}
+
+export interface WithEnabledParams {
+  model: UserMcpConfigModel;
+  enabled: boolean;
+}
+
 export class UserMcpConfigFactory {
   static fromDTO({ input, userId }: { input: CreateUserMcpConfigInput; userId: string }): UserMcpConfigModel {
-    const model = new UserMcpConfigModel();
-    model.userId = userId;
-    model.mcpId = input.mcpId;
-    model.fieldValues = { ...input.fieldValues };
-    model.status = USER_MCP_CONFIG_STATUS.Configured;
-    model.enabled = true;
-    return model;
+    return UserMcpConfigFactory.createNew({
+      userId,
+      mcpId: input.mcpId,
+      fieldValues: input.fieldValues,
+      id: '',
+    });
+  }
+
+  static createNew({
+    userId,
+    mcpId,
+    fieldValues,
+    id,
+    lastTestedAt = new Date(),
+    enabled = true,
+  }: CreateNewUserMcpConfigModelParams): UserMcpConfigModel {
+    return UserMcpConfigFactory.fromPersistence({
+      doc: {
+        id,
+        userId,
+        mcpId,
+        fieldValues,
+        status: USER_MCP_CONFIG_STATUS.Configured,
+        enabled,
+        lastTestedAt,
+      },
+    });
+  }
+
+  static withEnabled({ model, enabled }: WithEnabledParams): UserMcpConfigModel {
+    return UserMcpConfigFactory.fromPersistence({
+      doc: {
+        ...UserMcpConfigFactory.toPersistence({ model }),
+        enabled,
+      },
+    });
   }
 
   static toDTO({ model, configSchema }: ToUserMcpConfigDtoParams): UserMcpConfigResponse {

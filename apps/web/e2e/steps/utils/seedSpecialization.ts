@@ -1,3 +1,4 @@
+import { MCP_SLUG } from '@vassembly/constants';
 import { requireWorkspaceModule } from '@vassembly/e2e';
 
 import { initDomainContext } from './initDomainContext';
@@ -6,7 +7,7 @@ import type { InitDomainContextParams } from './initDomainContext';
 
 const E2E_SYSTEM_ADMIN_ID = 'e2e-system-admin';
 const AGENT_ROLES = ['researcher', 'worker', 'validator'] as const;
-const DEFAULT_LINKED_MCP_SLUGS = ['brave-search-mcp', 'wikipedia-mcp'] as const;
+const DEFAULT_LINKED_MCP_SLUGS = [MCP_SLUG.BraveSearchMcp, MCP_SLUG.WikipediaMcp] as const;
 
 export interface SeedSpecializationParams extends InitDomainContextParams {
   name: string;

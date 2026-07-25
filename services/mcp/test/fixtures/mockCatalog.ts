@@ -2,7 +2,7 @@ import type { McpListItemResponse } from '@vassembly/domain-mcp';
 
 const buildCatalogEntry = (
   overrides: Partial<McpListItemResponse> & Pick<McpListItemResponse, 'id' | 'slug' | 'name'>,
-): McpListItemResponse => ({
+): McpListItemResponse & { serverUrl?: string | null } => ({
   description: 'Test MCP',
   tags: ['test'],
   iconPath: '/mcps/test.svg',
@@ -18,6 +18,7 @@ export const mockWikipediaCatalogEntry = buildCatalogEntry({
   id: 'mcp-wikipedia',
   slug: 'wikipedia-mcp',
   name: 'Wikipedia',
+  serverUrl: 'http://localhost:4110/mcp',
   configSchema: {
     fields: [],
   },
@@ -27,6 +28,7 @@ export const mockBraveCatalogEntry = buildCatalogEntry({
   id: 'mcp-brave',
   slug: 'brave-search-mcp',
   name: 'Brave',
+  serverUrl: 'http://localhost:4109/mcp',
   configSchema: {
     fields: [{ key: 'apiKey', label: 'API Key', type: 'password', required: true }],
   },

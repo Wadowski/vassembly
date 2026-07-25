@@ -2,7 +2,6 @@ import { ConflictError } from '@vassembly/errors';
 import { ObjectId } from 'mongodb';
 
 import { userMcpConfigDao } from '../clients/mongodb';
-import { USER_MCP_CONFIG_STATUS } from '../constants';
 import { UserMcpConfigFactory } from '../model/factory';
 import type { McpConfigSchema } from '../model/configSchema';
 import type { UserMcpConfigModel } from '../model/model';
@@ -28,15 +27,12 @@ export const createUserMcpConfig = async (input: CreateCommandInput): Promise<Us
     throw new ConflictError('Configuration already exists for this MCP');
   }
 
-  const model = UserMcpConfigFactory.fromDTO({
-    input: { mcpId, fieldValues },
+  const model = UserMcpConfigFactory.createNew({
     userId,
+    mcpId,
+    fieldValues: encryptPasswordFields({ fieldValues, schema }),
+    id: new ObjectId().toString(),
   });
-  model.id = new ObjectId().toString();
-  model.status = USER_MCP_CONFIG_STATUS.Configured;
-  model.enabled = true;
-  model.lastTestedAt = new Date();
-  model.fieldValues = encryptPasswordFields({ fieldValues, schema });
 
   const created = await userMcpConfigDao.create({ model: toStoredRecord({ model }) });
 

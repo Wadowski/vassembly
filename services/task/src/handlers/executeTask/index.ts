@@ -11,6 +11,7 @@ import { executionRegistry } from '../../executionRegistry';
 import { buildConversationMessage } from './buildConversationMessage';
 import { buildResumeMessage } from './buildResumeMessage';
 import { createRecordAgentInvokeProgress } from './createRecordAgentInvokeProgress';
+import { createRecordMcpUsageEvent } from './createRecordMcpUsageEvent';
 import { logTaskTransition } from './logTaskTransition';
 import { mapExecutionError } from './mapExecutionError';
 import { TaskExecutionMode } from './types';
@@ -116,6 +117,7 @@ export const executeTask = async ({
           return currentTask.data?.status === TaskStatus.Paused;
         },
         recordAgentInvokeProgress: createRecordAgentInvokeProgress({ taskId, userId, commentId }),
+        recordMcpUsageEvent: createRecordMcpUsageEvent({ taskId, userId, commentId }),
       },
     });
 

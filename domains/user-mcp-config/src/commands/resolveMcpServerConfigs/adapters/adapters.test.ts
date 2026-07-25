@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { MCP_SLUG } from '@vassembly/constants';
 
 import { getMcpRuntimeAdapter } from './index';
 
 describe('MCP runtime adapters', () => {
   it('should map brave search config to HTTP server config with x-api-key header', () => {
-    const adapter = getMcpRuntimeAdapter({ slug: 'brave-search-mcp' });
+    const adapter = getMcpRuntimeAdapter({ slug: MCP_SLUG.BraveSearchMcp });
     const result = adapter.toServerConfig({
       mcpId: 'mcp-brave',
       fieldValues: { apiKey: 'brave-key' },
@@ -20,7 +21,7 @@ describe('MCP runtime adapters', () => {
   });
 
   it('should map wikipedia config to HTTP server config without headers', () => {
-    const adapter = getMcpRuntimeAdapter({ slug: 'wikipedia-mcp' });
+    const adapter = getMcpRuntimeAdapter({ slug: MCP_SLUG.WikipediaMcp });
     const result = adapter.toServerConfig({
       mcpId: 'mcp-wikipedia',
       fieldValues: {},
@@ -35,7 +36,7 @@ describe('MCP runtime adapters', () => {
   });
 
   it('should return null when serverUrl is missing', () => {
-    const adapter = getMcpRuntimeAdapter({ slug: 'wikipedia-mcp' });
+    const adapter = getMcpRuntimeAdapter({ slug: MCP_SLUG.WikipediaMcp });
     const result = adapter.toServerConfig({
       mcpId: 'mcp-wikipedia',
       fieldValues: {},

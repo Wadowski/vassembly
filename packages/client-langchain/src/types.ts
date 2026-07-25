@@ -5,6 +5,7 @@ export interface AiProviderTestResult {
 }
 
 import type { McpServerConfig } from './mcp/types';
+import type { RecordMcpToolCall } from './mcp/recordMcpToolCall';
 
 export interface InternalToolBinding {
   toolId: string;
@@ -19,6 +20,7 @@ export interface AiProviderInvokeParams {
   internalToolBindings?: InternalToolBinding[];
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
+  recordMcpToolCall?: RecordMcpToolCall;
 }
 
 export interface AiProviderInvokeResult {

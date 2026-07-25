@@ -21,6 +21,8 @@
   "dependencies": {
     "@vassembly/constants": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
+    "@vassembly/domain-mcp": "workspace:*",
+    "@vassembly/domain-mcp-usage": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
     "@vassembly/domain-task-comment": "workspace:*",

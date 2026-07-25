@@ -7,13 +7,16 @@ export type TaskActivityFilterGroup =
   | 'agentStarted'
   | 'agentFinished'
   | 'agentFailed'
-  | 'agentWaiting';
+  | 'agentWaiting'
+  | 'mcpUsage';
 
 export type TaskActivityItemKind =
   | 'userComment'
   | 'agentResponse'
   | 'hitlAnswered'
-  | 'progressEvent';
+  | 'progressEvent'
+  | 'mcpInvocationStarted'
+  | 'mcpInvocationCompleted';
 
 export interface TaskActivityProgressEventItem {
   kind: 'progressEvent';
@@ -70,11 +73,44 @@ export interface TaskActivityHitlAnsweredItem {
   answer: string;
 }
 
+export interface TaskActivityMcpInvocationStartedItem {
+  kind: 'mcpInvocationStarted';
+  id: string;
+  occurredAt: string;
+  sortKey: string;
+  filterGroup: 'mcpUsage';
+  commentId: string;
+  usageEventId: string;
+  mcpId: string;
+  mcpName: string;
+  toolName: string;
+  agentId: string;
+}
+
+export interface TaskActivityMcpInvocationCompletedItem {
+  kind: 'mcpInvocationCompleted';
+  id: string;
+  occurredAt: string;
+  sortKey: string;
+  filterGroup: 'mcpUsage';
+  commentId: string;
+  usageEventId: string;
+  mcpId: string;
+  mcpName: string;
+  toolName: string;
+  agentId: string;
+  status: string;
+  durationMs?: number;
+  errorMessage?: string;
+}
+
 export type TaskActivityItem =
   | TaskActivityUserCommentItem
   | TaskActivityAgentResponseItem
   | TaskActivityHitlAnsweredItem
-  | TaskActivityProgressEventItem;
+  | TaskActivityProgressEventItem
+  | TaskActivityMcpInvocationStartedItem
+  | TaskActivityMcpInvocationCompletedItem;
 
 export interface GetTaskActivityTimelineHandlerInput {
   userId: string;

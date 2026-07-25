@@ -4,7 +4,7 @@
     {
       "name": "wikipedia-mcp",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-wikipedia"],
+      "args": ["-y", "wikipedia-mcp"],
       "protocol": "stdio",
       "enabled": true
     }

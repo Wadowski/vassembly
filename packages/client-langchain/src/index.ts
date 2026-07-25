@@ -18,5 +18,5 @@ export type {
   LmStudioProviderParams,
 } from "./types";
 
-export { loadMcpTools, MCP_TOOL_MAX_ITERATIONS } from "./mcp";
-export type { McpServerConfig, LoadMcpToolsParams, LoadMcpToolsResult } from "./mcp";
+export { loadMcpTools, testMcpConnection, MCP_TOOL_MAX_ITERATIONS, MCP_TEST_CONNECTION_TIMEOUT_MS } from "./mcp";
+export type { McpServerConfig, LoadMcpToolsParams, LoadMcpToolsResult, TestMcpConnectionParams, TestMcpConnectionResult } from "./mcp";

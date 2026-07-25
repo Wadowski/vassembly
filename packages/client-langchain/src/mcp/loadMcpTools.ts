@@ -12,8 +12,27 @@ export interface LoadMcpToolsParams {
 
 export interface LoadMcpToolsResult {
   tools: DynamicStructuredTool[];
+  toolNameToServerName: Map<string, string>;
   close: () => Promise<void>;
 }
+
+const loadToolsForServer = async ({
+  client,
+  serverName,
+}: {
+  client: MultiServerMCPClient;
+  serverName: string;
+}): Promise<DynamicStructuredTool[]> => {
+  const getTools = client.getTools.bind(client) as (
+    serverName?: string,
+  ) => Promise<DynamicStructuredTool[]>;
+
+  if (serverName.length > 0) {
+    return getTools(serverName);
+  }
+
+  return getTools();
+};
 
 export const loadMcpTools = async ({
   serverConfigs,
@@ -27,10 +46,39 @@ export const loadMcpTools = async ({
     throwOnLoadError: false,
   });
 
-  const tools = await client.getTools();
+  const toolNameToServerName = new Map<string, string>();
+  const tools: DynamicStructuredTool[] = [];
+
+  if (serverConfigs.length === 1) {
+    const onlyServer = serverConfigs[0]!;
+    const serverTools = await loadToolsForServer({ client, serverName: onlyServer.serverName });
+
+    for (const tool of serverTools) {
+      toolNameToServerName.set(tool.name, onlyServer.serverName);
+      tools.push(tool);
+    }
+  } else {
+    for (const config of serverConfigs) {
+      const serverTools = await loadToolsForServer({ client, serverName: config.serverName });
+
+      for (const tool of serverTools) {
+        toolNameToServerName.set(tool.name, config.serverName);
+        tools.push(tool);
+      }
+    }
+
+    if (tools.length === 0) {
+      const flatTools = await client.getTools();
+
+      for (const tool of flatTools) {
+        tools.push(tool);
+      }
+    }
+  }
 
   return {
     tools,
+    toolNameToServerName,
     close: () => client.close(),
   };
 };

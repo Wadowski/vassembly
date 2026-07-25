@@ -49,6 +49,7 @@ describe('loadMcpTools', () => {
       throwOnLoadError: false,
     });
     expect(result.tools).toEqual([{ name: 'search' }]);
+    expect(result.toolNameToServerName.get('search')).toBe('brave-1');
     await result.close();
     expect(mockClose).toHaveBeenCalled();
   });

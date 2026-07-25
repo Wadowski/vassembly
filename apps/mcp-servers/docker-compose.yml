@@ -1,6 +1,8 @@
 services:
   brave-search-mcp:
     image: ghcr.io/onprem-ai/mcp-key-proxy:latest
+    security_opt:
+      - seccomp=unconfined
     command:
       - '--stdio'
       - 'npx -y @brave/brave-search-mcp-server'
@@ -22,5 +24,7 @@ services:
   wikipedia-mcp:
     build:
       context: ./mcps/wikipedia-mcp
+    security_opt:
+      - seccomp=unconfined
     ports:
       - '${MCP_WIKIPEDIA_PORT:-4110}:8080'

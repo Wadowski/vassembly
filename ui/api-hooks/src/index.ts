@@ -11,12 +11,14 @@ export {
   GET_USER_CONFIGURED_MCPS_QUERY,
   AVAILABLE_TAGS_QUERY,
   MCP_WITH_AGENTS_QUERY,
+  GET_MCP_USAGE_HISTORY_QUERY,
   useMcps,
   useMcpCatalog,
   useMcp,
   useMcpConfiguration,
   useUserConfiguredMcps,
   useMcpWithAgents,
+  useMcpUsageHistory,
   useUnassignMcpFromAgent,
   useSaveMcpConfiguration,
   useUpdateMcpConfiguration,
@@ -48,6 +50,8 @@ export type {
   McpWithAgentsData,
   McpWithAgentsAgent,
   UseMcpWithAgentsResult,
+  UseMcpUsageHistoryResult,
+  McpUsageHistoryItem,
 } from './mcps';
 export * from './specializations';
 export {

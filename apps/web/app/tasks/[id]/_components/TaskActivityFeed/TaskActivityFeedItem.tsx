@@ -6,6 +6,7 @@ import {
   ActivityUserComment,
 } from './activityEmphasizedCard/ActivityEmphasizedCard';
 import { ActivityProgressEventRow } from './activityProgressEventRow/ActivityProgressEventRow';
+import { ActivityMcpInvocationRow } from './activityMcpInvocationRow/ActivityMcpInvocationRow';
 
 export interface TaskActivityFeedItemProps {
   item: TaskActivityItemDto;
@@ -39,6 +40,10 @@ export const TaskActivityFeedItem = ({ item }: TaskActivityFeedItemProps): JSX.E
 
   if (item.kind === 'progressEvent') {
     return <ActivityProgressEventRow item={item} />;
+  }
+
+  if (item.kind === 'mcpInvocationStarted' || item.kind === 'mcpInvocationCompleted') {
+    return <ActivityMcpInvocationRow item={item} />;
   }
 
   return null;

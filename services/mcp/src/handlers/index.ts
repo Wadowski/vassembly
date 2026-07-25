@@ -9,7 +9,9 @@ export { deleteUserMcpConfiguration } from './deleteUserMcpConfiguration';
 export { testMcpConnection } from './testMcpConnection';
 export { enrichMcpListWithUserStatus } from './enrichMcpListWithUserStatus';
 export { setUserMcpEnabled } from './setUserMcpEnabled';
+export { getMcpUsageHistory } from './getMcpUsageHistory';
 
 export type { ListMcpsInput, ListMcpsResult, ServiceContext } from './listMcps/types';
+export type { GetMcpUsageHistoryInput, GetMcpUsageHistoryResult } from './getMcpUsageHistory/types';
 export type { GetAvailableTagsInput, GetAvailableTagsResult } from './getAvailableTags/types';
 export type { GetMcpInput, GetMcpResult } from './getMcp/types';

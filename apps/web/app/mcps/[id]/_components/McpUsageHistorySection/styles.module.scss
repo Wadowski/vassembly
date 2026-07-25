@@ -1,0 +1,68 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.emptyText {
+  color: var(--color-text-secondary, #666);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item {
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.toolName {
+  font-weight: 600;
+}
+
+.status {
+  text-transform: capitalize;
+}
+
+.context,
+.timestamps {
+  color: var(--color-text-secondary, #666);
+  margin-top: 0.25rem;
+}
+
+.error {
+  color: var(--color-danger, #c00);
+  margin-top: 0.25rem;
+}
+
+.inputSection {
+  margin-top: 0.5rem;
+}
+
+.inputToggle {
+  background: none;
+  border: none;
+  color: var(--color-link, #06c);
+  cursor: pointer;
+  padding: 0;
+}
+
+.input {
+  margin-top: 0.5rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.75rem;
+  background: var(--color-surface-muted, #f5f5f5);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}

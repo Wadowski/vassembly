@@ -40,6 +40,13 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
       integrationName: t.exposeString('integrationName', { nullable: true }),
       provider: t.exposeString('provider', { nullable: true }),
       model: t.exposeString('model', { nullable: true }),
+      usageEventId: t.exposeString('usageEventId', { nullable: true }),
+      mcpId: t.exposeString('mcpId', { nullable: true }),
+      mcpName: t.exposeString('mcpName', { nullable: true }),
+      toolName: t.exposeString('toolName', { nullable: true }),
+      status: t.exposeString('status', { nullable: true }),
+      durationMs: t.exposeInt('durationMs', { nullable: true }),
+      errorMessage: t.exposeString('errorMessage', { nullable: true }),
     }),
   });
 
@@ -81,20 +88,34 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
             .filter((item) => item.kind === 'progressEvent')
             .map((item) => item.agentId);
 
+          const mcpAgentIds = timeline.items
+            .filter(
+              (item) =>
+                item.kind === 'mcpInvocationStarted' || item.kind === 'mcpInvocationCompleted',
+            )
+            .map((item) => item.agentId);
+
           const agentNameById = await resolveAgentDisplayNames({
-            agentIds: progressAgentIds,
+            agentIds: [...progressAgentIds, ...mcpAgentIds],
             userId,
           });
 
           const items = timeline.items.map((item) => {
-            if (item.kind !== 'progressEvent') {
-              return item;
+            if (item.kind === 'progressEvent') {
+              return {
+                ...item,
+                agentName: agentNameById.get(item.agentId) ?? 'Unknown agent',
+              };
             }
 
-            return {
-              ...item,
-              agentName: agentNameById.get(item.agentId) ?? 'Unknown agent',
-            };
+            if (item.kind === 'mcpInvocationStarted' || item.kind === 'mcpInvocationCompleted') {
+              return {
+                ...item,
+                agentName: agentNameById.get(item.agentId) ?? 'Unknown agent',
+              };
+            }
+
+            return item;
           });
 
           return { items };
