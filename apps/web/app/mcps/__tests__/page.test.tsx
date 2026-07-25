@@ -27,6 +27,31 @@ vi.mock('next/navigation', () => ({
   useSearchParams: (): URLSearchParams => new URLSearchParams(),
 }));
 
+vi.mock('next/link', () => ({
+  default: ({
+    href,
+    children,
+    onClick,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+  }) => (
+    <a
+      href={href}
+      onClick={(event) => {
+        event.preventDefault();
+        onClick?.(event);
+        mockPush(href);
+      }}
+      {...props}
+    >
+      {children}
+    </a>
+  ),
+}));
+
 vi.mock('@vassembly/ui-user-auth', () => ({
   useUserAuth: vi.fn(() => ({
     isAuthenticated: true,
@@ -44,6 +69,17 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
     useMcps: (...args: unknown[]) => mockUseMcps(...args),
     useMcpCatalog: (...args: unknown[]) => mockUseMcpCatalog(...args),
     useAvailableTags: (...args: unknown[]) => mockUseAvailableTags(...args),
+    useSetMcpEnabled: vi.fn(() => [
+      vi.fn().mockResolvedValue(undefined),
+      { loading: false, error: null },
+    ]),
+    useHttpClient: vi.fn(() => ({
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      patch: vi.fn(),
+      delete: vi.fn(),
+    })),
   };
 });
 
@@ -91,9 +127,11 @@ describe('McpsPage', () => {
     it('should show YOUR MCPs section when user has configured MCPs', () => {
       render(<McpsPage />);
 
+      const yourMcpsSection = screen.getByRole('region', { name: /your mcps/i });
+
       expect(screen.getByRole('heading', { name: /your mcps/i, level: 2 })).not.toBeNull();
-      expect(screen.getByText(/gmail mcp/i)).not.toBeNull();
-      expect(screen.getByText(/brave search mcp/i)).not.toBeNull();
+      expect(within(yourMcpsSection).getByText(/gmail mcp/i)).not.toBeNull();
+      expect(within(yourMcpsSection).getByText(/brave search mcp/i)).not.toBeNull();
     });
 
     it('should show empty state message when no configurations exist', () => {
@@ -191,7 +229,8 @@ describe('McpsPage', () => {
       render(<McpsPage />);
 
       const discoverSection = screen.getByRole('region', { name: /discover/i });
-      await user.click(within(discoverSection).getByRole('link', { name: /gmail mcp/i }));
+      const gmailLinks = within(discoverSection).getAllByRole('link', { name: /configure gmail mcp/i });
+      await user.click(gmailLinks[0]!);
 
       expect(mockPush).toHaveBeenCalledWith('/mcps/mcp-gmail');
     });
@@ -261,11 +300,13 @@ describe('McpsPage', () => {
     it('should call useUserConfiguredMcps and render configured MCP data', () => {
       render(<McpsPage />);
 
+      const yourMcpsSection = screen.getByRole('region', { name: /your mcps/i });
+
       expect(mockUseUserConfiguredMcps).toHaveBeenCalled();
       MOCK_USER_CONFIGURED_MCPS.forEach((config) => {
         const mcp = MOCK_CONFIGURED_MCP_LOOKUP[config.mcpId];
         if (mcp !== undefined) {
-          expect(screen.getByText(mcp.name)).not.toBeNull();
+          expect(within(yourMcpsSection).getByText(mcp.name)).not.toBeNull();
         }
       });
     });
