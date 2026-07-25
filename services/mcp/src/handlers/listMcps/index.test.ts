@@ -115,7 +115,7 @@ describe('listMcps handler', () => {
 
   describe('configuration status enrichment', () => {
     it('should populate configurationStatus on each MCP when catalog fetch succeeds', async () => {
-      const configuredMcp = buildMcpItem({ id: 'mcp-gmail', slug: 'google-workspace-mcp' });
+      const configuredMcp = buildMcpItem({ id: 'mcp-wikipedia', slug: 'wikipedia-mcp' });
       const pendingMcp = buildMcpItem({ id: 'mcp-brave', slug: 'brave-search-mcp' });
 
       mockGetList.mockResolvedValue(
@@ -132,7 +132,7 @@ describe('listMcps handler', () => {
       const result = await listMcps({ page: 0, size: 20 }, buildContext());
 
       expect(result.items).toEqual([
-        expect.objectContaining({ id: 'mcp-gmail', configurationStatus: 'configured' }),
+        expect.objectContaining({ id: 'mcp-wikipedia', configurationStatus: 'configured' }),
         expect.objectContaining({ id: 'mcp-brave', configurationStatus: 'pending' }),
       ]);
       expect(result.total).toBe(2);

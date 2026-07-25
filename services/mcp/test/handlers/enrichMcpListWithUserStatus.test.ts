@@ -37,7 +37,9 @@ describe('enrichMcpListWithUserStatus', () => {
       const brave = result.find((mcp) => mcp.id === 'mcp-brave');
 
       expect(gmail?.configurationStatus).toBe('configured');
+      expect(gmail?.enabled).toBe(true);
       expect(brave?.configurationStatus).toBe('pending');
+      expect(brave?.enabled).toBe(false);
     });
   });
 

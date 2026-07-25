@@ -29,3 +29,5 @@ export { setupUserMcpConfigIndexes, UserMcpConfigDAO } from './clients/mongodb';
 export type { McpServerConfig } from './commands/resolveMcpServerConfigs/types';
 export * from './types';
 export * from './constants';
+export { mcpRequiresConfiguration } from './utils/mcpRequiresConfiguration';
+export type { McpRequiresConfigurationParams } from './utils/mcpRequiresConfiguration';

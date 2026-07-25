@@ -106,6 +106,7 @@ describe('createUserMcpConfig', () => {
       expect(created.userId).toBe(mockUserId);
       expect(created.mcpId).toBe(mockMcpId);
       expect(created.status).toBe('configured');
+      expect(created.enabled).toBe(true);
       expect(created.createdAt).toBeDefined();
     });
 

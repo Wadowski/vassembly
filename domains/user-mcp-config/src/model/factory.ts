@@ -16,6 +16,7 @@ export class UserMcpConfigFactory {
     model.mcpId = input.mcpId;
     model.fieldValues = { ...input.fieldValues };
     model.status = USER_MCP_CONFIG_STATUS.Configured;
+    model.enabled = true;
     return model;
   }
 
@@ -30,6 +31,7 @@ export class UserMcpConfigFactory {
       mcpId: model.mcpId,
       fieldValues: model.fieldValues,
       status: model.status,
+      enabled: model.enabled,
       lastTestedAt: model.lastTestedAt,
       lastConnectionError: model.lastConnectionError,
       createdAt: model.createdAt,
@@ -50,6 +52,7 @@ export class UserMcpConfigFactory {
     model.mcpId = doc.mcpId as string;
     model.fieldValues = (doc.fieldValues as Record<string, string | boolean>) ?? {};
     model.status = doc.status as UserMcpConfigModel['status'];
+    model.enabled = doc.enabled === undefined ? true : Boolean(doc.enabled);
     model.lastTestedAt = doc.lastTestedAt ? new Date(doc.lastTestedAt as string | Date) : undefined;
     model.lastConnectionError = (doc.lastConnectionError as string | null | undefined) ?? undefined;
     model.createdAt = doc.createdAt ? new Date(doc.createdAt as string | Date) : undefined;

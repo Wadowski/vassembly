@@ -1,10 +1,12 @@
 'use client';
 
 import type { MouseEvent } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
+import { Button } from '@vassembly/ui-system-design/button';
+import { Switch } from '@vassembly/ui-system-design/switch';
 import { Tag } from '@vassembly/ui-system-design/tag';
 import { Text } from '@vassembly/ui-system-design/text';
 
@@ -16,23 +18,42 @@ import type { McpListItemProps } from './types';
 const DEFAULT_ICON_SIZE = 40;
 
 /**
- * Card displaying MCP summary with optional status badge and navigation to detail page.
+ * Card displaying MCP summary with optional status badge and enable toggle.
  */
 export const McpListItem = ({
   mcp,
   statusBadge,
   iconSize = DEFAULT_ICON_SIZE,
-  isTitleAriaHidden = false,
+  isToggleLoading = false,
+  onToggleEnabled,
 }: McpListItemProps): JSX.Element => {
-  const router = useRouter();
   const resolvedBadge = statusBadge ?? mcp.configurationStatus ?? 'pending';
+  const isEnabled = mcp.enabled ?? false;
+  const requiresConfiguration = mcp.requiresConfiguration ?? false;
+  const canEnable = !requiresConfiguration || resolvedBadge === 'configured';
+  const isToggleDisabled = isToggleLoading || (!isEnabled && !canEnable);
+  const [enabled, setEnabled] = useState(isEnabled);
 
-  const handleNavigate = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>): void => {
-      event.preventDefault();
-      router.push(`/mcps/${mcp.id}`);
+  useEffect(() => {
+    setEnabled(isEnabled);
+  }, [isEnabled]);
+
+  const handleToggle = useCallback(
+    (nextEnabled: boolean): void => {
+      if (onToggleEnabled === undefined) {
+        return;
+      }
+
+      const previousEnabled = enabled;
+      setEnabled(nextEnabled);
+
+      void onToggleEnabled({ mcpId: mcp.id, enabled: nextEnabled }).then((success) => {
+        if (!success) {
+          setEnabled(previousEnabled);
+        }
+      });
     },
-    [mcp.id, router],
+    [enabled, mcp.id, onToggleEnabled],
   );
 
   const handleExternalLinkClick = useCallback((event: MouseEvent<HTMLAnchorElement>): void => {
@@ -40,12 +61,8 @@ export const McpListItem = ({
   }, []);
 
   return (
-    <a
-      href={`/mcps/${mcp.id}`}
-      className={styles.card}
-      aria-label={`Configure ${mcp.name}`}
-      onClick={handleNavigate}
-    >
+    <div className={styles.card} data-enabled={enabled}>
+      <Link href={`/mcps/${mcp.id}`} className={styles.contentLink} aria-label={`Configure ${mcp.name}`}>
         <div className={styles.header}>
           {/* eslint-disable-next-line @next/next/no-img-element -- MCP icons are served from arbitrary external URLs */}
           <img
@@ -56,11 +73,9 @@ export const McpListItem = ({
             height={iconSize}
           />
           <div className={styles.titleRow}>
-            {isTitleAriaHidden ? null : (
-              <Text variant="h3" as="h3" className={styles.name}>
-                {mcp.name}
-              </Text>
-            )}
+            <Text variant="h3" as="h3" className={styles.name}>
+              {mcp.name}
+            </Text>
             <McpStatusBadge variant={resolvedBadge} />
           </div>
         </div>
@@ -98,6 +113,29 @@ export const McpListItem = ({
             </a>
           ) : null}
         </div>
-    </a>
+      </Link>
+      <div className={styles.footer}>
+        {requiresConfiguration ? (
+          <Button
+            as="a"
+            variant="text"
+            size="small"
+            color="secondary"
+            text="Configure"
+            href={`/mcps/${mcp.id}`}
+            aria-label={`Configure ${mcp.name}`}
+          />
+        ) : null}
+        <div className={styles.footerToggle}>
+          <Switch
+            isChecked={enabled}
+            label={enabled ? 'Enabled' : 'Disabled'}
+            isDisabled={isToggleDisabled}
+            isLoading={isToggleLoading}
+            onChange={handleToggle}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

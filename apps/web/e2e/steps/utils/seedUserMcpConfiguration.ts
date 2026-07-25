@@ -12,12 +12,7 @@ const MCP_FIELD_VALUES_BY_SLUG: Record<string, Record<string, string | boolean>>
   'brave-search-mcp': {
     apiKey: 'e2e-test-api-key',
   },
-  'google-workspace-mcp': {
-    clientId: 'e2e-client-id',
-    clientSecret: 'e2e-client-secret',
-    scopes: 'full',
-    acceptTerms: true,
-  },
+  'wikipedia-mcp': {},
 };
 
 export const seedUserMcpConfiguration = async ({

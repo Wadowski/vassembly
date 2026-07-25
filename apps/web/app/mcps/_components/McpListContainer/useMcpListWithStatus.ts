@@ -3,18 +3,19 @@
 import { useMemo } from 'react';
 
 import type { McpConfigurationStatus, McpListItem } from '@vassembly/ui-api-hooks';
-import { useMcps, useUserConfiguredMcps } from '@vassembly/ui-api-hooks';
+import { useMcps } from '@vassembly/ui-api-hooks';
 
 import { useMcpList } from './useMcpList';
 
 export interface McpListItemWithStatus extends McpListItem {
   configurationStatus: McpConfigurationStatus;
+  enabled: boolean;
+  requiresConfiguration: boolean;
 }
 
 export interface UseMcpListWithStatusResult {
   list: ReturnType<typeof useMcpList>;
   itemsWithStatus: McpListItemWithStatus[];
-  configuredMcpIds: Set<string>;
 }
 
 const sortByConfigurationStatus = (items: McpListItemWithStatus[]): McpListItemWithStatus[] =>
@@ -36,31 +37,38 @@ const sortByConfigurationStatus = (items: McpListItemWithStatus[]): McpListItemW
 export const useMcpListWithStatus = (): UseMcpListWithStatusResult => {
   const list = useMcpList();
   const { data: allMcpsData } = useMcps();
-  const { data: configuredData } = useUserConfiguredMcps();
-
-  const configuredMcpIds = useMemo(
-    () => new Set(configuredData?.mcps.map((config) => config.mcpId) ?? []),
-    [configuredData?.mcps],
-  );
 
   const statusLookup = useMemo(() => {
-    const lookup = new Map<string, McpConfigurationStatus>();
+    const lookup = new Map<
+      string,
+      Pick<McpListItemWithStatus, 'configurationStatus' | 'enabled' | 'requiresConfiguration'>
+    >();
 
     for (const mcp of allMcpsData?.mcps ?? []) {
-      lookup.set(mcp.id, mcp.configurationStatus);
+      lookup.set(mcp.id, {
+        configurationStatus: mcp.configurationStatus,
+        enabled: mcp.enabled,
+        requiresConfiguration: mcp.requiresConfiguration,
+      });
     }
 
     return lookup;
   }, [allMcpsData?.mcps]);
 
   const itemsWithStatus = useMemo((): McpListItemWithStatus[] => {
-    const enriched = list.items.map((item) => ({
-      ...item,
-      configurationStatus: statusLookup.get(item.id) ?? 'pending',
-    }));
+    const enriched = list.items.map((item) => {
+      const userStatus = statusLookup.get(item.id);
+
+      return {
+        ...item,
+        configurationStatus: userStatus?.configurationStatus ?? 'pending',
+        enabled: userStatus?.enabled ?? false,
+        requiresConfiguration: userStatus?.requiresConfiguration ?? false,
+      };
+    });
 
     return sortByConfigurationStatus(enriched);
   }, [list.items, statusLookup]);
 
-  return { list, itemsWithStatus, configuredMcpIds };
+  return { list, itemsWithStatus };
 };

@@ -3,6 +3,7 @@ import type { McpServerConfig } from '../types';
 export interface McpRuntimeAdapterParams {
   mcpId: string;
   fieldValues: Record<string, string | boolean>;
+  serverUrl?: string | null;
 }
 
 export interface McpRuntimeAdapter {

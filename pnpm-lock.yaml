@@ -189,6 +189,8 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
+  apps/mcp-servers: {}
+
   apps/web:
     dependencies:
       '@types/react-syntax-highlighter':
@@ -985,6 +987,9 @@ importers:
       '@vassembly/client-mongodb':
         specifier: workspace:*
         version: link:../../packages/client-mongodb
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@vassembly/domain-mcp':
         specifier: workspace:*
         version: link:../mcp
@@ -1540,6 +1545,10 @@ importers:
         version: 2.1.9(@types/node@22.20.1)(jsdom@20.0.3)(sass@1.101.6)(terser@5.49.0)
 
   packages/config:
+    dependencies:
+      '@vassembly/constants':
+        specifier: workspace:*
+        version: link:../constants
     devDependencies:
       '@types/node':
         specifier: ^22.19.7

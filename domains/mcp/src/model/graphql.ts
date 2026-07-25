@@ -15,6 +15,8 @@ export const gqlMcpSchema = (builder: Builder): void => {
       documentationUrl: t.exposeString('documentationUrl', { nullable: true }),
       repositoryUrl: t.exposeString('repositoryUrl', { nullable: true }),
       configurationStatus: t.exposeString('configurationStatus', { nullable: true }),
+      enabled: t.exposeBoolean('enabled', { nullable: true }),
+      requiresConfiguration: t.exposeBoolean('requiresConfiguration', { nullable: true }),
       agentUsageCount: t.exposeInt('agentUsageCount', { nullable: true }),
       specializationIds: t.field({
         type: graphQLListType('String'),
@@ -77,6 +79,7 @@ export const gqlMcpSchema = (builder: Builder): void => {
       userId: t.exposeString('userId'),
       mcpId: t.exposeString('mcpId'),
       status: t.exposeString('status'),
+      enabled: t.exposeBoolean('enabled'),
       lastTestedAt: t.exposeString('lastTestedAt', { nullable: true }),
       createdAt: t.exposeString('createdAt'),
       updatedAt: t.exposeString('updatedAt'),

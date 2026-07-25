@@ -1,53 +1,15 @@
 [
   {
-    "slug": "google-workspace-mcp",
-    "name": "Gmail MCP",
-    "description": "Complete email management, calendar, documents, sheets, slides, forms, and chat integration",
-    "tags": ["productivity", "email", "google-workspace", "calendar", "documents"],
-    "iconPath": "/mcps/gmail.svg",
-    "documentationUrl": "https://glama.ai/mcp/servers/taylorwilsdon/google_workspace_mcp",
-    "repositoryUrl": "https://github.com/taylorwilsdon/google_workspace_mcp",
-    "configSchema": {
-      "fields": [
-        {
-          "key": "clientId",
-          "label": "Client ID",
-          "type": "text",
-          "required": true
-        },
-        {
-          "key": "clientSecret",
-          "label": "Client Secret",
-          "type": "password",
-          "required": true
-        },
-        {
-          "key": "scopes",
-          "label": "Access Level",
-          "type": "select",
-          "required": true,
-          "options": [
-            { "value": "readonly", "label": "Read only" },
-            { "value": "full", "label": "Full access" }
-          ]
-        },
-        {
-          "key": "acceptTerms",
-          "label": "I accept the provider terms",
-          "type": "checkbox",
-          "required": true
-        }
-      ]
-    }
-  },
-  {
     "slug": "brave-search-mcp",
     "name": "Brave Search MCP",
-    "description": "Comprehensive search capabilities including web search, local business search, image search, video search, news search, and AI-powered summarization",
+    "description": "Web search, news, images, and AI-powered summarization via Brave Search",
     "tags": ["search", "web", "ai-summary", "news", "images"],
     "iconPath": "/mcps/brave-search.svg",
-    "documentationUrl": "https://glama.ai/mcp/servers/brave/brave-search-mcp-server",
+    "documentationUrl": "https://github.com/brave/brave-search-mcp-server",
     "repositoryUrl": "https://github.com/brave/brave-search-mcp-server",
+    "category": "search",
+    "transport": "stdio-wrapped",
+    "dockerImage": "ghcr.io/onprem-ai/mcp-key-proxy:latest",
     "configSchema": {
       "fields": [
         {
@@ -57,72 +19,23 @@
           "description": "Your Brave Search API key",
           "required": true,
           "placeholder": "Enter your Brave Search API key"
-        },
-        {
-          "key": "transport",
-          "label": "Transport Mode",
-          "type": "select",
-          "description": "Transport mode for MCP server",
-          "defaultValue": "stdio",
-          "options": [
-            { "value": "stdio", "label": "STDIO (Default)" },
-            { "value": "http", "label": "HTTP" }
-          ]
-        },
-        {
-          "key": "port",
-          "label": "Port",
-          "type": "text",
-          "description": "HTTP server port (default: 8000)",
-          "placeholder": "8000",
-          "pattern": "^[0-9]{1,5}$"
-        },
-        {
-          "key": "host",
-          "label": "Host",
-          "type": "text",
-          "description": "HTTP server host (default: 0.0.0.0)",
-          "placeholder": "0.0.0.0"
-        },
-        {
-          "key": "logLevel",
-          "label": "Log Level",
-          "type": "select",
-          "description": "Desired logging level",
-          "defaultValue": "info",
-          "options": [
-            { "value": "debug", "label": "Debug" },
-            { "value": "info", "label": "Info" },
-            { "value": "notice", "label": "Notice" },
-            { "value": "warning", "label": "Warning" },
-            { "value": "error", "label": "Error" },
-            { "value": "critical", "label": "Critical" },
-            { "value": "alert", "label": "Alert" },
-            { "value": "emergency", "label": "Emergency" }
-          ]
-        },
-        {
-          "key": "enabledTools",
-          "label": "Enabled Tools",
-          "type": "text",
-          "description": "Space-separated whitelist of tools to enable (e.g., \"brave_web_search brave_news_search\")",
-          "placeholder": "Leave empty to enable all tools"
-        },
-        {
-          "key": "disabledTools",
-          "label": "Disabled Tools",
-          "type": "text",
-          "description": "Space-separated blacklist of tools to disable (e.g., \"brave_image_search\")",
-          "placeholder": "Leave empty to disable no tools"
-        },
-        {
-          "key": "stateless",
-          "label": "Stateless Mode",
-          "type": "checkbox",
-          "description": "HTTP stateless mode (recommended for Amazon Bedrock)",
-          "defaultValue": true
         }
       ]
+    }
+  },
+  {
+    "slug": "wikipedia-mcp",
+    "name": "Wikipedia MCP",
+    "description": "Search and retrieve articles from Wikipedia",
+    "tags": ["search", "knowledge", "wikipedia"],
+    "iconPath": "/mcps/brave-search.svg",
+    "documentationUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/wikipedia",
+    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
+    "category": "search",
+    "transport": "stdio-wrapped",
+    "dockerImage": "vassembly/mcp-wikipedia-mcp:local",
+    "configSchema": {
+      "fields": []
     }
   }
 ]

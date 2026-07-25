@@ -34,6 +34,7 @@ export const createUserMcpConfig = async (input: CreateCommandInput): Promise<Us
   });
   model.id = new ObjectId().toString();
   model.status = USER_MCP_CONFIG_STATUS.Configured;
+  model.enabled = true;
   model.lastTestedAt = new Date();
   model.fieldValues = encryptPasswordFields({ fieldValues, schema });
 

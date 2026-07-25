@@ -55,6 +55,7 @@ export const getUserMcpConfig = async (
       configSchema,
     }),
     status: record.status,
+    enabled: record.enabled ?? true,
     lastTestedAt: record.lastTestedAt?.toISOString(),
     createdAt: record.createdAt?.toISOString() ?? '',
     updatedAt: record.updatedAt?.toISOString() ?? '',

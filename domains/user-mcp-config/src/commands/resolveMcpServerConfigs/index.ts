@@ -10,7 +10,7 @@ export const resolveMcpServerConfigs = async (
   const serverConfigs: ResolveMcpServerConfigsResult['serverConfigs'] = [];
   const skippedMcpIds: string[] = [];
 
-  for (const { mcpId, slug } of params.mcpConfigs) {
+  for (const { mcpId, slug, serverUrl } of params.mcpConfigs) {
     const config = await getUserMcpConfigModel({
       userId: params.userId,
       mcpId,
@@ -23,7 +23,11 @@ export const resolveMcpServerConfigs = async (
 
     const decodedFieldValues = decodeEncryptedFieldValues(config.fieldValues ?? {});
     const adapter = getMcpRuntimeAdapter({ slug });
-    const serverConfig = adapter.toServerConfig({ mcpId, fieldValues: decodedFieldValues });
+    const serverConfig = adapter.toServerConfig({
+      mcpId,
+      fieldValues: decodedFieldValues,
+      serverUrl,
+    });
 
     if (!serverConfig) {
       skippedMcpIds.push(mcpId);

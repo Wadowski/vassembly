@@ -17,6 +17,7 @@
   "dependencies": {
     "@vassembly/client-encoder": "workspace:*",
     "@vassembly/client-mongodb": "workspace:*",
+    "@vassembly/constants": "workspace:*",
     "@vassembly/domain-mcp": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/model": "workspace:*",

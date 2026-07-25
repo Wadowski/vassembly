@@ -25,6 +25,7 @@ export const getUserMcpConfigs = async (
           mcpId: record.mcpId,
           fieldValues: record.fieldValues,
           status: record.status,
+          enabled: record.enabled,
           lastTestedAt: record.lastTestedAt,
           createdAt: record.createdAt,
           updatedAt: record.updatedAt,

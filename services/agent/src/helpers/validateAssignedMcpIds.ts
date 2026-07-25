@@ -23,6 +23,10 @@ export const validateAssignedMcpIds = async ({
       if (config === null) {
         throw new WrongParamError(`MCP ${mcpId} is not configured`);
       }
+
+      if (!config.enabled) {
+        throw new WrongParamError(`MCP ${mcpId} is disabled`);
+      }
     }),
   );
 };

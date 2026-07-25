@@ -57,6 +57,28 @@ export interface PlatformAiConfig {
   organizationId?: string;
 }
 
+export type McpTransport = 'native-http' | 'stdio-wrapped';
+
+export type McpProxyKind = 'none' | 'mcp-key-proxy' | 'mcpproxy-go' | 'fastmcp';
+
+export interface McpServerContainerConfig {
+  port: number;
+  transport: McpTransport;
+  proxy: McpProxyKind;
+  dockerImage: string;
+  platformEnv: Record<string, string>;
+}
+
+export interface McpServersConfig {
+  serverUrls: Record<string, string>;
+  containers: Record<string, McpServerContainerConfig>;
+  defaults: {
+    logLevel: string;
+    host: string;
+    proxyPoolSize: number;
+  };
+}
+
 export interface Config {
   environment: Environment;
   apps: {
@@ -73,6 +95,7 @@ export interface Config {
   encoder: EncoderConfig;
   jwt: JwtConfig;
   skills: SkillsConfig;
+  mcpServers: McpServersConfig;
   services: {
     api: ServiceConfig;
   };

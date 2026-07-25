@@ -16,6 +16,7 @@ export { useSaveMcpConfiguration } from './useSaveMcpConfiguration';
 export { useUpdateMcpConfiguration } from './useUpdateMcpConfiguration';
 export { useDeleteMcpConfiguration } from './useDeleteMcpConfiguration';
 export { useTestMcpConnection } from './useTestMcpConnection';
+export { useSetMcpEnabled } from './useSetMcpEnabled';
 export { useAvailableTags } from './useAvailableTags';
 export type {
   McpListItem,
@@ -30,6 +31,8 @@ export type {
   DeleteConfigInput,
   TestConnectionInput,
   TestConnectionResult,
+  SetMcpEnabledInput,
+  SetMcpEnabledResponse,
   McpConfiguration,
   McpConfigurationStatus,
   McpConfigSchemaField,

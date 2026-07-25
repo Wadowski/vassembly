@@ -7,13 +7,13 @@ const {
   mockResolveAndBuildClient,
   mockResolveMcpServerConfigs,
   mockInvoke,
-  mockResolveMcpSlugs,
+  mockResolveMcpRuntimeMetadata,
 } = vi.hoisted(() => ({
   mockGetById: vi.fn(),
   mockResolveAndBuildClient: vi.fn(),
   mockResolveMcpServerConfigs: vi.fn(),
   mockInvoke: vi.fn(),
-  mockResolveMcpSlugs: vi.fn(),
+  mockResolveMcpRuntimeMetadata: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-agent', async () => {
@@ -54,8 +54,8 @@ vi.mock('@vassembly/domain-user-mcp-config', () => ({
   },
 }));
 
-vi.mock('../../helpers/resolveMcpSlugs', () => ({
-  resolveMcpSlugs: mockResolveMcpSlugs,
+vi.mock('../../helpers/resolveMcpRuntimeMetadata', () => ({
+  resolveMcpRuntimeMetadata: mockResolveMcpRuntimeMetadata,
 }));
 
 import { invokePersonalAgent } from './index';
@@ -85,7 +85,12 @@ describe('invokePersonalAgent handler', () => {
       },
     });
     mockResolveAndBuildClient.mockResolvedValue(RESOLVE_RESULT);
-    mockResolveMcpSlugs.mockResolvedValue({ 'mcp-1': 'brave-search-mcp' });
+    mockResolveMcpRuntimeMetadata.mockResolvedValue({
+      'mcp-1': {
+        slug: 'brave-search-mcp',
+        serverUrl: 'http://localhost:4109/mcp',
+      },
+    });
     mockResolveMcpServerConfigs.mockResolvedValue({
       serverConfigs: [
         {

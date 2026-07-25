@@ -1,4 +1,5 @@
 import type { McpConfigSchema } from '../model/configSchema';
+import type { McpTransportValue } from '../model/transport';
 
 export interface McpSeedEntry {
   slug: string;
@@ -8,6 +9,9 @@ export interface McpSeedEntry {
   iconPath: string;
   documentationUrl?: string;
   repositoryUrl?: string;
+  category?: string;
+  transport: McpTransportValue;
+  dockerImage?: string;
   configSchema?: McpConfigSchema;
 }
 

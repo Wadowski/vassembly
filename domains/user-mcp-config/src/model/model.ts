@@ -14,6 +14,8 @@ export class UserMcpConfigModel extends Model {
 
   status!: UserMcpConfigStatusValue;
 
+  enabled!: boolean;
+
   lastTestedAt?: Date;
 
   lastConnectionError?: string | null;

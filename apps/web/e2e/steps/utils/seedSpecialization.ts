@@ -6,7 +6,7 @@ import type { InitDomainContextParams } from './initDomainContext';
 
 const E2E_SYSTEM_ADMIN_ID = 'e2e-system-admin';
 const AGENT_ROLES = ['researcher', 'worker', 'validator'] as const;
-const DEFAULT_LINKED_MCP_SLUGS = ['brave-search-mcp', 'google-workspace-mcp'] as const;
+const DEFAULT_LINKED_MCP_SLUGS = ['brave-search-mcp', 'wikipedia-mcp'] as const;
 
 export interface SeedSpecializationParams extends InitDomainContextParams {
   name: string;

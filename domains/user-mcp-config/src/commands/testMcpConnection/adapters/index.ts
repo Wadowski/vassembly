@@ -1,5 +1,5 @@
 import { braveSearchMcpAdapter } from './brave-search-mcp';
-import { googleWorkspaceMcpAdapter } from './google-workspace-mcp';
+import { wikipediaMcpAdapter } from './wikipedia-mcp';
 
 import type { McpTestAdapter, McpTestAdapterParams, McpTestAdapterResult } from './types';
 
@@ -20,8 +20,8 @@ const defaultAdapter: McpTestAdapter = {
 };
 
 const ADAPTERS: Record<string, McpTestAdapter> = {
-  'google-workspace-mcp': googleWorkspaceMcpAdapter,
   'brave-search-mcp': braveSearchMcpAdapter,
+  'wikipedia-mcp': wikipediaMcpAdapter,
 };
 
 export interface GetMcpTestAdapterParams {

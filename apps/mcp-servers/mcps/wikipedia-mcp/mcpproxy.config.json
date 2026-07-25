@@ -1,0 +1,12 @@
+{
+  "listen": "0.0.0.0:8080",
+  "mcpServers": [
+    {
+      "name": "wikipedia-mcp",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-wikipedia"],
+      "protocol": "stdio",
+      "enabled": true
+    }
+  ]
+}

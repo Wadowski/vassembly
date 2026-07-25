@@ -7,6 +7,8 @@ export interface EnrichMcpListInput {
 
 export type EnrichedMcpListItem = McpListItemResponse & {
   configurationStatus: 'configured' | 'pending';
+  enabled: boolean;
+  requiresConfiguration: boolean;
 };
 
 export interface EnrichMcpListWithUserStatusParams {

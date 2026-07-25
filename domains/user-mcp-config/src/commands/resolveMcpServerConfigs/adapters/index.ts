@@ -1,18 +1,16 @@
-import { braveSearchMcpRuntimeAdapter } from './brave-search-mcp';
-import { googleWorkspaceMcpRuntimeAdapter } from './google-workspace-mcp';
+import { CREDENTIAL_MAPPINGS } from './credentialMappings';
+import { createGenericAdapter } from './genericAdapter';
 
 import type { McpRuntimeAdapter } from './types';
 
-export type { McpRuntimeAdapter, McpRuntimeAdapterParams, McpServerConfig } from './types';
+const defaultAdapter: McpRuntimeAdapter = { toServerConfig: () => null };
 
-const defaultAdapter: McpRuntimeAdapter = {
-  toServerConfig: () => null,
-};
-
-const ADAPTERS: Record<string, McpRuntimeAdapter> = {
-  'google-workspace-mcp': googleWorkspaceMcpRuntimeAdapter,
-  'brave-search-mcp': braveSearchMcpRuntimeAdapter,
-};
+const ADAPTERS: Record<string, McpRuntimeAdapter> = Object.fromEntries(
+  Object.entries(CREDENTIAL_MAPPINGS).map(([slug, mapping]) => [
+    slug,
+    createGenericAdapter(mapping),
+  ]),
+);
 
 export interface GetMcpRuntimeAdapterParams {
   slug: string;

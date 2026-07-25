@@ -24,6 +24,7 @@ export interface UserMcpConfigResponse {
   mcpId: string;
   fieldValues: UserMcpConfigFieldValueResponse[];
   status: typeof USER_MCP_CONFIG_STATUS.Configured;
+  enabled: boolean;
   lastTestedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -45,4 +46,8 @@ export const createUserMcpConfigInputSchema = z.object({
 export const updateUserMcpConfigInputSchema = z.object({
   mcpId: z.string().min(1),
   fieldValues: fieldValuesSchema,
+});
+
+export const setUserMcpEnabledInputSchema = z.object({
+  enabled: z.boolean(),
 });

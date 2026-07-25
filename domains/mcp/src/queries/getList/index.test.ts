@@ -85,24 +85,24 @@ describe('getList mcp query', () => {
 
   describe('search', () => {
     it('should match MCPs by name when search term matches name', async () => {
-      const result = await getList({ search: 'gmail' });
+      const result = await getList({ search: 'wikipedia' });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.name).toBe('Gmail MCP');
+      expect(result.items[0]?.name).toBe('Wikipedia MCP');
     });
 
     it('should match MCPs by description when search term matches description', async () => {
-      const result = await getList({ search: 'email' });
+      const result = await getList({ search: 'articles' });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.name).toBe('Gmail MCP');
+      expect(result.items[0]?.name).toBe('Wikipedia MCP');
     });
 
     it('should match MCPs case-insensitively when search term uses different casing', async () => {
-      const result = await getList({ search: 'GMAIL' });
+      const result = await getList({ search: 'WIKIPEDIA' });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.name).toBe('Gmail MCP');
+      expect(result.items[0]?.name).toBe('Wikipedia MCP');
     });
 
     it('should return no MCPs when search term matches nothing', async () => {
@@ -122,18 +122,18 @@ describe('getList mcp query', () => {
 
   describe('tag filter', () => {
     it('should return only MCPs with selected tag when one tag is provided', async () => {
-      const result = await getList({ tags: ['email'] });
+      const result = await getList({ tags: ['knowledge'] });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.tags).toContain('email');
+      expect(result.items[0]?.tags).toContain('knowledge');
     });
 
     it('should return MCPs matching any selected tag when multiple tags are provided', async () => {
-      const result = await getList({ tags: ['search', 'email'] });
+      const result = await getList({ tags: ['search', 'knowledge'] });
 
       expect(result.items).toHaveLength(2);
       expect(result.items.map((item) => item.slug).sort()).toEqual(
-        ['brave-search-mcp', 'google-workspace-mcp'].sort(),
+        ['brave-search-mcp', 'wikipedia-mcp'].sort(),
       );
     });
 
@@ -180,7 +180,7 @@ describe('getList mcp query', () => {
       const names = result.items.map((item) => item.name);
       expect(names).toEqual([...names].sort((left, right) => left.localeCompare(right)));
       expect(names[0]).toBe('Brave Search MCP');
-      expect(names[names.length - 1]).toBe('Gmail MCP');
+      expect(names[names.length - 1]).toBe('Wikipedia MCP');
     });
   });
 
@@ -199,7 +199,7 @@ describe('getList mcp query', () => {
     });
 
     it('should return correct total count for filtered results', async () => {
-      const result = await getList({ search: 'search', tags: ['search'] });
+      const result = await getList({ search: 'brave', tags: ['search'] });
 
       expect(result.total).toBe(1);
       expect(result.items).toHaveLength(1);

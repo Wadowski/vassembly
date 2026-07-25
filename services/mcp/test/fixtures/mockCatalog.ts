@@ -14,15 +14,12 @@ const buildCatalogEntry = (
   ...overrides,
 });
 
-export const mockGmailCatalogEntry = buildCatalogEntry({
-  id: 'mcp-gmail',
-  slug: 'google-workspace-mcp',
-  name: 'Gmail',
+export const mockWikipediaCatalogEntry = buildCatalogEntry({
+  id: 'mcp-wikipedia',
+  slug: 'wikipedia-mcp',
+  name: 'Wikipedia',
   configSchema: {
-    fields: [
-      { key: 'clientId', label: 'Client ID', type: 'text', required: true },
-      { key: 'clientSecret', label: 'Secret', type: 'password', required: true },
-    ],
+    fields: [],
   },
 });
 
@@ -46,7 +43,7 @@ export const buildSimpleFieldCatalogEntry = (id: string): McpListItemResponse =>
   });
 
 export const TEST_MCP_CATALOG: Record<string, McpListItemResponse> = {
-  'mcp-gmail': mockGmailCatalogEntry,
+  'mcp-wikipedia': mockWikipediaCatalogEntry,
   'mcp-brave': mockBraveCatalogEntry,
   'mcp-nonexistent': buildCatalogEntry({
     id: 'mcp-nonexistent',

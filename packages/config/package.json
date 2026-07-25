@@ -10,6 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "dependencies": {
+    "@vassembly/constants": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^22.19.7",
     "@vassembly/eslint-config": "workspace:*",

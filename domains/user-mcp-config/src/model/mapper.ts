@@ -52,6 +52,7 @@ export const toUserMcpConfigResponse = ({
       passwordFieldKeys,
     }),
     status: model.status,
+    enabled: model.enabled,
     lastTestedAt: model.lastTestedAt?.toISOString(),
     createdAt: model.createdAt?.toISOString() ?? '',
     updatedAt: model.updatedAt?.toISOString() ?? '',

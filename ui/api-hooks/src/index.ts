@@ -22,6 +22,7 @@ export {
   useUpdateMcpConfiguration,
   useDeleteMcpConfiguration,
   useTestMcpConnection,
+  useSetMcpEnabled,
   useAvailableTags,
 } from './mcps';
 export type {

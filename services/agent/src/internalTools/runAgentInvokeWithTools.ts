@@ -11,7 +11,7 @@ import {
   WrongParamError,
 } from '@vassembly/errors';
 
-import { resolveMcpSlugs } from '../helpers/resolveMcpSlugs';
+import { resolveMcpRuntimeMetadata } from '../helpers/resolveMcpRuntimeMetadata';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
 import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
 import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
@@ -82,10 +82,14 @@ const resolveMcpConfigs = async ({
     return { mcpServerConfigs: [], skippedMcpIds: [] };
   }
 
-  const slugByMcpId = await resolveMcpSlugs({ mcpIds });
+  const metadataByMcpId = await resolveMcpRuntimeMetadata({ mcpIds });
   const configsResult = await userMcpConfigDomain.commands.resolveMcpServerConfigs({
     userId,
-    mcpConfigs: mcpIds.map((id) => ({ mcpId: id, slug: slugByMcpId[id] ?? '' })),
+    mcpConfigs: mcpIds.map((id) => ({
+      mcpId: id,
+      slug: metadataByMcpId[id]?.slug ?? '',
+      serverUrl: metadataByMcpId[id]?.serverUrl,
+    })),
   });
 
   return {

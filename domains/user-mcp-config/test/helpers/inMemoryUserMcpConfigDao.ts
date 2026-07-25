@@ -8,6 +8,7 @@ export interface StoredUserMcpConfig {
   mcpId: string;
   fieldValues: Record<string, string | boolean>;
   status: 'configured';
+  enabled?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

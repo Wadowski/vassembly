@@ -32,7 +32,7 @@ describe('validateAssignedMcpIds', () => {
 
   it('should complete when every mcpId exists in catalog and is configured for the user', async () => {
     mockGetMcpById.mockResolvedValue({ data: { id: 'mcp-1' } });
-    mockGetUserMcpConfigModel.mockResolvedValue({ id: 'config-1', mcpId: 'mcp-1' });
+    mockGetUserMcpConfigModel.mockResolvedValue({ id: 'config-1', mcpId: 'mcp-1', enabled: true });
 
     await expect(
       validateAssignedMcpIds({ userId: 'user-1', assignedMcpIds: ['mcp-1'] }),
@@ -54,5 +54,14 @@ describe('validateAssignedMcpIds', () => {
     await expect(
       validateAssignedMcpIds({ userId: 'user-1', assignedMcpIds: ['mcp-1'] }),
     ).rejects.toThrow(WrongParamError);
+  });
+
+  it('should throw WrongParamError when an mcpId is disabled for the user', async () => {
+    mockGetMcpById.mockResolvedValue({ data: { id: 'mcp-1' } });
+    mockGetUserMcpConfigModel.mockResolvedValue({ id: 'config-1', mcpId: 'mcp-1', enabled: false });
+
+    await expect(
+      validateAssignedMcpIds({ userId: 'user-1', assignedMcpIds: ['mcp-1'] }),
+    ).rejects.toThrow(/disabled/i);
   });
 });
