@@ -54,32 +54,32 @@ describe('getList mcp query', () => {
     });
 
     it('should return next page of MCPs when page is 1 and size is 20', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
       const result = await getList({ page: 1, size: 20 });
 
-      expect(result.items).toHaveLength(5);
+      expect(result.items).toHaveLength(20);
       expect(result.page).toBe(1);
       expect(result.size).toBe(20);
     });
 
     it('should return remaining MCPs on the last page', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
-      const result = await getList({ page: 1, size: 20 });
+      const result = await getList({ page: 2, size: 20 });
 
       expect(result.items.length).toBeGreaterThan(0);
       expect(result.items.length).toBeLessThanOrEqual(20);
-      expect(result.total).toBe(25);
+      expect(result.total).toBe(45);
     });
 
     it('should return empty items when page is beyond available results', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
       const result = await getList({ page: 5, size: 20 });
 
       expect(result.items).toEqual([]);
-      expect(result.total).toBe(25);
+      expect(result.total).toBe(45);
     });
   });
 
@@ -113,7 +113,7 @@ describe('getList mcp query', () => {
     });
 
     it('should return all MCPs when search is empty', async () => {
-      const result = await getList({ search: '' });
+      const result = await getList({ search: '', size: SEED_MCPS.length });
 
       expect(result.items).toHaveLength(SEED_MCPS.length);
       expect(result.total).toBe(SEED_MCPS.length);
@@ -122,19 +122,20 @@ describe('getList mcp query', () => {
 
   describe('tag filter', () => {
     it('should return only MCPs with selected tag when one tag is provided', async () => {
-      const result = await getList({ tags: ['knowledge'] });
+      const result = await getList({ tags: ['wikipedia'], size: SEED_MCPS.length });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]?.tags).toContain('knowledge');
+      expect(result.items[0]?.tags).toContain('wikipedia');
     });
 
     it('should return MCPs matching any selected tag when multiple tags are provided', async () => {
-      const result = await getList({ tags: ['search', 'knowledge'] });
+      const result = await getList({ tags: ['search', 'knowledge'], size: SEED_MCPS.length });
 
-      expect(result.items).toHaveLength(2);
-      expect(result.items.map((item) => item.slug).sort()).toEqual(
-        ['brave-search-mcp', 'wikipedia-mcp'].sort(),
-      );
+      const expectedSlugs = SEED_MCPS.filter((entry) =>
+        entry.tags.some((tag) => tag === 'search' || tag === 'knowledge'),
+      ).map((entry) => entry.slug);
+
+      expect(result.items.map((item) => item.slug).sort()).toEqual(expectedSlugs.sort());
     });
 
     it('should return no MCPs when tag filter matches nothing', async () => {
@@ -145,7 +146,7 @@ describe('getList mcp query', () => {
     });
 
     it('should return all MCPs when tags filter is empty', async () => {
-      const result = await getList({ tags: [] });
+      const result = await getList({ tags: [], size: SEED_MCPS.length });
 
       expect(result.items).toHaveLength(SEED_MCPS.length);
       expect(result.total).toBe(SEED_MCPS.length);
@@ -154,7 +155,7 @@ describe('getList mcp query', () => {
 
   describe('combined filters', () => {
     it('should apply search, tag filter, and pagination together', async () => {
-      wireInMemoryStore(buildPaginationDataset(25));
+      wireInMemoryStore(buildPaginationDataset(45));
 
       const result = await getList({
         search: 'MCP',
@@ -175,11 +176,12 @@ describe('getList mcp query', () => {
 
   describe('sorting', () => {
     it('should return MCPs sorted by name ascending', async () => {
-      const result = await getList({});
+      const result = await getList({ size: SEED_MCPS.length });
 
       const names = result.items.map((item) => item.name);
-      expect(names).toEqual([...names].sort((left, right) => left.localeCompare(right)));
-      expect(names[0]).toBe('Brave Search MCP');
+      const sortedNames = [...names].sort((left, right) => left.localeCompare(right));
+      expect(names).toEqual(sortedNames);
+      expect(names[0]).toBe('ArXiv MCP');
       expect(names[names.length - 1]).toBe('Wikipedia MCP');
     });
   });
