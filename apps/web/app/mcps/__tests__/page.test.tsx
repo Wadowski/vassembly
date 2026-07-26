@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  MOCK_CONFIGURED_MCP_LOOKUP,
   MOCK_DISCOVER_MCPS,
   MOCK_USER_CONFIGURED_MCPS,
   YOUR_MCPS_EMPTY_MESSAGE,

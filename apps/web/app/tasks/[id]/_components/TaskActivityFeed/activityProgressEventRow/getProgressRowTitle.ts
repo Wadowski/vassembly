@@ -20,7 +20,7 @@ export const getProgressRowTitle = ({ item }: GetProgressRowTitleParams): string
     errorDetails: item.errorDetails
       ? {
           message: item.errorDetails.message,
-          type: item.errorDetails.type ?? undefined,
+          type: item.errorDetails.type ?? 'Error',
           stackTrace: item.errorDetails.stackTrace ?? undefined,
         }
       : null,

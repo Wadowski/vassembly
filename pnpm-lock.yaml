@@ -503,6 +503,9 @@ importers:
       '@vassembly/validation':
         specifier: workspace:*
         version: link:../../packages/validation
+      mongodb:
+        specifier: ^7.0.0
+        version: 7.5.0(gcp-metadata@8.1.2)
       zod:
         specifier: ^4.3.6
         version: 4.4.3

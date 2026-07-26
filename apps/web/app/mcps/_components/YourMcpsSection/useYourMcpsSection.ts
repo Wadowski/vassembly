@@ -41,19 +41,19 @@ export const useYourMcpsSection = (): UseYourMcpsSectionResult => {
     void refreshConfiguredMcps();
   }, [refreshConfiguredMcps]);
 
-  const configuredMcps = data?.items ?? [];
-  const total = data?.total ?? 0;
-  const size = data?.size ?? YOUR_MCPS_PAGE_SIZE;
-  const totalPages = total === 0 ? 0 : Math.ceil(total / size);
-  const rangeStart = total === 0 ? 0 : page * size + 1;
-  const rangeEnd = Math.min((page + 1) * size, total);
-
   const handlePageChange = useCallback((newPage: number): void => {
     setPage(Math.max(0, newPage - 1));
   }, []);
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    const configuredMcps = data?.items ?? [];
+    const total = data?.total ?? 0;
+    const size = data?.size ?? YOUR_MCPS_PAGE_SIZE;
+    const totalPages = total === 0 ? 0 : Math.ceil(total / size);
+    const rangeStart = total === 0 ? 0 : page * size + 1;
+    const rangeEnd = Math.min((page + 1) * size, total);
+
+    return {
       loading,
       configuredMcps,
       isEmpty: !loading && configuredMcps.length === 0,
@@ -64,16 +64,6 @@ export const useYourMcpsSection = (): UseYourMcpsSectionResult => {
       rangeStart,
       rangeEnd,
       handlePageChange,
-    }),
-    [
-      configuredMcps,
-      handlePageChange,
-      loading,
-      page,
-      rangeEnd,
-      rangeStart,
-      total,
-      totalPages,
-    ],
-  );
+    };
+  }, [data, handlePageChange, loading, page]);
 };
