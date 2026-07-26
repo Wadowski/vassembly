@@ -33,6 +33,7 @@ interface TaskQuestionsResolverArgs {
 
 interface ApiGraphQLContext {
   authenticatedUserId?: string;
+  onboardingCompleted?: boolean;
 }
 
 type TaskQuestionsResolver = (
@@ -119,7 +120,7 @@ describe('TaskQuestions Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-1' },
-        { authenticatedUserId: 'user-1' },
+        { authenticatedUserId: 'user-1', onboardingCompleted: true },
       );
 
       expect(result).toEqual({
@@ -136,7 +137,7 @@ describe('TaskQuestions Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-1' },
-        { authenticatedUserId: 'user-1' },
+        { authenticatedUserId: 'user-1', onboardingCompleted: true },
       );
 
       expect(result).toEqual({
@@ -150,7 +151,7 @@ describe('TaskQuestions Resolver', () => {
       const resolver = captureTaskQuestionsResolverFn();
 
       await expect(
-        resolver(undefined, { taskId: 'task-1' }, { authenticatedUserId: undefined }),
+        resolver(undefined, { taskId: 'task-1' }, { authenticatedUserId: undefined, onboardingCompleted: true }),
       ).rejects.toThrow(UnauthorizedError);
     });
 
@@ -161,7 +162,7 @@ describe('TaskQuestions Resolver', () => {
       });
 
       await expect(
-        resolver(undefined, { taskId: 'task-1' }, { authenticatedUserId: 'user-1' }),
+        resolver(undefined, { taskId: 'task-1' }, { authenticatedUserId: 'user-1', onboardingCompleted: true }),
       ).rejects.toThrow(NotFoundError);
     });
   });

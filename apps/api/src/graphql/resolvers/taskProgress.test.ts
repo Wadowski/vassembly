@@ -29,6 +29,7 @@ interface TaskProgressResolverArgs {
 
 interface ApiGraphQLContext {
   authenticatedUserId?: string;
+  onboardingCompleted?: boolean;
 }
 
 type TaskProgressResolver = (
@@ -157,7 +158,7 @@ describe('TaskProgress Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-123', commentId: 'comment-123' },
-        { authenticatedUserId: 'user-456' }
+        { authenticatedUserId: 'user-456', onboardingCompleted: true }
       );
 
       expect(result).toEqual({
@@ -205,7 +206,7 @@ describe('TaskProgress Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-123', commentId: 'comment-123' },
-        { authenticatedUserId: 'user-456' }
+        { authenticatedUserId: 'user-456', onboardingCompleted: true }
       );
 
       // Validate ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ)
@@ -262,7 +263,7 @@ describe('TaskProgress Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-123', commentId: 'comment-123' },
-        { authenticatedUserId: 'user-456' }
+        { authenticatedUserId: 'user-456', onboardingCompleted: true }
       );
 
       expect(result.events).toHaveLength(2);
@@ -277,7 +278,7 @@ describe('TaskProgress Resolver', () => {
       const resolver = captureTaskProgressResolverFn();
 
       await expect(
-        resolver(undefined, { taskId: 'task-123', commentId: 'comment-123' }, { authenticatedUserId: undefined })
+        resolver(undefined, { taskId: 'task-123', commentId: 'comment-123' }, { authenticatedUserId: undefined, onboardingCompleted: true })
       ).rejects.toThrow(UnauthorizedError);
     });
 
@@ -290,7 +291,7 @@ describe('TaskProgress Resolver', () => {
         resolver(
           undefined,
           { taskId: 'task-123', commentId: 'comment-123' },
-          { authenticatedUserId: 'user-456' }
+          { authenticatedUserId: 'user-456', onboardingCompleted: true }
         )
       ).rejects.toThrow(NotFoundError);
     });
@@ -316,7 +317,7 @@ describe('TaskProgress Resolver', () => {
       await resolver(
         undefined,
         { taskId: 'task-123', commentId: 'comment-123' },
-        { authenticatedUserId: 'user-456' }
+        { authenticatedUserId: 'user-456', onboardingCompleted: true }
       );
 
       expect(mockGetTaskProgressByCommentId).toHaveBeenCalledWith({
@@ -348,7 +349,7 @@ describe('TaskProgress Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-123', commentId: 'comment-123' },
-        { authenticatedUserId: 'user-456' }
+        { authenticatedUserId: 'user-456', onboardingCompleted: true }
       );
 
       expect(result.completedAt).toBeUndefined();
@@ -383,7 +384,7 @@ describe('TaskProgress Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-123', commentId: 'comment-123' },
-        { authenticatedUserId: 'user-456' }
+        { authenticatedUserId: 'user-456', onboardingCompleted: true }
       );
 
       expect(result.events[0]!.duration).toBeUndefined();
@@ -424,7 +425,7 @@ describe('TaskProgress Resolver', () => {
       const result = await resolver(
         undefined,
         { taskId: 'task-123', commentId: 'comment-123' },
-        { authenticatedUserId: 'user-456' }
+        { authenticatedUserId: 'user-456', onboardingCompleted: true }
       );
 
       expect(result.events[0]!.errorDetails).toBeDefined();

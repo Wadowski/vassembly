@@ -72,6 +72,7 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       vi.fn().mockResolvedValue(undefined),
       { loading: false, error: null },
     ]),
+    useRefetchQueries: vi.fn(() => vi.fn().mockResolvedValue(undefined)),
     useHttpClient: vi.fn(() => ({
       get: vi.fn(),
       post: vi.fn(),
