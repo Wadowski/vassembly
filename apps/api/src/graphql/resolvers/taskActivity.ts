@@ -47,6 +47,7 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
       status: t.exposeString('status', { nullable: true }),
       durationMs: t.exposeInt('durationMs', { nullable: true }),
       errorMessage: t.exposeString('errorMessage', { nullable: true }),
+      errorDetails: t.expose('errorDetails', { type: 'ErrorDetails', nullable: true }),
     }),
   });
 

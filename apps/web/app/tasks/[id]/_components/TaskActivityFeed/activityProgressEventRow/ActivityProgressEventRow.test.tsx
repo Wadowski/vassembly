@@ -36,4 +36,58 @@ describe('ActivityProgressEventRow', () => {
       'request payload',
     );
   });
+
+  it('should show error message for failed progress events', () => {
+    render(
+      <ul>
+        <ActivityProgressEventRow
+          item={{
+            ...buildProgressItem(),
+            state: 'failed',
+            errorDetails: {
+              message: 'LLM API timeout',
+              type: 'TimeoutError',
+              stackTrace: 'Error: LLM API timeout\n    at invoke',
+            },
+          }}
+        />
+      </ul>,
+    );
+
+    expect(screen.getByTestId('activity-progress-error-event-1')).toHaveTextContent(
+      'LLM API timeout',
+    );
+  });
+
+  it('should show expanded error details for failed progress events', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ul>
+        <ActivityProgressEventRow
+          item={{
+            ...buildProgressItem(),
+            state: 'failed',
+            errorDetails: {
+              message: 'LLM API timeout',
+              type: 'TimeoutError',
+              stackTrace: 'Error: LLM API timeout\n    at invoke',
+            },
+          }}
+        />
+      </ul>,
+    );
+
+    await user.click(screen.getByRole('button'));
+
+    expect(screen.getByTestId('activity-progress-error-details-event-1')).toHaveTextContent(
+      'LLM API timeout',
+    );
+    expect(screen.getByTestId('activity-progress-error-details-event-1')).toHaveTextContent(
+      'TimeoutError',
+    );
+    expect(screen.getByTestId('activity-progress-error-details-event-1')).toHaveTextContent(
+      'at invoke',
+    );
+  });
 });

@@ -17,6 +17,9 @@ export interface ActivityProgressEventRowProps {
   item: TaskActivityItemDto;
 }
 
+const isFailedProgressEvent = (item: TaskActivityItemDto): boolean =>
+  (item.state ?? '').toLowerCase() === 'failed';
+
 export const ActivityProgressEventRow = ({
   item,
 }: ActivityProgressEventRowProps): JSX.Element => {
@@ -26,6 +29,7 @@ export const ActivityProgressEventRow = ({
   const relativeTime = getProgressRelativeTime({ item });
   const eventStats = getProgressEventStats({ item });
   const rowClassName = isExpanded ? `${styles.row} ${styles.rowExpanded}` : styles.row;
+  const hasErrorDetails = isFailedProgressEvent(item) && Boolean(item.errorDetails?.message);
 
   return (
     <li className={rowClassName} data-testid={`activity-progress-event-${item.eventId ?? item.id}`}>
@@ -57,6 +61,15 @@ export const ActivityProgressEventRow = ({
           </>
         ) : null}
       </button>
+      {hasErrorDetails ? (
+        <Text
+          variant="caption"
+          className={styles.error}
+          data-testid={`activity-progress-error-${item.eventId ?? item.id}`}
+        >
+          {item.errorDetails?.message}
+        </Text>
+      ) : null}
       {isExpanded ? (
         <div
           className={styles.details}
@@ -75,6 +88,30 @@ export const ActivityProgressEventRow = ({
             <Text variant="body2" className={styles.meta}>
               {[item.provider, item.model].filter(Boolean).join(' · ')}
             </Text>
+          ) : null}
+          {hasErrorDetails ? (
+            <section data-testid={`activity-progress-error-details-${item.eventId ?? item.id}`}>
+              <Text variant="label" className={styles.detailLabel}>
+                Error details
+              </Text>
+              <div className={styles.errorBox}>
+                <Text variant="body2" className={styles.errorMessage}>
+                  {item.errorDetails?.message}
+                </Text>
+                {item.errorDetails?.type || item.errorDetails?.stackTrace ? (
+                  <details className={styles.errorDetails}>
+                    {item.errorDetails?.type ? (
+                      <summary>Type: {item.errorDetails.type}</summary>
+                    ) : (
+                      <summary>Stack trace</summary>
+                    )}
+                    {item.errorDetails?.stackTrace ? (
+                      <pre className={styles.stackTrace}>{item.errorDetails.stackTrace}</pre>
+                    ) : null}
+                  </details>
+                ) : null}
+              </div>
+            </section>
           ) : null}
           {item.inputMessages ? (
             <section>

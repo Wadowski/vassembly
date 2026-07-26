@@ -42,6 +42,11 @@ export const GET_TASK_ACTIVITY_TIMELINE_QUERY = `
         status
         durationMs
         errorMessage
+        errorDetails {
+          message
+          type
+          stackTrace
+        }
       }
     }
   }

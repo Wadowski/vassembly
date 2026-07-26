@@ -17,7 +17,13 @@ export const getProgressRowTitle = ({ item }: GetProgressRowTitleParams): string
   return getProgressEventTitle({
     state: normalizeProgressState(item.state) as 'STARTED' | 'COMPLETED' | 'FAILED' | 'WAITING',
     duration: item.duration ?? null,
-    errorDetails: null,
+    errorDetails: item.errorDetails
+      ? {
+          message: item.errorDetails.message,
+          type: item.errorDetails.type ?? undefined,
+          stackTrace: item.errorDetails.stackTrace ?? undefined,
+        }
+      : null,
   });
 };
 

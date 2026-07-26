@@ -8,6 +8,12 @@ export type TaskActivityFilterGroup =
   | 'agentWaiting'
   | 'mcpUsage';
 
+export interface TaskActivityErrorDetailsDto {
+  message: string;
+  type?: string | null;
+  stackTrace?: string | null;
+}
+
 export interface TaskActivityItemDto {
   kind: string;
   id: string;
@@ -41,6 +47,7 @@ export interface TaskActivityItemDto {
   status?: string | null;
   durationMs?: number | null;
   errorMessage?: string | null;
+  errorDetails?: TaskActivityErrorDetailsDto | null;
 }
 
 export interface GraphQLTaskActivityTimelineData {
