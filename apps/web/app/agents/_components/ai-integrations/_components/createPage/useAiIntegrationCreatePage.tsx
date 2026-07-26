@@ -24,7 +24,8 @@ const REDIRECT_AFTER_CREATE_MS = 1500;
 
 export function AiIntegrationCreatePageContent(): JSX.Element {
   const router = useRouter();
-  const { onboardingCompleted = true } = useUserAuth().user ?? {};
+  const { user } = useUserAuth();
+  const onboardingCompleted = user?.onboardingCompleted ?? false;
   const snackbar = useSnackbar();
   const form = useAiIntegrationForm({ mode: 'create' });
   const { handleChange, values: formValues } = form;

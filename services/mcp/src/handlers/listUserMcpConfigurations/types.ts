@@ -1,13 +1,13 @@
-import type { UserMcpConfigResponse } from '@vassembly/domain-user-mcp-config';
-import type { ServiceContext } from '../../types';
+import type { EnrichedMcpListItem } from '../enrichMcpListWithUserStatus/types';
 
 export interface ListUserMcpConfigurationsInput {
-  limit?: number;
+  page?: number;
+  size?: number;
 }
 
-export interface ListUserMcpConfigurationsParams {
-  input: ListUserMcpConfigurationsInput;
-  context: ServiceContext;
+export interface ListUserMcpConfigurationsResult {
+  items: EnrichedMcpListItem[];
+  total: number;
+  page: number;
+  size: number;
 }
-
-export type ListUserMcpConfigurationsResult = UserMcpConfigResponse[];

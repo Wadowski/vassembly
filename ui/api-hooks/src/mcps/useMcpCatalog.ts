@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useApolloLazyQuery } from '../graphql';
 
 import { LIST_MCPS_QUERY } from './LIST_MCPS_QUERY';
-import type { McpListItem, UseMcpsArgs, UseMcpCatalogResult } from './types';
+import type { McpConfigurationStatus, McpWithConfigurationStatus, UseMcpsArgs, UseMcpCatalogResult } from './types';
 
 interface GraphQLMcpListItem {
   id: string;
@@ -14,6 +14,9 @@ interface GraphQLMcpListItem {
   slug: string;
   documentationUrl?: string | null;
   repositoryUrl?: string | null;
+  configurationStatus?: McpConfigurationStatus | null;
+  enabled?: boolean | null;
+  requiresConfiguration?: boolean | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,7 +33,7 @@ interface GraphQLMcpsListData {
 const DEFAULT_PAGE = 0;
 const DEFAULT_SIZE = 20;
 
-const mapMcpListItem = (item: GraphQLMcpListItem): McpListItem => ({
+const mapMcpListItem = (item: GraphQLMcpListItem): McpWithConfigurationStatus => ({
   id: item.id,
   name: item.name,
   description: item.description,
@@ -39,6 +42,9 @@ const mapMcpListItem = (item: GraphQLMcpListItem): McpListItem => ({
   slug: item.slug,
   documentationUrl: item.documentationUrl ?? undefined,
   repositoryUrl: item.repositoryUrl ?? undefined,
+  configurationStatus: item.configurationStatus ?? 'pending',
+  enabled: item.enabled ?? false,
+  requiresConfiguration: item.requiresConfiguration ?? false,
   createdAt: item.createdAt,
   updatedAt: item.updatedAt,
 });

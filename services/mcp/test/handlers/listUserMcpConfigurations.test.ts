@@ -14,7 +14,7 @@ describe('listUserMcpConfigurations', () => {
   });
 
   describe('list', () => {
-    it('should return all configs for the current user', async () => {
+    it('should return enriched MCP details for configured MCPs', async () => {
       await createUserMcpConfiguration(
         { mcpId: 'mcp-gmail', fieldValues: { clientId: 'a', clientSecret: 'secret' } },
         mockContext,
@@ -27,15 +27,18 @@ describe('listUserMcpConfigurations', () => {
 
       const result = await listUserMcpConfigurations({}, mockContext);
 
-      expect(result).toHaveLength(2);
-      expect(result.map((config) => config.mcpId)).toContain('mcp-gmail');
-      expect(result.map((config) => config.mcpId)).toContain('mcp-brave');
+      expect(result.items).toHaveLength(2);
+      expect(result.items.map((mcp) => mcp.id)).toContain('mcp-gmail');
+      expect(result.items.map((mcp) => mcp.id)).toContain('mcp-brave');
+      expect(result.items[0]?.name).toBeDefined();
+      expect(result.items[0]?.configurationStatus).toBe('configured');
     });
 
     it('should return empty list when user has no configs', async () => {
       const result = await listUserMcpConfigurations({}, mockContext);
 
-      expect(result).toHaveLength(0);
+      expect(result.items).toHaveLength(0);
+      expect(result.total).toBe(0);
     });
 
     it('should return only the current user configs', async () => {
@@ -55,8 +58,8 @@ describe('listUserMcpConfigurations', () => {
       const resultA = await listUserMcpConfigurations({}, userAContext);
       const resultB = await listUserMcpConfigurations({}, userBContext);
 
-      expect(resultA).toHaveLength(1);
-      expect(resultB).toHaveLength(1);
+      expect(resultA.items).toHaveLength(1);
+      expect(resultB.items).toHaveLength(1);
     });
 
     it('should sort by updatedAt descending', async () => {
@@ -76,8 +79,8 @@ describe('listUserMcpConfigurations', () => {
 
       const result = await listUserMcpConfigurations({}, mockContext);
 
-      expect(result[0]?.mcpId).toBe('mcp-brave');
-      expect(result[1]?.mcpId).toBe('mcp-gmail');
+      expect(result.items[0]?.id).toBe('mcp-brave');
+      expect(result.items[1]?.id).toBe('mcp-gmail');
     });
   });
 });

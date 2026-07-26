@@ -1,6 +1,7 @@
 import type { RouteDefinition } from '@vassembly/server';
 
 import { authRoute } from './auth';
+import { completeOnboardingRoute } from './completeOnboarding';
 import { logoutRoute } from './logout';
 import { refreshRoute } from './refresh';
 import { resendVerificationRoute } from './resendVerification';
@@ -12,4 +13,5 @@ export const routes: RouteDefinition[] = [
   logoutRoute,
   verifyEmailRoute,
   resendVerificationRoute,
+  completeOnboardingRoute,
 ];

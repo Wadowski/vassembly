@@ -84,7 +84,7 @@ const resolveStepIndicator = ({
   status,
   isLocked,
 }: {
-  stepNumber: 1 | 2;
+  stepNumber: 1 | 2 | 3;
   status: OnboardingStepStatus;
   isLocked: boolean;
 }): JSX.Element => {
@@ -104,6 +104,7 @@ export const OnboardingStepCard = ({
   title,
   description,
   status,
+  statusBadgeLabel,
   isLocked,
   body,
   footer,
@@ -111,6 +112,7 @@ export const OnboardingStepCard = ({
   const cardClassName = resolveCardClassName({ status, isLocked });
   const stepCircleClassName = resolveStepCircleClassName({ status, isLocked });
   const badgeClassName = resolveBadgeClassName(status);
+  const badgeLabel = statusBadgeLabel ?? STATUS_BADGE_LABEL[status];
 
   return (
     <article className={cardClassName} aria-labelledby={`onboarding-step-${stepNumber}-title`}>
@@ -126,7 +128,7 @@ export const OnboardingStepCard = ({
             <Text variant="body2">{description}</Text>
           </div>
         </div>
-        <span className={badgeClassName}>{STATUS_BADGE_LABEL[status]}</span>
+        <span className={badgeClassName}>{badgeLabel}</span>
       </header>
       <div className={styles.body}>{body}</div>
       {footer ? <div className={styles.footer}>{footer}</div> : null}

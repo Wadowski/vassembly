@@ -23,7 +23,7 @@ export interface UseMcpsArgs {
 
 export interface UseMcpCatalogResult {
   data?: {
-    items: McpListItem[];
+    items: McpWithConfigurationStatus[];
     total: number;
     page: number;
     size: number;
@@ -106,7 +106,7 @@ export interface UseMcpsResult {
   };
   loading: boolean;
   error?: CommonError;
-  refetch?: () => void;
+  refetch?: () => Promise<unknown>;
 }
 
 export interface UseMcpResult {
@@ -125,12 +125,21 @@ export interface UseMcpConfigurationResult {
   error?: CommonError;
 }
 
+export interface UseUserConfiguredMcpsArgs {
+  page?: number;
+  size?: number;
+}
+
 export interface UseUserConfiguredMcpsResult {
   data?: {
-    mcps: UserConfiguredMcpItem[];
+    items: McpWithConfigurationStatus[];
+    total: number;
+    page: number;
+    size: number;
   };
   loading: boolean;
   error?: CommonError;
+  execute: (args: UseUserConfiguredMcpsArgs) => Promise<void>;
   refetch?: () => void;
 }
 
@@ -172,6 +181,12 @@ export interface SetMcpEnabledInput {
 export interface SetMcpEnabledResponse {
   mcpId: string;
   enabled: boolean;
+}
+
+export interface SetZeroConfigMcpsEnabledResponse {
+  enabled: boolean;
+  mcpIds: string[];
+  updatedCount: number;
 }
 
 export interface SaveMcpConfigurationResponse {

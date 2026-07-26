@@ -74,6 +74,29 @@ export class UserMcpConfigDAO {
     return docs.map((doc) => this.toStoredRecord({ doc }));
   }
 
+  async getPaginatedListByUserId(params: {
+    userId: string;
+    skip: number;
+    limit: number;
+  }): Promise<{ items: StoredUserMcpConfigRecord[]; total: number }> {
+    const filter = { userId: params.userId };
+
+    const [docs, total] = await Promise.all([
+      this.collection
+        .find(filter)
+        .sort({ updatedAt: -1 })
+        .skip(params.skip)
+        .limit(params.limit)
+        .toArray(),
+      this.collection.countDocuments(filter),
+    ]);
+
+    return {
+      items: docs.map((doc) => this.toStoredRecord({ doc })),
+      total,
+    };
+  }
+
   async update(params: { model: StoredUserMcpConfigRecord }): Promise<StoredUserMcpConfigRecord> {
     const now = new Date();
     const model = UserMcpConfigFactory.fromPersistence({

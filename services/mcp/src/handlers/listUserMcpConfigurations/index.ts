@@ -1,5 +1,8 @@
-import { userMcpConfigDomain } from '@vassembly/domain-user-mcp-config';
+import mcpDomain from '@vassembly/domain-mcp';
+import { userMcpConfigDomain, mcpRequiresConfiguration } from '@vassembly/domain-user-mcp-config';
 import { UnauthorizedError } from '@vassembly/errors';
+
+import type { EnrichedMcpListItem } from '../enrichMcpListWithUserStatus/types';
 
 import type {
   ListUserMcpConfigurationsInput,
@@ -9,8 +12,6 @@ import type { ServiceContext } from '../../types';
 
 export type { ListUserMcpConfigurationsInput, ListUserMcpConfigurationsResult };
 
-const DEFAULT_LIST_LIMIT = 50;
-
 export const listUserMcpConfigurations = async (
   input: ListUserMcpConfigurationsInput,
   context: ServiceContext,
@@ -19,8 +20,47 @@ export const listUserMcpConfigurations = async (
     throw new UnauthorizedError('Unauthorized');
   }
 
-  return userMcpConfigDomain.queries.getUserMcpConfigs({
+  const configsResult = await userMcpConfigDomain.queries.getUserMcpConfigs({
     userId: context.userId,
-    limit: input.limit ?? DEFAULT_LIST_LIMIT,
+    page: input.page,
+    size: input.size,
   });
+
+  if (configsResult.items.length === 0) {
+    return {
+      items: [],
+      total: configsResult.total,
+      page: configsResult.page,
+      size: configsResult.size,
+    };
+  }
+
+  const mcpIds = configsResult.items.map((config) => config.mcpId);
+  const mcpsResult = await mcpDomain.queries.getByIds({ ids: mcpIds });
+  const mcpLookup = new Map(mcpsResult.items.map((mcp) => [mcp.id, mcp]));
+
+  const items = configsResult.items.reduce<EnrichedMcpListItem[]>((accumulator, config) => {
+    const mcp = mcpLookup.get(config.mcpId);
+
+    if (mcp === undefined) {
+      return accumulator;
+    }
+
+    accumulator.push({
+      ...mcp,
+      configurationStatus: 'configured',
+      enabled: config.enabled,
+      requiresConfiguration: mcpRequiresConfiguration({ schema: mcp.configSchema }),
+      updatedAt: config.updatedAt,
+    });
+
+    return accumulator;
+  }, []);
+
+  return {
+    items,
+    total: configsResult.total,
+    page: configsResult.page,
+    size: configsResult.size,
+  };
 };

@@ -3,6 +3,7 @@ import { createBdd } from 'playwright-bdd';
 import { bddTest } from '@vassembly/e2e';
 
 import { updateUserOnboardingState } from '../utils/onboardingUserState';
+import { seedActiveAiCredential } from '../utils/seedActiveAiCredential';
 import { seedAndSignInOnboardingUser } from '../utils/seedOnboardingUser';
 import type { WebBddWorld } from '../utils/types';
 
@@ -56,6 +57,25 @@ Given(
       page,
       state: { completedAt: null, verifiedAt: new Date() },
     });
+
+    world.auth = { userId: user.userId, token: user.token, email: user.email };
+  },
+);
+
+Given(
+  'an authenticated user with incomplete onboarding and an active AI credential',
+  async ({ page, seed, world }) => {
+    if (!page) {
+      return;
+    }
+
+    const user = await seedAndSignInOnboardingUser({
+      context: seed,
+      page,
+      state: { completedAt: null, verifiedAt: new Date() },
+    });
+
+    await seedActiveAiCredential({ context: seed, userId: user.userId });
 
     world.auth = { userId: user.userId, token: user.token, email: user.email };
   },

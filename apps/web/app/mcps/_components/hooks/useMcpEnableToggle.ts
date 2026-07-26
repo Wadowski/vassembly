@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import { useMcps, useSetMcpEnabled, useUserConfiguredMcps } from '@vassembly/ui-api-hooks';
+import { useMcps, useRefetchQueries, useSetMcpEnabled } from '@vassembly/ui-api-hooks';
 
 export interface ToggleMcpEnabledParams {
   mcpId: string;
@@ -19,8 +19,8 @@ export interface UseMcpEnableToggleResult {
  */
 export const useMcpEnableToggle = (): UseMcpEnableToggleResult => {
   const [setMcpEnabled] = useSetMcpEnabled();
+  const refetchQueries = useRefetchQueries();
   const { refetch: refetchMcps } = useMcps();
-  const { refetch: refetchConfiguredMcps } = useUserConfiguredMcps();
   const [togglingMcpId, setTogglingMcpId] = useState<string | null>(null);
 
   const toggleMcpEnabled = useCallback(
@@ -35,14 +35,14 @@ export const useMcpEnableToggle = (): UseMcpEnableToggleResult => {
         }
 
         refetchMcps?.();
-        refetchConfiguredMcps?.();
+        await refetchQueries({ include: ['GetUserConfiguredMcps'] });
 
         return true;
       } finally {
         setTogglingMcpId(null);
       }
     },
-    [refetchConfiguredMcps, refetchMcps, setMcpEnabled],
+    [refetchMcps, refetchQueries, setMcpEnabled],
   );
 
   return {

@@ -32,7 +32,7 @@ export const authorizeRequest = async (
   }
 
   const role = verified.role ?? "user";
-  const onboardingCompleted = verified.onboardingCompleted ?? true;
+  const onboardingCompleted = verified.onboardingCompleted === true;
 
   return { userId: verified.userId, role, onboardingCompleted };
 };

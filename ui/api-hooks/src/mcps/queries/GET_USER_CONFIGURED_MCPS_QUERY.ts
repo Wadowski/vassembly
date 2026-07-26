@@ -1,17 +1,26 @@
 import { gql } from '@apollo/client';
 
 export const GET_USER_CONFIGURED_MCPS_QUERY = gql`
-  query GetUserConfiguredMcps {
-    userConfiguredMcps {
+  query GetUserConfiguredMcps($page: Int, $size: Int) {
+    userConfiguredMcps(page: $page, size: $size) {
       items {
         id
-        mcpId
-        status
+        name
+        description
+        tags
+        iconPath
+        slug
+        documentationUrl
+        repositoryUrl
+        configurationStatus
         enabled
-        lastTestedAt
-        updatedAt
+        requiresConfiguration
         createdAt
+        updatedAt
       }
+      total
+      page
+      size
     }
   }
 `;

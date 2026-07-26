@@ -2,9 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { WrongParamError } from "@vassembly/errors";
 
-const { mockConfirmEmailVerification, mockCheckAndCompleteOnboarding } = vi.hoisted(() => ({
+const { mockConfirmEmailVerification } = vi.hoisted(() => ({
   mockConfirmEmailVerification: vi.fn(),
-  mockCheckAndCompleteOnboarding: vi.fn(),
 }));
 
 vi.mock("@vassembly/domain-user", () => {
@@ -16,10 +15,6 @@ vi.mock("@vassembly/domain-user", () => {
   return { ...impl, default: impl };
 });
 
-vi.mock("../checkAndCompleteOnboarding", () => ({
-  checkAndCompleteOnboarding: mockCheckAndCompleteOnboarding,
-}));
-
 import { confirmEmailVerification } from "./index";
 
 const VALID_USER_ID = "507f1f77bcf86cd799439011";
@@ -28,7 +23,6 @@ describe("confirmEmailVerification handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockConfirmEmailVerification.mockResolvedValue(undefined);
-    mockCheckAndCompleteOnboarding.mockResolvedValue(undefined);
   });
 
   it("should return success when email verification is confirmed", async () => {
@@ -42,7 +36,6 @@ describe("confirmEmailVerification handler", () => {
       userId: VALID_USER_ID,
       token: "plain-secret",
     });
-    expect(mockCheckAndCompleteOnboarding).toHaveBeenCalledWith({ userId: VALID_USER_ID });
   });
 
   it("should surface domain validation errors for invalid or expired tokens", async () => {
@@ -53,7 +46,6 @@ describe("confirmEmailVerification handler", () => {
     await expect(
       confirmEmailVerification({ userId: VALID_USER_ID, token: "bad-token" }),
     ).rejects.toThrow(WrongParamError);
-    expect(mockCheckAndCompleteOnboarding).not.toHaveBeenCalled();
   });
 
   it("should wrap unexpected errors in InternalError", async () => {

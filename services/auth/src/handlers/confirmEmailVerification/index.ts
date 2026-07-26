@@ -1,7 +1,6 @@
 import userDomain from '@vassembly/domain-user';
 import { CommonError, InternalError } from '@vassembly/errors';
 
-import { checkAndCompleteOnboarding } from '../checkAndCompleteOnboarding';
 import type {
   ConfirmEmailVerificationInput,
   ConfirmEmailVerificationOutput,
@@ -14,7 +13,6 @@ export const confirmEmailVerification = async (
 
   try {
     await userDomain.commands.confirmEmailVerification({ userId, token });
-    await checkAndCompleteOnboarding({ userId });
   } catch (error) {
     if (error instanceof CommonError) {
       throw error;

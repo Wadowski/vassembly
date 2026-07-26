@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ONBOARDING_ALLOWED_ROUTES } from '@vassembly/constants';
 import { decodeJwtPayload } from '@vassembly/ui-user-auth/decodeJwtPayload';
+
+import { isOnboardingAllowedRoute } from './lib/auth/isOnboardingAllowedRoute';
 
 const AUTH_PAGES = ['/login', '/register', '/forgot-password', '/reset-password'];
 const AUTH_TOKEN_KEY = 'auth-token';
 
 const ONBOARDING_ROUTE = '/onboarding';
-const ONBOARDING_ALLOWED_ROUTE_SET = new Set<string>(ONBOARDING_ALLOWED_ROUTES);
 
 const isValidAuthToken = (token: string): boolean => {
   const claims = decodeJwtPayload(token);
@@ -39,7 +39,7 @@ export function middleware(request: NextRequest): NextResponse {
 
   if (authToken) {
     const claims = decodeJwtPayload(authToken);
-    const isOnAllowedRoute = ONBOARDING_ALLOWED_ROUTE_SET.has(pathname);
+    const isOnAllowedRoute = isOnboardingAllowedRoute(pathname);
 
     if (claims === null) {
       if (!isOnAllowedRoute) {

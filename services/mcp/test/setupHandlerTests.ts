@@ -27,9 +27,10 @@ const seedBraveConfigForUser123 = (): void => {
   });
 };
 
-const { mockGetById, mockGetModelById } = vi.hoisted(() => ({
+const { mockGetById, mockGetModelById, mockGetByIds } = vi.hoisted(() => ({
   mockGetById: vi.fn(),
   mockGetModelById: vi.fn(),
+  mockGetByIds: vi.fn(),
 }));
 
 vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
@@ -65,6 +66,7 @@ vi.mock('@vassembly/domain-mcp', () => ({
     queries: {
       getList: vi.fn(),
       getById: mockGetById,
+      getByIds: mockGetByIds,
       getModelById: mockGetModelById,
     },
   },
@@ -93,6 +95,14 @@ mockGetModelById.mockImplementation(async ({ id }: { id: string }) => {
   }
 
   return { data: entry };
+});
+
+mockGetByIds.mockImplementation(async ({ ids }: { ids: string[] }) => {
+  const items = ids
+    .map((id) => TEST_MCP_CATALOG[id])
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== undefined);
+
+  return { items };
 });
 
 export const resetHandlerTestStores = (): void => {

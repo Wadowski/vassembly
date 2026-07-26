@@ -24,6 +24,14 @@ Feature: User Onboarding
     Then all product routes are accessible without onboarding redirect
 
   @smoke
+  Scenario: User stays on onboarding after AI integration to review MCP step
+    Given an authenticated user with incomplete onboarding and no active AI credentials
+    When I create my first AI integration during onboarding without finishing
+    Then I am on "/onboarding"
+    And I see "Connect MCPs"
+    And I see "Finish onboarding"
+
+  @smoke
   Scenario: Incomplete user is redirected from a restricted route
     Given an authenticated user with incomplete onboarding
     When I navigate to "/agents"

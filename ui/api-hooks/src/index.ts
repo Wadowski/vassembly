@@ -25,6 +25,7 @@ export {
   useDeleteMcpConfiguration,
   useTestMcpConnection,
   useSetMcpEnabled,
+  useSetZeroConfigMcpsEnabled,
   useAvailableTags,
 } from './mcps';
 export type {
@@ -94,6 +95,7 @@ export {
   useInternalTools,
 } from './internalTools';
 export type { InternalToolDto, UseInternalToolsResult, InternalToolAccessScope } from './internalTools';
-export { GraphQLProvider } from './graphql';
+export { GraphQLProvider, useRefetchQueries } from './graphql';
+export type { RefetchQueriesParams } from './graphql';
 export { HttpClientProvider, useHttpClient } from './http';
 export { usePolling } from './hooks/usePolling';

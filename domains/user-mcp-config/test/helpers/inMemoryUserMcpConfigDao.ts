@@ -25,6 +25,11 @@ export interface InMemoryUserMcpConfigDao {
   }) => Promise<StoredUserMcpConfig | null>;
   getByMcpId: (params: { mcpId: string }) => Promise<StoredUserMcpConfig | null>;
   getListByUserId: (params: { userId: string }) => Promise<StoredUserMcpConfig[]>;
+  getPaginatedListByUserId: (params: {
+    userId: string;
+    skip: number;
+    limit: number;
+  }) => Promise<{ items: StoredUserMcpConfig[]; total: number }>;
   update: (params: { model: StoredUserMcpConfig }) => Promise<StoredUserMcpConfig>;
   remove: (params: { userId: string; mcpId: string }) => Promise<boolean>;
 }
@@ -74,6 +79,20 @@ export const createInMemoryUserMcpConfigDao = (): InMemoryUserMcpConfigDao => {
       return configs
         .sort((left, right) => right.updatedAt.getTime() - left.updatedAt.getTime())
         .slice(0, LIST_CAP);
+    },
+
+    getPaginatedListByUserId: async ({ userId, skip, limit }): Promise<{
+      items: StoredUserMcpConfig[];
+      total: number;
+    }> => {
+      const configs = [...store.values()]
+        .filter((config) => config.userId === userId)
+        .sort((left, right) => right.updatedAt.getTime() - left.updatedAt.getTime());
+
+      return {
+        items: configs.slice(skip, skip + limit),
+        total: configs.length,
+      };
     },
 
     update: async ({ model }): Promise<StoredUserMcpConfig> => {

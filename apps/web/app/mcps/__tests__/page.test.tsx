@@ -87,9 +87,16 @@ import McpsPage from '../page';
 
 const setupDefaultMocks = (): void => {
   mockUseUserConfiguredMcps.mockReturnValue({
-    data: { mcps: MOCK_USER_CONFIGURED_MCPS },
+    data: {
+      items: MOCK_USER_CONFIGURED_MCPS,
+      total: MOCK_USER_CONFIGURED_MCPS.length,
+      page: 0,
+      size: 9,
+    },
     loading: false,
     error: undefined,
+    execute: vi.fn().mockResolvedValue(undefined),
+    refetch: vi.fn(),
   });
 
   mockUseMcps.mockReturnValue({
@@ -136,9 +143,11 @@ describe('McpsPage', () => {
 
     it('should show empty state message when no configurations exist', () => {
       mockUseUserConfiguredMcps.mockReturnValue({
-        data: { mcps: [] },
+        data: { items: [], total: 0, page: 0, size: 9 },
         loading: false,
         error: undefined,
+        execute: vi.fn().mockResolvedValue(undefined),
+        refetch: vi.fn(),
       });
 
       render(<McpsPage />);
@@ -268,6 +277,8 @@ describe('McpsPage', () => {
         data: undefined,
         loading: true,
         error: undefined,
+        execute: vi.fn().mockResolvedValue(undefined),
+        refetch: vi.fn(),
       });
 
       render(<McpsPage />);
@@ -280,15 +291,24 @@ describe('McpsPage', () => {
         data: undefined,
         loading: true,
         error: undefined,
+        execute: vi.fn().mockResolvedValue(undefined),
+        refetch: vi.fn(),
       });
 
       const { rerender } = render(<McpsPage />);
       expect(screen.queryByRole('region', { name: /your mcps/i })).toBeNull();
 
       mockUseUserConfiguredMcps.mockReturnValue({
-        data: { mcps: MOCK_USER_CONFIGURED_MCPS },
+        data: {
+          items: MOCK_USER_CONFIGURED_MCPS,
+          total: MOCK_USER_CONFIGURED_MCPS.length,
+          page: 0,
+          size: 9,
+        },
         loading: false,
         error: undefined,
+        execute: vi.fn().mockResolvedValue(undefined),
+        refetch: vi.fn(),
       });
 
       rerender(<McpsPage />);
@@ -303,11 +323,8 @@ describe('McpsPage', () => {
       const yourMcpsSection = screen.getByRole('region', { name: /your mcps/i });
 
       expect(mockUseUserConfiguredMcps).toHaveBeenCalled();
-      MOCK_USER_CONFIGURED_MCPS.forEach((config) => {
-        const mcp = MOCK_CONFIGURED_MCP_LOOKUP[config.mcpId];
-        if (mcp !== undefined) {
-          expect(within(yourMcpsSection).getByText(mcp.name)).not.toBeNull();
-        }
+      MOCK_USER_CONFIGURED_MCPS.forEach((mcp) => {
+        expect(within(yourMcpsSection).getByText(mcp.name)).not.toBeNull();
       });
     });
 

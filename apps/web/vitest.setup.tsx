@@ -86,9 +86,16 @@ vi.mock('@vassembly/ui-api-hooks', async (importOriginal) => {
       refetch: vi.fn(),
     })),
     useUserConfiguredMcps: vi.fn(() => ({
-      data: { mcps: [] },
+      data: {
+        items: [],
+        total: 0,
+        page: 0,
+        size: 20,
+      },
       loading: false,
       error: undefined,
+      execute: vi.fn().mockResolvedValue(undefined),
+      refetch: vi.fn(),
     })),
     useInternalTools: vi.fn(() => ({
       data: [],

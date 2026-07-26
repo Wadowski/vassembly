@@ -11,6 +11,7 @@ const { Then } = createBdd(bddTest);
 const ONBOARDING_HEADING = 'Complete your account setup';
 const STEP1_TITLE = 'Verify email address';
 const STEP2_TITLE = 'Create first AI integration';
+const STEP3_TITLE = 'Connect MCPs';
 
 const getOnboardingHub = ({ page }: { page: NonNullable<import('@playwright/test').Page> }) =>
   page.getByRole('main');
@@ -38,6 +39,16 @@ Then('Step 1 shows as complete on the hub', async ({ page }) => {
   const step1Card = getStep1Card({ page });
   await expect(step1Card.getByRole('heading', { name: STEP1_TITLE })).toBeVisible();
   await expect(step1Card.getByText(/verified/i)).toBeVisible();
+});
+
+Then('Step 3 is locked on the hub', async ({ page }) => {
+  if (!page) {
+    return;
+  }
+
+  const step3Card = page.getByRole('article', { name: STEP3_TITLE });
+  await expect(step3Card.getByRole('heading', { name: STEP3_TITLE })).toBeVisible();
+  await expect(step3Card.getByText(/complete step 2/i)).toBeVisible();
 });
 
 Then('Step 2 is locked on the hub', async ({ page }) => {

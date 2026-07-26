@@ -3,7 +3,7 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { useEffect, useMemo } from 'react';
 
-import { useAiIntegrations, useInternalTools, useMcps, useUserConfiguredMcps } from '@vassembly/ui-api-hooks';
+import { useAiIntegrations, useInternalTools, useUserConfiguredMcps } from '@vassembly/ui-api-hooks';
 import { Alert } from '@vassembly/ui-system-design/alert';
 import { Button } from '@vassembly/ui-system-design/button';
 import { Dropdown } from '@vassembly/ui-system-design/dropdown';
@@ -58,13 +58,20 @@ export function AgentForm({
   });
 
   const { data: integrationsData, fetch: fetchIntegrations, isLoading: isIntegrationsLoading } = useAiIntegrations();
-  const { data: configuredMcpsData, loading: isConfiguredMcpsLoading } = useUserConfiguredMcps();
-  const { data: allMcpsData } = useMcps();
+  const {
+    data: configuredMcpsData,
+    loading: isConfiguredMcpsLoading,
+    execute: fetchConfiguredMcps,
+  } = useUserConfiguredMcps();
   const { data: internalToolsData, loading: isInternalToolsLoading } = useInternalTools();
 
   useEffect(() => {
     void fetchIntegrations({ status: 'active', size: 100 });
   }, [fetchIntegrations]);
+
+  useEffect(() => {
+    void fetchConfiguredMcps({ page: 0, size: 50 });
+  }, [fetchConfiguredMcps]);
 
   const connectedIntegrations = useMemo(() => {
     const activeConnected = (integrationsData?.items ?? []).filter(
@@ -86,16 +93,11 @@ export function AgentForm({
   }, [integrationsData?.items, values.integrationCredentialId]);
 
   const configuredMcpOptions = useMemo((): McpAssignmentOption[] => {
-    const catalogLookup = new Map(allMcpsData?.mcps.map((mcp) => [mcp.id, mcp]));
-
-    const configured = (configuredMcpsData?.mcps ?? [])
-      .map((config) => catalogLookup.get(config.mcpId))
-      .filter((mcp): mcp is NonNullable<typeof mcp> => mcp !== undefined)
-      .map((mcp) => ({
-        id: mcp.id,
-        name: mcp.name,
-        slug: mcp.slug,
-      }));
+    const configured = (configuredMcpsData?.items ?? []).map((mcp) => ({
+      id: mcp.id,
+      name: mcp.name,
+      slug: mcp.slug,
+    }));
 
     const configuredIds = new Set(configured.map((mcp) => mcp.id));
     const staleSelections = values.assignedMcpIds
@@ -107,7 +109,7 @@ export function AgentForm({
       }));
 
     return [...configured, ...staleSelections];
-  }, [allMcpsData?.mcps, configuredMcpsData?.mcps, values.assignedMcpIds]);
+  }, [configuredMcpsData?.items, values.assignedMcpIds]);
 
   const internalToolOptions = useMemo((): InternalToolItem[] => {
     const catalog = internalToolsData ?? [];

@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { useGetUser, useAiIntegrations, useHttpClient } from '@vassembly/ui-api-hooks';
-import { useUserAuth, parseOnboardingCompleted } from '@vassembly/ui-user-auth';
+import { useGetUser, useAiIntegrations, useHttpClient, useFinishOnboarding } from '@vassembly/ui-api-hooks';
+import { useUserAuth } from '@vassembly/ui-user-auth';
 import { resolvePostRegisterTargetUrl } from '@vassembly/ui-register-form';
 
-import { setTokens, getTokens } from '../../../lib/auth/sessionStorage';
+import { setTokens } from '../../../lib/auth/sessionStorage';
 import type { RefObject } from 'react';
 
 import type { OnboardingSteps } from './types';
@@ -30,6 +30,10 @@ export interface UseOnboardingHubResult {
   steps: OnboardingSteps;
   currentStepIndex: number;
   isLoading: boolean;
+  canFinish: boolean;
+  isFinishing: boolean;
+  finishErrorMessage: string | null;
+  finishOnboarding: () => Promise<void>;
   returnUrlRef: RefObject<string | null>;
 }
 
@@ -40,8 +44,9 @@ export const useOnboardingHub = (): UseOnboardingHubResult => {
   const httpClient = useHttpClient();
   const returnUrlRef = useRef<string | null>(searchParams.get('returnUrl'));
   const completionHandledRef = useRef(false);
+  const [finishOnboardingRequest, { loading: isFinishing, error: finishError }] = useFinishOnboarding();
 
-  const { data: userData, isLoading: isUserLoading } = useGetUser({
+  const { data: userData, isLoading: isUserLoading, refetch: refetchUser } = useGetUser({
     userId: user?.id ?? '',
   });
   const { fetch: fetchIntegrations, data: integrationsData, isLoading: isIntegrationsLoading } =
@@ -56,7 +61,8 @@ export const useOnboardingHub = (): UseOnboardingHubResult => {
 
   const emailVerified = userData?.user?.verifiedAt != null;
   const aiIntegrationCreated = (integrationsData?.totalCount ?? 0) >= 1;
-  const isComplete = userData?.user?.onboarding?.completedAt != null;
+  const isOnboardingComplete = userData?.user?.onboarding?.completedAt != null;
+  const canFinish = emailVerified && aiIntegrationCreated && !isOnboardingComplete;
 
   const steps: OnboardingSteps = {
     emailVerified,
@@ -68,12 +74,7 @@ export const useOnboardingHub = (): UseOnboardingHubResult => {
     aiIntegrationCreated,
   });
 
-  const handleCompletion = useCallback(async (): Promise<void> => {
-    if (completionHandledRef.current) {
-      return;
-    }
-    completionHandledRef.current = true;
-
+  const refreshSessionAndRedirect = useCallback(async (): Promise<void> => {
     const authResult = await httpClient.post<object, { authToken: string; refreshToken: string }>({
       path: '/auth',
       body: {},
@@ -101,28 +102,32 @@ export const useOnboardingHub = (): UseOnboardingHubResult => {
     router.replace(href);
   }, [httpClient, router]);
 
-  useEffect(() => {
-    if (!isComplete || !isAuthenticated) {
+  const finishOnboarding = useCallback(async (): Promise<void> => {
+    if (!canFinish || completionHandledRef.current) {
       return;
     }
-    void handleCompletion();
-  }, [handleCompletion, isComplete, isAuthenticated]);
 
-  useEffect(() => {
-    const tokens = getTokens();
-    if (tokens.authToken && user) {
-      const onboardingCompleted = parseOnboardingCompleted({ authToken: tokens.authToken });
-      if (onboardingCompleted && isComplete) {
-        router.replace('/');
-      }
+    completionHandledRef.current = true;
+
+    const result = await finishOnboardingRequest();
+    if (!result?.success) {
+      completionHandledRef.current = false;
+      return;
     }
-  }, [isComplete, router, user]);
+
+    await refetchUser();
+    await refreshSessionAndRedirect();
+  }, [canFinish, finishOnboardingRequest, refetchUser, refreshSessionAndRedirect]);
 
   return {
     email: userData?.user?.email ?? user?.email ?? '',
     steps,
     currentStepIndex,
     isLoading: isUserLoading || isIntegrationsLoading,
+    canFinish,
+    isFinishing,
+    finishErrorMessage: finishError?.message ?? null,
+    finishOnboarding,
     returnUrlRef,
   };
 };
