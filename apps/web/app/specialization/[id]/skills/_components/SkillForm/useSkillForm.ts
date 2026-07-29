@@ -7,7 +7,9 @@ import { z } from 'zod';
 
 import {
   SKILL_DESCRIPTION_MAX,
+  SKILL_INPUT_MAX,
   SKILL_NAME_MAX,
+  SKILL_OUTPUT_MAX,
   SKILL_RULE_MAX,
   SKILL_SCRIPT_MAX_COUNT,
 } from './constants';
@@ -35,6 +37,16 @@ const schema = z.object({
       SKILL_DESCRIPTION_MAX,
       `Description must be at most ${SKILL_DESCRIPTION_MAX} characters.`,
     ),
+  input: z
+    .string()
+    .trim()
+    .min(1, 'Input is required.')
+    .max(SKILL_INPUT_MAX, `Input must be at most ${SKILL_INPUT_MAX} characters.`),
+  output: z
+    .string()
+    .trim()
+    .min(1, 'Output is required.')
+    .max(SKILL_OUTPUT_MAX, `Output must be at most ${SKILL_OUTPUT_MAX} characters.`),
   rule: z
     .string()
     .trim()
@@ -57,6 +69,8 @@ const emptyScript = (): SkillFormScriptInput => ({
 const toFormValues = (initial?: SkillFormInitialValues): SkillFormInput => ({
   name: initial?.name ?? '',
   description: initial?.description ?? '',
+  input: initial?.input ?? '',
+  output: initial?.output ?? '',
   rule: initial?.rule ?? '',
   usesSkillIds: initial?.usesSkillIds ?? [],
   scripts: initial?.scripts ?? [],
@@ -78,6 +92,8 @@ export interface UseSkillFormResult {
   ) => string | undefined;
   blurField: (key: keyof SkillFormInput) => void;
   descriptionCharCount: number;
+  inputCharCount: number;
+  outputCharCount: number;
   ruleCharCount: number;
 }
 
@@ -226,6 +242,8 @@ export const useSkillForm = (initial?: SkillFormInitialValues): UseSkillFormResu
     getScriptFieldErrorMessage,
     blurField,
     descriptionCharCount: values.description.length,
+    inputCharCount: values.input.length,
+    outputCharCount: values.output.length,
     ruleCharCount: values.rule.length,
   };
 };

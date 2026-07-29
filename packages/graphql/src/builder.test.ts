@@ -10,5 +10,6 @@ describe('createBuilder', () => {
     expect(typeof schema.getTypeMap).toBe('function');
     expect(schema.getType('Query')).toBeDefined();
     expect(schema.getType('DateTime')).toBeDefined();
+    expect(schema.getType('JSON')).toBeDefined();
   });
 });

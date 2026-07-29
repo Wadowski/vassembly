@@ -4,6 +4,10 @@ export const SKILL_NAME_MAX_LENGTH = 64;
 
 export const SKILL_DESCRIPTION_MAX_LENGTH = 1024;
 
+export const SKILL_INPUT_MAX_LENGTH = 512;
+
+export const SKILL_OUTPUT_MAX_LENGTH = 512;
+
 export const SKILL_SCRIPT_MAX_SIZE_BYTES = 512 * 1024;
 
 export const SKILL_SCRIPT_MAX_COUNT = 10;

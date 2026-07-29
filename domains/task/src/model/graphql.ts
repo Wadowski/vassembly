@@ -18,11 +18,6 @@ export const gqlTaskSchema = (builder: Builder): void => {
         nullable: true,
         resolve: (parent: { specializationIds?: string[] | null }) => parent.specializationIds ?? null,
       }),
-      skillIdsUsed: t.field({
-        type: graphQLListType('String'),
-        nullable: true,
-        resolve: (parent: { skillIdsUsed?: string[] | null }) => parent.skillIdsUsed ?? null,
-      }),
       activeCommentId: t.exposeString('activeCommentId', { nullable: true }),
       errorMessage: t.exposeString('errorMessage', { nullable: true }),
       errorCode: t.exposeString('errorCode', { nullable: true }),

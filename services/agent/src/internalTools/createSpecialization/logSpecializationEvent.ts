@@ -9,7 +9,9 @@ export type SpecializationLogEvent =
   | 'specialization.mcp_mapping.completed'
   | 'specialization.mcp_mapping.failed'
   | 'specialization.mcp_mapping.skipped'
-  | 'specialization.agent.description.failed';
+  | 'specialization.agent.description.failed'
+  | 'specialization.agent.customInstructions.failed'
+  | 'specialization.agent.provisioning.failed';
 
 export interface LogSpecializationEventParams {
   event: SpecializationLogEvent;

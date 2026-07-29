@@ -22,4 +22,6 @@ export class SystemAgentModel extends ModelWithTranslation {
   assignedToolIds?: string[];
 
   specializationId?: string | null;
+
+  customInstructions?: string | null;
 }

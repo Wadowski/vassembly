@@ -7,9 +7,11 @@ export interface ListSystemAgentsBySpecializationIdsParams {
 }
 
 const mapSystemAgentRow = (agent: {
+  id: string;
   name: string;
   description?: string;
 }): ListAgentRow => ({
+  id: agent.id,
   name: agent.name,
   description: agent.description,
   category: null,
@@ -37,7 +39,7 @@ export const listSystemAgentsBySpecializationIds = async ({
 
       agentsById.set(
         agent.id,
-        mapSystemAgentRow({ name: agent.name, description: agent.description }),
+        mapSystemAgentRow({ id: agent.id, name: agent.name, description: agent.description }),
       );
     }
   }

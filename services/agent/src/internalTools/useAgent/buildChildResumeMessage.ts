@@ -1,5 +1,10 @@
 import type { AnsweredQuestion } from '@vassembly/domain-task-questions';
 
+export interface BuildChildResumeMessageParams {
+  agentPrompt: string;
+  answeredQuestions: AnsweredQuestion[];
+}
+
 const formatAnswer = (answer: string | string[] | boolean): string => {
   if (Array.isArray(answer)) {
     return JSON.stringify(answer);
@@ -7,11 +12,6 @@ const formatAnswer = (answer: string | string[] | boolean): string => {
 
   return String(answer);
 };
-
-export interface BuildChildResumeMessageParams {
-  agentPrompt: string;
-  answeredQuestions: AnsweredQuestion[];
-}
 
 export const buildChildResumeMessage = ({
   agentPrompt,
@@ -21,13 +21,8 @@ export const buildChildResumeMessage = ({
 
   if (answeredQuestions.length > 0) {
     parts.push('', '--- User responses received ---');
-
-    for (const question of answeredQuestions) {
-      parts.push(
-        `Question: "${question.question}"`,
-        `Answer: ${formatAnswer(question.answer)}`,
-        '',
-      );
+    for (const qa of answeredQuestions) {
+      parts.push(`Question: "${qa.question}"`, `Answer: ${formatAnswer(qa.answer)}`, '');
     }
   }
 

@@ -9,6 +9,7 @@ export enum SYSTEM_AGENT_NAME {
   SpecializationClassifier = 'Specialization classifier',
   McpSpecializationClassifier = 'MCP specialization classifier',
   SpecializationAgentDescriptionGenerator = 'Specialization agent description generator',
+  SpecializationAgentRuleGenerator = 'Specialization agent rule generator',
   SkillResolver = 'Skill resolver',
   TaskPlanner = 'Task planner',
   SkillPlanner = 'Skill planner',

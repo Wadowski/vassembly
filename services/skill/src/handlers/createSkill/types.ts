@@ -10,6 +10,8 @@ export interface CreateSkillInput {
   specializationId: string;
   name: string;
   description: string;
+  input: string;
+  output: string;
   rule: string;
   scripts?: SkillScriptWriteInput[];
   usesSkillIds?: string[];

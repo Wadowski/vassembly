@@ -57,63 +57,6 @@
     "iconPath": "/mcps/context7.png"
   },
   {
-    "slug": "playwright-mcp",
-    "name": "Playwright MCP",
-    "category": "browser-automation",
-    "transport": "stdio-wrapped",
-    "description": "Browser automation and web scraping using Microsoft Playwright",
-    "tags": [
-      "browser",
-      "automation",
-      "playwright",
-      "testing"
-    ],
-    "documentationUrl": "https://github.com/microsoft/playwright-mcp",
-    "repositoryUrl": "https://github.com/microsoft/playwright-mcp",
-    "configSchema": {
-      "fields": []
-    },
-    "iconPath": "/mcps/playwright-mcp.png"
-  },
-  {
-    "slug": "puppeteer-mcp",
-    "name": "Puppeteer MCP",
-    "category": "browser-automation",
-    "transport": "stdio-wrapped",
-    "description": "Browser automation and web scraping using Puppeteer",
-    "tags": [
-      "browser",
-      "automation",
-      "puppeteer",
-      "scraping"
-    ],
-    "documentationUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer",
-    "repositoryUrl": "https://github.com/modelcontextprotocol/servers",
-    "configSchema": {
-      "fields": []
-    },
-    "iconPath": "/mcps/puppeteer-mcp.png"
-  },
-  {
-    "slug": "chrome-devtools-mcp",
-    "name": "Chrome DevTools MCP",
-    "category": "browser-automation",
-    "transport": "native-http",
-    "description": "Debug and inspect web pages using Chrome DevTools Protocol",
-    "tags": [
-      "browser",
-      "devtools",
-      "chrome",
-      "debugging"
-    ],
-    "documentationUrl": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
-    "repositoryUrl": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
-    "configSchema": {
-      "fields": []
-    },
-    "iconPath": "/mcps/chrome-devtools-mcp.png"
-  },
-  {
     "slug": "mongodb-mcp",
     "name": "MongoDB MCP",
     "category": "database",
@@ -168,25 +111,6 @@
       ]
     },
     "iconPath": "/mcps/redis-mcp.png"
-  },
-  {
-    "slug": "docker-mcp",
-    "name": "Docker MCP",
-    "category": "cloud-infra",
-    "transport": "stdio-wrapped",
-    "description": "Manage Docker containers, images, and networks",
-    "tags": [
-      "cloud-infra",
-      "docker",
-      "containers",
-      "devops"
-    ],
-    "documentationUrl": "https://github.com/docker/mcp-server-docker",
-    "repositoryUrl": "https://github.com/docker/mcp-server-docker",
-    "configSchema": {
-      "fields": []
-    },
-    "iconPath": "/mcps/docker-mcp.png"
   },
   {
     "slug": "aws-mcp",
@@ -383,34 +307,6 @@
     "iconPath": "/mcps/brave-search-mcp.png"
   },
   {
-    "slug": "firecrawl-mcp",
-    "name": "Firecrawl MCP",
-    "category": "search",
-    "transport": "native-http",
-    "description": "Crawl and scrape websites with Firecrawl for AI-ready content",
-    "tags": [
-      "search",
-      "crawling",
-      "scraping",
-      "web"
-    ],
-    "documentationUrl": "https://github.com/mendableai/firecrawl-mcp-server",
-    "repositoryUrl": "https://github.com/mendableai/firecrawl-mcp-server",
-    "configSchema": {
-      "fields": [
-        {
-          "key": "apiKey",
-          "label": "API Key",
-          "type": "password",
-          "description": "Your Firecrawl API key",
-          "required": true,
-          "placeholder": "Enter your api key"
-        }
-      ]
-    },
-    "iconPath": "/mcps/firecrawl-mcp.png"
-  },
-  {
     "slug": "wikipedia-mcp",
     "name": "Wikipedia MCP",
     "category": "search",
@@ -515,7 +411,7 @@
     "slug": "notion-mcp",
     "name": "Notion MCP",
     "category": "knowledge",
-    "transport": "native-http",
+    "transport": "stdio-wrapped",
     "description": "Read and write Notion pages, databases, and workspaces",
     "tags": [
       "knowledge",
@@ -846,34 +742,6 @@
       ]
     },
     "iconPath": "/mcps/canva-mcp.png"
-  },
-  {
-    "slug": "home-assistant-mcp",
-    "name": "Home Assistant MCP",
-    "category": "iot-geo",
-    "transport": "native-http",
-    "description": "Control smart home devices and automations via Home Assistant",
-    "tags": [
-      "iot-geo",
-      "home-assistant",
-      "smart-home",
-      "automation"
-    ],
-    "documentationUrl": "https://github.com/home-assistant/mcp-server-homeassistant",
-    "repositoryUrl": "https://github.com/home-assistant/mcp-server-homeassistant",
-    "configSchema": {
-      "fields": [
-        {
-          "key": "longLivedAccessToken",
-          "label": "Long-Lived Access Token",
-          "type": "password",
-          "description": "Your Home Assistant long-lived access token",
-          "required": true,
-          "placeholder": "Enter your long-lived access token"
-        }
-      ]
-    },
-    "iconPath": "/mcps/home-assistant-mcp.png"
   },
   {
     "slug": "google-maps-mcp",

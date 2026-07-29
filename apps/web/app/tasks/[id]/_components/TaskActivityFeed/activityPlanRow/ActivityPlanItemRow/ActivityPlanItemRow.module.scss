@@ -1,0 +1,49 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  padding: $spacing-2 0;
+}
+
+.header {
+  align-items: flex-start;
+  display: flex;
+  gap: $spacing-3;
+  justify-content: space-between;
+}
+
+.description {
+  flex: 1;
+  white-space: pre-wrap;
+}
+
+.meta,
+.retry {
+  color: $color-text-secondary;
+}
+
+.pending {
+  color: $color-text-secondary;
+  flex-shrink: 0;
+}
+
+.inProgress {
+  color: $color-primary;
+  flex-shrink: 0;
+}
+
+.done {
+  color: $color-success;
+  flex-shrink: 0;
+}
+
+.failed {
+  color: $color-error;
+  flex-shrink: 0;
+}
+
+.error {
+  color: $color-error;
+}

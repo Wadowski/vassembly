@@ -47,9 +47,18 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
   defineInternalTool({
     domain: 'task',
     action: 'update',
-    description: 'Persist title, category, specializationIds, or skillIdsUsed for the current task. taskId is optional during task execution — it is taken from execution context.',
+    description:
+      'Persist title, category, or specializationIds for the current task. taskId is optional during task execution — it is taken from execution context.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'update_task',
+  }),
+  defineInternalTool({
+    domain: 'task-plan',
+    action: 'persist',
+    description:
+      'Persist the composed plan. Required top-level fields: shortName, description, inputDetails, outputDetails, resolvedInputDetails, items[]. Each item needs agentName (exact name from Available agents), skillId (existing skill id, or null), skillName (existing skill name to reuse when skillId is null; omit to define a new skill via description), description, order. Do not use placeholder agent names or MongoDB ids for agents.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'persist_task_plan',
   }),
   defineInternalTool({
     domain: 'user',
@@ -79,7 +88,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     domain: 'skill',
     action: 'create',
     description:
-      'Create a skill for a specialization with name, description, rule, and optional scripts.',
+      'Create a skill for a specialization with name, description, input, output, rule, and optional scripts.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'create_skill',
   }),

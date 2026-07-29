@@ -18,6 +18,7 @@ export const taskCommentResponseSchema = z.object({
   userId: z.string(),
   userText: z.string(),
   agentResponse: z.string().nullable(),
+  specializationIds: z.array(z.string()),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

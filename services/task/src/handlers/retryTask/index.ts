@@ -1,5 +1,7 @@
 import taskDomain, { TaskStatus, toTaskResponse } from '@vassembly/domain-task';
 import taskProgressDomain from '@vassembly/domain-task-progress';
+import mcpUsageDomain from '@vassembly/domain-mcp-usage';
+import internalToolUsageDomain from '@vassembly/domain-internal-tool-usage';
 import { ConflictError, NotFoundError } from '@vassembly/errors';
 import { logger } from '@vassembly/logger';
 
@@ -7,6 +9,14 @@ import { executeTask, TaskExecutionMode } from '../executeTask';
 import { resolveActiveCommentId } from '../executeTask/resolveActiveCommentId';
 
 import type { RetryTaskHandlerInput, RetryTaskHandlerOutput } from './types';
+
+const resetCommentExecutionActivity = async ({ commentId }: { commentId: string }): Promise<void> => {
+  await Promise.all([
+    taskProgressDomain.commands.resetTaskProgress({ commentId }),
+    mcpUsageDomain.commands.clearByCommentId({ commentId }),
+    internalToolUsageDomain.commands.clearByCommentId({ commentId }),
+  ]);
+};
 
 export const retryTask = async ({
   userId,
@@ -26,7 +36,7 @@ export const retryTask = async ({
   const commentId = await resolveActiveCommentId({ taskId });
 
   try {
-    await taskProgressDomain.commands.resetTaskProgress({ commentId });
+    await resetCommentExecutionActivity({ commentId });
   } catch (error: unknown) {
     logger('task.retry.resetProgress.failed', {
       meta: { sessionId: 'TASK_EXECUTION', taskId, userId },

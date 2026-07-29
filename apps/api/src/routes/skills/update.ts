@@ -26,6 +26,8 @@ export const skillUpdateRoute = defineRoute({
     const { skill } = await skillService.updateSkill({
       skillId,
       description: body.description,
+      input: body.input,
+      output: body.output,
       rule: body.rule,
       enabled: body.enabled,
       scripts: body.scripts,

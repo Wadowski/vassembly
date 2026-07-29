@@ -16,5 +16,6 @@ export const mapSubmittedCommentToActivityItem = ({
     filterGroup: 'comments',
     commentId: comment.id,
     userText: comment.userText,
+    specializationIds: comment.specializationIds ?? [],
   };
 };

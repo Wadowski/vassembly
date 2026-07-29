@@ -18,6 +18,7 @@ export interface InternalToolBinding {
 
 export interface ModeledProviderToolUsage {
   internalToolIdsUsed: string[];
+  internalToolResults?: Array<{ toolId: string; content: string }>;
   skippedInternalToolIds: string[];
   skippedMcpToolNames?: string[];
 }
@@ -30,6 +31,8 @@ export interface ModeledProviderInvokeParams {
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
   recordMcpToolCall?: AiProviderInvokeParams['recordMcpToolCall'];
+  recordInternalToolCall?: AiProviderInvokeParams['recordInternalToolCall'];
+  requireSuccessfulToolLlmName?: AiProviderInvokeParams['requireSuccessfulToolLlmName'];
 }
 
 export interface ModeledProviderClient {
@@ -67,6 +70,8 @@ export const getModeledProviderClient = (
         signal: messageOrParams.signal,
         shouldAbort: messageOrParams.shouldAbort,
         recordMcpToolCall: messageOrParams.recordMcpToolCall,
+        recordInternalToolCall: messageOrParams.recordInternalToolCall,
+        requireSuccessfulToolLlmName: messageOrParams.requireSuccessfulToolLlmName,
       });
     },
   };

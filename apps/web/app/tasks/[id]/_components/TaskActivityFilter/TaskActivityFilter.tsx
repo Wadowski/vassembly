@@ -15,7 +15,8 @@ const FILTER_OPTIONS: { value: TaskActivityFilterGroup; label: string }[] = [
   { value: 'agentFinished', label: 'Agent finished' },
   { value: 'agentFailed', label: 'Agent failed' },
   { value: 'agentWaiting', label: 'Agent waiting' },
-  { value: 'mcpUsage', label: 'MCP tool calls' },
+  { value: 'toolCalls', label: 'Tool calls' },
+  { value: 'plans', label: 'Plans' },
 ];
 
 const FILTER_PLACEHOLDER = 'Filter activity';

@@ -35,6 +35,8 @@ export const getCatalogBySpecializationId = async (
   const items: SkillCatalogItem[] = rows.map((row) => ({
     name: String(row.name),
     description: String(row.description),
+    input: typeof row.input === 'string' ? row.input : '',
+    output: typeof row.output === 'string' ? row.output : '',
   }));
 
   return { items };

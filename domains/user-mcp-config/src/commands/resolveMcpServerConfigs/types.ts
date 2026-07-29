@@ -6,6 +6,7 @@ export interface McpServerConfig {
   env?: Record<string, string>;
   url?: string;
   headers?: Record<string, string>;
+  label?: string;
 }
 
 export interface ResolveMcpServerConfigsParams {

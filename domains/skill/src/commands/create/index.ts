@@ -9,7 +9,9 @@ import { getModelById } from '../../queries/getModelById';
 import { persistSkillScripts } from '../shared/persistScripts';
 import {
   SKILL_DESCRIPTION_SCHEMA,
+  SKILL_INPUT_SCHEMA,
   SKILL_NAME_SCHEMA,
+  SKILL_OUTPUT_SCHEMA,
   SKILL_RULE_SCHEMA,
   SKILL_SCRIPTS_INPUT_SCHEMA,
   USES_SKILL_IDS_SCHEMA,
@@ -21,6 +23,8 @@ const CREATE_INPUT_SCHEMA = z.object({
   specializationId: z.string().trim().min(1).max(100),
   name: SKILL_NAME_SCHEMA,
   description: SKILL_DESCRIPTION_SCHEMA,
+  input: SKILL_INPUT_SCHEMA,
+  output: SKILL_OUTPUT_SCHEMA,
   rule: SKILL_RULE_SCHEMA,
   scripts: SKILL_SCRIPTS_INPUT_SCHEMA,
   usesSkillIds: USES_SKILL_IDS_SCHEMA.optional(),
@@ -31,6 +35,8 @@ const CREATE_DB_SCHEMA = z.object({
   specializationId: z.string().min(1).max(100),
   name: SKILL_NAME_SCHEMA,
   description: SKILL_DESCRIPTION_SCHEMA,
+  input: SKILL_INPUT_SCHEMA,
+  output: SKILL_OUTPUT_SCHEMA,
   rule: SKILL_RULE_SCHEMA,
   enabled: z.literal(true),
   scripts: z.array(z.unknown()).default([]),
@@ -115,6 +121,8 @@ export const create = async (
   const onDuplicate = parsed.data.onDuplicate ?? 'error';
   const name = parsed.data.name.trim();
   const description = parsed.data.description.trim();
+  const skillInput = parsed.data.input.trim();
+  const skillOutput = parsed.data.output.trim();
   const rule = parsed.data.rule.trim();
   const scripts = parsed.data.scripts ?? [];
   const usesSkillIds = parsed.data.usesSkillIds ?? [];
@@ -134,6 +142,8 @@ export const create = async (
       specializationId: parsed.data.specializationId,
       name,
       description,
+      input: skillInput,
+      output: skillOutput,
       rule,
       enabled: true,
       scripts: [],

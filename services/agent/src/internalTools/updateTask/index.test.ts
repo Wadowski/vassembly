@@ -193,26 +193,17 @@ describe('updateTask internal tool handler', () => {
     });
   });
 
-  it('should throw ValidationError when specializationIds exceeds max 3', async () => {
-    await expect(
-      updateTaskToolHandler({
-        taskId: TASK_ID,
-        specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'],
-      }),
-    ).rejects.toThrow(ValidationError);
-  });
-
-  it('should update skillIdsUsed when provided', async () => {
+  it('should update task when specializationIds has more than 3 entries', async () => {
     const result = await updateTaskToolHandler({
       taskId: TASK_ID,
-      skillIdsUsed: ['skill-1', 'skill-2'],
+      specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'],
     });
 
     expect(mockUpdateTask).toHaveBeenCalledWith({
       id: TASK_ID,
-      skillIdsUsed: ['skill-1', 'skill-2'],
+      specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'],
     });
-    expect(result).toBe(`Updated skillIdsUsed for task ${TASK_ID}`);
+    expect(result).toBe(`Updated specializationIds for task ${TASK_ID}`);
   });
 
   it('should throw ValidationError when no update fields are provided', async () => {

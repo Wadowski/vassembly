@@ -6,7 +6,7 @@ import { mongoDb } from '@vassembly/client-mongodb';
 
 import { MCP_USAGE_COLLECTION_NAME } from '../../clients';
 import { McpUsageStatus } from '../../model';
-import { sanitizeErrorMessage, sanitizeToolInput } from './shared/sanitizeToolInput';
+import { sanitizeErrorMessage, sanitizeToolInput, sanitizeToolOutput } from './shared/sanitizeToolInput';
 
 import type { RecordUsageEventInput, RecordUsageEventResult } from './types';
 
@@ -15,6 +15,7 @@ const STARTED_SCHEMA = z.object({
   mcpId: z.string().min(1),
   mcpSlug: z.string().optional(),
   toolName: z.string().min(1),
+  toolDisplayName: z.string().optional(),
   userId: z.string().min(1),
   taskId: z.string().nullable().optional(),
   commentId: z.string().nullable().optional(),
@@ -32,6 +33,7 @@ const COMPLETED_SCHEMA = z.object({
   endedAt: z.date(),
   durationMs: z.number().min(0),
   errorMessage: z.string().optional(),
+  output: z.string().optional(),
 });
 
 const recordStarted = async (
@@ -44,6 +46,7 @@ const recordStarted = async (
     mcpId: input.mcpId,
     mcpSlug: input.mcpSlug ?? null,
     toolName: input.toolName,
+    toolDisplayName: input.toolDisplayName ?? null,
     userId: input.userId,
     taskId: input.taskId ?? null,
     commentId: input.commentId ?? null,
@@ -70,6 +73,7 @@ const recordStarted = async (
 const recordCompleted = async (
   input: z.infer<typeof COMPLETED_SCHEMA>,
 ): Promise<void> => {
+  const { value: sanitizedOutput, outputTruncated } = sanitizeToolOutput(input.output);
   const collection = mongoDb.db.collection(MCP_USAGE_COLLECTION_NAME);
   const result = await collection.updateOne(
     { _id: new ObjectId(input.eventId) },
@@ -79,6 +83,8 @@ const recordCompleted = async (
         endedAt: input.endedAt,
         durationMs: input.durationMs,
         errorMessage: sanitizeErrorMessage(input.errorMessage),
+        output: sanitizedOutput,
+        outputTruncated,
         updatedAt: new Date(),
       },
     },

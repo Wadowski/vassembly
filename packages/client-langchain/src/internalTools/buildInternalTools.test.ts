@@ -24,6 +24,8 @@ describe('buildInternalTools', () => {
     expect(result.tools.every((tool) => tool instanceof DynamicStructuredTool)).toBe(true);
     expect(result.boundToolIds).toEqual(['agent-use', 'agent-list']);
     expect(result.skippedToolIds).toEqual([]);
+    expect(result.toolNameToInternalToolId.get('use_agent')).toBe('agent-use');
+    expect(result.toolNameToInternalToolId.get('list_agents')).toBe('agent-list');
   });
 
   it('should skip unknown tool ids', () => {

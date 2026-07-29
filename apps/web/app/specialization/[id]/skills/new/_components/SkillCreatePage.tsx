@@ -35,6 +35,8 @@ export const SkillCreatePage = (): JSX.Element => {
           specializationId,
           name: form.values.name.trim(),
           description: form.values.description.trim(),
+          input: form.values.input.trim(),
+          output: form.values.output.trim(),
           rule: form.values.rule.trim(),
           scripts: form.values.scripts.map((script) => ({
             filename: script.filename.trim(),

@@ -39,7 +39,10 @@ export const resolveMcpServerConfigs = async (
       continue;
     }
 
-    serverConfigs.push(serverConfig);
+    serverConfigs.push({
+      ...serverConfig,
+      label: slug,
+    });
   }
 
   return { serverConfigs, skippedMcpIds };

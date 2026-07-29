@@ -6,6 +6,7 @@ import taskProgressDomain from '@vassembly/domain-task-progress';
 import { logger } from '@vassembly/logger';
 
 import { executeTask } from '../executeTask';
+import { classifyCommentSpecializations } from '../classifyCommentSpecializations';
 import { generateTaskCategory } from '../generateTaskCategory';
 import { generateTaskTitle } from '../generateTaskTitle';
 
@@ -46,6 +47,12 @@ export const createTask = async ({ userId, body }: CreateTaskHandlerInput): Prom
       previousStatus: null,
       newStatus: 'in_progress',
     },
+  });
+
+  await classifyCommentSpecializations({
+    taskId,
+    userId,
+    commentId,
   });
 
   const response = {

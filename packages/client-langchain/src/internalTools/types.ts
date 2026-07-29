@@ -11,4 +11,5 @@ export interface BuildInternalToolsResult {
   tools: DynamicStructuredTool[];
   boundToolIds: string[];
   skippedToolIds: string[];
+  toolNameToInternalToolId: Map<string, string>;
 }

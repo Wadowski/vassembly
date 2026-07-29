@@ -29,6 +29,7 @@
     "@modelcontextprotocol/sdk": "1.12.1",
     "@vassembly/constants": "workspace:*",
     "@vassembly/errors": "workspace:*",
+    "@vassembly/validation": "workspace:*",
     "openai": "^4.52.0",
     "zod": "^3.24.2"
   }

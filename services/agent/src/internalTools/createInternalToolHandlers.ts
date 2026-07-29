@@ -1,3 +1,6 @@
+import { withNormalizedInput } from '@vassembly/client-langchain';
+
+import { persistTaskPlanToolHandler } from './persistTaskPlan';
 import { runSkillScriptToolHandler } from './runSkillScript';
 import { invokeSkillPlannerToolHandler } from './invokeSkillPlanner';
 import { listAgents } from './listAgents';
@@ -20,16 +23,56 @@ export interface CreateInternalToolHandlersParams {
 export const createInternalToolHandlers = ({
   toolContext,
 }: CreateInternalToolHandlersParams): InternalToolHandlerMap => ({
-  'agent-list': (args) => listAgents({ args, context: toolContext }),
-  'task-update': (args) => updateTaskToolHandler(args, toolContext),
-  'user-ask': (args) => askUser({ args, context: toolContext }),
-  'agent-use': (args) => useAgent({ args, context: toolContext }),
-  'specialization-classify': (args) => classifySpecializationToolHandler(args, toolContext),
-  'specialization-create': (args) => createSpecializationToolHandler(args, toolContext),
-  'skill-create': (args) => createSkillToolHandler(args),
-  'skill-resolve': (args) => resolveSkillToolHandler(args, toolContext),
-  'skill-run-script': (args) => runSkillScriptToolHandler(args, toolContext),
-  'skill-plan': (args) => invokeSkillPlannerToolHandler(args, toolContext),
-  'web-search': (args) => webSearch({ args }),
-  'web-page-content': (args) => webPageContent({ args }),
+  'agent-list': withNormalizedInput({
+    toolId: 'agent-list',
+    handler: (args) => listAgents({ args, context: toolContext }),
+  }),
+  'task-update': withNormalizedInput({
+    toolId: 'task-update',
+    handler: (args) => updateTaskToolHandler(args, toolContext),
+  }),
+  'user-ask': withNormalizedInput({
+    toolId: 'user-ask',
+    handler: (args) => askUser({ args, context: toolContext }),
+  }),
+  'agent-use': withNormalizedInput({
+    toolId: 'agent-use',
+    handler: (args) => useAgent({ args, context: toolContext }),
+  }),
+  'specialization-classify': withNormalizedInput({
+    toolId: 'specialization-classify',
+    handler: (args) => classifySpecializationToolHandler(args, toolContext),
+  }),
+  'specialization-create': withNormalizedInput({
+    toolId: 'specialization-create',
+    handler: (args) => createSpecializationToolHandler(args, toolContext),
+  }),
+  'skill-create': withNormalizedInput({
+    toolId: 'skill-create',
+    handler: (args) => createSkillToolHandler(args),
+  }),
+  'skill-resolve': withNormalizedInput({
+    toolId: 'skill-resolve',
+    handler: (args) => resolveSkillToolHandler(args, toolContext),
+  }),
+  'skill-run-script': withNormalizedInput({
+    toolId: 'skill-run-script',
+    handler: (args) => runSkillScriptToolHandler(args, toolContext),
+  }),
+  'skill-plan': withNormalizedInput({
+    toolId: 'skill-plan',
+    handler: (args) => invokeSkillPlannerToolHandler(args, toolContext),
+  }),
+  'task-plan-persist': withNormalizedInput({
+    toolId: 'task-plan-persist',
+    handler: (args) => persistTaskPlanToolHandler(args, toolContext),
+  }),
+  'web-search': withNormalizedInput({
+    toolId: 'web-search',
+    handler: (args) => webSearch({ args }),
+  }),
+  'web-page-content': withNormalizedInput({
+    toolId: 'web-page-content',
+    handler: (args) => webPageContent({ args }),
+  }),
 });

@@ -12,9 +12,13 @@ import {
 import { runAgentInvokeWithTools } from '../runAgentInvokeWithTools';
 
 import { resolveTarget } from './resolveTarget';
+import { buildChildResumeMessage } from './buildChildResumeMessage';
 
 import type { UseAgentParams } from './types';
 import type { ResolveTargetResult } from './types';
+
+export { buildChildResumeMessage } from './buildChildResumeMessage';
+export type { BuildChildResumeMessageParams } from './buildChildResumeMessage';
 
 const resolveAgentName = (args: Record<string, unknown>): string | undefined => {
   const name = args.name;
@@ -38,36 +42,6 @@ const resolveAgentPrompt = (args: Record<string, unknown>): string | undefined =
   const trimmed = agentPrompt.trim();
 
   return trimmed.length > 0 ? trimmed : undefined;
-};
-
-const formatAnswer = (answer: string | string[] | boolean): string => {
-  if (Array.isArray(answer)) {
-    return JSON.stringify(answer);
-  }
-
-  return String(answer);
-};
-
-export interface BuildChildResumeMessageParams {
-  agentPrompt: string;
-  answeredQuestions: AnsweredQuestion[];
-}
-
-export const buildChildResumeMessage = ({
-  agentPrompt,
-  answeredQuestions,
-}: BuildChildResumeMessageParams): string => {
-  const parts = [agentPrompt];
-
-  if (answeredQuestions.length > 0) {
-    parts.push('', '--- User responses received ---');
-    for (const qa of answeredQuestions) {
-      parts.push(`Question: "${qa.question}"`, `Answer: ${formatAnswer(qa.answer)}`, '');
-    }
-  }
-
-  parts.push('Continue from where execution left off. Do not repeat completed steps above.');
-  return parts.join('\n');
 };
 
 const runChildInvocation = async ({

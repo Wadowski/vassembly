@@ -20,6 +20,7 @@
     "vitest": "^2.0.0"
   },
   "dependencies": {
+    "@vassembly/client-langchain": "workspace:*",
     "@vassembly/client-encoder": "workspace:*",
     "@vassembly/client-sandbox": "workspace:*",
     "@vassembly/config": "workspace:*",
@@ -34,7 +35,10 @@
     "@vassembly/domain-auth-token": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
+    "@vassembly/domain-task-comment": "workspace:*",
     "@vassembly/domain-task-questions": "workspace:*",
+    "@vassembly/domain-task-plan-template": "workspace:*",
+    "@vassembly/domain-task-plan-instance": "workspace:*",
     "@vassembly/domain-user": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/logger": "workspace:*",

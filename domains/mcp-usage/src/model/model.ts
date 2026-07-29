@@ -13,6 +13,8 @@ export class McpUsageEventModel extends Model {
 
   toolName!: string;
 
+  toolDisplayName?: string | null;
+
   userId!: string;
 
   taskId?: string | null;
@@ -36,6 +38,10 @@ export class McpUsageEventModel extends Model {
   input?: Record<string, unknown> | null;
 
   inputTruncated?: boolean;
+
+  output?: string | null;
+
+  outputTruncated?: boolean;
 
   errorMessage?: string | null;
 }

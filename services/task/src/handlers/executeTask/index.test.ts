@@ -15,6 +15,8 @@ const {
   mockRunAgentInvokeWithTools,
   mockFinalizeTaskProgress,
   mockLogger,
+  mockGetPlanByCommentId,
+  mockOrchestrateTaskPlanInstance,
 } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
   mockMarkInProgress: vi.fn(),
@@ -28,6 +30,8 @@ const {
   mockRunAgentInvokeWithTools: vi.fn(),
   mockFinalizeTaskProgress: vi.fn(),
   mockLogger: vi.fn(),
+  mockGetPlanByCommentId: vi.fn(),
+  mockOrchestrateTaskPlanInstance: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-task', () => ({
@@ -82,11 +86,27 @@ vi.mock('@vassembly/service-agent', () => ({
   runAgentInvokeWithTools: mockRunAgentInvokeWithTools,
 }));
 
+vi.mock('@vassembly/domain-task-plan-instance', () => ({
+  TaskPlanInstanceStatus: {
+    Pending: 'pending',
+    InProgress: 'in-progress',
+    Done: 'done',
+    Failed: 'failed',
+  },
+  default: {
+    queries: { getByCommentId: mockGetPlanByCommentId },
+  },
+}));
+
+vi.mock('./orchestrateTaskPlanInstance', () => ({
+  orchestrateTaskPlanInstance: mockOrchestrateTaskPlanInstance,
+}));
+
 vi.mock('@vassembly/logger', () => ({
   logger: mockLogger,
 }));
 
-import { executeTask } from './index';
+import { executeTask, TaskExecutionMode } from './index';
 
 const BASE_TASK = {
   id: 'task-1',
@@ -123,6 +143,12 @@ describe('executeTask handler', () => {
     mockGetModelByCommentId.mockResolvedValue({ data: { events: [] } });
     mockSetAgentResponse.mockResolvedValue({ data: {} });
     mockListByTaskId.mockResolvedValue({ data: [] });
+    mockGetPlanByCommentId.mockResolvedValue({ data: null });
+    mockOrchestrateTaskPlanInstance.mockResolvedValue({
+      instanceStatus: 'done',
+      skillIdsUsed: [],
+      executedItemIndexes: [],
+    });
   });
 
   const EXECUTE_PARAMS = { taskId: 'task-1', userId: 'user-1', commentId: 'comment-1' };
@@ -267,5 +293,67 @@ describe('executeTask handler', () => {
       expect.objectContaining({ errorCode: 'INVALID_AGENT_ASSIGNED' }),
     );
     expect(mockRunAgentInvokeWithTools).not.toHaveBeenCalled();
+  });
+
+  it('should call orchestrateTaskPlanInstance when comment has a task plan instance', async () => {
+    mockGetPlanByCommentId.mockResolvedValue({
+      data: { id: 'plan-instance-1' },
+    });
+
+    await executeTask(EXECUTE_PARAMS);
+
+    expect(mockOrchestrateTaskPlanInstance).toHaveBeenCalledWith(
+      {
+        taskPlanInstanceId: 'plan-instance-1',
+        commentId: 'comment-1',
+        taskId: 'task-1',
+      },
+      expect.objectContaining({
+        userId: 'user-1',
+        agentAssignedId: 'agent-1',
+        credentialId: 'cred-1',
+        shouldReconcile: false,
+      }),
+    );
+    expect(mockSetAgentResponse).toHaveBeenCalledWith({
+      commentId: 'comment-1',
+      agentResponse: 'LLM result',
+      taskPlanInstanceId: 'plan-instance-1',
+      skillIdsUsed: [],
+    });
+  });
+
+  it('should fail task with PLAN_EXECUTION_FAILED when plan orchestration fails', async () => {
+    mockGetPlanByCommentId.mockResolvedValue({
+      data: { id: 'plan-instance-1' },
+    });
+    mockOrchestrateTaskPlanInstance.mockResolvedValue({
+      instanceStatus: 'failed',
+      skillIdsUsed: [],
+      executedItemIndexes: [0],
+    });
+
+    await executeTask(EXECUTE_PARAMS);
+
+    expect(mockFail).toHaveBeenCalledWith(
+      expect.objectContaining({ errorCode: 'PLAN_EXECUTION_FAILED' }),
+    );
+    expect(mockComplete).not.toHaveBeenCalled();
+  });
+
+  it('should pass shouldReconcile when execution mode is retry', async () => {
+    mockGetPlanByCommentId.mockResolvedValue({
+      data: { id: 'plan-instance-1' },
+    });
+
+    await executeTask({
+      ...EXECUTE_PARAMS,
+      mode: TaskExecutionMode.Retry,
+    });
+
+    expect(mockOrchestrateTaskPlanInstance).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ shouldReconcile: true }),
+    );
   });
 });

@@ -26,6 +26,8 @@ export const createSkill = async (input: CreateSkillInput): Promise<CreateSkillR
     specializationId: input.specializationId,
     name: input.name,
     description: input.description,
+    input: input.input,
+    output: input.output,
     rule: input.rule,
     scripts: input.scripts,
     usesSkillIds,

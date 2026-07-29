@@ -1,0 +1,26 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing-2 0;
+}
+
+.animation {
+  width: 4rem;
+  height: 4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animation {
+    display: none;
+  }
+
+  .indicator::after {
+    content: '…';
+    color: $color-text-secondary;
+    font-size: $font-size-body-lg;
+    letter-spacing: 0.2em;
+  }
+}

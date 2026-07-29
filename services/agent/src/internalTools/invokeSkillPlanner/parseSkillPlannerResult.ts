@@ -1,8 +1,10 @@
 import { ValidationError } from '@vassembly/errors';
 
-import type { ParseSkillPlannerResultParams, ParsedCreateSkillResult } from './types';
+import type { ParseSkillPlannerResultParams, ParsedSkillPlannerResult } from './types';
 
-const isCreateSkillResult = (value: unknown): value is ParsedCreateSkillResult => {
+const isCreateSkillResult = (
+  value: unknown,
+): value is { skillId: string; isNew: boolean } => {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
@@ -12,12 +14,61 @@ const isCreateSkillResult = (value: unknown): value is ParsedCreateSkillResult =
   return typeof record.skillId === 'string' && record.skillId.trim() !== '' && typeof record.isNew === 'boolean';
 };
 
-const tryParseJsonObject = ({ text }: { text: string }): ParsedCreateSkillResult | null => {
+const isReuseSkillResult = (
+  value: unknown,
+): value is { action: 'reuse'; skillName: string; fitScore?: number; refinements?: string } => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const record = value as { action?: unknown; skillName?: unknown };
+
+  return record.action === 'reuse' && typeof record.skillName === 'string' && record.skillName.trim() !== '';
+};
+
+const isComposeSkillResult = (
+  value: unknown,
+): value is { action: 'compose'; skillNames: string[]; fitScore?: number } => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const record = value as { action?: unknown; skillNames?: unknown };
+
+  return (
+    record.action === 'compose' &&
+    Array.isArray(record.skillNames) &&
+    record.skillNames.every((name) => typeof name === 'string' && name.trim() !== '')
+  );
+};
+
+const tryParseJsonObject = ({ text }: { text: string }): ParsedSkillPlannerResult | null => {
   try {
     const parsed: unknown = JSON.parse(text);
 
+    if (isReuseSkillResult(parsed)) {
+      return {
+        action: 'reuse',
+        skillName: parsed.skillName.trim(),
+        fitScore: parsed.fitScore,
+        refinements: parsed.refinements,
+      };
+    }
+
+    if (isComposeSkillResult(parsed)) {
+      return {
+        action: 'compose',
+        skillNames: parsed.skillNames.map((name) => name.trim()),
+        fitScore: parsed.fitScore,
+      };
+    }
+
     if (isCreateSkillResult(parsed)) {
-      return { skillId: parsed.skillId.trim(), isNew: parsed.isNew };
+      return {
+        action: 'create',
+        skillId: parsed.skillId.trim(),
+        isNew: parsed.isNew,
+      };
     }
   } catch {
     return null;
@@ -28,7 +79,7 @@ const tryParseJsonObject = ({ text }: { text: string }): ParsedCreateSkillResult
 
 export const parseSkillPlannerResult = ({
   message,
-}: ParseSkillPlannerResultParams): ParsedCreateSkillResult => {
+}: ParseSkillPlannerResultParams): ParsedSkillPlannerResult => {
   const trimmedMessage = message.trim();
 
   if (trimmedMessage === '') {
@@ -45,7 +96,8 @@ export const parseSkillPlannerResult = ({
     }
   }
 
-  const jsonObjectPattern = /\{[^{}]*"skillId"\s*:\s*"[^"]+"[^{}]*"isNew"\s*:\s*(true|false)[^{}]*\}/g;
+  const jsonObjectPattern =
+    /\{[^{}]*(?:"action"\s*:\s*"(reuse|compose)"|"skillId"\s*:\s*"[^"]+")[^{}]*\}/g;
   const matches = trimmedMessage.match(jsonObjectPattern) ?? [];
 
   for (let index = matches.length - 1; index >= 0; index -= 1) {
@@ -56,5 +108,5 @@ export const parseSkillPlannerResult = ({
     }
   }
 
-  throw new ValidationError('Skill planner response did not include create_skill result JSON');
+  throw new ValidationError('Skill planner response did not include a valid result JSON');
 };

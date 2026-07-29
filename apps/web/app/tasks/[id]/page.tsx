@@ -85,6 +85,7 @@ export default function TaskDetailPage(): JSX.Element {
               setPendingUserComment(null);
             }}
             onTaskUpdated={handleTaskUpdated}
+            isAdmin={isAdmin}
           />
           <TaskExecutionStatistics
             taskId={view.task.id}

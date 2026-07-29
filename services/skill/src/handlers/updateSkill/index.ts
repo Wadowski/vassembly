@@ -23,6 +23,8 @@ export const updateSkill = async (input: UpdateSkillInput): Promise<UpdateSkillR
   const result = await skillDomain.commands.update({
     id: input.skillId,
     description: input.description,
+    input: input.input,
+    output: input.output,
     rule: input.rule,
     enabled: input.enabled,
     scripts: input.scripts,

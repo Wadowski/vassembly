@@ -10,6 +10,7 @@ import {
 } from '@vassembly/ui-api-hooks';
 
 import { mapSubmittedCommentToActivityItem } from './mapSubmittedCommentToActivityItem';
+import { areActivityTimelinesEqual } from './utils/areActivityTimelinesEqual';
 
 const ALL_FILTER_GROUPS: TaskActivityFilterGroup[] = [
   'comments',
@@ -19,6 +20,8 @@ const ALL_FILTER_GROUPS: TaskActivityFilterGroup[] = [
   'agentFinished',
   'agentFailed',
   'agentWaiting',
+  'toolCalls',
+  'plans',
 ];
 
 export interface UseTaskActivityFeedParams {
@@ -53,7 +56,13 @@ export const useTaskActivityFeed = ({
 
   const loadTimeline = useCallback(async (): Promise<void> => {
     const items = await fetch(taskId);
-    setTimeline(items);
+    setTimeline((previousTimeline) => {
+      if (areActivityTimelinesEqual(previousTimeline, items)) {
+        return previousTimeline;
+      }
+
+      return items;
+    });
   }, [fetch, taskId]);
 
   const timelineWithPendingComment = useMemo((): TaskActivityItemDto[] => {

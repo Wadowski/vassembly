@@ -29,6 +29,12 @@ export interface WebBddWorld extends BddWorld {
   pendingQuestionIds?: string[];
   questionsByText?: Record<string, string>;
   lastSubmittedQuestionId?: string;
+  commentId?: string;
+  commentIds?: Record<string, string>;
+  taskPlanInstanceId?: string;
+  planShortName?: string;
+  planItemDescriptions?: string[];
+  agentResponseText?: string;
 }
 
 export interface SeedMcpParams {

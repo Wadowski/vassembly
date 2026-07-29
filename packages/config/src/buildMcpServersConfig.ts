@@ -1,29 +1,16 @@
-import { getMcpSlugs, MCP_SLUG } from '@vassembly/constants';
+import { getMcpSlugs } from '@vassembly/constants';
 
-import type { McpProxyKind, McpServersConfig, McpTransport } from './types';
+import { MCP_CONTAINER_DEFAULTS } from './mcpContainerDefaults';
+import { MCP_DOCKER_IMAGES } from './mcpDockerImages';
+
+import type { McpServersConfig } from './types';
 
 const MCP_HOST = process.env.MCP_HOST || 'localhost';
 
-const SPIKE_CONTAINER_DEFAULTS: Record<
-  MCP_SLUG,
-  { port: number; transport: McpTransport; proxy: McpProxyKind }
-> = {
-  [MCP_SLUG.BraveSearchMcp]: {
-    port: 4109,
-    transport: 'stdio-wrapped',
-    proxy: 'mcp-key-proxy',
-  },
-  [MCP_SLUG.WikipediaMcp]: {
-    port: 4110,
-    transport: 'stdio-wrapped',
-    proxy: 'mcpproxy-go',
-  },
-};
-
-const buildSpikeServerUrls = (): Record<string, string> =>
+const buildDefaultServerUrls = (): Record<string, string> =>
   Object.fromEntries(
     getMcpSlugs().map((slug) => {
-      const port = SPIKE_CONTAINER_DEFAULTS[slug]?.port ?? 8080;
+      const port = MCP_CONTAINER_DEFAULTS[slug]?.port ?? 8080;
       return [slug, `http://${MCP_HOST}:${port}/mcp`];
     }),
   );
@@ -36,20 +23,17 @@ export const buildMcpServersConfig = (): McpServersConfig => ({
   },
   serverUrls: process.env.MCP_SERVER_URLS_JSON
     ? (JSON.parse(process.env.MCP_SERVER_URLS_JSON) as Record<string, string>)
-    : buildSpikeServerUrls(),
+    : buildDefaultServerUrls(),
   containers: Object.fromEntries(
     getMcpSlugs().map((slug) => {
-      const defaults = SPIKE_CONTAINER_DEFAULTS[slug];
+      const defaults = MCP_CONTAINER_DEFAULTS[slug];
       return [
         slug,
         {
           port: defaults?.port ?? 8080,
           transport: defaults?.transport ?? 'stdio-wrapped',
           proxy: defaults?.proxy ?? 'mcp-key-proxy',
-          dockerImage:
-            slug === MCP_SLUG.WikipediaMcp
-              ? 'vassembly/mcp-wikipedia-mcp:local'
-              : 'ghcr.io/onprem-ai/mcp-key-proxy:latest',
+          dockerImage: MCP_DOCKER_IMAGES[slug],
           platformEnv: {},
         },
       ];

@@ -1,0 +1,56 @@
+# Default local dev subset: arxiv, notion, wikipedia only.
+# Start the full fleet: pnpm mcp-servers:up:full
+
+services:
+  github-mcp:
+    profiles: [full]
+  context7:
+    profiles: [full]
+  mongodb-mcp:
+    profiles: [full]
+  redis-mcp:
+    profiles: [full]
+  aws-mcp:
+    profiles: [full]
+  vercel-mcp:
+    profiles: [full]
+  terraform-mcp:
+    profiles: [full]
+  sentry-mcp:
+    profiles: [full]
+  datadog-mcp:
+    profiles: [full]
+  brave-search-mcp:
+    profiles: [full]
+  pubmed-mcp:
+    profiles: [full]
+  google-search-mcp:
+    profiles: [full]
+  obsidian-mcp:
+    profiles: [full]
+  granola-mcp:
+    profiles: [full]
+  discord-mcp:
+    profiles: [full]
+  gmail-mcp:
+    profiles: [full]
+  google-calendar-mcp:
+    profiles: [full]
+  todoist-mcp:
+    profiles: [full]
+  linear-mcp:
+    profiles: [full]
+  stripe-mcp:
+    profiles: [full]
+  figma-mcp:
+    profiles: [full]
+  google-sheets-mcp:
+    profiles: [full]
+  canva-mcp:
+    profiles: [full]
+  google-maps-mcp:
+    profiles: [full]
+  openweather-mcp:
+    profiles: [full]
+  spotify-mcp:
+    profiles: [full]

@@ -141,34 +141,39 @@ describe('updateTask task command', () => {
     expect(result.data?.specializationIds).toBeNull();
   });
 
-  it('should return model with skillIdsUsed set when updating skillIdsUsed only', async () => {
-    mockPersist.mockResolvedValue({
-      data: {
-        id: '507f1f77bcf86cd799439011',
-        skillIdsUsed: ['skill-1', 'skill-2'],
-      },
-    });
-
-    const result = await updateTask({ id: '507f1f77bcf86cd799439011', skillIdsUsed: ['skill-1', 'skill-2'] });
-
-    expect(mockPersist).toHaveBeenCalledWith({
-      id: '507f1f77bcf86cd799439011',
-      data: { skillIdsUsed: ['skill-1', 'skill-2'] },
-    });
-    expect(result.data?.skillIdsUsed).toEqual(['skill-1', 'skill-2']);
+  it('should throw ValidationError when neither title, category, nor specializationIds is provided', async () => {
+    await expect(updateTask({ id: '507f1f77bcf86cd799439011' })).rejects.toThrow(ValidationError);
   });
 
-  it('should throw ValidationError when specializationIds exceeds max 3', async () => {
+  it('should reject skillIdsUsed updates after field removal', async () => {
+    mockPersist.mockReset();
+
     await expect(
       updateTask({
         id: '507f1f77bcf86cd799439011',
-        specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'],
-      }),
+        skillIdsUsed: ['skill-1'],
+      } as unknown as Parameters<typeof updateTask>[0]),
     ).rejects.toThrow(ValidationError);
   });
 
-  it('should throw ValidationError when neither title, category, nor specializationIds is provided', async () => {
-    await expect(updateTask({ id: '507f1f77bcf86cd799439011' })).rejects.toThrow(ValidationError);
+  it('should accept more than 3 specializationIds on task', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: '507f1f77bcf86cd799439011',
+        specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'],
+      },
+    });
+
+    const result = await updateTask({
+      id: '507f1f77bcf86cd799439011',
+      specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'],
+    });
+
+    expect(mockPersist).toHaveBeenCalledWith({
+      id: '507f1f77bcf86cd799439011',
+      data: { specializationIds: ['spec-1', 'spec-2', 'spec-3', 'spec-4'] },
+    });
+    expect(result.data?.specializationIds).toEqual(['spec-1', 'spec-2', 'spec-3', 'spec-4']);
   });
 
   it('should throw NotFoundError when task is not found', async () => {

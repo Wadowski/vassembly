@@ -21,6 +21,7 @@
   "dependencies": {
     "@vassembly/constants": "workspace:*",
     "@vassembly/domain-ai-integration": "workspace:*",
+    "@vassembly/domain-internal-tool-usage": "workspace:*",
     "@vassembly/domain-mcp": "workspace:*",
     "@vassembly/domain-mcp-usage": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
@@ -28,6 +29,8 @@
     "@vassembly/domain-task-comment": "workspace:*",
     "@vassembly/domain-task-progress": "workspace:*",
     "@vassembly/domain-task-questions": "workspace:*",
+    "@vassembly/domain-task-plan-template": "workspace:*",
+    "@vassembly/domain-task-plan-instance": "workspace:*",
     "@vassembly/service-agent": "workspace:*",
     "@vassembly/errors": "workspace:*",
     "@vassembly/logger": "workspace:*",

@@ -45,6 +45,7 @@ vi.mock('@vassembly/domain-skill', () => ({
     queries: {
       getCatalogBySpecializationId: mockGetCatalogBySpecializationId,
       getModelById: mockGetModelById,
+      getActiveRuleByName: vi.fn(),
     },
   },
 }));
@@ -126,6 +127,7 @@ describe('invokeSkillPlanner internal tool handler', () => {
       skillName: 'nda-review',
       isNew: true,
       specializationId: '674a1b2c3d4e5f6789012345',
+      action: 'create',
     });
   });
 

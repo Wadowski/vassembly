@@ -8,15 +8,17 @@ export type TaskActivityFilterGroup =
   | 'agentFinished'
   | 'agentFailed'
   | 'agentWaiting'
-  | 'mcpUsage';
+  | 'toolCalls'
+  | 'plans';
 
 export type TaskActivityItemKind =
   | 'userComment'
   | 'agentResponse'
   | 'hitlAnswered'
   | 'progressEvent'
-  | 'mcpInvocationStarted'
-  | 'mcpInvocationCompleted';
+  | 'mcpInvocation'
+  | 'toolInvocation'
+  | 'plan';
 
 export interface TaskActivityProgressEventItem {
   kind: 'progressEvent';
@@ -39,6 +41,46 @@ export interface TaskActivityProgressEventItem {
   model?: string;
 }
 
+export interface TaskActivityPlanItemRow {
+  templateItemIndex: number;
+  agentId: string;
+  agentName?: string;
+  skillId: string | null;
+  skillName?: string | null;
+  order: number;
+  status: string;
+  startedAt: string | null;
+  completedAt: string | null;
+  failedAt: string | null;
+  errorMessage: string | null;
+  retryCount: number;
+  description: string;
+}
+
+export interface TaskActivityPlanItem {
+  kind: 'plan';
+  id: string;
+  occurredAt: string;
+  sortKey: string;
+  filterGroup: 'plans';
+  commentId: string;
+  commentSkillIds: string[];
+  planTemplateShortName: string;
+  planTemplateDescription: string;
+  planInstanceStatus: string;
+  planItems: TaskActivityPlanItemRow[];
+  planTemplate: {
+    shortName: string;
+    description: string;
+    inputDetails: Record<string, unknown>;
+    outputDetails: Record<string, unknown>;
+  };
+  planInstance: {
+    status: string;
+    inputDetails: Record<string, unknown>;
+  };
+}
+
 export interface TaskActivityUserCommentItem {
   kind: 'userComment';
   id: string;
@@ -47,6 +89,8 @@ export interface TaskActivityUserCommentItem {
   filterGroup: 'comments';
   commentId: string;
   userText: string;
+  specializationIds: string[];
+  commentSkillIds: string[];
 }
 
 export interface TaskActivityAgentResponseItem {
@@ -57,6 +101,7 @@ export interface TaskActivityAgentResponseItem {
   filterGroup: 'responses';
   commentId: string;
   agentResponse: string;
+  commentSkillIds: string[];
   totalDuration?: number;
   totalTokens?: TokenUsage;
 }
@@ -73,35 +118,44 @@ export interface TaskActivityHitlAnsweredItem {
   answer: string;
 }
 
-export interface TaskActivityMcpInvocationStartedItem {
-  kind: 'mcpInvocationStarted';
-  id: string;
-  occurredAt: string;
-  sortKey: string;
-  filterGroup: 'mcpUsage';
-  commentId: string;
+export interface TaskActivityToolInvocationDetails {
   usageEventId: string;
-  mcpId: string;
-  mcpName: string;
-  toolName: string;
-  agentId: string;
-}
-
-export interface TaskActivityMcpInvocationCompletedItem {
-  kind: 'mcpInvocationCompleted';
-  id: string;
-  occurredAt: string;
-  sortKey: string;
-  filterGroup: 'mcpUsage';
-  commentId: string;
-  usageEventId: string;
-  mcpId: string;
-  mcpName: string;
   toolName: string;
   agentId: string;
   status: string;
+  startedAt: string;
+  endedAt?: string;
   durationMs?: number;
   errorMessage?: string;
+  input?: string;
+  inputTruncated?: boolean;
+  output?: string;
+  outputTruncated?: boolean;
+  invocationId?: string;
+  rootInvokeId?: string;
+}
+
+export interface TaskActivityMcpInvocationItem extends TaskActivityToolInvocationDetails {
+  kind: 'mcpInvocation';
+  id: string;
+  occurredAt: string;
+  sortKey: string;
+  filterGroup: 'toolCalls';
+  commentId: string;
+  mcpId: string;
+  mcpName: string;
+  toolDisplayName?: string;
+}
+
+export interface TaskActivityInternalToolInvocationItem extends TaskActivityToolInvocationDetails {
+  kind: 'toolInvocation';
+  id: string;
+  occurredAt: string;
+  sortKey: string;
+  filterGroup: 'toolCalls';
+  commentId: string;
+  internalToolId: string;
+  internalToolDisplayName: string;
 }
 
 export type TaskActivityItem =
@@ -109,8 +163,9 @@ export type TaskActivityItem =
   | TaskActivityAgentResponseItem
   | TaskActivityHitlAnsweredItem
   | TaskActivityProgressEventItem
-  | TaskActivityMcpInvocationStartedItem
-  | TaskActivityMcpInvocationCompletedItem;
+  | TaskActivityMcpInvocationItem
+  | TaskActivityInternalToolInvocationItem
+  | TaskActivityPlanItem;
 
 export interface GetTaskActivityTimelineHandlerInput {
   userId: string;

@@ -2,6 +2,7 @@ export interface McpToolCallRecordStartedInput {
   phase: 'started';
   mcpId: string;
   toolName: string;
+  originalToolName: string;
   args: Record<string, unknown>;
   startedAt: Date;
 }
@@ -13,6 +14,7 @@ export interface McpToolCallRecordCompletedInput {
   endedAt: Date;
   durationMs: number;
   errorMessage?: string;
+  output?: string;
 }
 
 export type McpToolCallRecordInput =

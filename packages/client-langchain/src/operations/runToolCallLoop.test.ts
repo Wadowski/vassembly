@@ -127,4 +127,65 @@ describe('runToolCallLoop', () => {
     expect(secondToolInvoke).toHaveBeenCalled();
     expect(toolInvokeOrder.indexOf('second-start')).toBeLessThan(toolInvokeOrder.indexOf('first-end'));
   });
+
+  it('should nudge the model when required tool was not called', async () => {
+    const persistInvoke = vi
+      .fn()
+      .mockResolvedValue(JSON.stringify({ taskPlanInstanceId: 'instance-1' }));
+    const invoke = vi
+      .fn()
+      .mockResolvedValueOnce({
+        content: 'Here is the plan in prose only.',
+        tool_calls: [],
+      })
+      .mockResolvedValueOnce({
+        content: '',
+        tool_calls: [{ name: 'persist_task_plan', args: {}, id: 'call-1' }],
+      })
+      .mockResolvedValueOnce({
+        content: 'Done',
+        tool_calls: [],
+      });
+
+    const result = await runToolCallLoop({
+      model: {
+        bindTools: () => createMockModel(invoke),
+      } as unknown as BaseChatModel,
+      tools: [createMockTool('persist_task_plan', persistInvoke)],
+      messages: [new HumanMessage('Hello')],
+      maxIterations: 3,
+      requireSuccessfulToolLlmName: 'persist_task_plan',
+    });
+
+    expect(invoke).toHaveBeenCalledTimes(3);
+    expect(persistInvoke).toHaveBeenCalled();
+    expect(result.response.content).toBe('Done');
+  });
+
+  it('should return tool error as ToolMessage instead of aborting the loop', async () => {
+    const toolInvoke = vi.fn().mockRejectedValue(new Error('validation failed'));
+    const invoke = vi
+      .fn()
+      .mockResolvedValueOnce({
+        content: '',
+        tool_calls: [{ name: 'persist_task_plan', args: {}, id: 'call-1' }],
+      })
+      .mockResolvedValueOnce({
+        content: 'Done',
+        tool_calls: [],
+      });
+
+    const result = await runToolCallLoop({
+      model: {
+        bindTools: () => createMockModel(invoke),
+      } as unknown as BaseChatModel,
+      tools: [createMockTool('persist_task_plan', toolInvoke)],
+      messages: [new HumanMessage('Hello')],
+      maxIterations: 3,
+    });
+
+    expect(toolInvoke).toHaveBeenCalled();
+    expect(result.response.content).toBe('Done');
+    expect(invoke).toHaveBeenCalledTimes(2);
+  });
 });

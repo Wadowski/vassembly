@@ -5,6 +5,7 @@ import { ConflictError, NotFoundError } from '@vassembly/errors';
 import { logger } from '@vassembly/logger';
 
 import { executeTask } from '../executeTask';
+import { classifyCommentSpecializations } from '../classifyCommentSpecializations';
 
 import type { SubmitTaskCommentHandlerInput, SubmitTaskCommentHandlerOutput } from './types';
 
@@ -44,6 +45,12 @@ export const submitTaskComment = async ({
     commentId,
   });
 
+  await classifyCommentSpecializations({
+    taskId,
+    userId,
+    commentId,
+  });
+
   void executeTask({
     taskId,
     userId,
@@ -56,9 +63,10 @@ export const submitTaskComment = async ({
   });
 
   const refreshedTask = await taskDomain.queries.getModelById({ id: taskId });
+  const refreshedComment = await taskCommentDomain.queries.getModelById({ id: commentId });
 
   return {
-    comment: toTaskCommentResponse({ taskComment: commentResult.data }),
+    comment: toTaskCommentResponse({ taskComment: refreshedComment.data! }),
     task: toTaskResponse({ task: refreshedTask.data! }),
   };
 };

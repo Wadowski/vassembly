@@ -26,7 +26,14 @@ const buildCatalogMessage = ({
       ? 'No existing specializations.'
       : catalogItems.map((item) => `- ${item.name}: ${item.description}`).join('\n');
 
-  return ['Task description:', description, '', 'Existing specializations:', catalogLines].join('\n');
+  return [
+    'Classify the new comment into 1-3 topic specializations. Use previous comments only as context.',
+    '',
+    description,
+    '',
+    'Existing specializations:',
+    catalogLines,
+  ].join('\n');
 };
 
 const toSkippedResult = ({ reason }: { reason: string }): string =>

@@ -71,6 +71,8 @@ export const SkillEditPage = (): JSX.Element => {
       resetForm({
         name: skill.name,
         description: skill.description,
+        input: skill.input,
+        output: skill.output,
         rule: skill.rule,
         usesSkillIds: skill.usesSkillIds,
         scripts,
@@ -93,6 +95,8 @@ export const SkillEditPage = (): JSX.Element => {
         skillId,
         body: {
           description: form.values.description.trim(),
+          input: form.values.input.trim(),
+          output: form.values.output.trim(),
           rule: form.values.rule.trim(),
           scripts: form.values.scripts.map((script) => ({
             filename: script.filename.trim(),

@@ -32,7 +32,7 @@ export const ActivityProgressEventRow = ({
   const hasErrorDetails = isFailedProgressEvent(item) && Boolean(item.errorDetails?.message);
 
   return (
-    <li className={rowClassName} data-testid={`activity-progress-event-${item.eventId ?? item.id}`}>
+    <div className={rowClassName} data-testid={`activity-progress-event-${item.eventId ?? item.id}`}>
       <button
         type="button"
         className={styles.header}
@@ -131,6 +131,6 @@ export const ActivityProgressEventRow = ({
           ) : null}
         </div>
       ) : null}
-    </li>
+    </div>
   );
 };

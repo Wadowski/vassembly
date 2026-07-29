@@ -7,6 +7,8 @@ export const GET_SKILL_QUERY = gql`
       specializationId
       name
       description
+      input
+      output
       rule
       enabled
       scripts {

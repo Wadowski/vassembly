@@ -6,6 +6,8 @@ export const createSkillSchema = z.object({
   specializationId: z.string().min(1),
   name: z.string().min(1),
   description: z.string().min(1),
+  input: z.string().min(1),
+  output: z.string().min(1),
   rule: z.string().min(1),
   scripts: z
     .array(
@@ -17,4 +19,5 @@ export const createSkillSchema = z.object({
     )
     .optional()
     .default([]),
+  usesSkillIds: z.array(z.string().min(1)).optional().default([]),
 });

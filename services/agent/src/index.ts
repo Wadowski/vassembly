@@ -11,8 +11,11 @@ export {
 export type {
   AgentInvokeProgressEventInput,
   InternalToolContext,
+  RecordAgentInvokeProgress,
   RecordMcpUsageEvent,
   RecordMcpUsageEventInput,
+  RecordInternalToolUsageEvent,
+  RecordInternalToolUsageEventInput,
 } from './internalTools';
 export type { ClassifySpecializationResult } from './internalTools/classifySpecialization/types';
 export type { CreateSpecializationToolResult } from './internalTools/createSpecialization/types';

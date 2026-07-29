@@ -4,6 +4,7 @@ import type { GraphQLSchema } from 'graphql';
 export type GraphQLSchemaTypes = {
   Scalars: {
     DateTime: { Input: Date; Output: Date };
+    JSON: { Input: unknown; Output: unknown };
   };
   Objects: Record<string, object>;
   Queries: Record<string, { Args: Record<string, unknown>; Output: unknown }>;

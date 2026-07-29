@@ -27,6 +27,8 @@ export const gqlSkillSchema = (builder: Builder): void => {
       specializationId: t.exposeString('specializationId'),
       name: t.exposeString('name'),
       description: t.exposeString('description'),
+      input: t.exposeString('input'),
+      output: t.exposeString('output'),
       rule: t.exposeString('rule'),
       enabled: t.exposeBoolean('enabled'),
       scripts: t.field({

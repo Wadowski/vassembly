@@ -21,6 +21,8 @@ export const skillCreateRoute = defineRoute({
       specializationId: body.specializationId,
       name: body.name,
       description: body.description,
+      input: body.input,
+      output: body.output,
       rule: body.rule,
       scripts: body.scripts,
       usesSkillIds: body.usesSkillIds,

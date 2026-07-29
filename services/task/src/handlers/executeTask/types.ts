@@ -22,3 +22,9 @@ export interface CreateRecordMcpUsageEventParams {
   userId: string;
   commentId: string;
 }
+
+export interface CreateRecordInternalToolUsageEventParams {
+  taskId: string;
+  userId: string;
+  commentId: string;
+}

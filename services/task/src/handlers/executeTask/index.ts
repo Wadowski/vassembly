@@ -1,6 +1,9 @@
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import taskDomain, { TaskStatus } from '@vassembly/domain-task';
 import taskCommentDomain from '@vassembly/domain-task-comment';
+import taskPlanInstanceDomain, {
+  TaskPlanInstanceStatus,
+} from '@vassembly/domain-task-plan-instance';
 import taskProgressDomain from '@vassembly/domain-task-progress';
 import taskQuestionsDomain from '@vassembly/domain-task-questions';
 import { ExecutionPausedError, UserInputWaitingError } from '@vassembly/errors';
@@ -11,9 +14,12 @@ import { executionRegistry } from '../../executionRegistry';
 import { buildConversationMessage } from './buildConversationMessage';
 import { buildResumeMessage } from './buildResumeMessage';
 import { createRecordAgentInvokeProgress } from './createRecordAgentInvokeProgress';
+import { createRecordInternalToolUsageEvent } from './createRecordInternalToolUsageEvent';
 import { createRecordMcpUsageEvent } from './createRecordMcpUsageEvent';
+import { logTaskPlanEvent } from './logTaskPlanEvent';
 import { logTaskTransition } from './logTaskTransition';
 import { mapExecutionError } from './mapExecutionError';
+import { orchestrateTaskPlanInstance } from './orchestrateTaskPlanInstance';
 import { TaskExecutionMode } from './types';
 
 import type { ExecuteTaskParams } from './types';
@@ -109,7 +115,7 @@ export const executeTask = async ({
         callerAgentId: task.agentAssignedId,
         callerAgentType: 'system',
         recursionDepth: 0,
-        rootInvokeId: randomUUID(),
+        rootInvokeId: rootInvocationId,
         specializationIds,
         abortSignal,
         shouldAbort: async (): Promise<boolean> => {
@@ -118,15 +124,78 @@ export const executeTask = async ({
         },
         recordAgentInvokeProgress: createRecordAgentInvokeProgress({ taskId, userId, commentId }),
         recordMcpUsageEvent: createRecordMcpUsageEvent({ taskId, userId, commentId }),
+        recordInternalToolUsageEvent: createRecordInternalToolUsageEvent({
+          taskId,
+          userId,
+          commentId,
+        }),
       },
     });
 
     await taskProgressDomain.commands.finalizeTaskProgress({ commentId });
 
+    const planInstanceResult = await taskPlanInstanceDomain.queries.getByCommentId({ commentId });
+    const taskPlanInstanceId = planInstanceResult.data?.id ?? null;
+
+    if (
+      taskPlanInstanceId === null &&
+      specializationIds !== null &&
+      specializationIds.length > 0
+    ) {
+      logTaskPlanEvent({
+        event: 'taskPlan.persist.missing',
+        taskId,
+        commentId,
+        userId,
+      });
+    }
+
+    let skillIdsUsed: string[] | undefined;
+
+    if (taskPlanInstanceId) {
+      const orchestrationResult = await orchestrateTaskPlanInstance(
+        {
+          taskPlanInstanceId,
+          commentId,
+          taskId,
+        },
+        {
+          userId,
+          agentAssignedId: task.agentAssignedId,
+          credentialId,
+          specializationIds,
+          abortSignal,
+          shouldReconcile:
+            mode === TaskExecutionMode.Retry || mode === TaskExecutionMode.Resume,
+        },
+      );
+
+      if (orchestrationResult.instanceStatus === TaskPlanInstanceStatus.Failed) {
+        await taskDomain.commands.fail({
+          taskId,
+          errorMessage: 'Task plan execution failed',
+          errorCode: 'PLAN_EXECUTION_FAILED',
+        });
+        logTaskTransition({
+          event: 'task.status.failed',
+          taskId,
+          userId,
+          errorCode: 'PLAN_EXECUTION_FAILED',
+          durationMs: Date.now() - startedAt,
+        });
+        return;
+      }
+
+      skillIdsUsed = orchestrationResult.skillIdsUsed;
+    }
+
     await taskCommentDomain.commands.setAgentResponse({
       commentId,
       agentResponse: invokeResult.message,
+      ...(skillIdsUsed ? { skillIdsUsed } : {}),
+      ...(taskPlanInstanceId ? { taskPlanInstanceId } : {}),
     });
+
     await taskDomain.commands.complete({ taskId });
     logTaskTransition({
       event: 'task.status.done',

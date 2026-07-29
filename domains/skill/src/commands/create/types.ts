@@ -6,6 +6,8 @@ export interface CreateSkillCommandInput {
   specializationId: string;
   name: string;
   description: string;
+  input: string;
+  output: string;
   rule: string;
   scripts?: SkillScriptInput[];
   usesSkillIds?: string[];

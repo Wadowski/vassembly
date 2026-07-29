@@ -47,6 +47,14 @@ const parseScripts = (
   });
 };
 
+const parseUsesSkillIds = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((entry) => (typeof entry === 'string' && entry.trim() !== '' ? [entry.trim()] : []));
+};
+
 export const createSkillToolHandler = async (
   args: Record<string, unknown>,
 ): Promise<string> => {
@@ -54,8 +62,11 @@ export const createSkillToolHandler = async (
     typeof args.specializationId === 'string' ? args.specializationId.trim() : '';
   const name = typeof args.name === 'string' ? args.name.trim() : '';
   const description = typeof args.description === 'string' ? args.description.trim() : '';
+  const input = typeof args.input === 'string' ? args.input.trim() : '';
+  const output = typeof args.output === 'string' ? args.output.trim() : '';
   const rule = typeof args.rule === 'string' ? args.rule.trim() : '';
   const scripts = parseScripts(args.scripts);
+  const usesSkillIds = parseUsesSkillIds(args.usesSkillIds);
 
   if (!specializationId) {
     throw new ValidationError('specializationId is required');
@@ -69,6 +80,14 @@ export const createSkillToolHandler = async (
     throw new ValidationError('description is required');
   }
 
+  if (!input) {
+    throw new ValidationError('input is required');
+  }
+
+  if (!output) {
+    throw new ValidationError('output is required');
+  }
+
   if (!rule) {
     throw new ValidationError('rule is required');
   }
@@ -77,8 +96,11 @@ export const createSkillToolHandler = async (
     specializationId,
     name,
     description,
+    input,
+    output,
     rule,
     scripts,
+    usesSkillIds,
     onDuplicate: 'returnExisting',
   });
 

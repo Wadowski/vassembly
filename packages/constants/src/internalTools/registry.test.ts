@@ -49,7 +49,7 @@ describe('internal tool registry', () => {
           id: 'task-update',
           displayName: 'task - update',
           description:
-            'Persist title, category, specializationIds, or skillIdsUsed for the current task. taskId is optional during task execution — it is taken from execution context.',
+            'Persist title, category, or specializationIds for the current task. taskId is optional during task execution — it is taken from execution context.',
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'update_task',
         }),
@@ -81,7 +81,7 @@ describe('internal tool registry', () => {
           id: 'skill-create',
           displayName: 'skill - create',
           description:
-            'Create a skill for a specialization with name, description, rule, and optional scripts.',
+            'Create a skill for a specialization with name, description, input, output, rule, and optional scripts.',
           accessScope: InternalToolAccessScope.SYSTEM_ONLY,
           llmToolName: 'create_skill',
         }),
@@ -124,9 +124,17 @@ describe('internal tool registry', () => {
           accessScope: InternalToolAccessScope.SYSTEM_AND_PERSONAL,
           llmToolName: 'web_page_content',
         }),
+        expect.objectContaining({
+          id: 'task-plan-persist',
+          displayName: 'task-plan - persist',
+          description:
+            'Persist the composed plan. Required top-level fields: shortName, description, inputDetails, outputDetails, resolvedInputDetails, items[]. Each item needs agentName (exact name from Available agents), skillId (existing skill id, or null), skillName (existing skill name to reuse when skillId is null; omit to define a new skill via description), description, order. Do not use placeholder agent names or MongoDB ids for agents.',
+          accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+          llmToolName: 'persist_task_plan',
+        }),
       ]),
     );
-    expect(tools).toHaveLength(12);
+    expect(tools).toHaveLength(13);
   });
 
   it('should have unique registry ids', () => {
@@ -259,6 +267,7 @@ describe('filtering tools by agent type', () => {
       'skill-run-script',
       'specialization-classify',
       'specialization-create',
+      'task-plan-persist',
       'task-update',
       'user-ask',
       'web-page-content',

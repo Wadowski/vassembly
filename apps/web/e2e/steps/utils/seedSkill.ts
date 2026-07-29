@@ -19,6 +19,8 @@ export interface SeedSkillParams extends InitDomainContextParams {
   specializationId: string;
   name: string;
   description: string;
+  input?: string;
+  output?: string;
   rule: string;
   scripts?: SeedSkillScriptParams[];
 }
@@ -33,6 +35,8 @@ export interface SeedSkillsForSpecializationParams extends InitDomainContextPara
   }>;
 }
 
+const DEFAULT_SKILL_INPUT = 'Task context and parameters provided at runtime.';
+const DEFAULT_SKILL_OUTPUT = 'Structured result produced by the skill.';
 const DEFAULT_SKILL_RULE = 'Follow the workflow instructions for this skill.';
 const DEFAULT_SCRIPT_STORAGE_ROOT = process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH
   ? path.resolve(process.cwd(), process.env.SKILL_SCRIPT_STORAGE_LOCAL_PATH)
@@ -70,6 +74,8 @@ export const seedSkill = async ({
   specializationId,
   name,
   description,
+  input = DEFAULT_SKILL_INPUT,
+  output = DEFAULT_SKILL_OUTPUT,
   rule,
   scripts = [],
 }: SeedSkillParams): Promise<string> => {
@@ -93,6 +99,8 @@ export const seedSkill = async ({
       skillFactory.create({ id: existingId }),
       skillFactory.create({
         description,
+        input,
+        output,
         rule,
         enabled: true,
         removedAt: null,
@@ -130,6 +138,8 @@ export const seedSkill = async ({
       specializationId,
       name,
       description,
+      input,
+      output,
       rule,
       enabled: true,
       scripts: [],

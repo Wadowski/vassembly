@@ -9,6 +9,8 @@ export interface SkillScriptWriteInput {
 export interface UpdateSkillInput {
   skillId: string;
   description?: string;
+  input?: string;
+  output?: string;
   rule?: string;
   enabled?: boolean;
   scripts?: SkillScriptWriteInput[];

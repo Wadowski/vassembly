@@ -25,6 +25,41 @@
   gap: $spacing-3;
 }
 
+.listItem {
+  will-change: transform;
+}
+
+.listItemContent {
+  will-change: opacity, transform;
+}
+
+.listItemEntering {
+  animation: activityListItemEnter 400ms ease forwards;
+}
+
+@keyframes activityListItemEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listItem,
+  .listItemContent {
+    will-change: auto;
+  }
+
+  .listItemEntering {
+    animation: none;
+  }
+}
+
 .empty {
   margin: 0;
   color: $color-text-secondary;

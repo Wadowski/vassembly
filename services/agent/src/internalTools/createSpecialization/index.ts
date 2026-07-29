@@ -3,6 +3,7 @@ import { ValidationError } from '@vassembly/errors';
 
 import { syncTaskSpecializationIds } from '../updateTask/syncTaskSpecializationIds';
 import { mapMcpsToSpecialization } from './mapMcpsToSpecialization';
+import { generateSpecializationAgentCustomInstructions } from './generateSpecializationAgentCustomInstructions';
 import { generateSpecializationAgentDescriptions } from './generateSpecializationAgentDescriptions';
 import { logSpecializationEvent } from './logSpecializationEvent';
 import { provisionSpecializationAgents } from './provisionSpecializationAgents';
@@ -46,37 +47,53 @@ export const createSpecializationToolHandler = async (
       specializationName: name,
     });
 
-    void mapMcpsToSpecialization({
-      specializationId,
-      specializationName: name,
-      specializationDescription: description,
-      userId: context.userId,
-      toolContext: context,
-    }).catch((error: unknown) => {
-      logSpecializationEvent({
-        event: 'specialization.mcp_mapping.failed',
-        specializationId,
-        userId: context.userId,
-        reason: error instanceof Error ? error.message : String(error),
-      });
-    });
-
-    if (createdAgentIds.length > 0) {
-      void generateSpecializationAgentDescriptions({
-        agentIds: createdAgentIds,
-        specializationName: name,
-        specializationId,
-        userId: context.userId,
-        toolContext: context,
-      }).catch((error: unknown) => {
+    void (async (): Promise<void> => {
+      try {
+        await mapMcpsToSpecialization({
+          specializationId,
+          specializationName: name,
+          specializationDescription: description,
+          userId: context.userId,
+          toolContext: context,
+        });
+      } catch (error: unknown) {
         logSpecializationEvent({
-          event: 'specialization.agent.description.failed',
+          event: 'specialization.mcp_mapping.failed',
+          specializationId,
+          userId: context.userId,
+          reason: error instanceof Error ? error.message : String(error),
+        });
+      }
+
+      if (createdAgentIds.length === 0) {
+        return;
+      }
+
+      await Promise.all([
+        generateSpecializationAgentDescriptions({
+          agentIds: createdAgentIds,
+          specializationName: name,
+          specializationId,
+          userId: context.userId,
+          toolContext: context,
+        }),
+        generateSpecializationAgentCustomInstructions({
+          agentIds: createdAgentIds,
+          specializationName: name,
+          specializationDescription: description,
+          specializationId,
+          userId: context.userId,
+          toolContext: context,
+        }),
+      ]).catch((error: unknown) => {
+        logSpecializationEvent({
+          event: 'specialization.agent.provisioning.failed',
           specializationId,
           userId: context.userId,
           reason: error instanceof Error ? error.message : String(error),
         });
       });
-    }
+    })();
   }
 
   if (context.taskId !== '') {

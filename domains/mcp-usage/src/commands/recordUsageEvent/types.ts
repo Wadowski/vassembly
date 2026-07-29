@@ -5,6 +5,7 @@ export interface RecordUsageEventStartedInput {
   mcpId: string;
   mcpSlug?: string;
   toolName: string;
+  toolDisplayName?: string;
   userId: string;
   taskId?: string | null;
   commentId?: string | null;
@@ -22,6 +23,7 @@ export interface RecordUsageEventCompletedInput {
   endedAt: Date;
   durationMs: number;
   errorMessage?: string;
+  output?: string;
 }
 
 export type RecordUsageEventInput =

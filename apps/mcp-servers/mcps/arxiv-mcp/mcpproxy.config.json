@@ -1,0 +1,12 @@
+{
+  "listen": "0.0.0.0:8080",
+  "mcpServers": [
+    {
+      "name": "arxiv-mcp",
+      "command": "npx",
+      "args": ["-y", "arxiv-mcp-server"],
+      "protocol": "stdio",
+      "enabled": true
+    }
+  ]
+}

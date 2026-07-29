@@ -35,12 +35,16 @@ export const invoke = async (
       name: agentResult.data.name!,
       rule: agentResult.data.rule,
       skillsCatalogSection: params.skillsCatalogSection,
+      agentsCatalogSection: params.agentsCatalogSection,
+      customInstructions: agentResult.data.customInstructions ?? undefined,
     }),
     mcpServerConfigs: params.mcpServerConfigs,
     internalToolBindings: params.internalToolBindings,
     signal: params.signal,
     shouldAbort: params.shouldAbort,
     recordMcpToolCall: params.recordMcpToolCall,
+    recordInternalToolCall: params.recordInternalToolCall,
+    requireSuccessfulToolLlmName: params.requireSuccessfulToolLlmName,
   });
 
   return {

@@ -4,6 +4,7 @@ import {
   AgentCategory,
   AgentStatus,
   SYSTEM_AGENT_DESCRIPTION_MAX_LENGTH,
+  SYSTEM_AGENT_CUSTOM_INSTRUCTIONS_MAX_LENGTH,
   SYSTEM_AGENT_NAME_MAX_LENGTH,
   SYSTEM_AGENT_NAME_MIN_LENGTH,
   SYSTEM_AGENT_RULE_MAX_LENGTH,
@@ -31,6 +32,10 @@ export const SYSTEM_AGENT_DESCRIPTION_SCHEMA = z
   .string()
   .max(SYSTEM_AGENT_DESCRIPTION_MAX_LENGTH);
 
+export const SYSTEM_AGENT_CUSTOM_INSTRUCTIONS_SCHEMA = z
+  .string()
+  .max(SYSTEM_AGENT_CUSTOM_INSTRUCTIONS_MAX_LENGTH);
+
 export const SYSTEM_AGENT_CATEGORY_SCHEMA = z.enum(CATEGORY_VALUES);
 
 export const SYSTEM_AGENT_STATUS_SCHEMA = z.enum(STATUS_VALUES);
@@ -54,6 +59,7 @@ export const UPDATE_SYSTEM_AGENT_DATA_SCHEMA = z
     category: SYSTEM_AGENT_CATEGORY_SCHEMA.nullable().optional(),
     status: SYSTEM_AGENT_STATUS_SCHEMA.optional(),
     assignedToolIds: assignedToolIdsUpdateSchema,
+    customInstructions: SYSTEM_AGENT_CUSTOM_INSTRUCTIONS_SCHEMA.nullable().optional(),
   })
   .strict();
 

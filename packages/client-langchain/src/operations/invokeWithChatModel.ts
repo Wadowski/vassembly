@@ -4,6 +4,7 @@ import { ExecutionPausedError, InternalError, UserInputWaitingError } from '@vas
 
 import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
 import { mapExecutedLlmToolNamesToIds } from '../internalTools/mapExecutedLlmToolNamesToIds';
+import { mapExecutedToolResultsToIds } from '../internalTools/mapExecutedToolResultsToIds';
 import { MCP_TOOL_MAX_ITERATIONS, loadMcpTools } from '../mcp';
 import { assertNotAborted } from '../utils/assertNotAborted';
 import { extractTokenUsageFromMessage } from '../utils/extractTokenUsageFromMessage';
@@ -84,6 +85,7 @@ const invokeModel = async ({
   const {
     tools: internalTools,
     skippedToolIds,
+    toolNameToInternalToolId,
   } = buildInternalTools({
     toolIds: internalToolBindings.map((binding) => binding.toolId),
     handlers: buildHandlerMap(internalToolBindings),
@@ -91,12 +93,14 @@ const invokeModel = async ({
 
   let mcpTools: Awaited<ReturnType<typeof loadMcpTools>>['tools'] = [];
   let toolNameToServerName: Map<string, string> | undefined;
+  let toolNameToOriginalName: Map<string, string> | undefined;
   let close: () => Promise<void> = async () => undefined;
 
   if (mcpServerConfigs.length > 0) {
     const loadedMcpTools = await loadMcpTools({ serverConfigs: mcpServerConfigs });
     mcpTools = loadedMcpTools.tools;
     toolNameToServerName = loadedMcpTools.toolNameToServerName;
+    toolNameToOriginalName = loadedMcpTools.toolNameToOriginalName;
     close = loadedMcpTools.close;
   }
 
@@ -113,7 +117,7 @@ const invokeModel = async ({
   }
 
   try {
-    const { response, executedToolNames, usage } = await runToolCallLoop({
+    const { response, executedToolNames, executedToolResults, usage } = await runToolCallLoop({
       model: chatModel,
       tools: mergedTools,
       messages,
@@ -121,7 +125,11 @@ const invokeModel = async ({
       signal: invokeParams.signal,
       shouldAbort: invokeParams.shouldAbort,
       toolNameToServerName,
+      toolNameToOriginalName,
+      toolNameToInternalToolId,
       recordMcpToolCall: invokeParams.recordMcpToolCall,
+      recordInternalToolCall: invokeParams.recordInternalToolCall,
+      requireSuccessfulToolLlmName: invokeParams.requireSuccessfulToolLlmName,
     });
 
     return {
@@ -129,6 +137,7 @@ const invokeModel = async ({
       usage,
       toolUsage: {
         internalToolIdsUsed: mapExecutedLlmToolNamesToIds(executedToolNames),
+        internalToolResults: mapExecutedToolResultsToIds(executedToolResults),
         skippedInternalToolIds: skippedToolIds,
         skippedMcpToolNames: skippedMcpToolNames.length > 0 ? skippedMcpToolNames : undefined,
       },
