@@ -1,0 +1,1 @@
+export const MCP_USAGE_HISTORY_PAGE_SIZE = 20;

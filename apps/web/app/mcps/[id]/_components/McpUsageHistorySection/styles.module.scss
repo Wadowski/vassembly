@@ -1,68 +1,246 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
 .section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: $spacing-4;
+  padding: $spacing-4;
+  border: 1px solid $color-outline;
+  border-radius: $border-radius-md;
 }
 
 .emptyText {
-  color: var(--color-text-secondary, #666);
+  color: $color-text-secondary;
 }
 
-.list {
+.tableContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: $spacing-4;
 }
 
-.item {
-  border: 1px solid var(--color-border, #e0e0e0);
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: $color-text-primary;
+
+  th,
+  td {
+    text-align: left;
+    border-bottom: 1px solid $color-outline-variant;
+    vertical-align: middle;
+  }
+
+  th {
+    padding: $spacing-2 $spacing-3;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
+  }
 }
 
-.toolName {
-  font-weight: 600;
+.expandCol {
+  width: 2rem;
 }
 
-.status {
-  text-transform: capitalize;
+.statusCol {
+  width: 7rem;
 }
 
-.context,
-.timestamps {
-  color: var(--color-text-secondary, #666);
-  margin-top: 0.25rem;
+.expandHeader {
+  width: 2rem;
 }
 
-.error {
-  color: var(--color-danger, #c00);
-  margin-top: 0.25rem;
+.itemRow {
+  transition: background-color 0.15s ease;
 }
 
-.inputSection {
-  margin-top: 0.5rem;
+.itemRowExpanded {
+  background-color: rgba($color-primary, $opacity-5);
 }
 
-.inputToggle {
-  background: none;
-  border: none;
-  color: var(--color-link, #06c);
-  cursor: pointer;
+.itemCell {
   padding: 0;
 }
 
-.input {
-  margin-top: 0.5rem;
+.summaryRow {
+  padding: $spacing-2 $spacing-3;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: rgba($color-primary, $opacity-10);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 2fr) 7rem minmax(0, 1.5fr) minmax(0, 2fr);
+  column-gap: $spacing-3;
+  align-items: center;
+}
+
+.expandCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expandIcon {
+  width: 1rem;
+  height: 1rem;
+  color: $color-text-secondary;
+  transition: transform 0.2s ease;
+}
+
+.expandIconOpen {
+  transform: rotate(180deg);
+}
+
+.toolCell {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.statusCell,
+.agentCell,
+.taskCell {
+  min-width: 0;
+}
+
+.toolName {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.status {
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+
+  &[data-status='success'] {
+    color: $color-success;
+  }
+
+  &[data-status='error'] {
+    color: $color-error;
+  }
+}
+
+.link {
+  color: $color-primary;
+  text-decoration: none;
+  font-size: $font-size-body-sm;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+}
+
+.mutedText {
+  color: $color-text-secondary;
+}
+
+.detailsPanel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.detailsPanelOpen {
+  grid-template-rows: 1fr;
+}
+
+.detailsPanelInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.details {
+  margin: 0 $spacing-3 $spacing-2 $spacing-3;
+  padding: $spacing-3;
+  border-left: 2px solid $color-outline-variant;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.meta {
+  color: $color-text-secondary;
+}
+
+.detailLabel {
+  color: $color-primary-dim;
+  margin-bottom: $spacing-1;
+}
+
+.detailValue {
+  color: $color-text-primary;
+  word-break: break-word;
+}
+
+.code {
+  margin: 0;
+  padding: $spacing-2;
+  border-radius: $border-radius-sm;
+  background-color: $color-surface-container-low;
+  border: 1px solid $color-outline-variant;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  font-size: $font-size-body-sm;
+  overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
-  font-size: 0.75rem;
-  background: var(--color-surface-muted, #f5f5f5);
-  padding: 0.5rem;
-  border-radius: 0.25rem;
+}
+
+.errorBox {
+  padding: $spacing-2;
+  border-radius: $border-radius-sm;
+  background-color: rgba($color-error, $opacity-10);
+  border: 1px solid rgba($color-error, $opacity-30);
+}
+
+.errorMessage {
+  color: $color-error;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.countText {
+  color: $color-text-secondary;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summaryRow,
+  .expandIcon,
+  .detailsPanel,
+  .itemRow {
+    transition: none;
+  }
 }

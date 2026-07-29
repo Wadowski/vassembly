@@ -5,6 +5,7 @@ export interface McpUsageEventResponse {
   mcpId: string;
   mcpSlug: string | null;
   toolName: string;
+  toolDisplayName: string | null;
   userId: string;
   taskId: string | null;
   commentId: string | null;
@@ -17,6 +18,8 @@ export interface McpUsageEventResponse {
   durationMs: number | null;
   input: Record<string, unknown> | null;
   inputTruncated: boolean;
+  output: string | null;
+  outputTruncated: boolean;
   errorMessage: string | null;
   createdAt: string;
   updatedAt: string;
