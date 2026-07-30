@@ -4,8 +4,10 @@ import { buildPlanItemResearcherMessage } from './buildPlanItemResearcherMessage
 import { buildPlanItemValidatorMessage } from './buildPlanItemValidatorMessage';
 import { buildPlanItemWorkerMessage } from './buildPlanItemWorkerMessage';
 
+type PlanItemAgentRole = Exclude<SpecializationAgentRole, 'methodologist'>;
+
 export interface BuildPlanItemMessageParams {
-  role: SpecializationAgentRole;
+  role: PlanItemAgentRole;
   templateItemIndex: number;
   description: string;
   skillId: string | null;
@@ -15,7 +17,7 @@ export interface BuildPlanItemMessageParams {
 }
 
 const PLAN_ITEM_MESSAGE_BUILDERS: Record<
-  SpecializationAgentRole,
+  PlanItemAgentRole,
   (params: BuildPlanItemMessageParams) => string
 > = {
   worker: buildPlanItemWorkerMessage,

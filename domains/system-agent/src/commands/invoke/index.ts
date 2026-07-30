@@ -1,7 +1,8 @@
 import { NotFoundError } from '@vassembly/errors';
 import { validatorFactory } from '@vassembly/validation';
 
-import { getActiveById } from '../../queries';
+import { AgentStatus } from '../../constants';
+import { getModelById } from '../../queries';
 import { buildSystemAgentSystemMessage } from '../../utils/buildSystemAgentSystemMessage';
 
 import { assertValidInput } from '../shared/assertValidInput';
@@ -23,20 +24,25 @@ export const invoke = async (
     }),
   );
 
-  const agentResult = await getActiveById({ id: validated.systemAgentId });
+  const agentResult = await getModelById({ id: validated.systemAgentId });
+  const agent = agentResult.data;
 
-  if (agentResult.data === null || agentResult.data.rule === undefined) {
+  if (
+    agent.status !== AgentStatus.Active ||
+    agent.removedAt != null ||
+    agent.rule === undefined
+  ) {
     throw new NotFoundError(NOT_FOUND_MESSAGE);
   }
 
   const response = await params.modeledProviderClient.invoke({
     message: validated.message,
     systemMessage: buildSystemAgentSystemMessage({
-      name: agentResult.data.name!,
-      rule: agentResult.data.rule,
+      name: agent.name!,
+      rule: agent.rule,
       skillsCatalogSection: params.skillsCatalogSection,
       agentsCatalogSection: params.agentsCatalogSection,
-      customInstructions: agentResult.data.customInstructions ?? undefined,
+      customInstructions: agent.customInstructions ?? undefined,
     }),
     mcpServerConfigs: params.mcpServerConfigs,
     internalToolBindings: params.internalToolBindings,

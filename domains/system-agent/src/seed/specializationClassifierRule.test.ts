@@ -1,22 +1,11 @@
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import { describe, expect, it } from 'vitest';
+
+import seedData from '../../seed/systemAgents.json';
 
 const EXPECTED_MAX_SPECIALIZATION_RESULTS = 5;
 
-const seedFilePath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  '../../seed/systemAgents.json',
-);
-
 const loadClassifierRule = (): string => {
-  const seedEntries = JSON.parse(readFileSync(seedFilePath, 'utf-8')) as Array<{
-    name: string;
-    rule: string;
-  }>;
-  const classifier = seedEntries.find((entry) => entry.name === 'Specialization classifier');
+  const classifier = seedData.find((entry) => entry.name === 'Specialization classifier');
 
   if (!classifier) {
     throw new Error('Specialization classifier seed entry not found');

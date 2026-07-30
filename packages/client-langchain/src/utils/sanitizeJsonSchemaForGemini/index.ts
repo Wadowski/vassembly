@@ -15,8 +15,9 @@ const sanitizeSchemaNode = (schema: unknown): unknown => {
     return schema;
   }
 
-  const { $schema: _removedSchema, ...schemaWithoutMeta } = schema;
-  let normalized: JsonSchemaValue = { ...schemaWithoutMeta };
+  const schemaWithoutMeta = { ...schema };
+  delete schemaWithoutMeta.$schema;
+  let normalized: JsonSchemaValue = schemaWithoutMeta;
 
   normalized = flattenNullableAnyOf({ schema: normalized });
   normalized = normalizeTypeField({ schema: normalized });

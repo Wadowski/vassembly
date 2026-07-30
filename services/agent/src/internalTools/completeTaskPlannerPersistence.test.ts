@@ -26,6 +26,11 @@ const buildInvokeResult = ({
   message,
   usage: undefined,
   metadata: {
+    mcpIdsUsed: [],
+    skippedMcpIds: [],
+    internalToolIdsUsed: [],
+    skippedInternalToolIds: [],
+    maxUseAgentDepth: 0,
     internalToolResults,
   },
 });

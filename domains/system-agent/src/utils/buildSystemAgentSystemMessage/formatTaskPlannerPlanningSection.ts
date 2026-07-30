@@ -1,5 +1,3 @@
-import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
-
 export const TASK_PLANNER_PLANNING_SECTION_HEADING = '## Planning policy';
 
 export const formatTaskPlannerPlanningSection = (): string => {

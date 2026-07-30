@@ -11,6 +11,7 @@ export interface UpdateSystemAgentParams {
     category: AgentCategory | null;
     status: AgentStatus;
     assignedToolIds: string[];
+    customInstructions: string | null;
   }>;
 }
 

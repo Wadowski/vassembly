@@ -1,4 +1,4 @@
-import { DynamicStructuredTool } from '@langchain/core/tools';
+import { DynamicStructuredTool, type ToolSchemaBase } from '@langchain/core/tools';
 import { toJsonSchema } from '@langchain/core/utils/json_schema';
 
 import { sanitizeJsonSchemaForGemini } from './sanitizeJsonSchemaForGemini/index';
@@ -17,7 +17,7 @@ export const adaptToolsForGemini = ({
     return new DynamicStructuredTool({
       name: tool.name,
       description: tool.description,
-      schema: sanitizedSchema,
+      schema: sanitizedSchema as ToolSchemaBase,
       func: tool.func,
     });
   });

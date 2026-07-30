@@ -2462,6 +2462,9 @@ importers:
       '@vassembly/domain-mcp-usage':
         specifier: workspace:*
         version: link:../../domains/mcp-usage
+      '@vassembly/domain-skill':
+        specifier: workspace:*
+        version: link:../../domains/skill
       '@vassembly/domain-system-agent':
         specifier: workspace:*
         version: link:../../domains/system-agent

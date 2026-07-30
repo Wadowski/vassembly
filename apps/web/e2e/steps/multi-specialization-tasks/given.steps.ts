@@ -8,7 +8,6 @@ import {
   seedClassifierProgressEvent,
   seedClassifierTurnProgressEvents,
   seedCommentWithSpecializations,
-  seedMultiSpecPlanComment,
   seedSpecializationWithWorkerAgents,
   seedTaskCommentAwaitingClassification,
   ensureMcpCatalogIncludesNotion,
@@ -128,7 +127,7 @@ Given(
 
 Given(
   "a comment's raw classifier output contains more than {int} valid specialization lines\\/NEW entries",
-  async ({ seed, world }, _minimumCount: number) => {
+  async ({ seed, world }) => {
     const webWorld = world as WebBddWorld;
     if (!webWorld.auth?.userId) {
       throw new Error('User must be logged in before seeding classifier output');
@@ -336,7 +335,7 @@ Given(
 
 Given(
   'the MCP catalog includes an MCP named {string} with a short description',
-  async ({ seed }, _mcpName: string) => {
+  async ({ seed }) => {
     await ensureMcpCatalogIncludesNotion({ context: seed });
   },
 );

@@ -47,7 +47,8 @@ export const flattenNullableAnyOf = ({ schema }: { schema: JsonSchemaValue }): J
     return schema;
   }
 
-  const { anyOf: _removedAnyOf, ...rest } = schema;
+  const rest = { ...schema };
+  delete rest.anyOf;
 
   return {
     ...rest,

@@ -1,8 +1,8 @@
 import type { ShapeCoercionConfig } from '@vassembly/validation';
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodTypeAny } from 'zod';
 
 export interface ToolNormalizer {
-  schema: ZodObject<ZodRawShape>;
+  schema: ZodTypeAny;
   shapeCoercion: ShapeCoercionConfig;
   transformShapedInput?: (record: Record<string, unknown>) => Record<string, unknown>;
 }

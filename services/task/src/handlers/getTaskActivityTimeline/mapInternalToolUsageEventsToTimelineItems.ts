@@ -37,7 +37,7 @@ export const mapInternalToolUsageEventsToTimelineItems = ({
       agentId: event.agentId,
       status: event.status,
       startedAt,
-      endedAt: toNullableIsoString(event.endedAt),
+      endedAt: toNullableIsoString(event.endedAt) ?? undefined,
       durationMs: event.durationMs ?? undefined,
       errorMessage: event.errorMessage ?? undefined,
       input: serializeToolPayload({ payload: event.input }),

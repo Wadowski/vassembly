@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
-import type { AnsweredQuestion } from '@vassembly/domain-task-questions';
 import { ExecutionPausedError, UserInputWaitingError } from '@vassembly/errors';
 
 import { invocationResumeRegistry } from '../../invocationResumeRegistry';

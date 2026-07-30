@@ -267,7 +267,7 @@ Then(
   },
 );
 
-Then('a progress event for this invocation is recorded for the comment', async ({ seed, world }) => {
+Then('a progress event for this invocation is recorded for the comment', async ({ world }) => {
   const webWorld = world as WebBddWorld;
   if (!webWorld.commentId) {
     throw new Error('commentId is required to verify progress events');

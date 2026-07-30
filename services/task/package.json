@@ -24,6 +24,7 @@
     "@vassembly/domain-internal-tool-usage": "workspace:*",
     "@vassembly/domain-mcp": "workspace:*",
     "@vassembly/domain-mcp-usage": "workspace:*",
+    "@vassembly/domain-skill": "workspace:*",
     "@vassembly/domain-system-agent": "workspace:*",
     "@vassembly/domain-task": "workspace:*",
     "@vassembly/domain-task-comment": "workspace:*",

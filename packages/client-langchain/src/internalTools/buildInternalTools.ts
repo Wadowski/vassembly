@@ -1,6 +1,6 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { getInternalToolById } from '@vassembly/constants';
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodTypeAny } from 'zod';
 
 import { askUserSchema } from './schemas/askUserSchema';
 import { classifySpecializationSchema } from './schemas/classifySpecializationSchema';
@@ -18,7 +18,7 @@ import { webSearchSchema } from './schemas/webSearchSchema';
 
 import type { BuildInternalToolsParams, BuildInternalToolsResult } from './types';
 
-export const INTERNAL_TOOL_SCHEMAS: Record<string, ZodObject<ZodRawShape>> = {
+export const INTERNAL_TOOL_SCHEMAS: Record<string, ZodTypeAny> = {
   'user-ask': askUserSchema,
   'agent-use': useAgentSchema,
   'agent-list': listAgentsSchema,

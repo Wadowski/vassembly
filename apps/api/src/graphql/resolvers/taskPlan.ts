@@ -232,7 +232,7 @@ export const registerTaskPlanResolvers = (builder: Builder): void => {
         const enriched = await enrichPlanItems({
           templateItems: templateResult.data.items ?? [],
           instanceItems: (instanceResult.data.items ?? []).map(mapInstanceItemForEnrichment),
-          userId: context.userId,
+          userId: context.authenticatedUserId,
         });
 
         return {

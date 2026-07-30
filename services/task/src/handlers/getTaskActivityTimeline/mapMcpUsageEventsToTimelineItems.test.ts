@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import { mapMcpUsageEventsToTimelineItems } from './mapMcpUsageEventsToTimelineItems';
 
-import type { McpUsageEventModel } from '@vassembly/domain-mcp-usage';
+import { McpUsageStatus, type McpUsageEventModel } from '@vassembly/domain-mcp-usage';
 
 const createEvent = (overrides: Partial<McpUsageEventModel> = {}): McpUsageEventModel =>
   ({
@@ -57,7 +57,7 @@ describe('mapMcpUsageEventsToTimelineItems', () => {
     const items = mapMcpUsageEventsToTimelineItems({
       events: [
         createEvent({
-          status: 'success',
+          status: McpUsageStatus.Success,
           endedAt: new Date('2026-01-01T10:00:01.200Z'),
           durationMs: 1200,
           output: 'result',

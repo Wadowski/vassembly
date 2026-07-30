@@ -171,7 +171,7 @@ When('the invocation completes', async () => {
   // Progress events are seeded directly in Given steps for AF-2.
 });
 
-When('the Specialization Classifier tool handler returns a {string} result', async ({}, _result: string) => {
+When('the Specialization Classifier tool handler returns a {string} result', async () => {
   // Skipped classification is represented by seeded progress events in Given steps for AF-3.
 });
 

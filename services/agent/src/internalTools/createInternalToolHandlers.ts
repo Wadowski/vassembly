@@ -1,6 +1,7 @@
 import { withNormalizedInput } from '@vassembly/client-langchain';
 
 import { persistTaskPlanToolHandler } from './persistTaskPlan';
+import type { PersistTaskPlanInput } from './persistTaskPlan/types';
 import { runSkillScriptToolHandler } from './runSkillScript';
 import { invokeSkillPlannerToolHandler } from './invokeSkillPlanner';
 import { listAgents } from './listAgents';
@@ -65,7 +66,7 @@ export const createInternalToolHandlers = ({
   }),
   'task-plan-persist': withNormalizedInput({
     toolId: 'task-plan-persist',
-    handler: (args) => persistTaskPlanToolHandler(args, toolContext),
+    handler: (args) => persistTaskPlanToolHandler(args as unknown as PersistTaskPlanInput, toolContext),
   }),
   'web-search': withNormalizedInput({
     toolId: 'web-search',

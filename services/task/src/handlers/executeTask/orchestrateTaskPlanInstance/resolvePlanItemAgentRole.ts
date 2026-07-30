@@ -9,5 +9,9 @@ export const resolvePlanItemAgentRole = async ({
   const agentResult = await systemAgentDomain.queries.getModelById({ id: agentId });
   const role = resolveSpecializationAgentRole({ name: agentResult.data?.name ?? '' });
 
-  return role ?? 'worker';
+  if (role === 'researcher' || role === 'validator') {
+    return role;
+  }
+
+  return 'worker';
 };

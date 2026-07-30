@@ -18,8 +18,6 @@ import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 import { useAiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
 import {
   isCredentialEligibleForSystemAgentPreference,
-  SystemAgentPreferenceAction,
-  SystemAgentPreferenceBadge,
   useSetSystemAgentPreference,
   useSystemAgentPreferenceStatus,
 } from '../../../_components/ai-integrations/_components/shared';

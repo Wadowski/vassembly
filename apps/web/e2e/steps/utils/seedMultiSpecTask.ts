@@ -55,7 +55,6 @@ const ensureTaskCommentIndexes = async ({ context }: { context: SeedContext }): 
 };
 
 export const specializationExistsInCatalog = async ({
-  context,
   name,
 }: {
   context: SeedContext;

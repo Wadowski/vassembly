@@ -57,6 +57,7 @@ export interface ModeledProviderInvokeParams {
     durationMs: number;
     errorMessage?: string;
   }) => Promise<string | void>;
+  requireSuccessfulToolLlmName?: string;
 }
 
 export interface ModeledProviderClient {
