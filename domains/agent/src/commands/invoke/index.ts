@@ -19,6 +19,7 @@ const resolveInvokeParams = (
     signal: params.signal,
     shouldAbort: params.shouldAbort,
     recordMcpToolCall: params.recordMcpToolCall,
+    recordInternalToolCall: params.recordInternalToolCall,
   };
 };
 

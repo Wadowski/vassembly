@@ -8,4 +8,10 @@ export class TaskCommentModel extends Model {
   userText?: string;
 
   agentResponse?: string | null;
+
+  specializationIds?: string[];
+
+  skillIdsUsed?: string[] | null;
+
+  taskPlanInstanceId?: string | null;
 }

@@ -17,7 +17,7 @@ export const enforceOnboardingCompleteForQuery = ({
   }
 
   enforceOnboardingComplete({
-    onboardingCompleted: context.onboardingCompleted ?? true,
+    onboardingCompleted: context.onboardingCompleted === true,
     role: context.role,
   });
 };

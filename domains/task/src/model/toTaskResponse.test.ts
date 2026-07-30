@@ -70,22 +70,6 @@ describe('toTaskResponse', () => {
     expect(response.specializationIds).toBeNull();
   });
 
-  it('should include optional nullable skillIdsUsed on TaskResponse', () => {
-    const response: TaskResponse = toTaskResponse({
-      task: buildTask({ skillIdsUsed: ['skill-1'] }),
-    });
-
-    expect(response.skillIdsUsed).toEqual(['skill-1']);
-  });
-
-  it('should map skillIdsUsed null to null in TaskResponse', () => {
-    const response = toTaskResponse({
-      task: buildTask({ skillIdsUsed: null }),
-    });
-
-    expect(response.skillIdsUsed).toBeNull();
-  });
-
   it('should map failed task status to failed in TaskResponse', () => {
     const response = toTaskResponse({
       task: buildTask({ status: TaskStatus.Failed }),

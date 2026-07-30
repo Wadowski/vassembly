@@ -1,10 +1,14 @@
 import taskDomain from '@vassembly/domain-task';
 import taskCommentDomain from '@vassembly/domain-task-comment';
+import taskPlanInstanceDomain from '@vassembly/domain-task-plan-instance';
+import taskPlanTemplateDomain from '@vassembly/domain-task-plan-template';
 import mcpUsageDomain from '@vassembly/domain-mcp-usage';
+import internalToolUsageDomain from '@vassembly/domain-internal-tool-usage';
 import taskQuestionsDomain from '@vassembly/domain-task-questions';
 import { NotFoundError } from '@vassembly/errors';
 import { toIsoString } from '@vassembly/mappers';
 
+import { mapInternalToolUsageEventsToTimelineItems } from './mapInternalToolUsageEventsToTimelineItems';
 import { mapMcpUsageEventsToTimelineItems } from './mapMcpUsageEventsToTimelineItems';
 import { mapProgressStateToFilterGroup } from './types';
 import { aggregateProgressStats } from './aggregateProgressStats';
@@ -42,6 +46,9 @@ export const getTaskActivityTimeline = async ({
   const commentsResult = await taskCommentDomain.queries.listByTaskId({ taskId });
   const questionsResult = await taskQuestionsDomain.queries.getTaskQuestions({ taskId });
   const mcpUsageResult = await mcpUsageDomain.queries.getModelsByTaskId({ taskId });
+  const internalToolUsageResult = await internalToolUsageDomain.queries.getModelsByTaskId({
+    taskId,
+  });
   const answeredQuestions = questionsResult.data?.answeredQuestions ?? [];
 
   const items: TaskActivityItem[] = [];
@@ -60,7 +67,64 @@ export const getTaskActivityTimeline = async ({
       filterGroup: 'comments',
       commentId,
       userText: comment.userText!,
+      specializationIds: comment.specializationIds ?? [],
+      commentSkillIds: comment.skillIdsUsed ?? [],
     });
+
+    if (comment.taskPlanInstanceId) {
+      const instanceResult = await taskPlanInstanceDomain.queries.getModelById({
+        id: comment.taskPlanInstanceId,
+      });
+      const templateResult = await taskPlanTemplateDomain.queries.getModelById({
+        id: instanceResult.data.taskPlanTemplateId!,
+      });
+
+      items.push({
+        kind: 'plan',
+        id: `plan-${commentId}`,
+        occurredAt: toIsoString({
+          value: instanceResult.data.createdAt!,
+          fieldName: 'createdAt',
+        }),
+        sortKey: `${commentId}-plan`,
+        filterGroup: 'plans',
+        commentId,
+        commentSkillIds: comment.skillIdsUsed ?? [],
+        planTemplateShortName: templateResult.data.shortName!,
+        planTemplateDescription: templateResult.data.description!,
+        planInstanceStatus: instanceResult.data.status!,
+        planItems: (instanceResult.data.items ?? []).map((item) => ({
+          templateItemIndex: item.templateItemIndex,
+          agentId: item.agentId,
+          skillId: item.skillId,
+          order: item.order,
+          status: item.status,
+          startedAt: item.startedAt
+            ? toIsoString({ value: item.startedAt, fieldName: 'startedAt' })
+            : null,
+          completedAt: item.completedAt
+            ? toIsoString({ value: item.completedAt, fieldName: 'completedAt' })
+            : null,
+          failedAt: item.failedAt
+            ? toIsoString({ value: item.failedAt, fieldName: 'failedAt' })
+            : null,
+          errorMessage: item.errorMessage,
+          retryCount: item.retryCount,
+          description:
+            templateResult.data.items?.[item.templateItemIndex]?.description ?? '',
+        })),
+        planTemplate: {
+          shortName: templateResult.data.shortName!,
+          description: templateResult.data.description!,
+          inputDetails: templateResult.data.inputDetails ?? {},
+          outputDetails: templateResult.data.outputDetails ?? {},
+        },
+        planInstance: {
+          status: instanceResult.data.status!,
+          inputDetails: instanceResult.data.inputDetails ?? {},
+        },
+      });
+    }
 
     const commentProgress = await resolveCommentProgress({
       taskId,
@@ -92,6 +156,7 @@ export const getTaskActivityTimeline = async ({
         integrationName: event.integrationName,
         provider: event.provider,
         model: event.model,
+        outcomeSummary: event.outcomeSummary,
       });
     }
 
@@ -126,6 +191,7 @@ export const getTaskActivityTimeline = async ({
         filterGroup: 'responses',
         commentId,
         agentResponse: comment.agentResponse,
+        commentSkillIds: comment.skillIdsUsed ?? [],
         totalDuration: executionStats.totalDuration,
         totalTokens: executionStats.totalTokens,
       });
@@ -135,6 +201,9 @@ export const getTaskActivityTimeline = async ({
   items.push(
     ...mapMcpUsageEventsToTimelineItems({
       events: mcpUsageResult.data,
+    }),
+    ...mapInternalToolUsageEventsToTimelineItems({
+      events: internalToolUsageResult.data,
     }),
   );
 

@@ -30,15 +30,17 @@ describe('getUserMcpConfigs', () => {
 
       const list = await getUserMcpConfigs({ userId: mockUserId });
 
-      expect(list).toHaveLength(2);
-      expect(list.map((config) => config.mcpId)).toContain('mcp-gmail');
-      expect(list.map((config) => config.mcpId)).toContain('mcp-brave');
+      expect(list.items).toHaveLength(2);
+      expect(list.items.map((config) => config.mcpId)).toContain('mcp-gmail');
+      expect(list.items.map((config) => config.mcpId)).toContain('mcp-brave');
+      expect(list.total).toBe(2);
     });
 
     it('should return empty list when user has no configurations', async () => {
       const list = await getUserMcpConfigs({ userId: 'user-no-configs' });
 
-      expect(list).toHaveLength(0);
+      expect(list.items).toHaveLength(0);
+      expect(list.total).toBe(0);
     });
 
     it('should return only configurations belonging to requested user', async () => {
@@ -59,14 +61,33 @@ describe('getUserMcpConfigs', () => {
       const listA = await getUserMcpConfigs({ userId: 'user-a' });
       const listB = await getUserMcpConfigs({ userId: 'user-b' });
 
-      expect(listA).toHaveLength(1);
-      expect(listB).toHaveLength(1);
-      expect(listA[0]?.fieldValues).not.toEqual(listB[0]?.fieldValues);
+      expect(listA.items).toHaveLength(1);
+      expect(listB.items).toHaveLength(1);
+      expect(listA.items[0]?.fieldValues).not.toEqual(listB.items[0]?.fieldValues);
     });
   });
 
-  describe('capping', () => {
-    it('should cap list at 50 items for YOUR MCPs section', async () => {
+  describe('pagination', () => {
+    it('should return paginated configurations for YOUR MCPs section', async () => {
+      for (let index = 0; index < 12; index += 1) {
+        await createUserMcpConfig({
+          userId: mockUserId,
+          mcpId: `mcp-${index}`,
+          fieldValues: { someField: `value-${index}` },
+          schema: mockSimpleTextSchema,
+        });
+      }
+
+      const firstPage = await getUserMcpConfigs({ userId: mockUserId, page: 0, size: 5 });
+      const secondPage = await getUserMcpConfigs({ userId: mockUserId, page: 1, size: 5 });
+
+      expect(firstPage.items).toHaveLength(5);
+      expect(secondPage.items).toHaveLength(5);
+      expect(firstPage.total).toBe(12);
+      expect(secondPage.total).toBe(12);
+    });
+
+    it('should cap page size at 50 items', async () => {
       for (let index = 0; index < 55; index += 1) {
         await createUserMcpConfig({
           userId: mockUserId,
@@ -76,9 +97,10 @@ describe('getUserMcpConfigs', () => {
         });
       }
 
-      const list = await getUserMcpConfigs({ userId: mockUserId });
+      const list = await getUserMcpConfigs({ userId: mockUserId, page: 0, size: 100 });
 
-      expect(list.length).toBeLessThanOrEqual(50);
+      expect(list.items.length).toBeLessThanOrEqual(50);
+      expect(list.size).toBe(50);
     });
   });
 });

@@ -34,8 +34,6 @@ export function useMcps(): UseMcpsResult {
     data: mappedData,
     loading: isLoading,
     error,
-    refetch: () => {
-      void refetch();
-    },
+    refetch: () => refetch(),
   };
 }

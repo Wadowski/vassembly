@@ -93,9 +93,12 @@ export const gqlMcpSchema = (builder: Builder): void => {
   defineObjectType(builder,'UserMcpConfigList', {
     fields: (t) => ({
       items: t.field({
-        type: graphQLListType('UserMcpConfig'),
+        type: graphQLListType('Mcp'),
         resolve: (parent: { items: unknown[] }) => parent.items,
       }),
+      total: t.exposeInt('total'),
+      page: t.exposeInt('page'),
+      size: t.exposeInt('size'),
     }),
   });
 

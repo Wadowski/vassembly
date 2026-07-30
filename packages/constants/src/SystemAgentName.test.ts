@@ -15,6 +15,7 @@ describe('SYSTEM_AGENT_NAME', () => {
       'Specialization classifier',
       'MCP specialization classifier',
       'Specialization agent description generator',
+      'Specialization agent rule generator',
       'Skill resolver',
       'Task planner',
       'Skill planner',

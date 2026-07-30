@@ -83,13 +83,13 @@ export function SystemAgentInvokeModal({
     }
     if (preferenceData === undefined) {
       setBlockingError(
-        'Please select an AI connection for system agents in Settings before invoking.',
+        'Please set an AI connection for platform agents from the integrations list before invoking.',
       );
       return;
     }
     if (selectedCredential === undefined || selectedCredential.connectionStatus !== 'connected') {
       setBlockingError(
-        'Your system agent connection is no longer valid. Please select a new one in Settings.',
+        'Your system agent connection is no longer valid. Please select a new one from the integrations list.',
       );
       return;
     }

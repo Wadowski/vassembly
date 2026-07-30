@@ -7,11 +7,22 @@ import { OnboardingProgressPanel } from './OnboardingProgressPanel';
 import { OnboardingSkeleton } from './OnboardingSkeleton';
 import { EmailVerificationStep } from './EmailVerificationStep';
 import { AiIntegrationStep } from './AiIntegrationStep';
+import { McpConnectionsStep } from './McpConnectionsStep';
+import { OnboardingFinishSection } from './OnboardingFinishSection';
 import { useOnboardingHub } from './useOnboardingHub';
 import styles from './OnboardingHub.module.scss';
 
 export const OnboardingHub = (): JSX.Element => {
-  const { email, steps, currentStepIndex, isLoading } = useOnboardingHub();
+  const {
+    email,
+    steps,
+    currentStepIndex,
+    isLoading,
+    canFinish,
+    isFinishing,
+    finishErrorMessage,
+    finishOnboarding,
+  } = useOnboardingHub();
   const [liveMessage, setLiveMessage] = useState('');
   const previousEmailVerifiedRef = useRef(steps.emailVerified);
 
@@ -41,6 +52,15 @@ export const OnboardingHub = (): JSX.Element => {
           <AiIntegrationStep
             isLocked={!steps.emailVerified}
             isComplete={steps.aiIntegrationCreated}
+          />
+          <McpConnectionsStep isLocked={!steps.aiIntegrationCreated} />
+          <OnboardingFinishSection
+            canFinish={canFinish}
+            isFinishing={isFinishing}
+            errorMessage={finishErrorMessage}
+            onFinish={() => {
+              void finishOnboarding();
+            }}
           />
         </div>
       </div>

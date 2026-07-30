@@ -23,6 +23,8 @@ export interface SkillFormProps {
 export interface SkillFormInitialValues {
   name?: string;
   description?: string;
+  input?: string;
+  output?: string;
   rule?: string;
   usesSkillIds?: string[];
   scripts?: SkillFormScriptInput[];

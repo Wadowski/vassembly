@@ -3,4 +3,6 @@ export type { GraphQLProviderProps } from './types';
 export { useApolloQuery } from './useApolloQuery';
 export { useApolloLazyQuery } from './useApolloLazyQuery';
 export { useApolloMutation } from './useApolloMutation';
+export { useRefetchQueries } from './useRefetchQueries';
 export type { UseApolloQueryOptions, UseApolloQueryState, UseApolloLazyQueryState, UseApolloMutationOptions, UseApolloMutationState } from './types';
+export type { RefetchQueriesParams } from './useRefetchQueries';

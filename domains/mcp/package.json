@@ -26,6 +26,7 @@
     "@vassembly/model": "workspace:*",
     "@vassembly/queries": "workspace:*",
     "@vassembly/validation": "workspace:*",
+    "mongodb": "^7.0.0",
     "zod": "^4.3.6"
   }
 }

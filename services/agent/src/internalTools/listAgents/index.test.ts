@@ -238,18 +238,21 @@ describe('listAgents internal tool handler', () => {
 
     expect(agents).toEqual([
       {
+        id: 'agent-finance-researcher',
         name: 'Finance researcher',
         description: 'Finance research',
         category: null,
         agentType: 'system',
       },
       {
+        id: 'agent-researcher',
         name: 'Legal researcher',
         description: 'Legal research',
         category: null,
         agentType: 'system',
       },
       {
+        id: 'agent-worker',
         name: 'Legal worker',
         description: 'Legal execution',
         category: null,
@@ -282,6 +285,7 @@ describe('listAgents internal tool handler', () => {
 
     expect(agents).toEqual([
       {
+        id: 'agent-researcher',
         name: 'Legal researcher',
         description: 'Research',
         category: null,

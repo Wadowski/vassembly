@@ -33,7 +33,7 @@ export const createApiGraphQLContext = async (
     return {
       authenticatedUserId: verified.userId,
       role: verified.role ?? 'user',
-      onboardingCompleted: verified.onboardingCompleted ?? true,
+      onboardingCompleted: verified.onboardingCompleted === true,
     };
   } catch {
     return { authenticatedUserId: undefined };

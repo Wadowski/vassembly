@@ -31,6 +31,17 @@
   border-radius: $border-radius-lg;
 }
 
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.countText {
+  color: $color-text-secondary;
+}
+
 @media #{$media-mobile-only} {
   .grid,
   .skeletonGrid {

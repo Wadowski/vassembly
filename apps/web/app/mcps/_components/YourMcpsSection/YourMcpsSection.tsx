@@ -2,6 +2,7 @@
 
 import { Skeleton } from '@vassembly/ui-system-design/skeleton';
 import { Text } from '@vassembly/ui-system-design/text';
+import { Pagination } from '@vassembly/ui-system-design/pagination';
 
 import { McpListItem } from '../McpListItem/McpListItem';
 import { useMcpEnableToggle } from '../hooks/useMcpEnableToggle';
@@ -31,24 +32,41 @@ export const YourMcpsSection = (): JSX.Element | null => {
     );
   }
 
+  const showPagination = section.total > 0;
+
   return (
     <section className={styles.section} aria-label="YOUR MCPs" role="region">
       <Text variant="h2" as="h2">YOUR MCPs</Text>
       {section.isEmpty ? (
         <Text variant="body2" className={styles.emptyMessage}>{YOUR_MCPS_EMPTY_MESSAGE}</Text>
       ) : (
-        <div className={styles.grid} data-testid="your-mcps-grid" data-columns="3">
-          {section.configuredMcps.map((mcp) => (
-            <McpListItem
-              key={mcp.id}
-              mcp={mcp}
-              statusBadge="configured"
-              iconSize={section.iconSize}
-              isToggleLoading={togglingMcpId === mcp.id}
-              onToggleEnabled={toggleMcpEnabled}
-            />
-          ))}
-        </div>
+        <>
+          <div className={styles.grid} data-testid="your-mcps-grid" data-columns="3">
+            {section.configuredMcps.map((mcp) => (
+              <McpListItem
+                key={mcp.id}
+                mcp={mcp}
+                statusBadge="configured"
+                iconSize={section.iconSize}
+                isToggleLoading={togglingMcpId === mcp.id}
+                onToggleEnabled={toggleMcpEnabled}
+              />
+            ))}
+          </div>
+          {showPagination ? (
+            <div className={styles.footer}>
+              <Text variant="body2" className={styles.countText}>
+                Showing {section.rangeStart}–{section.rangeEnd} of {section.total} total
+              </Text>
+              <Pagination
+                currentPage={section.currentPage}
+                totalPages={section.totalPages}
+                onPageChange={section.handlePageChange}
+                ariaLabel="Your MCPs pagination"
+              />
+            </div>
+          ) : null}
+        </>
       )}
     </section>
   );

@@ -1,2 +1,2 @@
-export { TaskDetailSkillsUsed, TaskDetailSkillsUsedView } from './TaskDetailSkillsUsed';
-export type { TaskDetailSkillsUsedProps, TaskDetailSkillsUsedViewProps } from './types';
+export { TaskDetailSkillsUsed } from './TaskDetailSkillsUsed';
+export type { TaskDetailSkillsUsedProps } from './types';

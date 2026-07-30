@@ -1,9 +1,11 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { DynamicStructuredTool } from '@langchain/core/tools';
 import { ExecutionPausedError, InternalError, UserInputWaitingError } from '@vassembly/errors';
 
 import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
 import { mapExecutedLlmToolNamesToIds } from '../internalTools/mapExecutedLlmToolNamesToIds';
+import { mapExecutedToolResultsToIds } from '../internalTools/mapExecutedToolResultsToIds';
 import { MCP_TOOL_MAX_ITERATIONS, loadMcpTools } from '../mcp';
 import { assertNotAborted } from '../utils/assertNotAborted';
 import { extractTokenUsageFromMessage } from '../utils/extractTokenUsageFromMessage';
@@ -17,6 +19,7 @@ export interface InvokeWithChatModelParams {
   createChatModel: (model: string) => BaseChatModel;
   invokeParams: AiProviderInvokeParams;
   errorMessage: string;
+  adaptTools?: (tools: DynamicStructuredTool[]) => DynamicStructuredTool[];
 }
 
 const CONSOLE_LOG_PREFIX = 'client-langchain ::';
@@ -53,9 +56,11 @@ interface InvokeModelResult {
 const invokeModel = async ({
   createChatModel,
   invokeParams,
+  adaptTools,
 }: {
   createChatModel: (model: string) => BaseChatModel;
   invokeParams: AiProviderInvokeParams;
+  adaptTools?: (tools: DynamicStructuredTool[]) => DynamicStructuredTool[];
 }): Promise<InvokeModelResult> => {
   const chatModel = createChatModel(invokeParams.model);
   const messages = buildInitialMessages(invokeParams);
@@ -84,6 +89,7 @@ const invokeModel = async ({
   const {
     tools: internalTools,
     skippedToolIds,
+    toolNameToInternalToolId,
   } = buildInternalTools({
     toolIds: internalToolBindings.map((binding) => binding.toolId),
     handlers: buildHandlerMap(internalToolBindings),
@@ -91,12 +97,14 @@ const invokeModel = async ({
 
   let mcpTools: Awaited<ReturnType<typeof loadMcpTools>>['tools'] = [];
   let toolNameToServerName: Map<string, string> | undefined;
+  let toolNameToOriginalName: Map<string, string> | undefined;
   let close: () => Promise<void> = async () => undefined;
 
   if (mcpServerConfigs.length > 0) {
     const loadedMcpTools = await loadMcpTools({ serverConfigs: mcpServerConfigs });
     mcpTools = loadedMcpTools.tools;
     toolNameToServerName = loadedMcpTools.toolNameToServerName;
+    toolNameToOriginalName = loadedMcpTools.toolNameToOriginalName;
     close = loadedMcpTools.close;
   }
 
@@ -113,15 +121,20 @@ const invokeModel = async ({
   }
 
   try {
-    const { response, executedToolNames, usage } = await runToolCallLoop({
+    const { response, executedToolNames, executedToolResults, usage } = await runToolCallLoop({
       model: chatModel,
       tools: mergedTools,
+      bindingTools: adaptTools ? adaptTools(mergedTools) : undefined,
       messages,
       maxIterations: MCP_TOOL_MAX_ITERATIONS,
       signal: invokeParams.signal,
       shouldAbort: invokeParams.shouldAbort,
       toolNameToServerName,
+      toolNameToOriginalName,
+      toolNameToInternalToolId,
       recordMcpToolCall: invokeParams.recordMcpToolCall,
+      recordInternalToolCall: invokeParams.recordInternalToolCall,
+      requireSuccessfulToolLlmName: invokeParams.requireSuccessfulToolLlmName,
     });
 
     return {
@@ -129,6 +142,7 @@ const invokeModel = async ({
       usage,
       toolUsage: {
         internalToolIdsUsed: mapExecutedLlmToolNamesToIds(executedToolNames),
+        internalToolResults: mapExecutedToolResultsToIds(executedToolResults),
         skippedInternalToolIds: skippedToolIds,
         skippedMcpToolNames: skippedMcpToolNames.length > 0 ? skippedMcpToolNames : undefined,
       },
@@ -142,9 +156,14 @@ export const invokeWithChatModel = async ({
   createChatModel,
   invokeParams,
   errorMessage,
+  adaptTools,
 }: InvokeWithChatModelParams): Promise<AiProviderInvokeResult> => {
   try {
-    const { message, usage, toolUsage } = await invokeModel({ createChatModel, invokeParams });
+    const { message, usage, toolUsage } = await invokeModel({
+      createChatModel,
+      invokeParams,
+      adaptTools,
+    });
 
     return {
       message,

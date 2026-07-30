@@ -1,9 +1,8 @@
-import { toIsoString } from '@vassembly/mappers';
-
-import { McpUsageStatus } from '@vassembly/domain-mcp-usage';
+import { toIsoString, toNullableIsoString } from '@vassembly/mappers';
 
 import type { McpUsageEventModel } from '@vassembly/domain-mcp-usage';
 import type { TaskActivityItem } from './types';
+import { serializeToolPayload } from './serializeToolPayload';
 
 export interface MapMcpUsageEventsToTimelineItemsParams {
   events: McpUsageEventModel[];
@@ -16,46 +15,34 @@ const resolveMcpDisplayName = ({ event }: { event: McpUsageEventModel }): string
 export const mapMcpUsageEventsToTimelineItems = ({
   events,
 }: MapMcpUsageEventsToTimelineItemsParams): TaskActivityItem[] => {
-  const items: TaskActivityItem[] = [];
-
-  for (const event of events) {
+  return events.map((event) => {
     const eventId = event.id!;
-    const mcpName = resolveMcpDisplayName({ event });
-    const commentId = event.commentId ?? '';
+    const startedAt = toIsoString({ value: event.startedAt, fieldName: 'startedAt' });
 
-    items.push({
-      kind: 'mcpInvocationStarted',
-      id: `mcp-start-${eventId}`,
-      occurredAt: toIsoString({ value: event.startedAt, fieldName: 'startedAt' }),
-      sortKey: `${eventId}-start`,
-      filterGroup: 'mcpUsage',
-      commentId,
+    return {
+      kind: 'mcpInvocation',
+      id: `mcp-${eventId}`,
+      occurredAt: startedAt,
+      sortKey: eventId,
+      filterGroup: 'toolCalls',
+      commentId: event.commentId ?? '',
       usageEventId: eventId,
       mcpId: event.mcpId,
-      mcpName,
+      mcpName: resolveMcpDisplayName({ event }),
       toolName: event.toolName,
+      toolDisplayName: event.toolDisplayName ?? undefined,
       agentId: event.agentId,
-    });
-
-    if (event.status !== McpUsageStatus.InProgress && event.endedAt) {
-      items.push({
-        kind: 'mcpInvocationCompleted',
-        id: `mcp-complete-${eventId}`,
-        occurredAt: toIsoString({ value: event.endedAt, fieldName: 'endedAt' }),
-        sortKey: `${eventId}-complete`,
-        filterGroup: 'mcpUsage',
-        commentId,
-        usageEventId: eventId,
-        mcpId: event.mcpId,
-        mcpName,
-        toolName: event.toolName,
-        agentId: event.agentId,
-        status: event.status,
-        durationMs: event.durationMs ?? undefined,
-        errorMessage: event.errorMessage ?? undefined,
-      });
-    }
-  }
-
-  return items;
+      status: event.status,
+      startedAt,
+      endedAt: toNullableIsoString(event.endedAt) ?? undefined,
+      durationMs: event.durationMs ?? undefined,
+      errorMessage: event.errorMessage ?? undefined,
+      input: serializeToolPayload({ payload: event.input }),
+      inputTruncated: event.inputTruncated,
+      output: event.output ?? undefined,
+      outputTruncated: event.outputTruncated,
+      invocationId: event.invocationId ?? undefined,
+      rootInvokeId: event.rootInvokeId ?? undefined,
+    };
+  });
 };

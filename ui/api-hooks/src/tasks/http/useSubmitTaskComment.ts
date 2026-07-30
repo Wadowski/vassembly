@@ -16,6 +16,7 @@ export interface SubmitTaskCommentResponse {
     userId: string;
     userText: string;
     agentResponse: string | null;
+    specializationIds: string[];
     createdAt: string;
     updatedAt: string;
   };

@@ -30,9 +30,13 @@ export const createGenericAdapter = (mapping: CredentialMapping): McpRuntimeAdap
     }
 
     const headers: Record<string, string> = {};
-    for (const { headerName, fieldKey, format } of mapping.headers) {
+    for (const { headerName, fieldKey, format, optional } of mapping.headers) {
       const value = readRequiredString(fieldValues, fieldKey);
       if (!value) {
+        if (optional) {
+          continue;
+        }
+
         return null;
       }
 
@@ -46,7 +50,7 @@ export const createGenericAdapter = (mapping: CredentialMapping): McpRuntimeAdap
       serverName: mcpId,
       transport: 'http',
       url: serverUrl,
-      headers,
+      headers: Object.keys(headers).length > 0 ? headers : undefined,
     };
   },
 });

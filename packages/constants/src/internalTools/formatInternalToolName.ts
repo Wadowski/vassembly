@@ -10,3 +10,5 @@ export const formatInternalToolDisplayName = ({
   domain,
   action,
 }: FormatInternalToolNameParams): string => `${domain} - ${action}`;
+
+export const formatToolDisplayName = formatInternalToolDisplayName;

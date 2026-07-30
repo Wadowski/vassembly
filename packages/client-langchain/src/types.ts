@@ -5,6 +5,7 @@ export interface AiProviderTestResult {
 }
 
 import type { McpServerConfig } from './mcp/types';
+import type { RecordInternalToolCall } from './internalTools/recordInternalToolCall';
 import type { RecordMcpToolCall } from './mcp/recordMcpToolCall';
 
 export interface InternalToolBinding {
@@ -21,6 +22,8 @@ export interface AiProviderInvokeParams {
   signal?: AbortSignal;
   shouldAbort?: () => Promise<boolean>;
   recordMcpToolCall?: RecordMcpToolCall;
+  recordInternalToolCall?: RecordInternalToolCall;
+  requireSuccessfulToolLlmName?: string;
 }
 
 export interface AiProviderInvokeResult {
@@ -33,6 +36,7 @@ export interface AiProviderInvokeResult {
   };
   toolUsage?: {
     internalToolIdsUsed: string[];
+    internalToolResults?: Array<{ toolId: string; content: string }>;
     skippedInternalToolIds: string[];
     skippedMcpToolNames?: string[];
   };

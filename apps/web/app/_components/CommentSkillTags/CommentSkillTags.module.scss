@@ -1,0 +1,14 @@
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.tag,
+.tagLink {
+  display: inline-flex;
+}
+
+.tagLink {
+  text-decoration: none;
+}

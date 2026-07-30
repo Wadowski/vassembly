@@ -1,6 +1,8 @@
 import {
   SKILL_DESCRIPTION_MAX_LENGTH,
+  SKILL_INPUT_MAX_LENGTH,
   SKILL_NAME_MAX_LENGTH,
+  SKILL_OUTPUT_MAX_LENGTH,
   SKILL_RULE_MAX_LENGTH,
   SKILL_SCRIPT_MAX_COUNT,
   SKILL_SCRIPT_MAX_SIZE_BYTES,
@@ -23,6 +25,8 @@ export const CREATE_SKILL_BODY_SCHEMA = z.object({
   specializationId: z.string().trim().min(1).max(100),
   name: z.string().trim().min(1).max(SKILL_NAME_MAX_LENGTH),
   description: z.string().trim().min(1).max(SKILL_DESCRIPTION_MAX_LENGTH),
+  input: z.string().trim().min(1).max(SKILL_INPUT_MAX_LENGTH),
+  output: z.string().trim().min(1).max(SKILL_OUTPUT_MAX_LENGTH),
   rule: z.string().trim().min(1).max(SKILL_RULE_MAX_LENGTH),
   scripts: z.array(SKILL_SCRIPT_WRITE_BODY_SCHEMA).max(SKILL_SCRIPT_MAX_COUNT).optional().default([]),
   usesSkillIds: z.array(z.string().trim().min(1)).optional().default([]),
@@ -31,6 +35,8 @@ export const CREATE_SKILL_BODY_SCHEMA = z.object({
 export const UPDATE_SKILL_BODY_SCHEMA = z
   .object({
     description: z.string().trim().min(1).max(SKILL_DESCRIPTION_MAX_LENGTH).optional(),
+    input: z.string().trim().min(1).max(SKILL_INPUT_MAX_LENGTH).optional(),
+    output: z.string().trim().min(1).max(SKILL_OUTPUT_MAX_LENGTH).optional(),
     rule: z.string().trim().min(1).max(SKILL_RULE_MAX_LENGTH).optional(),
     enabled: z.boolean().optional(),
     scripts: z.array(SKILL_SCRIPT_WRITE_BODY_SCHEMA).max(SKILL_SCRIPT_MAX_COUNT).optional(),
@@ -39,6 +45,8 @@ export const UPDATE_SKILL_BODY_SCHEMA = z
   .refine(
     (value) =>
       value.description !== undefined ||
+      value.input !== undefined ||
+      value.output !== undefined ||
       value.rule !== undefined ||
       value.enabled !== undefined ||
       value.scripts !== undefined ||
@@ -51,6 +59,8 @@ export const SKILL_RESPONSE_SCHEMA = z.object({
   specializationId: z.string(),
   name: z.string(),
   description: z.string(),
+  input: z.string(),
+  output: z.string(),
   rule: z.string(),
   enabled: z.boolean(),
   scripts: z.array(

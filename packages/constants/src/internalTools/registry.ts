@@ -47,9 +47,18 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
   defineInternalTool({
     domain: 'task',
     action: 'update',
-    description: 'Persist title, category, specializationIds, or skillIdsUsed for the current task. taskId is optional during task execution — it is taken from execution context.',
+    description:
+      'Persist title, category, or specializationIds for the current task. taskId is optional during task execution — it is taken from execution context.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'update_task',
+  }),
+  defineInternalTool({
+    domain: 'task-plan',
+    action: 'persist',
+    description:
+      'Persist the composed plan. Required top-level fields: shortName, description, inputDetails, outputDetails, resolvedInputDetails, items[]. Each item needs agentName (exact name from Available agents — worker, researcher, or validator), skillId (existing skill id, or null), skillName (existing skill name to reuse when skillId is null; omit to define a new skill via description), description, order. Do not use placeholder agent names or MongoDB ids for agents.',
+    accessScope: InternalToolAccessScope.SYSTEM_ONLY,
+    llmToolName: 'persist_task_plan',
   }),
   defineInternalTool({
     domain: 'user',
@@ -63,7 +72,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     domain: 'specialization',
     action: 'classify',
     description:
-      'Classify a task description into 1–3 specialization domains. Returns existing IDs or a signal to create a new specialization.',
+      'Classify a task description into up to 5 specialization domains (subject-matter and tool/platform). Returns existing IDs and/or new specialization entries to create.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'classify_specialization',
   }),
@@ -71,7 +80,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     domain: 'specialization',
     action: 'create',
     description:
-      'Provision a new specialization domain: creates the entity, provisions researcher/worker/validator agents, and maps relevant MCPs.',
+      'Provision a new specialization domain: creates the entity, provisions methodologist/researcher/worker/validator agents, and maps relevant MCPs.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'create_specialization',
   }),
@@ -79,7 +88,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     domain: 'skill',
     action: 'create',
     description:
-      'Create a skill for a specialization with name, description, rule, and optional scripts.',
+      'Create a skill for a specialization with name, description, input, output, rule, and optional scripts.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'create_skill',
   }),

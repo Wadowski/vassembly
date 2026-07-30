@@ -5,9 +5,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   PAGE_SIZE,
-  useAiIntegrationDelete,
   useAiIntegrationRestore,
   useAiIntegrations,
+  useHttpClient,
   useTestConnection,
   type AiIntegrationCredentialDto,
 } from '@vassembly/ui-api-hooks';
@@ -19,6 +19,10 @@ import {
   AI_INTEGRATIONS_CREATE_PATH,
   aiIntegrationEditPath,
 } from '../../../../aiIntegrationRoutes';
+import {
+  useSetSystemAgentPreference,
+  useSystemAgentPreferenceStatus,
+} from '../shared';
 
 import {
   AI_INTEGRATION_LIST_ALL_PROVIDERS,
@@ -30,10 +34,22 @@ import {
 export const useAiIntegrationList = () => {
   const router = useRouter();
   const snackbar = useSnackbar();
+  const http = useHttpClient();
   const { data, fetch, isLoading, error } = useAiIntegrations();
-  const { mutate: deleteCredential, isLoading: isDeleting } = useAiIntegrationDelete();
   const { mutate: restoreCredential, isLoading: isRestoring } = useAiIntegrationRestore();
   const { mutate: testConnection, isLoading: isTesting } = useTestConnection();
+  const {
+    currentCredentialId,
+    isLoading: isPreferenceLoading,
+    refetch: refetchPreference,
+  } = useSystemAgentPreferenceStatus();
+  const {
+    setPreference,
+    isSaving: isSettingPreference,
+    savingCredentialId: settingPreferenceCredentialId,
+  } = useSetSystemAgentPreference({
+    onSuccess: refetchPreference,
+  });
 
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebouncedValue(searchInput, 300);
@@ -45,6 +61,7 @@ export const useAiIntegrationList = () => {
   const [deleteTarget, setDeleteTarget] = useState<AiIntegrationCredentialDto | null>(null);
   const [restoreTarget, setRestoreTarget] = useState<AiIntegrationCredentialDto | null>(null);
   const [testingCredentialId, setTestingCredentialId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const refreshList = useCallback(async (): Promise<void> => {
     await fetch({
@@ -87,19 +104,32 @@ export const useAiIntegrationList = () => {
     if (deleteTarget === null) {
       return;
     }
-    const result = await deleteCredential({ id: deleteTarget.id });
-    if (result === undefined) {
+    setIsDeleting(true);
+    try {
+      await http.delete({
+        path: `/ai-integrations/${deleteTarget.id}`,
+        withAuth: true,
+      });
+      snackbar.show({ variant: 'success', message: 'Integration deleted', duration: 4000 });
+      setDeleteTarget(null);
+      await refreshList();
+    } catch (deleteError) {
       snackbar.show({
         variant: 'error',
-        message: 'Failed to delete integration',
+        message: getRequestErrorMessage(deleteError, 'Failed to delete integration'),
         duration: 5000,
       });
-      return;
+    } finally {
+      setIsDeleting(false);
     }
-    snackbar.show({ variant: 'success', message: 'Integration deleted', duration: 4000 });
-    setDeleteTarget(null);
-    await refreshList();
-  }, [deleteCredential, deleteTarget, refreshList, snackbar]);
+  }, [deleteTarget, http, refreshList, snackbar]);
+
+  const handleSetSystemAgentPreference = useCallback(
+    async (credentialId: string): Promise<void> => {
+      await setPreference(credentialId);
+    },
+    [setPreference],
+  );
 
   const handleRestore = useCallback(async (): Promise<void> => {
     if (restoreTarget === null) {
@@ -175,7 +205,11 @@ export const useAiIntegrationList = () => {
     isDeleting,
     isRestoring,
     isTesting,
+    isPreferenceLoading,
+    isSettingPreference,
     testingCredentialId,
+    settingPreferenceCredentialId,
+    currentPreferenceCredentialId: currentCredentialId,
     items,
     errorMessage,
     deleteTarget,
@@ -193,5 +227,6 @@ export const useAiIntegrationList = () => {
     handleDelete,
     handleRestore,
     handleTestConnection,
+    handleSetSystemAgentPreference,
   };
 };

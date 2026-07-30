@@ -1,0 +1,1 @@
+export const MAX_SPECIALIZATION_RESULTS = 5;

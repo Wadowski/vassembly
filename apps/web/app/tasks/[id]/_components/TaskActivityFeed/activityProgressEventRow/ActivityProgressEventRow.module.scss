@@ -39,6 +39,47 @@
   }
 }
 
+.error {
+  display: block;
+  width: 100%;
+  padding: 0 $spacing-2 $spacing-1;
+  color: $color-error;
+}
+
+.errorBox {
+  padding: $spacing-2;
+  border-radius: $border-radius-sm;
+  background-color: rgba($color-error, $opacity-10);
+  border: 1px solid rgba($color-error, $opacity-30);
+}
+
+.errorMessage {
+  color: $color-error;
+}
+
+.errorDetails {
+  margin-top: $spacing-2;
+  color: $color-text-secondary;
+  font-size: $font-size-body-sm;
+
+  summary {
+    cursor: pointer;
+  }
+}
+
+.stackTrace {
+  margin: $spacing-2 0 0;
+  padding: $spacing-2;
+  border-radius: $border-radius-sm;
+  background-color: $color-surface-container-low;
+  border: 1px solid $color-outline-variant;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  font-size: $font-size-body-sm;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
 .agentName {
   flex-shrink: 1;
   min-width: 0;

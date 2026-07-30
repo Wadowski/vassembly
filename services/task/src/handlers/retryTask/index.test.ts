@@ -6,12 +6,16 @@ const {
   mockGetModelById,
   mockRetryTaskCommand,
   mockResetTaskProgress,
+  mockClearMcpUsageByCommentId,
+  mockClearInternalToolUsageByCommentId,
   mockExecuteTask,
   mockLogger,
 } = vi.hoisted(() => ({
   mockGetModelById: vi.fn(),
   mockRetryTaskCommand: vi.fn(),
   mockResetTaskProgress: vi.fn(),
+  mockClearMcpUsageByCommentId: vi.fn(),
+  mockClearInternalToolUsageByCommentId: vi.fn(),
   mockExecuteTask: vi.fn(),
   mockLogger: vi.fn(),
 }));
@@ -37,6 +41,22 @@ vi.mock('@vassembly/domain-task-progress', () => ({
   default: {
     commands: {
       resetTaskProgress: mockResetTaskProgress,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-mcp-usage', () => ({
+  default: {
+    commands: {
+      clearByCommentId: mockClearMcpUsageByCommentId,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-internal-tool-usage', () => ({
+  default: {
+    commands: {
+      clearByCommentId: mockClearInternalToolUsageByCommentId,
     },
   },
 }));
@@ -93,6 +113,8 @@ describe('retryTask handler', () => {
     vi.clearAllMocks();
     mockExecuteTask.mockResolvedValue(undefined);
     mockResetTaskProgress.mockResolvedValue(undefined);
+    mockClearMcpUsageByCommentId.mockResolvedValue(undefined);
+    mockClearInternalToolUsageByCommentId.mockResolvedValue(undefined);
   });
 
   it('should return in-progress task with cleared error fields when task is paused', async () => {
@@ -198,6 +220,8 @@ describe('retryTask handler', () => {
     await retryTask({ userId: 'user-1', taskId: 'task-1' });
 
     expect(mockResetTaskProgress).toHaveBeenCalledWith({ commentId: 'comment-1' });
+    expect(mockClearMcpUsageByCommentId).toHaveBeenCalledWith({ commentId: 'comment-1' });
+    expect(mockClearInternalToolUsageByCommentId).toHaveBeenCalledWith({ commentId: 'comment-1' });
     expect(mockExecuteTask).toHaveBeenCalledTimes(1);
     expect(mockExecuteTask).toHaveBeenCalledWith({
       taskId: 'task-1',

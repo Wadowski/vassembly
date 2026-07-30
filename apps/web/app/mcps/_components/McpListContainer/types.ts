@@ -1,9 +1,9 @@
-import type { McpListItem } from '@vassembly/ui-api-hooks';
+import type { McpWithConfigurationStatus } from '@vassembly/ui-api-hooks';
 
 export interface McpListContainerViewModel {
   searchInput: string;
   selectedTags: string[];
-  items: McpListItem[];
+  items: McpWithConfigurationStatus[];
   loading: boolean;
   errorMessage?: string;
   currentPage: number;

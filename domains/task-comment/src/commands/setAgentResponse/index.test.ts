@@ -51,4 +51,38 @@ describe('setAgentResponse command', () => {
       }),
     ).rejects.toThrow('Response exceeds 5000 characters');
   });
+
+  it('should persist skillIdsUsed when provided', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'comment-1',
+        agentResponse: 'Done',
+      },
+    });
+
+    const result = await setAgentResponse({
+      commentId: 'comment-1',
+      agentResponse: 'Done',
+      skillIdsUsed: ['skill-1', 'skill-2'],
+    } as Parameters<typeof setAgentResponse>[0]);
+
+    expect(result.data?.skillIdsUsed).toEqual(['skill-1', 'skill-2']);
+  });
+
+  it('should persist taskPlanInstanceId when provided', async () => {
+    mockPersist.mockResolvedValue({
+      data: {
+        id: 'comment-1',
+        agentResponse: 'Done',
+      },
+    });
+
+    const result = await setAgentResponse({
+      commentId: 'comment-1',
+      agentResponse: 'Done',
+      taskPlanInstanceId: '507f1f77bcf86cd799439011',
+    } as Parameters<typeof setAgentResponse>[0]);
+
+    expect(result.data?.taskPlanInstanceId).toBe('507f1f77bcf86cd799439011');
+  });
 });

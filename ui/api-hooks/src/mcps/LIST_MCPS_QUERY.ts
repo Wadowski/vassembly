@@ -24,6 +24,9 @@ export const LIST_MCPS_QUERY = gql`
         slug
         documentationUrl
         repositoryUrl
+        configurationStatus
+        enabled
+        requiresConfiguration
         createdAt
         updatedAt
       }

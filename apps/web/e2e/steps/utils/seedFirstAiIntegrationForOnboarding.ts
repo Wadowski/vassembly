@@ -17,9 +17,6 @@ export const seedFirstAiIntegrationForOnboarding = async ({
   const aiIntegrationDomain = requireWorkspaceModule<typeof import('@vassembly/domain-ai-integration')>({
     moduleName: '@vassembly/domain-ai-integration',
   });
-  const userDomain = requireWorkspaceModule<typeof import('@vassembly/domain-user')>({
-    moduleName: '@vassembly/domain-user',
-  });
 
   await aiIntegrationDomain.default.commands.create({
     userId,
@@ -28,6 +25,4 @@ export const seedFirstAiIntegrationForOnboarding = async ({
     apiKey: 'e2e-onboarding-api-key',
     model: 'gemini-pro',
   });
-
-  await userDomain.default.commands.completeOnboarding({ userId });
 };

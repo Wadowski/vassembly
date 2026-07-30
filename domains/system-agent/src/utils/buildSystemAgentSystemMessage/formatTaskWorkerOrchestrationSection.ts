@@ -2,28 +2,22 @@ import { SYSTEM_AGENT_NAME } from '@vassembly/constants';
 
 export const TASK_WORKER_ORCHESTRATION_SECTION_HEADING = '## Mandatory delegation chain';
 
-export const MAX_TASK_WORKER_VALIDATOR_RETRIES = 3;
-
 export const formatTaskWorkerOrchestrationSection = (): string => {
   const taskPlannerName = SYSTEM_AGENT_NAME.TaskPlanner;
 
   return `${TASK_WORKER_ORCHESTRATION_SECTION_HEADING}
 
-Complete every step via use_agent before starting the next. Never call specialization workers until "${taskPlannerName}" returns. Validators are mandatory — never skip step 4.
+Complete every step via use_agent before starting the next. Call ${taskPlannerName} exactly once.
 
-1. **Researchers (required)** — call list_agents with role=researcher, then use_agent for each "{Specialization} researcher". Collect summaries including Suggested skills and Gaps requiring new skills. Researchers have the skill catalog — Task planner does not.
-2. **${taskPlannerName} (required)** — call use_agent name="${taskPlannerName}" with the goal, intent category, and researcher summaries. On a retry (step 5), also pass the previous subtask list and validator issues. ${taskPlannerName} plans agent-only work from researcher skill suggestions — it never asks the user questions and never calls Skill planner.
-3. **Route subtasks to workers (required)** — ${taskPlannerName} returns a numbered subtask list with Skills to use and New skill needed per subtask. For each subtask: call list_agents with role=worker scoped to that specialization, then use_agent to the matching "{Specialization} worker" with that subtask only. Workers execute using skills, tools, and MCPs — they create missing skills via invoke_skill_planner when New skill needed is set.
-4. **Validators (mandatory, never skip)** — for each worker invoked in step 3, call list_agents with role=validator scoped to the same specialization, then use_agent to the matching "{Specialization} validator" with the subtask goal and worker output. Collect "STATUS: pass" or "STATUS: issues".
-5. **Retry loop** — if every validator reports "STATUS: pass", stop and synthesize the final result. If any reports "STATUS: issues", repeat from step 2 with prior subtasks and validator issues. Retry at most ${MAX_TASK_WORKER_VALIDATOR_RETRIES} times; then report unresolved issues.
+1. **Methodologists (required)** — call list_agents with role=methodologist, then use_agent for each "{Specialization} methodologist". Collect summaries including Process steps, Suggested skills, and Gaps requiring new skills. Methodologists have the skill catalog — Task planner does not. Do not call researchers in this phase.
+2. **${taskPlannerName} (required, once only)** — call use_agent name="${taskPlannerName}" exactly once with the goal, intent category, and methodologist summaries. ${taskPlannerName} must call persist_task_plan before finishing. Never call ${taskPlannerName} a second time.
+3. **Hand off to platform execution** — once ${taskPlannerName} returns after persist_task_plan, your delegation is complete. The platform executes plan items via specialization workers, researchers, and validators as assigned. Do NOT call use_agent to specialization agents yourself.
+4. **Synthesize** — return a brief confirmation that methodology review and planning completed and the plan was persisted.
 
-Forbidden before step 2 completes:
-- use_agent to any specialization worker or validator
-- Producing the final deliverable without ${taskPlannerName} output
-
-Forbidden at any point:
-- Skipping step 4 for any worker that ran in step 3
-- Calling Skill planner directly — specialization workers invoke it when a subtask requires a new skill
+Forbidden:
+- Calling ${taskPlannerName} more than once
+- use_agent to specialization workers, researchers, or validators before ${taskPlannerName} completes persist_task_plan
+- Producing the final deliverable without ${taskPlannerName} completing persist_task_plan
 
 Exact use_agent name value for the system planner: "${taskPlannerName}".`;
 };

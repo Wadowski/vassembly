@@ -11,12 +11,13 @@
 
 ### 1.1 Feature statement
 
-**User Onboarding** is a mandatory post-registration gate that all new users must complete before accessing the product. It comprises two sequential steps:
+**User Onboarding** is a mandatory post-registration gate that all new users must complete before accessing the product. It comprises three steps in sequence:
 
 1. **Verify email address** — confirmed via `verifiedAt` on the user record.
 2. **Create first AI integration** — confirmed when the user has ≥1 active AI credential.
+3. **Connect MCPs** *(optional)* — batch enable/disable zero-configuration MCPs; does not block onboarding completion.
 
-Until both steps are complete, the user is restricted to a defined allowlist of routes. All other navigation attempts redirect to `/onboarding`.
+Until steps 1 and 2 are complete, the user is restricted to a defined allowlist of routes. Step 3 is optional and may be skipped. All other navigation attempts redirect to `/onboarding`.
 
 ### 1.2 In-scope summary
 
@@ -32,7 +33,7 @@ Until both steps are complete, the user is restricted to a defined allowlist of 
 ### 1.3 Out of scope
 
 - Social login / SSO verification flows — handled by separate initiative.
-- Multi-step onboarding wizard beyond the two defined steps (team setup, billing, profile enrichment) — future milestone.
+- Multi-step onboarding wizard beyond the three defined steps (team setup, billing, profile enrichment) — future milestone.
 - Mobile-native onboarding shell (App Router web only for MVP).
 - In-product tours, coach marks, or feature walkthroughs — separate onboarding experience layer.
 - AI integration creation logic itself — covered by the AI Integrations feature; this PRD only specifies the post-creation redirect and completion detection.
@@ -47,12 +48,12 @@ Until both steps are complete, the user is restricted to a defined allowlist of 
 1. User completes registration at `/register`.
 2. System creates user record; sets `onboarding.startedAt`; sends verification email.
 3. System redirects user to `/onboarding` (not home or `returnUrl`).
-4. **Onboarding hub** displays two steps with their current status.
+4. **Onboarding hub** displays three steps with their current status (Step 3 is optional).
 5. User opens their email, clicks the verification link.
 6. System sets `verifiedAt`; hub updates Step 1 to complete.
 7. Step 2 becomes actionable; user navigates to `/agents/ai-integrations/create`.
 8. User creates their first AI integration.
-9. System detects ≥1 active credential; sets `onboarding.completedAt`.
+9. System detects ≥1 active credential; sets `onboarding.completedAt` (Step 3 is optional and does not affect completion).
 10. System redirects user to the stored `returnUrl` (if safe) or `/`.
 
 ### 2.2 Incomplete onboarding — route enforcement
@@ -84,12 +85,13 @@ Until both steps are complete, the user is restricted to a defined allowlist of 
 
 ## 3. Onboarding Steps Definition
 
-Steps are **sequential**: Step 2 is only actionable after Step 1 is complete. Both steps must be satisfied for `onboarding.completedAt` to be set.
+Steps are **sequential**: Step 2 is only actionable after Step 1 is complete; Step 3 is only actionable after Step 2 is complete. Steps 1 and 2 must be satisfied for `onboarding.completedAt` to be set. **Step 3 is optional** and never blocks completion.
 
 | # | Step | Completion signal | Editable by user |
 |---|------|-------------------|------------------|
 | 1 | **Verify email address** | `verifiedAt != null` on user record | No; system-set on token confirmation |
 | 2 | **Create first AI integration** | User has ≥1 active AI credential | No; derived from integrations state |
+| 3 | **Connect MCPs** *(optional)* | None — session-local toggle only; not persisted as a step completion flag | Yes; user may enable/disable zero-config MCPs or skip entirely |
 
 **Step completion is derived at runtime** — no duplicate flags in the `onboarding` object. `onboarding.emailVerified` does not exist.
 
@@ -104,6 +106,8 @@ The following routes are accessible to an authenticated user with `onboarding.co
 | `/onboarding` | Full access (the hub) |
 | `/settings` | Full access |
 | `/agents/ai-integrations/create` | Full access |
+| `/mcps` | Full access (list page) |
+| `/mcps/[id]` | Full access (detail page; prefix match on `/mcps`) |
 
 All other routes redirect to `/onboarding`. This applies to both:
 - **UI** — client-side route guard / Next.js middleware.
@@ -154,6 +158,7 @@ onboarding?: {
 |------|-------------|
 | Email verified | `user.verifiedAt != null` |
 | AI integration created | At least one active AI credential exists for the user |
+| MCP connections (Step 3) | **Not derived** — no stored or runtime completion signal; optional user action only |
 
 These are never stored as flags inside `onboarding`.
 
@@ -201,12 +206,13 @@ At deploy time, a one-off migration sets `onboarding.completedAt` to a past time
 ### 8.1 Content requirements
 
 - Heading that orients the user ("Complete your account setup" or equivalent).
-- Two step cards displayed in order, each showing:
+- Three step cards displayed in order, each showing:
   - Step number and title.
-  - Completion status (pending / done).
+  - Completion status (pending / done / locked / enabled for Step 3 toggle).
   - Brief description of what the step requires.
   - Primary action or status indicator.
 - Step 2 is visually inactive (greyed or locked) until Step 1 is complete.
+- Step 3 is visually inactive until Step 2 is complete; it remains optional after unlock.
 
 ### 8.2 Step 1 — Verify email
 
@@ -218,15 +224,34 @@ At deploy time, a one-off migration sets `onboarding.completedAt` to a past time
 
 - Enabled only when Step 1 is done.
 - Primary CTA: "Add AI integration" navigates to `/agents/ai-integrations/create`.
-- On Step 2 complete: card updates to "Done" state and onboarding finalizes.
+- On Step 2 complete: card updates to "Done" state; Step 3 becomes active (onboarding may finalize in parallel when `completedAt` is set).
 
-### 8.4 States
+### 8.5 Step 3 — MCP connections (optional)
+
+- Enabled only when Step 2 is done.
+- Toggle **always renders OFF on page load** — session-local UI state only, not a reflection of persisted aggregate MCP enablement.
+- Toggle ON → single REST batch request enables all zero-configuration MCPs for the user.
+- Toggle OFF → single REST batch request disables all zero-configuration MCPs.
+- Primary CTA: "Manage individual connections" navigates to `/mcps`.
+- Copy:
+  - Title: "Connect MCPs"
+  - Description: "Turn on ready-to-use tool connections for your agents."
+  - Body (unlocked): "Some of our MCPs work instantly — no setup required. Flip the switch to turn them all on for your agents."
+  - Body (toggle ON, after success): "Zero-setup MCPs are connected. You can fine-tune individual connections anytime."
+  - Locked: "Complete step 2 — add an AI integration first."
+  - Toggle label: "Enable zero-setup MCPs"
+  - Footer hint: "Optional — you can always manage this later from MCP settings."
+- Toggling Step 3 does **not** affect `onboarding.completedAt`.
+
+### 8.6 States
 
 | State | UI behavior |
 |-------|-------------|
 | Step 1 pending | Step 1 card active with resend; Step 2 card locked |
 | Step 1 done | Step 1 card shows "Verified"; Step 2 card unlocked |
-| Step 2 done (all complete) | User is forwarded; hub is not shown |
+| Step 2 done (required steps complete) | Step 2 card shows "Done"; Step 3 unlocked; user may be forwarded when `completedAt` is set |
+| Step 3 toggle ON (session) | Step 3 card shows "Enabled" badge; zero-config MCPs batch-enabled |
+| Step 3 locked | Step 3 card locked until Step 2 complete |
 | Resend on cooldown | Button disabled with countdown or "Try again in Xs" |
 
 ---
@@ -320,6 +345,54 @@ Scenario: returnUrl is captured pre-onboarding and honored on completion
   And the returnUrl was captured before the redirect to "/onboarding"
   When onboarding completes
   Then the user is redirected to the captured returnUrl if it is on the safe allowlist
+```
+
+### 9.3 Step 3 — MCP connections (optional)
+
+```gherkin
+Scenario: Toggle ON enables all zero-config MCPs
+  Given an authenticated user with incomplete onboarding and an active AI credential
+  When the user toggles "Enable zero-setup MCPs" ON on the onboarding hub
+  Then all zero-configuration MCPs are enabled for the user
+```
+
+```gherkin
+Scenario: Toggle OFF disables all zero-config MCPs
+  Given an authenticated user with incomplete onboarding and an active AI credential
+  And zero-configuration MCPs are enabled for the user
+  When the user toggles "Enable zero-setup MCPs" OFF on the onboarding hub
+  Then all zero-configuration MCPs are disabled for the user
+```
+
+```gherkin
+Scenario: Step 3 toggle does not affect onboarding completion
+  Given an authenticated user with incomplete onboarding and an active AI credential
+  When the user toggles "Enable zero-setup MCPs" ON on the onboarding hub
+  Then onboarding.completedAt remains null until required steps 1 and 2 completion rules are satisfied server-side
+```
+
+```gherkin
+Scenario: Step 3 toggle always renders OFF on reload
+  Given an authenticated user with incomplete onboarding and an active AI credential
+  And the user toggled "Enable zero-setup MCPs" ON on the onboarding hub
+  When the user reloads the onboarding hub
+  Then the "Enable zero-setup MCPs" switch is OFF
+```
+
+```gherkin
+Scenario: MCP connections CTA navigates to /mcps
+  Given an authenticated user with incomplete onboarding and an active AI credential
+  When the user activates "Manage individual connections" on the onboarding hub
+  Then the user is on "/mcps"
+```
+
+```gherkin
+Scenario: /mcps and /mcps/[id] reachable during incomplete onboarding
+  Given an authenticated user with incomplete onboarding
+  When the user navigates to "/mcps"
+  Then no redirect to "/onboarding" occurs
+  When the user navigates to "/mcps/{mcpId}"
+  Then no redirect to "/onboarding" occurs
 ```
 
 ---
@@ -470,10 +543,12 @@ Scenario: Server error when setting verifiedAt
 - [ ] Reused token → error returned; no state change; no user enumeration.
 - [ ] Resend: new email sent; previous token invalidated; cooldown enforced.
 - [ ] Resend within cooldown → `429` with `retryAfter`; no email sent.
-- [ ] `/onboarding` hub correctly reflects Step 1 status from `verifiedAt` and Step 2 status from active credentials count.
+- [ ] `/onboarding` hub correctly reflects Step 1 status from `verifiedAt`, Step 2 status from active credentials count, and Step 3 optional toggle (session-local).
 - [ ] Step 2 CTA on hub is disabled/locked when Step 1 is not complete.
+- [ ] Step 3 is locked until Step 2 is complete; toggle and CTA behave per §8.5.
+- [ ] Step 3 toggle batch-enables/disables zero-config MCPs; always renders OFF on page load; does not block `onboarding.completedAt`.
 - [ ] Incomplete user navigating to a restricted route → redirect to `/onboarding`.
-- [ ] Incomplete user can access `/settings`, `/agents/ai-integrations/create`, and `/onboarding` without redirect.
+- [ ] Incomplete user can access `/settings`, `/agents/ai-integrations/create`, `/mcps`, `/mcps/[id]`, and `/onboarding` without redirect.
 - [ ] Incomplete user calling a protected API outside allowlist → `403` with onboarding-incomplete error code.
 - [ ] After creating first AI integration during onboarding → redirect to `/onboarding`, not integrations list.
 - [ ] After all steps complete → `onboarding.completedAt` set; user forwarded to safe `returnUrl` or `/`.
@@ -484,7 +559,7 @@ Scenario: Server error when setting verifiedAt
 
 ### 12.2 UI/UX states
 
-- [ ] Hub shows two step cards with correct pending/done states.
+- [ ] Hub shows three step cards with correct pending/done/locked/enabled states.
 - [ ] Step 2 visually locked when Step 1 is pending.
 - [ ] Resend button shows cooldown feedback; disabled during cooldown.
 - [ ] Loading state shown during verification and resend requests.

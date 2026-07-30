@@ -1,0 +1,18 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.title {
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.description {
+  color: $color-text-secondary;
+  white-space: pre-wrap;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  margin-top: $spacing-1;
+}

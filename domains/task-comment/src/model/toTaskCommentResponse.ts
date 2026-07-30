@@ -24,6 +24,9 @@ export const toTaskCommentResponse = ({
     userId: taskComment.userId!,
     userText: taskComment.userText!,
     agentResponse: taskComment.agentResponse ?? null,
+    specializationIds: taskComment.specializationIds ?? [],
+    skillIdsUsed: taskComment.skillIdsUsed ?? null,
+    taskPlanInstanceId: taskComment.taskPlanInstanceId ?? null,
     createdAt: toIsoString({ value: taskComment.createdAt!, fieldName: 'createdAt' }),
     updatedAt: toIsoString({ value: taskComment.updatedAt!, fieldName: 'updatedAt' }),
   };

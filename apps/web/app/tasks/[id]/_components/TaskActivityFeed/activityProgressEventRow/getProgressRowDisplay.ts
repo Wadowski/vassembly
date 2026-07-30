@@ -35,9 +35,14 @@ export const getProgressStatusLabel = ({ item }: GetProgressRowDisplayParams): s
     completed: 'Completed',
     failed: 'Failed',
     waiting: 'Waiting',
+    skipped: 'Skipped',
   };
 
   return labelByState[state] ?? state;
+};
+
+export const getProgressOutcomeSummary = ({ item }: GetProgressRowDisplayParams): string | undefined => {
+  return item.outcomeSummary ?? undefined;
 };
 
 export const getProgressRelativeTime = ({ item }: GetProgressRowDisplayParams): string => {

@@ -3,7 +3,7 @@ import aiIntegrationDomain from '@vassembly/domain-ai-integration';
 import skillDomain, { formatSkillsCatalogSection } from '@vassembly/domain-skill';
 import systemAgentDomain, { SYSTEM_AGENT_ERROR_CODES } from '@vassembly/domain-system-agent';
 import userMcpConfigDomain from '@vassembly/domain-user-mcp-config';
-import { MAX_USE_AGENT_DEPTH } from '@vassembly/constants';
+import { MAX_USE_AGENT_DEPTH, SYSTEM_AGENT_NAME } from '@vassembly/constants';
 import {
   ExecutionPausedError,
   NotFoundError,
@@ -12,6 +12,9 @@ import {
 } from '@vassembly/errors';
 
 import { resolveMcpRuntimeMetadata } from '../helpers/resolveMcpRuntimeMetadata';
+import { completeTaskPlannerPersistence } from './completeTaskPlannerPersistence';
+import { resolveSpecializationMcpIds } from '../helpers/resolveSpecializationMcpIds';
+import { buildTaskPlannerAgentsCatalogSection } from './buildTaskPlannerAgentsCatalogSection';
 import { loadAssignedInternalTools } from './loadAssignedInternalTools';
 import { mapInvokeUsageToTokenUsage } from './mapInvokeUsageToTokenUsage';
 import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
@@ -19,6 +22,7 @@ import { resolveInvokeErrorDetails } from './resolveInvokeErrorDetails';
 import type { AiIntegrationSnapshot, ResolveAndBuildClientResult } from '@vassembly/domain-ai-integration';
 import type {
   CredentialScope,
+  RecordInternalToolUsageEvent,
   RecordMcpUsageEvent,
   RunAgentInvokeWithToolsParams,
   RunAgentInvokeWithToolsResult,
@@ -177,6 +181,33 @@ const buildRecordMcpToolCall = ({
   };
 };
 
+const buildRecordInternalToolCall = ({
+  recordInternalToolUsageEvent,
+  toolContext,
+}: {
+  recordInternalToolUsageEvent?: RecordInternalToolUsageEvent;
+  toolContext: RunAgentInvokeWithToolsParams['toolContext'];
+}) => {
+  if (!recordInternalToolUsageEvent) {
+    return undefined;
+  }
+
+  return async (
+    input: Parameters<RecordInternalToolUsageEvent>[0],
+  ): Promise<string | void> => {
+    if (input.phase === 'started') {
+      return recordInternalToolUsageEvent({
+        ...input,
+        agentId: toolContext.callerAgentId,
+        invocationId: toolContext.invocationId,
+        rootInvokeId: toolContext.rootInvokeId,
+      });
+    }
+
+    return recordInternalToolUsageEvent(input);
+  };
+};
+
 const invokePersonalAgent = async ({
   userId,
   agentId,
@@ -187,6 +218,10 @@ const invokePersonalAgent = async ({
   const { data: agent } = await agentDomain.queries.getById({ id: agentId, userId });
   const recordMcpToolCall = buildRecordMcpToolCall({
     recordMcpUsageEvent: toolContext.recordMcpUsageEvent,
+    toolContext,
+  });
+  const recordInternalToolCall = buildRecordInternalToolCall({
+    recordInternalToolUsageEvent: toolContext.recordInternalToolUsageEvent,
     toolContext,
   });
 
@@ -209,6 +244,7 @@ const invokePersonalAgent = async ({
     signal: toolContext.abortSignal,
     shouldAbort: toolContext.shouldAbort,
     recordMcpToolCall,
+    recordInternalToolCall,
   });
 
   return {
@@ -218,6 +254,7 @@ const invokePersonalAgent = async ({
       mcpIdsUsed: mcpIds.filter((id) => !skippedMcpIds.includes(id)),
       skippedMcpIds,
       internalToolIdsUsed: result.toolUsage?.internalToolIdsUsed ?? [],
+      internalToolResults: result.toolUsage?.internalToolResults,
       skippedInternalToolIds: skippedToolIds,
       maxUseAgentDepth: MAX_USE_AGENT_DEPTH,
     },
@@ -235,6 +272,10 @@ const invokeSystemAgent = async ({
   const { data: agent } = await systemAgentDomain.queries.getActiveById({ id: agentId });
   const recordMcpToolCall = buildRecordMcpToolCall({
     recordMcpUsageEvent: toolContext.recordMcpUsageEvent,
+    toolContext,
+  });
+  const recordInternalToolCall = buildRecordInternalToolCall({
+    recordInternalToolUsageEvent: toolContext.recordInternalToolUsageEvent,
     toolContext,
   });
 
@@ -257,37 +298,116 @@ const invokeSystemAgent = async ({
       ? await buildSkillsCatalogSection({ specializationId: agent.specializationId })
       : undefined;
 
-  const mcpIds = mcpIdsOverride ?? [];
+  const agentsCatalogSection =
+    agent.name === SYSTEM_AGENT_NAME.TaskPlanner &&
+    toolContext.specializationIds !== undefined &&
+    toolContext.specializationIds !== null &&
+    toolContext.specializationIds.length > 0
+      ? await buildTaskPlannerAgentsCatalogSection({
+          specializationIds: toolContext.specializationIds,
+        })
+      : undefined;
+
+  const resolvedMcpIdsOverride =
+    mcpIdsOverride ??
+    (agent.specializationId !== undefined &&
+    agent.specializationId !== null &&
+    agent.specializationId !== ''
+      ? await resolveSpecializationMcpIds({ specializationId: agent.specializationId })
+      : undefined);
+
+  const mcpIds = resolvedMcpIdsOverride ?? [];
   const { mcpServerConfigs, skippedMcpIds } =
-    mcpIdsOverride !== undefined
+    resolvedMcpIdsOverride !== undefined
       ? await resolveMcpConfigs({ userId, mcpIds })
       : { mcpServerConfigs: [], skippedMcpIds: [] };
+
+  const hasSpecializationIds =
+    toolContext.specializationIds !== undefined &&
+    toolContext.specializationIds !== null &&
+    toolContext.specializationIds.length > 0;
+
+  const requireSuccessfulToolLlmName =
+    agent.name === SYSTEM_AGENT_NAME.TaskPlanner && hasSpecializationIds
+      ? 'persist_task_plan'
+      : undefined;
 
   const result = await systemAgentDomain.commands.invoke({
     modeledProviderClient: client,
     systemAgentId: agentId,
     message,
     internalToolBindings: bindings,
-    mcpServerConfigs: mcpIdsOverride !== undefined ? mcpServerConfigs : undefined,
+    mcpServerConfigs: resolvedMcpIdsOverride !== undefined ? mcpServerConfigs : undefined,
     signal: toolContext.abortSignal,
     shouldAbort: toolContext.shouldAbort,
     recordMcpToolCall,
+    recordInternalToolCall,
     skillsCatalogSection,
+    agentsCatalogSection,
+    requireSuccessfulToolLlmName,
   });
 
-  return {
+  const invokeResult: RunAgentInvokeWithToolsResult = {
     message: result.message,
     usage: result.usage,
     metadata: {
       model: result.metadata?.model,
       provider: result.metadata?.provider,
-      mcpIdsUsed: mcpIdsOverride !== undefined ? mcpIds.filter((id) => !skippedMcpIds.includes(id)) : [],
-      skippedMcpIds: mcpIdsOverride !== undefined ? skippedMcpIds : [],
+      mcpIdsUsed:
+        resolvedMcpIdsOverride !== undefined
+          ? mcpIds.filter((id) => !skippedMcpIds.includes(id))
+          : [],
+      skippedMcpIds: resolvedMcpIdsOverride !== undefined ? skippedMcpIds : [],
       internalToolIdsUsed: result.toolUsage?.internalToolIdsUsed ?? [],
+      internalToolResults: result.toolUsage?.internalToolResults,
       skippedInternalToolIds: skippedToolIds,
       maxUseAgentDepth: MAX_USE_AGENT_DEPTH,
     },
   };
+
+  if (agent.name === SYSTEM_AGENT_NAME.TaskPlanner && hasSpecializationIds) {
+    return completeTaskPlannerPersistence({
+      commentId: toolContext.commentId,
+      plannerInputMessage: message,
+      firstResult: invokeResult,
+      continueInvocation: async (continuationMessage: string) => {
+        const continuation = await systemAgentDomain.commands.invoke({
+          modeledProviderClient: client,
+          systemAgentId: agentId,
+          message: continuationMessage,
+          internalToolBindings: bindings,
+          mcpServerConfigs: resolvedMcpIdsOverride !== undefined ? mcpServerConfigs : undefined,
+          signal: toolContext.abortSignal,
+          shouldAbort: toolContext.shouldAbort,
+          recordMcpToolCall,
+          recordInternalToolCall,
+          skillsCatalogSection,
+          agentsCatalogSection,
+          requireSuccessfulToolLlmName: 'persist_task_plan',
+        });
+
+        return {
+          message: continuation.message,
+          usage: continuation.usage,
+          metadata: {
+            model: continuation.metadata?.model,
+            provider: continuation.metadata?.provider,
+            mcpIdsUsed:
+              resolvedMcpIdsOverride !== undefined
+                ? mcpIds.filter((id) => !skippedMcpIds.includes(id))
+                : [],
+            skippedMcpIds: resolvedMcpIdsOverride !== undefined ? skippedMcpIds : [],
+            internalToolIdsUsed: continuation.toolUsage?.internalToolIdsUsed ?? [],
+            internalToolResults: continuation.toolUsage?.internalToolResults,
+            skippedInternalToolIds: skippedToolIds,
+            maxUseAgentDepth: MAX_USE_AGENT_DEPTH,
+          },
+        };
+      },
+    });
+  }
+
+  return invokeResult;
 };
 
 const assertNotAborted = async (

@@ -20,3 +20,12 @@ export type {
 
 export { loadMcpTools, testMcpConnection, MCP_TOOL_MAX_ITERATIONS, MCP_TEST_CONNECTION_TIMEOUT_MS } from "./mcp";
 export type { McpServerConfig, LoadMcpToolsParams, LoadMcpToolsResult, TestMcpConnectionParams, TestMcpConnectionResult } from "./mcp";
+
+export {
+  normalizeToolInput,
+  withNormalizedInput,
+  TOOL_NORMALIZERS,
+} from "./internalTools/normalization";
+export type { NormalizeToolInputResult, ToolNormalizer } from "./internalTools/normalization";
+
+export { normalizePersistTaskPlanInput } from "./internalTools/schemas/parsePersistTaskPlanInput";

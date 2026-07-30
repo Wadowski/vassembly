@@ -21,8 +21,8 @@ interface McpConfigurationResolverArgs {
 }
 
 interface UserConfiguredMcpsResolverArgs {
-  limit?: number | null;
-  offset?: number | null;
+  page?: number | null;
+  size?: number | null;
 }
 
 interface McpWithAgentsResolverArgs {
@@ -123,8 +123,8 @@ export const registerMcpResolvers = (builder: Builder): void => {
       userConfiguredMcps: t.field({
         type: 'UserMcpConfigList',
         args: {
-          limit: t.arg.int({ required: false }),
-          offset: t.arg.int({ required: false }),
+          page: t.arg.int({ required: false, defaultValue: 0 }),
+          size: t.arg.int({ required: false, defaultValue: 20 }),
         },
         resolve: async (
           _root: unknown,
@@ -137,12 +137,15 @@ export const registerMcpResolvers = (builder: Builder): void => {
             throw new UnauthorizedError('Unauthorized');
           }
 
-          const configs = await mcpService.listUserMcpConfigurations(
-            { limit: args.limit ?? undefined },
+          const result = await mcpService.listUserMcpConfigurations(
+            {
+              page: args.page ?? undefined,
+              size: args.size ?? undefined,
+            },
             { userId },
           );
 
-          return { items: configs };
+          return result;
         },
       }),
       mcpWithAgents: t.field({

@@ -971,3 +971,430 @@ Phases 1–3 are sequential (backend). Phases 4–5 can start after Phase 3 with
 | D-4 | `onb` JWT claim key | Short key `onb` chosen for token size; document in `domain-auth-token` README |
 | D-5 | API onboarding gate scope | `enforceOnboardingComplete` applied in each protected route handler (explicit); alternative: Fastify `preHandler` plugin for all `/api/*` except allowlist paths. Plugin approach is more central but harder to test in isolation — start with explicit, migrate to plugin if boilerplate grows |
 | D-6 | `buildVerificationUrl` config key | Add `EMAIL_VERIFICATION_WEB_URL` env/config key (mirrors `AUTH_PASSWORD_RESET_WEB_URL`) |
+
+---
+
+## Addendum: Step 3 — MCP Connections (Optional)
+
+**Status:** Draft — implementation specification
+**Added:** 2026-07-26
+**Related:** [MCP Architecture](../../../domains/mcp/README.md) · [User MCP Config Domain](../../../domains/user-mcp-config/README.md)
+
+Adds a third, **optional**, non-blocking onboarding step that lets the user enable all zero-configuration MCPs in one action. Sequence becomes: 1) Email → 2) AI integration → 3) MCP connections.
+
+### Confirmed requirements recap
+
+- Step 3 is **optional** — `checkAndCompleteOnboarding` (`services/auth/src/handlers/checkAndCompleteOnboarding/index.ts`) is **unchanged**; `onboarding.completedAt` still derives only from email + AI integration.
+- Toggle ON → batch-enable all zero-config MCPs; toggle OFF → batch-disable all zero-config MCPs. One REST request per toggle flip.
+- Toggle always renders **OFF on page load** — it is a session-local UI affordance, not a reflection of persisted aggregate state.
+- `/mcps` and `/mcps/[id]` must be reachable while onboarding is incomplete (both route allowlist and GraphQL query allowlist).
+- Zero-config detection reuses `mcpRequiresConfiguration()` (`domains/user-mcp-config/src/utils/mcpRequiresConfiguration.ts`) — never re-implemented.
+- GraphQL for reads, REST for the batch command, per `.cursor/rules/api-calling-conventions.mdc`.
+
+### Analysis — monorepo audit
+
+| Layer | Existing capability | Gap |
+|---|---|---|
+| `domains/mcp` | `queries.getList` returns `McpListItemResponse[]` incl. `configSchema` (needed to detect zero-config), paginated, `MAX_PAGE_SIZE = 50` (catalog is 35 items — fits one page today) | None — no domain change needed |
+| `domains/user-mcp-config` | `commands.setUserMcpEnabled({ userId, mcpId, enabled, schema })` — full per-MCP enable/disable lifecycle (create-on-enable, update-on-toggle, `WrongParamError` guard for configurable MCPs without config); `mcpRequiresConfiguration()` util | None — this command is reused as-is, once per zero-config MCP |
+| `services/mcp` | `enrichMcpListWithUserStatus` already imports **both** `mcpDomain` and `mcpRequiresConfiguration` from `@vassembly/domain-user-mcp-config` in the service layer — proof this composition is the sanctioned integration point (domains cannot cross-import each other; services can) | No batch/aggregate handler yet |
+| `apps/api` | `apps/api/src/routes/mcps/setEnabled.ts` — `PATCH /mcps/:mcpId/enabled`, single MCP | No batch route; static `/zero-config/enabled` segment routes correctly ahead of `/:mcpId/enabled` (Fastify matches static path segments before parametric ones, so registration order is irrelevant) |
+| `apps/api` GraphQL | `mcps` resolver already calls `enforceOnboardingCompleteForQuery({ queryName: 'mcps', context })`; gate checks `ONBOARDING_GRAPHQL_ALLOWED_QUERIES` (currently `user`, `aiIntegrations`) | `mcps` (and, per dependency audit below, `availableTags`, `userConfiguredMcps`, `mcp`, `mcpConfiguration`, `mcpWithAgents`) must be added or `/mcps` and `/mcps/[id]` partially break during onboarding |
+| `apps/api` REST | No REST-level onboarding gate is actually wired today — `apps/api/src/routes/mcps/*.ts` call only `authorizeProtectedRequest`, never `enforceOnboardingComplete` (that helper is only invoked from GraphQL's `enforceOnboardingCompleteForQuery`) | None — the new batch REST route follows the same unguarded-by-onboarding pattern as `setEnabled.ts`; no new gate code needed |
+| `ui/api-hooks` | `useSetMcpEnabled` — REST hook calling `PATCH /mcps/:mcpId/enabled` | New sibling hook for the batch endpoint |
+| `apps/web` onboarding | 2-step stepper (`onboardingStepperSteps.tsx`), `OnboardingStepCard` (`stepNumber: 1 \| 2`), `useOnboardingHub` (`resolveOnboardingCurrentStepIndex` returns 0/1/2), `OnboardingHub.tsx` renders `EmailVerificationStep` + `AiIntegrationStep` | Add 3rd stepper entry, widen `stepNumber` type, add step-index branch, render `McpConnectionsStep` |
+| `apps/web` middleware + constants | `ONBOARDING_ALLOWED_ROUTES` (`packages/constants/src/onboardingAllowedRoutes.ts`) checked via `Set.has(pathname)` (exact match only) in `middleware.ts` | `/mcps/[id]` is a dynamic route — exact-match `Set.has()` never matches `/mcps/abc123`; matching logic must become prefix-aware |
+
+### What can be reused (~90%)
+
+- `userMcpConfigDomain.commands.setUserMcpEnabled` — the entire enable/disable state machine (create-if-missing, update-if-existing, config-required guard) is reused unchanged, called once per zero-config MCP id.
+- `mcpDomain.queries.getList` — reused to enumerate the catalog (with `configSchema`) instead of adding a new domain query.
+- `mcpRequiresConfiguration()` — reused, unmodified, exactly as documented in the requirements.
+- `OnboardingStepCard`, `OnboardingProgressPanel`, `Stepper` (`@vassembly/ui-system-design/stepper`) — reused as-is; only the steps data array and the `stepNumber` union grow.
+- `Switch` (`@vassembly/ui-system-design/switch`) — existing toggle primitive, used for the ON/OFF control (same component family as other settings toggles in the app).
+- `useHttpClient` + REST hook pattern from `useSetMcpEnabled` — template for the new batch hook.
+- Onboarding allowlist + middleware Chain-of-Responsibility structure — extended, not replaced.
+
+### What is genuinely new (~10%)
+
+| Gap | Placement |
+|---|---|
+| `setZeroConfigMcpsEnabled` service handler (Facade: enumerate catalog → filter zero-config → fan out `setUserMcpEnabled` per id) | `services/mcp/src/handlers/setZeroConfigMcpsEnabled/` |
+| `PATCH /mcps/zero-config/enabled` REST route | `apps/api/src/routes/mcps/setZeroConfigEnabled.ts` |
+| `useSetZeroConfigMcpsEnabled` REST hook | `ui/api-hooks/src/mcps/useSetZeroConfigMcpsEnabled.ts` |
+| `McpConnectionsStep` component + `useMcpConnectionsStep` hook | `apps/web/app/onboarding/_components/` |
+| 3rd stepper entry + `stepNumber` union widening | `apps/web/app/onboarding/_components/onboardingStepperSteps.tsx`, `OnboardingStepCard/types.ts` |
+| Prefix-aware allowlist matching (`/mcps/[id]` support) | `apps/web/middleware.ts`, `packages/constants/src/onboardingAllowedRoutes.ts` |
+| GraphQL onboarding-allowed query additions | `packages/constants/src/onboardingAllowedRoutes.ts` |
+
+### Design patterns applied
+
+| Pattern | Where | Rationale |
+|---|---|---|
+| **Facade** | `services/mcp/src/handlers/setZeroConfigMcpsEnabled/` | Orchestrates a domain-mcp catalog read + N domain-user-mcp-config command calls behind one entry point — same role as `checkAndCompleteOnboarding` |
+| **Command** | Reuses existing `userMcpConfigDomain.commands.setUserMcpEnabled` per MCP id — no new Command module | Avoids duplicating the enable/disable state machine |
+| **Strategy (map/predicate)** | Zero-config filter (`!mcpRequiresConfiguration({ schema })`) applied to the catalog list | Matches workspace convention of predicate/map filtering over branching logic |
+| **Chain of Responsibility** | `apps/web/middleware.ts` allowlist check | Same chain already documented for the auth-page → onboarding gate steps; only the route-matching predicate changes (exact → prefix-aware) |
+| **Template Method** | `McpConnectionsStep` mirrors `AiIntegrationStep`'s `OnboardingStepCard` composition (`resolveStatus`, locked/unlocked body, footer CTA) | Consistent step-card shape without inventing a new layout |
+
+### Architecture & package placement
+
+```
+apps/web/app/onboarding (Step 3: McpConnectionsStep, toggle)
+  → ui/api-hooks (useSetZeroConfigMcpsEnabled: REST)
+  → ui/system-design/switch (toggle primitive)
+
+ui/api-hooks
+  → REST: apps/api PATCH /mcps/zero-config/enabled
+
+apps/api routes/mcps/setZeroConfigEnabled.ts
+  → service-mcp handlers.setZeroConfigMcpsEnabled
+
+service-mcp handlers/setZeroConfigMcpsEnabled
+  → domain-mcp queries.getList (catalog + configSchema)
+  → domain-user-mcp-config utils.mcpRequiresConfiguration (filter)
+  → domain-user-mcp-config commands.setUserMcpEnabled (per zero-config mcpId, fan-out)
+
+apps/web/middleware.ts + packages/constants
+  → prefix-aware ONBOARDING_ALLOWED_ROUTES (/mcps, /mcps/[id])
+
+apps/api graphql/resolvers/mcp.ts (unchanged code)
+  → packages/constants ONBOARDING_GRAPHQL_ALLOWED_QUERIES (+ mcps, and dependency-audited queries)
+```
+
+No new packages, no new domain, no new domain command. All new code lives in one service handler, one REST route, one UI hook, and onboarding-scoped frontend components/constants.
+
+### Recommendation
+
+**Add a single Facade handler in `services/mcp`** that composes two already-existing domain operations (`mcpDomain.queries.getList` + `userMcpConfigDomain.commands.setUserMcpEnabled`), expose it via **one new REST route**, and consume it from **one new UI hook**. This is the most conservative implementation: zero new domain commands/queries, zero duplication of the enable/disable state machine, and the zero-config predicate is asserted exactly once (in the service handler) using the existing exported utility.
+
+**Alternative considered — new domain query `getZeroConfigMcpIds` in `domains/mcp`:** Rejected. `domains/mcp` cannot import `domains/user-mcp-config` (domain isolation), so a domain-level query would have to re-implement the `fields.length === 0` predicate, duplicating logic the requirements explicitly forbid duplicating. The service layer already legitimately imports both domains (see `enrichMcpListWithUserStatus`), so filtering there needs no new logic at all.
+
+**Alternative considered — one combined `PATCH` request that both lists and toggles:** Rejected in favor of a dedicated `PATCH /mcps/zero-config/enabled` command-only endpoint, keeping strict REST-for-commands / GraphQL-for-reads separation per `api-calling-conventions.mdc`.
+
+**Pagination note:** the catalog is 35 MCPs (`< MAX_PAGE_SIZE = 50`), so a single `getList({ page: 0, size: MAX_PAGE_SIZE })` call covers the whole catalog today. The handler still loops pages defensively (`while items collected < total`) so it keeps working if the catalog grows past 50 without another architecture change.
+
+### Data flow — toggle ON
+
+```mermaid
+sequenceDiagram
+  participant UI as McpConnectionsStep
+  participant Hook as useSetZeroConfigMcpsEnabled
+  participant API as PATCH /mcps/zero-config/enabled
+  participant Svc as service-mcp.setZeroConfigMcpsEnabled
+  participant McpDom as domain-mcp
+  participant CfgDom as domain-user-mcp-config
+
+  UI->>Hook: setZeroConfigMcpsEnabled({ enabled: true })
+  Hook->>API: PATCH { enabled: true }
+  API->>Svc: setZeroConfigMcpsEnabled({ enabled: true }, { userId })
+  Svc->>McpDom: queries.getList({ page, size: MAX_PAGE_SIZE }) [loop until total covered]
+  McpDom-->>Svc: items[] (incl. configSchema)
+  Svc->>Svc: filter !mcpRequiresConfiguration({ schema })
+  loop each zero-config mcpId
+    Svc->>CfgDom: commands.setUserMcpEnabled({ userId, mcpId, enabled: true, schema })
+  end
+  Svc-->>API: { enabled: true, mcpIds: string[], updatedCount }
+  API-->>Hook: 200 { enabled, mcpIds, updatedCount }
+  Hook-->>UI: local toggle state = ON (session-only, not re-fetched from an aggregate query)
+```
+
+### Backend — `services/mcp` (new handler)
+
+`services/mcp/src/handlers/setZeroConfigMcpsEnabled/`
+
+```typescript
+// types.ts
+export interface SetZeroConfigMcpsEnabledInput {
+  enabled: boolean;
+}
+
+export interface SetZeroConfigMcpsEnabledResult {
+  enabled: boolean;
+  mcpIds: string[];
+  updatedCount: number;
+}
+```
+
+```typescript
+// index.ts (shape — coder implements against real types)
+import mcpDomain from '@vassembly/domain-mcp';
+import { userMcpConfigDomain, mcpRequiresConfiguration } from '@vassembly/domain-user-mcp-config';
+import { UnauthorizedError } from '@vassembly/errors';
+
+export const setZeroConfigMcpsEnabled = async (input, context) => {
+  if (!context.userId) throw new UnauthorizedError('Unauthorized');
+
+  // 1. Enumerate full catalog (loop pages defensively past MAX_PAGE_SIZE)
+  // 2. Filter: !mcpRequiresConfiguration({ schema: item.configSchema })
+  // 3. Promise.all(zeroConfigItems.map((mcp) =>
+  //      userMcpConfigDomain.commands.setUserMcpEnabled({
+  //        userId: context.userId, mcpId: mcp.id, enabled: input.enabled, schema: mcp.configSchema!,
+  //      })))
+  // 4. return { enabled: input.enabled, mcpIds: zeroConfigItems.map((m) => m.id), updatedCount: zeroConfigItems.length }
+};
+```
+
+Export from `services/mcp/src/handlers/index.ts`.
+
+**Error handling:** if an individual `setUserMcpEnabled` call fails, follow the "never silently catch" rule — either let `Promise.all` reject (fail the whole batch, client can retry — matches "one batch REST request" semantics), or use `Promise.allSettled` and throw an aggregate `InternalError` listing failed mcpIds if any failed. Given the requirement says "one batch REST request" atomically from the UI's perspective, prefer `Promise.all` (fail-fast) for a first pass; document as an open decision if partial-success UX is desired later.
+
+### API gateway — `apps/api`
+
+`apps/api/src/routes/mcps/setZeroConfigEnabled.ts`:
+
+```typescript
+export const setZeroConfigMcpsEnabledBodySchema = z.object({ enabled: z.boolean() });
+
+export const setZeroConfigMcpsEnabledResponseSchema = z.object({
+  enabled: z.boolean(),
+  mcpIds: z.array(z.string()),
+  updatedCount: z.number(),
+});
+
+export const setZeroConfigMcpsEnabledRoute = defineRoute({
+  method: 'PATCH',
+  url: '/zero-config/enabled',
+  schema: {
+    body: setZeroConfigMcpsEnabledBodySchema,
+    response: withErrorResponses(setZeroConfigMcpsEnabledResponseSchema),
+  },
+  handler: async ({ body, headers }) => {
+    const { userId } = await authorizeProtectedRequest({ headers });
+    return mcpService.setZeroConfigMcpsEnabled({ enabled: body.enabled }, { userId });
+  },
+});
+```
+
+Register in `apps/api/src/routes/mcps/index.ts` — add to the `mcpConfigurationRoutes` array (order irrelevant: Fastify's router matches the static `/zero-config/enabled` segment ahead of the parametric `/:mcpId/enabled`, confirmed by existing Fastify radix-tree routing used via `@vassembly/server`).
+
+No `enforceOnboardingComplete` call needed — no existing `mcps/*.ts` REST route calls it today (that gate is currently wired only into GraphQL resolvers via `enforceOnboardingCompleteForQuery`), so the new route stays consistent with its siblings.
+
+### GraphQL allowlist — `packages/constants/src/onboardingAllowedRoutes.ts`
+
+```typescript
+export const ONBOARDING_GRAPHQL_ALLOWED_QUERIES = new Set([
+  'user',
+  'aiIntegrations',
+  'mcps',              // required — /mcps list
+  'availableTags',     // required — McpTagFilter on /mcps
+  'userConfiguredMcps',// required — YourMcpsSection on /mcps
+  'mcp',               // required — /mcps/[id] detail
+  'mcpConfiguration',  // required — /mcps/[id] config form
+  'mcpWithAgents',     // required — /mcps/[id] agents section
+]);
+```
+
+Dependency audit (`useMcpListWithStatus`, `useYourMcpsSection`, `McpTagFilter`, `[id]/page.tsx`, `useMcpAgentsSection`) shows `/mcps` and `/mcps/[id]` call all seven queries above; whitelisting only `mcps` (the explicitly named query) leaves the tag filter, "Your MCPs" section, and the entire detail page broken for incomplete-onboarding users. Recommend whitelisting the full dependency set — flag for confirmation during review since it broadens the GraphQL onboarding allowlist beyond the single query named in the requirements.
+
+### Route allowlist — prefix-aware matching
+
+`packages/constants/src/onboardingAllowedRoutes.ts`:
+
+```typescript
+export const ONBOARDING_ALLOWED_ROUTES = [
+  '/onboarding',
+  '/settings',
+  '/agents/ai-integrations/create',
+  '/verify-email',
+  '/mcps',   // covers /mcps and, via prefix match, /mcps/[id]
+] as const;
+```
+
+`apps/web/middleware.ts` — replace the exact-match `Set.has(pathname)` check with a prefix-aware predicate (mirrors the existing `AUTH_PAGES.some((page) => pathname.startsWith(page))` pattern already in the same file — Chain of Responsibility, consistent style):
+
+```typescript
+const isOnboardingAllowedRoute = (pathname: string): boolean =>
+  ONBOARDING_ALLOWED_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+```
+
+Replace both usages of `ONBOARDING_ALLOWED_ROUTE_SET.has(pathname)` in `middleware.ts` with `isOnboardingAllowedRoute(pathname)`. This is a **behavior-preserving generalization** for existing entries (`/onboarding`, `/settings`, etc. have no nested pages today) and adds correct matching for `/mcps/[id]`.
+
+### Frontend — `apps/web/app/onboarding`
+
+**`onboardingStepperSteps.tsx`** — add third entry:
+
+```typescript
+export const ONBOARDING_STEPPER_STEPS: readonly StepperStep[] = [
+  { id: 'email', icon: <SendEmailIcon />, title: 'Verify email address', description: 'Confirm your email to secure your account.' },
+  { id: 'ai-integration', icon: <BulbIcon />, title: 'Create first AI integration', description: 'Connect an AI provider to use platform agents.' },
+  { id: 'mcp-connections', icon: <PlugIcon /* or closest available icon */ />, title: 'Connect MCPs', description: 'Turn on ready-to-use tool connections for your agents.' },
+];
+```
+
+**`OnboardingStepCard/types.ts`** — widen `stepNumber: 1 | 2` → `stepNumber: 1 | 2 | 3`.
+
+**`useOnboardingHub.ts`** — `resolveOnboardingCurrentStepIndex` gains a third branch. Since step 3 never "completes" the flow (optional), the index simply advances to `2` once step 2 is done (same trigger condition as today) — no new signal is read from the server for step 3's own completion:
+
+```typescript
+export const resolveOnboardingCurrentStepIndex = ({ emailVerified, aiIntegrationCreated }: OnboardingSteps): number => {
+  if (aiIntegrationCreated) return 2; // now points at the MCP connections step, not "finished"
+  if (emailVerified) return 1;
+  return 0;
+};
+```
+
+No change to `OnboardingSteps` type (`types.ts`) is required — Step 3 has no persisted completion signal to derive (`isLocked` for the card is fully computed from `!aiIntegrationCreated`, exactly like Step 2 is computed from `!emailVerified`).
+
+**New `McpConnectionsStep.tsx`** (mirrors `AiIntegrationStep.tsx` composition 1:1):
+
+```typescript
+export interface McpConnectionsStepProps {
+  isLocked: boolean;
+}
+
+export const McpConnectionsStep = ({ isLocked }: McpConnectionsStepProps): JSX.Element => {
+  const router = useRouter();
+  const { isEnabled, isLoading, errorMessage, handleToggle } = useMcpConnectionsStep();
+  const status = isEnabled ? 'done' : isLocked ? 'locked' : 'active'; // session-local status only, not persisted aggregate state
+
+  // body: Switch (isChecked={isEnabled}, isDisabled={isLocked || isLoading}, onChange={handleToggle}) + copy
+  // footer: "Manage individual connections" Button (variant="outlined") -> router.push('/mcps')
+
+  return (
+    <OnboardingStepCard stepNumber={3} title="Connect MCPs" description="Turn on ready-to-use tool connections for your agents." status={status} isLocked={isLocked} body={body} footer={footer} />
+  );
+};
+```
+
+**New `useMcpConnectionsStep.ts`** (mirrors `useResendVerificationHandler.ts` shape — local state, no persisted read):
+
+```typescript
+export interface UseMcpConnectionsStepResult {
+  isEnabled: boolean;   // session-local; always initializes to false
+  isLoading: boolean;
+  errorMessage: string | null;
+  handleToggle: (nextEnabled: boolean) => Promise<void>;
+}
+
+export const useMcpConnectionsStep = (): UseMcpConnectionsStepResult => {
+  const [setZeroConfigMcpsEnabled, { loading, error }] = useSetZeroConfigMcpsEnabled();
+  const [isEnabled, setIsEnabled] = useState(false); // always OFF on load — never derived from a query
+
+  const handleToggle = useCallback(async (nextEnabled: boolean) => {
+    const result = await setZeroConfigMcpsEnabled({ enabled: nextEnabled });
+    if (result !== undefined) setIsEnabled(nextEnabled);
+  }, [setZeroConfigMcpsEnabled]);
+
+  return { isEnabled, isLoading: loading, errorMessage: error?.message ?? null, handleToggle };
+};
+```
+
+**`OnboardingHub.tsx`** — render the third card after `AiIntegrationStep`:
+
+```typescript
+<AiIntegrationStep isLocked={!steps.emailVerified} isComplete={steps.aiIntegrationCreated} />
+<McpConnectionsStep isLocked={!steps.aiIntegrationCreated} />
+```
+
+Step 3 has no live-region completion announcement (mirrors that only Step 1→2 transition is announced today; extending is optional polish, not required by the spec).
+
+### `ui/api-hooks` — new hook
+
+`ui/api-hooks/src/mcps/useSetZeroConfigMcpsEnabled.ts` — copy of `useSetMcpEnabled.ts` structure, hitting `PATCH /mcps/zero-config/enabled`:
+
+```typescript
+export function useSetZeroConfigMcpsEnabled(): readonly [
+  (input: { enabled: boolean }) => Promise<SetZeroConfigMcpsEnabledResponse | undefined>,
+  McpConfigurationMutationState,
+] {
+  // same httpClient.patch pattern as useSetMcpEnabled, path: '/mcps/zero-config/enabled'
+  // reuses handleMcpMutationError for error normalization
+}
+```
+
+Add `SetZeroConfigMcpsEnabledResponse` to `ui/api-hooks/src/mcps/types.ts`:
+
+```typescript
+export interface SetZeroConfigMcpsEnabledResponse {
+  enabled: boolean;
+  mcpIds: string[];
+  updatedCount: number;
+}
+```
+
+Export both from `ui/api-hooks/src/mcps/index.ts`.
+
+### Suggested UX copy
+
+| Element | Copy |
+|---|---|
+| Stepper item title | "Connect MCPs" |
+| Stepper item description | "Turn on ready-to-use tool connections for your agents." |
+| Step card title | "Connect MCPs" |
+| Step card description | "Turn on ready-to-use tool connections for your agents." |
+| Body copy (unlocked) | "Some of our MCPs work instantly — no setup required. Flip the switch to turn them all on for your agents." |
+| Body copy (toggle ON, after success) | "Zero-setup MCPs are connected. You can fine-tune individual connections anytime." |
+| Locked body copy | "Complete step 2 — add an AI integration first." (mirrors `AiIntegrationStep`'s locked copy style) |
+| Toggle label (next to `Switch`) | "Enable zero-setup MCPs" |
+| Footer hint (unlocked, toggle OFF) | "Optional — you can always manage this later from MCP settings." |
+| Footer CTA button | "Manage individual connections" → navigates to `/mcps` |
+| Error message (toggle failed) | "Something went wrong turning on MCPs. Please try again." |
+| Step badge label ('done' status, session-local) | "Enabled" (extend `STATUS_BADGE_LABEL` map in `OnboardingStepCard.tsx` — it is already keyed by the full `OnboardingStepStatus` union, so `'done': 'Enabled'` for this context reads correctly; no schema change needed since `'done'` is reused, not a new status value) |
+
+### Test plan
+
+| Layer | Scope | Subagent |
+|---|---|---|
+| `services/mcp` | `setZeroConfigMcpsEnabled`: filters zero-config vs. configurable MCPs correctly (mock `mcpDomain.queries.getList`, `mcpRequiresConfiguration` semantics via fixtures with empty vs. non-empty `configSchema.fields`); enable=true calls `setUserMcpEnabled` per zero-config id with `enabled: true`; enable=false mirrors with `enabled: false`; empty zero-config catalog → `updatedCount: 0`, no domain calls; unauthenticated context throws `UnauthorizedError`; pagination loop covers >1 page (mock `getList` returning `total > size`) | `tdd-unit-test-writer` |
+| `apps/api` route | `PATCH /mcps/zero-config/enabled`: 200 with valid body + auth; 400 on missing/invalid `enabled`; 401 without auth token (via `authorizeProtectedRequest`) | `tdd-unit-test-writer` (or coder + code-reviewer if the route test harness is thin) |
+| `apps/web` middleware | `isOnboardingAllowedRoute('/mcps')` → true; `isOnboardingAllowedRoute('/mcps/abc123')` → true (new); existing allowlist entries unaffected (regression); non-allowlisted route still redirects | `tdd-unit-test-writer` |
+| `apps/web` `useOnboardingHub` | `resolveOnboardingCurrentStepIndex` returns `2` when `aiIntegrationCreated` true (regression + confirms it now maps to Step 3, not "done") | `tdd-unit-test-writer` |
+| `apps/web` `useMcpConnectionsStep` | Initializes `isEnabled: false` always; toggle ON calls hook with `{ enabled: true }` and flips local state on success; failed call leaves `isEnabled` unchanged and surfaces `errorMessage`; toggle OFF mirrors with `{ enabled: false }` | `tdd-unit-test-writer` |
+| `apps/web` E2E | New/extended Gherkin scenarios (see below) — toggle ON enables zero-config MCPs (assert via `/mcps` page state after navigating there), toggle OFF disables them, CTA navigates to `/mcps`, step 3 does not block `onboarding.completedAt`, `/mcps` and `/mcps/[id]` are reachable before onboarding completes | `tdd-e2e-test-writer` |
+
+### PRD update
+
+**Required.** `docs/features/user-onboarding/PRD.md` currently only documents a 2-step flow (§3 Onboarding Steps Definition, §4 Allowed Routes, §8 Onboarding Hub Page, §9/§10 Gherkin). Recommend the product-manager/business-analyst agents add:
+
+- §3: Step 3 definition (optional, non-blocking, toggle semantics, zero-config scope).
+- §4: `/mcps`, `/mcps/[id]` added to the allowed-routes table.
+- §8: New subsection "8.5 Step 3 — MCP connections" (content requirements, states: locked/active/enabled).
+- §9/§10: New Gherkin scenarios — toggle ON enables all zero-config MCPs; toggle OFF disables them; toggling does not affect `onboarding.completedAt`; toggle always renders OFF on reload; CTA navigates to `/mcps`; `/mcps` and `/mcps/[id]` reachable during incomplete onboarding.
+- §6.2: Note that Step 3 has **no** stored or runtime-derived completion signal (unlike Steps 1–2) — it is purely an optional user action.
+
+This architecture addendum does not modify `PRD.md` itself (architect scope is the implementation plan); flagging it here per workflow so `tdd-e2e-test-writer` has Gherkin source material before writing feature files.
+
+### Implementation order / Todo Plan
+
+1. **`services/mcp`** — new Facade handler
+   - Changes: Add `setZeroConfigMcpsEnabled` handler composing `mcpDomain.queries.getList` (paged) + `mcpRequiresConfiguration` filter + `userMcpConfigDomain.commands.setUserMcpEnabled` fan-out; export from `handlers/index.ts`
+   - Files: `services/mcp/src/handlers/setZeroConfigMcpsEnabled/index.ts`, `.../types.ts`, `.../index.test.ts`, `services/mcp/src/handlers/index.ts`
+   - Workflow: `tdd-unit-test-writer` → `coder` ↔ `code-reviewer` (max 2) → `documentation-writer`
+   - Dependencies: None (pure composition of existing domain exports)
+
+2. **`apps/api`** — REST route
+   - Changes: `PATCH /mcps/zero-config/enabled` route calling `mcpService.setZeroConfigMcpsEnabled`; register in `routes/mcps/index.ts`; add `mcps`, `availableTags`, `userConfiguredMcps`, `mcp`, `mcpConfiguration`, `mcpWithAgents` to `ONBOARDING_GRAPHQL_ALLOWED_QUERIES`
+   - Files: `apps/api/src/routes/mcps/setZeroConfigEnabled.ts`, `apps/api/src/routes/mcps/index.ts`, `packages/constants/src/onboardingAllowedRoutes.ts`
+   - Workflow: `coder` ↔ `code-reviewer` (max 2)
+   - Dependencies: Todo 1
+
+3. **`@vassembly/ui-api-hooks`** — new hook
+   - Changes: `useSetZeroConfigMcpsEnabled.ts` (mirrors `useSetMcpEnabled.ts`); add `SetZeroConfigMcpsEnabledResponse` to `types.ts`; export from `index.ts`
+   - Files: `ui/api-hooks/src/mcps/useSetZeroConfigMcpsEnabled.ts`, `ui/api-hooks/src/mcps/types.ts`, `ui/api-hooks/src/mcps/index.ts`
+   - Workflow: `coder` ↔ `code-reviewer` (max 2)
+   - Dependencies: Todo 2
+
+4. **`apps/web`** — route allowlist + middleware
+   - Changes: Add `/mcps` to `ONBOARDING_ALLOWED_ROUTES`; replace exact-match `Set.has()` with prefix-aware `isOnboardingAllowedRoute()` in `middleware.ts`
+   - Files: `packages/constants/src/onboardingAllowedRoutes.ts`, `apps/web/middleware.ts`
+   - Workflow: `tdd-unit-test-writer` → `coder` ↔ `code-reviewer` (max 2)
+   - Dependencies: None (can run parallel with Todos 1–3)
+
+5. **`apps/web`** — onboarding Step 3 UI
+   - Changes: 3rd entry in `onboardingStepperSteps.tsx`; widen `OnboardingStepCard` `stepNumber` union to `1 | 2 | 3`; extend `resolveOnboardingCurrentStepIndex` in `useOnboardingHub.ts`; new `McpConnectionsStep.tsx` + `.module.scss` + `useMcpConnectionsStep.ts`; render in `OnboardingHub.tsx`
+   - Files: `apps/web/app/onboarding/_components/onboardingStepperSteps.tsx`, `apps/web/app/onboarding/_components/OnboardingStepCard/types.ts`, `apps/web/app/onboarding/_components/useOnboardingHub.ts`, `apps/web/app/onboarding/_components/McpConnectionsStep.tsx`, `apps/web/app/onboarding/_components/McpConnectionsStep.module.scss`, `apps/web/app/onboarding/_components/useMcpConnectionsStep.ts`, `apps/web/app/onboarding/_components/OnboardingHub.tsx`
+   - Workflow: `tdd-unit-test-writer` (`useMcpConnectionsStep`, `resolveOnboardingCurrentStepIndex`) → `coder` ↔ `code-reviewer` (max 2) → `documentation-writer`
+   - Dependencies: Todo 3
+
+6. **`docs/features/user-onboarding`** — PRD update
+   - Changes: Add Step 3 definition, allowed routes, hub page subsection, Gherkin scenarios (see PRD update section above)
+   - Files: `docs/features/user-onboarding/PRD.md`
+   - Workflow: `product-manager` (or `business-analyst` → `product-manager`)
+   - Dependencies: None — can run in parallel with Todos 1–5; required before Todo 7
+
+7. **`apps/web`** — E2E acceptance tests
+   - Changes: Failing Playwright BDD scenarios for toggle ON/OFF, non-blocking completion, `/mcps` + `/mcps/[id]` reachability during onboarding, CTA navigation
+   - Files: `apps/web/e2e/features/onboarding/mcpConnections.feature` (or extend `onboarding.feature`), `apps/web/e2e/steps/onboarding/` (new steps only if existing ones don't cover toggle interactions)
+   - Workflow: `tdd-e2e-test-writer` → `coder` ↔ `code-reviewer` (max 2)
+   - Dependencies: Todo 6 (Gherkin source), Todo 5 (implementation must exist for scenarios to pass)

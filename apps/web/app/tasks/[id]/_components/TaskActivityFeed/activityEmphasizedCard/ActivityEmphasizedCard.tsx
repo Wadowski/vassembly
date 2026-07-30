@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { Button } from '@vassembly/ui-system-design/button';
 import { Text } from '@vassembly/ui-system-design/text';
 
+import { LinkedSpecializations } from '../../../../../_components/LinkedSpecializations/LinkedSpecializations';
+import { CommentSkillTags } from '../../../../../_components/CommentSkillTags';
 import { MarkdownContent } from '../../TaskDetailAiResponse/MarkdownContent';
 import { ExpandableText } from '../expandableText/ExpandableText';
 import { ACTIVITY_TEXT_SHOW_MORE_THRESHOLD_CHARS } from '../expandableText/constants';
@@ -33,7 +35,7 @@ export const ActivityEmphasizedCard = ({
   children,
 }: ActivityEmphasizedCardProps): JSX.Element => {
   return (
-    <li
+    <div
       className={`${styles.card} ${variantClassName[variant]}`}
       data-testid={testId}
     >
@@ -41,18 +43,24 @@ export const ActivityEmphasizedCard = ({
         {label}
       </Text>
       <div className={styles.body}>{children}</div>
-    </li>
+    </div>
   );
 };
 
 export interface ActivityUserCommentProps {
   commentId: string;
   userText: string;
+  specializationIds: string[];
+  skillIds: string[];
+  isAdmin: boolean;
 }
 
 export const ActivityUserComment = ({
   commentId,
   userText,
+  specializationIds,
+  skillIds,
+  isAdmin,
 }: ActivityUserCommentProps): JSX.Element => {
   return (
     <ActivityEmphasizedCard
@@ -60,6 +68,12 @@ export const ActivityUserComment = ({
       variant="user"
       testId={`activity-user-comment-${commentId}`}
     >
+      <LinkedSpecializations specializationIds={specializationIds} isAdmin={isAdmin} />
+      <CommentSkillTags
+        skillIds={skillIds}
+        isAdmin={isAdmin}
+        className={styles.skillTags}
+      />
       <ExpandableText text={userText} testId={`activity-user-comment-text-${commentId}`} />
     </ActivityEmphasizedCard>
   );
@@ -68,6 +82,8 @@ export const ActivityUserComment = ({
 export interface ActivityAgentResponseProps {
   commentId: string;
   agentResponse: string;
+  skillIds: string[];
+  isAdmin: boolean;
   totalDuration?: number | null;
   totalTokens?: { input: number; output: number; total: number } | null;
 }
@@ -75,6 +91,8 @@ export interface ActivityAgentResponseProps {
 export const ActivityAgentResponse = ({
   commentId,
   agentResponse,
+  skillIds,
+  isAdmin,
   totalDuration,
   totalTokens,
 }: ActivityAgentResponseProps): JSX.Element => {
@@ -101,6 +119,7 @@ export const ActivityAgentResponse = ({
           {statsLabel}
         </Text>
       ) : null}
+      <CommentSkillTags skillIds={skillIds} isAdmin={isAdmin} className={styles.skillTags} />
       <div className={markdownClassName}>
         <MarkdownContent
           content={agentResponse}

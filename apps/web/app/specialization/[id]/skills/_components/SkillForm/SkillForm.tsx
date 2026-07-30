@@ -13,6 +13,8 @@ import { TextField } from '@vassembly/ui-system-design/text-field';
 
 import {
   SKILL_DESCRIPTION_MAX,
+  SKILL_INPUT_MAX,
+  SKILL_OUTPUT_MAX,
   SKILL_RULE_MAX,
   SKILL_RULE_MIN_ROWS,
   SKILL_SCRIPT_CONTENT_MIN_ROWS,
@@ -95,6 +97,30 @@ export const SkillForm = ({
         onBlur={() => form.blurField('description')}
       />
       <Text variant="body2">{`${form.descriptionCharCount}/${SKILL_DESCRIPTION_MAX}`}</Text>
+      <TextField
+        label="Input"
+        value={form.values.input}
+        errorMessage={form.getFieldErrorMessage('input')}
+        isDisabled={isSubmitting}
+        isFullWidth
+        isMultiline
+        onChange={(event: ChangeEvent<HTMLInputElement>) => form.setField('input', event.target.value)}
+        onBlur={() => form.blurField('input')}
+      />
+      <Text variant="body2">What this skill expects — parameters, context, or artifacts.</Text>
+      <Text variant="body2">{`${form.inputCharCount}/${SKILL_INPUT_MAX}`}</Text>
+      <TextField
+        label="Output"
+        value={form.values.output}
+        errorMessage={form.getFieldErrorMessage('output')}
+        isDisabled={isSubmitting}
+        isFullWidth
+        isMultiline
+        onChange={(event: ChangeEvent<HTMLInputElement>) => form.setField('output', event.target.value)}
+        onBlur={() => form.blurField('output')}
+      />
+      <Text variant="body2">What this skill produces — deliverable shape or result type.</Text>
+      <Text variant="body2">{`${form.outputCharCount}/${SKILL_OUTPUT_MAX}`}</Text>
       <TextField
         label="Rule"
         value={form.values.rule}

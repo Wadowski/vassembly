@@ -1,3 +1,4 @@
+export { MAX_SPECIALIZATION_RESULTS } from './specialization';
 export { MCP_SLUG, getMcpSlugs } from './mcpSlugs';
 export { AUTH_TOKEN_ROLE } from './authTokenRole';
 export { SYSTEM_AGENT_NAME } from './SystemAgentName';
@@ -21,6 +22,7 @@ export {
   InternalToolAccessScope,
   MAX_USE_AGENT_DEPTH,
 } from './internalTools';
+export { formatToolDisplayName } from './internalTools/formatInternalToolName';
 export type { InternalToolDefinition } from './internalTools';
 export { AI_INTEGRATION_PROVIDER_LABELS } from './aiIntegrationProviderLabels';
 export {

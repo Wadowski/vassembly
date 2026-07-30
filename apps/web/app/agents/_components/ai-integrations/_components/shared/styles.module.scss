@@ -1,0 +1,29 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.preferenceBadge {
+  white-space: nowrap;
+}
+
+.preferenceAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-1;
+}
+
+.preferenceHelper {
+  color: $color-text-secondary;
+}
+
+.preferenceRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  align-items: flex-start;
+}
+
+.editPreferenceSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}

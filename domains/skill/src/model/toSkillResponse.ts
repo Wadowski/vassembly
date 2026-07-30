@@ -31,6 +31,8 @@ export const toSkillResponse = ({ skill }: ToSkillResponseParams): SkillResponse
     specializationId: skill.specializationId!,
     name: skill.name!,
     description: skill.description!,
+    input: skill.input ?? '',
+    output: skill.output ?? '',
     rule: skill.rule!,
     enabled: skill.enabled ?? true,
     scripts: (skill.scripts ?? []).map((script) => ({

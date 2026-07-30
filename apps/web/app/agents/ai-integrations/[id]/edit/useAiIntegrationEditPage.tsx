@@ -16,6 +16,11 @@ import { useUserAuth } from '@vassembly/ui-user-auth';
 import { useSnackbar } from '@vassembly/ui-system-design/snackbar';
 
 import { useAiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
+import {
+  isCredentialEligibleForSystemAgentPreference,
+  useSetSystemAgentPreference,
+  useSystemAgentPreferenceStatus,
+} from '../../../_components/ai-integrations/_components/shared';
 import { getRequestErrorMessage } from '../../../getRequestErrorMessage';
 import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../aiIntegrationRoutes';
 
@@ -45,6 +50,12 @@ export interface UseAiIntegrationEditPageResult {
   shouldShowProgress: boolean;
   setShouldShowProgress: (show: boolean) => void;
   userId: string;
+  isCurrentSystemAgentConnection: boolean;
+  canSetAsSystemAgentConnection: boolean;
+  isPreferenceLoading: boolean;
+  currentPreferenceCredentialId?: string;
+  handleSetSystemAgentPreference: (credentialId: string) => Promise<void>;
+  isSettingSystemAgentPreference: boolean;
 }
 
 export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
@@ -79,6 +90,18 @@ export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
 
   const { mutate: update, isLoading: isUpdating } = useAiIntegrationUpdate();
   const { mutate: testConnection, isLoading: isTesting } = useTestConnection();
+  const {
+    currentCredentialId,
+    isLoading: isPreferenceLoading,
+    refetch: refetchPreference,
+  } = useSystemAgentPreferenceStatus();
+  const {
+    setPreference,
+    isSaving: isSettingSystemAgentPreference,
+    savingCredentialId,
+  } = useSetSystemAgentPreference({
+    onSuccess: refetchPreference,
+  });
 
   useEffect(() => {
     if (credential === undefined) {
@@ -218,6 +241,19 @@ export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
 
   const userId = user?.id ?? '';
 
+  const isCurrentSystemAgentConnection =
+    credential !== undefined && currentCredentialId === credential.id;
+  const canSetAsSystemAgentConnection =
+    credential !== undefined &&
+    isCredentialEligibleForSystemAgentPreference({ credential });
+
+  const handleSetSystemAgentPreference = useCallback(
+    async (targetCredentialId: string): Promise<void> => {
+      await setPreference(targetCredentialId);
+    },
+    [setPreference],
+  );
+
   return {
     view,
     form,
@@ -234,5 +270,12 @@ export function useAiIntegrationEditPage(): UseAiIntegrationEditPageResult {
     shouldShowProgress,
     setShouldShowProgress,
     userId,
+    isCurrentSystemAgentConnection,
+    canSetAsSystemAgentConnection,
+    isPreferenceLoading,
+    currentPreferenceCredentialId: currentCredentialId,
+    handleSetSystemAgentPreference,
+    isSettingSystemAgentPreference:
+      isSettingSystemAgentPreference && savingCredentialId === credentialId,
   };
 }

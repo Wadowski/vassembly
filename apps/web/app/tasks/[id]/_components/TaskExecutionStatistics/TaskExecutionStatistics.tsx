@@ -89,10 +89,15 @@ export const TaskExecutionStatistics = ({
     };
   }, [commentId, fetch, taskId, taskStatus]);
 
+  const shouldPollProgress =
+    isTaskDetailPollable(taskStatus as TaskStatus) &&
+    resolvedCommentId !== null &&
+    resolvedCommentId !== '';
+
   const { data } = useCommentProgressPolling({
     taskId,
     commentId: resolvedCommentId ?? '',
-    enabled: resolvedCommentId !== null && resolvedCommentId !== '',
+    enabled: shouldPollProgress,
   });
 
   if (!data) {

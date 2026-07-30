@@ -5,6 +5,7 @@ import { getModels } from "../operations/getModels";
 import { invokeWithChatModel } from "../operations/invokeWithChatModel";
 import { testConnection } from "../operations/testConnection";
 import { listGeminiModels } from "../modelListing/listGeminiModels";
+import { adaptToolsForGemini } from "../utils/adaptToolsForGemini";
 import type { AiProviderClient, GeminiProviderParams } from "../types";
 
 const GEMINI_GET_MODELS_ERROR = "Failed to fetch Gemini models";
@@ -40,6 +41,7 @@ export const createGeminiProvider = (
         createChatModel,
         invokeParams,
         errorMessage: GEMINI_INVOKE_ERROR,
+        adaptTools: (tools) => adaptToolsForGemini({ tools }),
       }),
   };
 };

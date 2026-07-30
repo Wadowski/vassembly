@@ -1,6 +1,7 @@
 import { init as initMongoDb } from '@vassembly/client-mongodb';
 import { mongodbIndexes as agentMongodbIndexes } from '@vassembly/domain-agent';
 import { mongodbIndexes as aiIntegrationMongodbIndexes } from '@vassembly/domain-ai-integration';
+import { mongodbIndexes as internalToolUsageMongodbIndexes } from '@vassembly/domain-internal-tool-usage';
 import { mongodbIndexes as mcpUsageMongodbIndexes } from '@vassembly/domain-mcp-usage';
 import { mongodbIndexes as mcpMongodbIndexes } from '@vassembly/domain-mcp';
 import { mongodbIndexes as skillMongodbIndexes } from '@vassembly/domain-skill';
@@ -8,6 +9,7 @@ import { mongodbIndexes as specializationMongodbIndexes } from '@vassembly/domai
 import { mongodbIndexes as systemAgentMongodbIndexes } from '@vassembly/domain-system-agent';
 import { mongodbIndexes as taskCommentMongodbIndexes } from '@vassembly/domain-task-comment';
 import { mongodbIndexes as taskMongodbIndexes } from '@vassembly/domain-task';
+import { mongodbIndexes as taskPlanInstanceMongodbIndexes } from '@vassembly/domain-task-plan-instance';
 import { mongodbIndexes as taskProgressMongodbIndexes } from '@vassembly/domain-task-progress';
 import { mongodbIndexes as taskQuestionsMongodbIndexes } from '@vassembly/domain-task-questions';
 import { setupUserMcpConfigIndexes } from '@vassembly/domain-user-mcp-config';
@@ -52,8 +54,10 @@ export const getApiMongoIndexFunctions = (): Array<() => Promise<void>> => [
   skillMongodbIndexes,
   taskMongodbIndexes,
   taskCommentMongodbIndexes,
+  taskPlanInstanceMongodbIndexes,
   mcpMongodbIndexes,
   mcpUsageMongodbIndexes,
+  internalToolUsageMongodbIndexes,
   setupUserMcpConfigIndexes,
   taskProgressMongodbIndexes,
   taskQuestionsMongodbIndexes,

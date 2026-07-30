@@ -1,6 +1,6 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { getInternalToolById } from '@vassembly/constants';
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodTypeAny } from 'zod';
 
 import { askUserSchema } from './schemas/askUserSchema';
 import { classifySpecializationSchema } from './schemas/classifySpecializationSchema';
@@ -8,6 +8,7 @@ import { createSkillSchema } from './schemas/createSkillSchema';
 import { createSpecializationSchema } from './schemas/createSpecializationSchema';
 import { invokeSkillPlannerSchema } from './schemas/invokeSkillPlannerSchema';
 import { listAgentsSchema } from './schemas/listAgentsSchema';
+import { persistTaskPlanSchema } from './schemas/parsePersistTaskPlanInput';
 import { resolveSkillSchema } from './schemas/resolveSkillSchema';
 import { runSkillScriptSchema } from './schemas/runSkillScriptSchema';
 import { updateTaskSchema } from './schemas/updateTaskSchema';
@@ -17,7 +18,7 @@ import { webSearchSchema } from './schemas/webSearchSchema';
 
 import type { BuildInternalToolsParams, BuildInternalToolsResult } from './types';
 
-const INTERNAL_TOOL_SCHEMAS: Record<string, ZodObject<ZodRawShape>> = {
+export const INTERNAL_TOOL_SCHEMAS: Record<string, ZodTypeAny> = {
   'user-ask': askUserSchema,
   'agent-use': useAgentSchema,
   'agent-list': listAgentsSchema,
@@ -28,6 +29,7 @@ const INTERNAL_TOOL_SCHEMAS: Record<string, ZodObject<ZodRawShape>> = {
   'skill-resolve': resolveSkillSchema,
   'skill-run-script': runSkillScriptSchema,
   'skill-plan': invokeSkillPlannerSchema,
+  'task-plan-persist': persistTaskPlanSchema,
   'web-search': webSearchSchema,
   'web-page-content': webPageContentSchema,
 };
@@ -39,6 +41,7 @@ export const buildInternalTools = ({
   const tools: DynamicStructuredTool[] = [];
   const boundToolIds: string[] = [];
   const skippedToolIds: string[] = [];
+  const toolNameToInternalToolId = new Map<string, string>();
 
   for (const toolId of toolIds) {
     const definition = getInternalToolById(toolId);
@@ -59,11 +62,13 @@ export const buildInternalTools = ({
       }),
     );
     boundToolIds.push(toolId);
+    toolNameToInternalToolId.set(definition.llmToolName, toolId);
   }
 
   return {
     tools,
     boundToolIds,
     skippedToolIds,
+    toolNameToInternalToolId,
   };
 };

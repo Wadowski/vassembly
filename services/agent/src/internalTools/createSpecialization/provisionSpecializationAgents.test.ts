@@ -37,7 +37,7 @@ describe('provisionSpecializationAgents', () => {
       specializationName: 'legal',
     });
 
-    expect(mockCreateSystemAgent).toHaveBeenCalledTimes(3);
+    expect(mockCreateSystemAgent).toHaveBeenCalledTimes(4);
     expect(mockCreateSystemAgent).toHaveBeenCalledWith(
       expect.objectContaining({
         assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
@@ -45,7 +45,7 @@ describe('provisionSpecializationAgents', () => {
     );
     expect(mockCreateSystemAgent).toHaveBeenCalledWith(
       expect.objectContaining({
-        name: 'Legal researcher',
+        name: 'Legal methodologist',
         category: AgentCategory.Utility,
         specializationId: 'spec-1',
       }),

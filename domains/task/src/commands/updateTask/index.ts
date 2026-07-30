@@ -15,8 +15,7 @@ const VALID_CATEGORY_SLUGS = Object.values(INTENT_CATEGORY_SLUG) as [string, ...
 const UPDATE_TASK_DB_SCHEMA = z.object({
   title: z.string().min(1).max(120).optional(),
   category: z.enum(VALID_CATEGORY_SLUGS).nullable().optional(),
-  specializationIds: z.array(z.string().min(1)).max(3).nullable().optional(),
-  skillIdsUsed: z.array(z.string().min(1)).nullable().optional(),
+  specializationIds: z.array(z.string().min(1)).nullable().optional(),
 });
 
 const persistUpdateTask = updateDbById<TaskModel>({
@@ -30,21 +29,19 @@ export const updateTask = async ({
   title,
   category,
   specializationIds,
-  skillIdsUsed,
 }: UpdateTaskCommandInput): Promise<UpdateTaskCommandResult> => {
   const parsed = UPDATE_TASK_INPUT_SCHEMA.safeParse({
     id,
     title,
     category,
     specializationIds,
-    skillIdsUsed,
   });
 
   if (!parsed.success) {
     throw new ValidationError(parsed.error.message);
   }
 
-  const data: Partial<Pick<TaskModel, 'title' | 'category' | 'specializationIds' | 'skillIdsUsed'>> = {};
+  const data: Partial<Pick<TaskModel, 'title' | 'category' | 'specializationIds'>> = {};
 
   if (parsed.data.title !== undefined) {
     data.title = parsed.data.title;
@@ -56,10 +53,6 @@ export const updateTask = async ({
 
   if (parsed.data.specializationIds !== undefined) {
     data.specializationIds = parsed.data.specializationIds;
-  }
-
-  if (parsed.data.skillIdsUsed !== undefined) {
-    data.skillIdsUsed = parsed.data.skillIdsUsed;
   }
 
   return persistUpdateTask({ id: parsed.data.id, data });

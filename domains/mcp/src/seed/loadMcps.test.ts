@@ -12,9 +12,10 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockFindToArray, mockCreateMany, mockReadMcpSeedFile } = vi.hoisted(() => ({
+const { mockFindToArray, mockCreateMany, mockDeleteMany, mockReadMcpSeedFile } = vi.hoisted(() => ({
   mockFindToArray: vi.fn(),
   mockCreateMany: vi.fn(),
+  mockDeleteMany: vi.fn(),
   mockReadMcpSeedFile: vi.fn(),
 }));
 
@@ -26,6 +27,7 @@ vi.mock('../../clients', () => ({
           toArray: mockFindToArray,
         })),
       })),
+      deleteMany: mockDeleteMany,
     },
     createMany: mockCreateMany,
   },
@@ -41,6 +43,7 @@ describe('loadMcps seed loader', () => {
     mockReadMcpSeedFile.mockResolvedValue(VALID_SEED_JSON);
     mockFindToArray.mockResolvedValue([]);
     mockCreateMany.mockResolvedValue({ insertedCount: VALID_SEED_ENTRIES.length });
+    mockDeleteMany.mockResolvedValue({ deletedCount: 0 });
   });
 
   describe('JSON parsing', () => {
@@ -110,6 +113,7 @@ describe('loadMcps seed loader', () => {
 
       expect(result.insertedCount).toBe(VALID_SEED_ENTRIES.length);
       expect(result.skippedCount).toBe(0);
+      expect(result.removedCount).toBe(0);
     });
 
     it('should not insert duplicates on second load when collection is still empty check path', async () => {
@@ -133,6 +137,19 @@ describe('loadMcps seed loader', () => {
       expect(result.skippedCount).toBe(VALID_SEED_ENTRIES.length);
     });
 
+    it('should remove MCPs that are no longer in seed', async () => {
+      mockFindToArray.mockResolvedValue([
+        { slug: 'playwright-mcp' },
+        { slug: VALID_SEED_ENTRIES[0]?.slug },
+      ]);
+      mockDeleteMany.mockResolvedValue({ deletedCount: 1 });
+
+      const result = await loadMcps();
+
+      expect(mockDeleteMany).toHaveBeenCalledWith({ slug: { $in: ['playwright-mcp'] } });
+      expect(result.removedCount).toBe(1);
+    });
+
     it('should skip seeding when collection already contains MCPs', async () => {
       mockFindToArray.mockResolvedValue(VALID_SEED_ENTRIES.map((entry) => ({ slug: entry.slug })));
 
@@ -151,6 +168,7 @@ describe('loadMcps seed loader', () => {
       await expect(loadMcps()).resolves.toEqual({
         insertedCount: 0,
         skippedCount: 0,
+        removedCount: 0,
       });
       expect(consoleErrorSpy).toHaveBeenCalled();
 
@@ -163,6 +181,7 @@ describe('loadMcps seed loader', () => {
       await expect(loadMcps()).resolves.toEqual({
         insertedCount: 0,
         skippedCount: 0,
+        removedCount: 0,
       });
     });
   });

@@ -14,6 +14,8 @@ const {
   mockLoadAssignedInternalTools,
   mockGetCatalogBySpecializationId,
   mockSpecializationGetById,
+  mockMcpGetList,
+  mockGetPlanByCommentId,
 } = vi.hoisted(() => ({
   mockGetById: vi.fn(),
   mockGetActiveById: vi.fn(),
@@ -25,6 +27,8 @@ const {
   mockLoadAssignedInternalTools: vi.fn(),
   mockGetCatalogBySpecializationId: vi.fn(),
   mockSpecializationGetById: vi.fn(),
+  mockMcpGetList: vi.fn(),
+  mockGetPlanByCommentId: vi.fn(),
 }));
 
 vi.mock('@vassembly/domain-agent', () => ({
@@ -77,6 +81,12 @@ vi.mock('./loadAssignedInternalTools', () => ({
   loadAssignedInternalTools: mockLoadAssignedInternalTools,
 }));
 
+vi.mock('./buildTaskPlannerAgentsCatalogSection', () => ({
+  buildTaskPlannerAgentsCatalogSection: vi.fn().mockResolvedValue(
+    '## Available agents\n\n- **Legal researcher**',
+  ),
+}));
+
 vi.mock('@vassembly/domain-skill', () => ({
   formatSkillsCatalogSection: ({ items }: { items: Array<{ name: string; description: string }> }) =>
     items.length === 0 ? '' : `## Available Skills\n\n- **${items[0]?.name}**: ${items[0]?.description}`,
@@ -91,6 +101,22 @@ vi.mock('@vassembly/domain-specialization', () => ({
   default: {
     queries: {
       getById: mockSpecializationGetById,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-mcp', () => ({
+  default: {
+    queries: {
+      getList: mockMcpGetList,
+    },
+  },
+}));
+
+vi.mock('@vassembly/domain-task-plan-instance', () => ({
+  default: {
+    queries: {
+      getByCommentId: mockGetPlanByCommentId,
     },
   },
 }));
@@ -186,6 +212,8 @@ describe('runAgentInvokeWithTools', () => {
       boundToolIds: ['agent-list', 'agent-use'],
       skippedToolIds: [],
     });
+    mockMcpGetList.mockResolvedValue({ items: [] });
+    mockGetPlanByCommentId.mockResolvedValue({ data: { id: 'plan-instance-1' } });
     mockGetCatalogBySpecializationId.mockResolvedValue({ items: [] });
     mockInvoke.mockResolvedValue({
       message: 'Here is the answer.',
@@ -364,6 +392,42 @@ describe('runAgentInvokeWithTools', () => {
 
     expect(result.metadata.mcpIdsUsed).toEqual(['mcp-1']);
     expect(result.metadata.skippedMcpIds).toEqual([]);
+  });
+
+  it('should inject agents catalog for Task planner agents', async () => {
+    mockGetActiveById.mockResolvedValue({
+      data: {
+        id: 'task-planner-1',
+        name: 'Task planner',
+        rule: 'Plan tasks.',
+        assignedToolIds: [],
+      },
+    });
+    mockLoadAssignedInternalTools.mockResolvedValue({
+      bindings: [],
+      boundToolIds: [],
+      skippedToolIds: [],
+    });
+
+    await runAgentInvokeWithTools({
+      userId: 'user-1',
+      agentType: 'system',
+      agentId: 'task-planner-1',
+      message: 'Plan review',
+      toolContext: {
+        ...TOOL_CONTEXT,
+        specializationIds: ['spec-legal'],
+      },
+    });
+
+    expect(mockSpecializationGetById).not.toHaveBeenCalled();
+    expect(mockGetCatalogBySpecializationId).not.toHaveBeenCalled();
+    expect(mockInvoke).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skillsCatalogSection: undefined,
+        agentsCatalogSection: '## Available agents\n\n- **Legal researcher**',
+      }),
+    );
   });
 
   it('should not inject skill catalog for Task planner agents', async () => {

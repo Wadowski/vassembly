@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatInternalToolDisplayName,
   formatInternalToolId,
+  formatToolDisplayName,
 } from './formatInternalToolName';
 
 describe('formatInternalToolId', () => {
@@ -23,6 +24,14 @@ describe('formatInternalToolDisplayName', () => {
     );
     expect(formatInternalToolDisplayName({ domain: 'skill', action: 'create' })).toBe(
       'skill - create',
+    );
+  });
+});
+
+describe('formatToolDisplayName', () => {
+  it('should format MCP tool display names the same as internal tools', () => {
+    expect(formatToolDisplayName({ domain: 'wikipedia-mcp', action: 'list-registries' })).toBe(
+      'wikipedia-mcp - list-registries',
     );
   });
 });

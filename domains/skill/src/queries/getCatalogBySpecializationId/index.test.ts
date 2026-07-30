@@ -29,15 +29,37 @@ describe('getCatalogBySpecializationId', () => {
 
   it('should return only enabled non-archived skills with name and description', async () => {
     mockGetManyRaw.mockResolvedValue([
-      { name: 'contract-review', description: 'Review contracts', rule: 'hidden', enabled: true },
-      { name: 'legal-research', description: 'Research law', rule: 'hidden', enabled: true },
+      {
+        name: 'contract-review',
+        description: 'Review contracts',
+        input: 'contract text',
+        output: 'findings list',
+        rule: 'hidden',
+        enabled: true,
+      },
+      {
+        name: 'legal-research',
+        description: 'Research law',
+        rule: 'hidden',
+        enabled: true,
+      },
     ]);
 
     const result = await getCatalogBySpecializationId({ specializationId: SPECIALIZATION_ID });
 
     expect(result.items).toEqual([
-      { name: 'contract-review', description: 'Review contracts' },
-      { name: 'legal-research', description: 'Research law' },
+      {
+        name: 'contract-review',
+        description: 'Review contracts',
+        input: 'contract text',
+        output: 'findings list',
+      },
+      {
+        name: 'legal-research',
+        description: 'Research law',
+        input: '',
+        output: '',
+      },
     ]);
     expect(mockGetManyRaw).toHaveBeenCalledWith(
       {

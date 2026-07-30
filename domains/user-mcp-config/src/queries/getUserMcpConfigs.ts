@@ -2,21 +2,36 @@ import { userMcpConfigDao } from '../clients/mongodb';
 import { UserMcpConfigFactory } from '../model/factory';
 import type { UserMcpConfigResponse } from '../types';
 
+import { resolvePagination } from './shared/pagination';
+
 export interface GetUserMcpConfigsInput {
   userId: string;
-  limit?: number;
+  page?: number;
+  size?: number;
 }
 
-const DEFAULT_LIST_LIMIT = 50;
+export interface GetUserMcpConfigsResult {
+  items: UserMcpConfigResponse[];
+  total: number;
+  page: number;
+  size: number;
+}
 
 export const getUserMcpConfigs = async (
   input: GetUserMcpConfigsInput,
-): Promise<UserMcpConfigResponse[]> => {
-  const { userId, limit = DEFAULT_LIST_LIMIT } = input;
+): Promise<GetUserMcpConfigsResult> => {
+  const { page, size, skip } = resolvePagination({
+    page: input.page,
+    size: input.size,
+  });
 
-  const models = await userMcpConfigDao.getListByUserId({ userId });
+  const paginatedResult = await userMcpConfigDao.getPaginatedListByUserId({
+    userId: input.userId,
+    skip,
+    limit: size,
+  });
 
-  return models.slice(0, limit).map((record) =>
+  const items = paginatedResult.items.map((record) =>
     UserMcpConfigFactory.toDTO({
       model: UserMcpConfigFactory.fromPersistence({
         doc: {
@@ -33,4 +48,11 @@ export const getUserMcpConfigs = async (
       }),
     }),
   );
+
+  return {
+    items,
+    total: paginatedResult.total,
+    page,
+    size,
+  };
 };

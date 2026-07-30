@@ -30,11 +30,6 @@ const resolveCategoryArg = ({
 };
 
 const isValidSpecializationIds = (value: unknown): value is string[] =>
-  Array.isArray(value) &&
-  value.length <= 3 &&
-  value.every((item) => typeof item === 'string' && item.length > 0);
-
-const isValidSkillIdsUsed = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((item) => typeof item === 'string' && item.length > 0);
 
 export const updateTaskToolHandler = async (
@@ -42,21 +37,16 @@ export const updateTaskToolHandler = async (
   context?: InternalToolContext,
 ): Promise<string> => {
   const id = resolveTaskId({ args, context });
-  const { title, category: rawCategory, specializationIds, skillIdsUsed } = args;
+  const { title, category: rawCategory, specializationIds } = args;
   const category = resolveCategoryArg({ category: rawCategory });
 
   if (!id) {
     throw new ValidationError('id is required');
   }
 
-  if (
-    title === undefined &&
-    category === undefined &&
-    specializationIds === undefined &&
-    skillIdsUsed === undefined
-  ) {
+  if (title === undefined && category === undefined && specializationIds === undefined) {
     throw new ValidationError(
-      'At least one of title, category, specializationIds, or skillIdsUsed must be provided',
+      'At least one of title, category, or specializationIds must be provided',
     );
   }
 
@@ -72,10 +62,6 @@ export const updateTaskToolHandler = async (
     throw new ValidationError('specializationIds must be an array of max 3 strings');
   }
 
-  if (skillIdsUsed !== undefined && !isValidSkillIdsUsed(skillIdsUsed)) {
-    throw new ValidationError('skillIdsUsed must be an array of non-empty strings');
-  }
-
   if (specializationIds !== undefined) {
     await syncTaskSpecializationIds({
       taskId: id,
@@ -84,12 +70,11 @@ export const updateTaskToolHandler = async (
     });
   }
 
-  if (title !== undefined || category !== undefined || skillIdsUsed !== undefined) {
+  if (title !== undefined || category !== undefined) {
     await taskDomain.commands.updateTask({
       id,
       ...(title !== undefined ? { title } : {}),
       ...(category !== undefined ? { category: category as INTENT_CATEGORY_SLUG | null } : {}),
-      ...(skillIdsUsed !== undefined ? { skillIdsUsed } : {}),
     });
   }
 
@@ -97,7 +82,6 @@ export const updateTaskToolHandler = async (
     title !== undefined ? 'title' : null,
     category !== undefined ? 'category' : null,
     specializationIds !== undefined ? 'specializationIds' : null,
-    skillIdsUsed !== undefined ? 'skillIdsUsed' : null,
   ]
     .filter(Boolean)
     .join(' and ');

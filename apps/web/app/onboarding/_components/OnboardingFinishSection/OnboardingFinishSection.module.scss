@@ -1,0 +1,21 @@
+@import '@vassembly/ui-system-design/src/theme/tokens/index.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-6;
+  border: 1px solid $color-outline-variant;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface-container-high;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.errorText {
+  color: $color-error;
+}

@@ -9,11 +9,27 @@ import type { TestConnectionHandlerInput, TestConnectionHandlerOutput } from './
 
 const validateTestConnectionBody = validatorFactory(TEST_CONNECTION_BODY_SCHEMA);
 
-const buildSuccessOutput = (models?: string[]): TestConnectionHandlerOutput => ({
-  success: true,
-  connectionStatus: AiIntegrationConnectionStatus.Connected,
-  models,
-});
+type ProviderConnectionTestResult = Awaited<
+  ReturnType<typeof aiIntegrationDomain.commands.testProviderConnection>
+>;
+
+const buildTestConnectionOutput = (
+  result: ProviderConnectionTestResult,
+): TestConnectionHandlerOutput => {
+  if (!result.success) {
+    return {
+      success: false,
+      connectionStatus: AiIntegrationConnectionStatus.Failed,
+      error: result.error,
+    };
+  }
+
+  return {
+    success: true,
+    connectionStatus: AiIntegrationConnectionStatus.Connected,
+    models: result.models,
+  };
+};
 
 const testEphemeralConnection = async (
   input: TestConnectionHandlerInput,
@@ -27,7 +43,7 @@ const testEphemeralConnection = async (
       organizationId: body.organizationId,
     });
 
-    return buildSuccessOutput(result.models);
+    return buildTestConnectionOutput(result);
   } catch (error) {
     if (error instanceof WrongParamError || error instanceof InternalError) {
       throw error;
@@ -61,6 +77,19 @@ const testSavedConnection = async (
       organizationId: credential.organizationId,
     });
 
+    if (!result.success) {
+      await aiIntegrationDomain.commands.update({
+        id: credentialId,
+        userId,
+        data: {
+          connectionStatus: AiIntegrationConnectionStatus.Failed,
+          lastTestedAt: new Date(),
+        },
+      });
+
+      return buildTestConnectionOutput(result);
+    }
+
     await aiIntegrationDomain.commands.update({
       id: credentialId,
       userId,
@@ -70,7 +99,7 @@ const testSavedConnection = async (
       },
     });
 
-    return buildSuccessOutput(result.models);
+    return buildTestConnectionOutput(result);
   } catch (error) {
     await aiIntegrationDomain.commands.update({
       id: credentialId,

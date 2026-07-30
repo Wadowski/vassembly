@@ -26,6 +26,7 @@ export type {
   GetActiveRuleByNameResult,
   GetActiveRuleByIdParams,
   GetActiveRuleByIdResult,
+  SkillCatalogItem,
 } from './queries';
 
 export {
@@ -37,7 +38,9 @@ export {
 export {
   COLLECTION_NAME,
   SKILL_DESCRIPTION_MAX_LENGTH,
+  SKILL_INPUT_MAX_LENGTH,
   SKILL_NAME_MAX_LENGTH,
+  SKILL_OUTPUT_MAX_LENGTH,
   SKILL_RULE_MAX_LENGTH,
   SKILL_SCRIPT_LANGUAGES,
   SKILL_SCRIPT_MAX_COUNT,

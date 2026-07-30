@@ -14,6 +14,7 @@ export { updateUserProfile } from "./updateUserProfile";
 export { confirmEmailVerification } from "./confirmEmailVerification";
 export { resendEmailVerification } from "./resendEmailVerification";
 export { checkAndCompleteOnboarding } from "./checkAndCompleteOnboarding";
+export { finishOnboarding } from "./finishOnboarding";
 
 export type { AuthInput, AuthOutput, AuthPublicUser } from "./auth/types";
 export type {
@@ -40,3 +41,4 @@ export type {
   ResendEmailVerificationOutput,
 } from "./resendEmailVerification/types";
 export type { CheckAndCompleteOnboardingInput } from "./checkAndCompleteOnboarding/types";
+export type { FinishOnboardingInput, FinishOnboardingOutput } from "./finishOnboarding/types";

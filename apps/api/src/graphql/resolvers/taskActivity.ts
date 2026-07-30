@@ -1,4 +1,4 @@
-import { applyResolvers, defineObjectType } from '@vassembly/graphql';
+import { applyResolvers, defineObjectType, graphQLListType } from '@vassembly/graphql';
 import { UnauthorizedError } from '@vassembly/errors';
 import taskService from '@vassembly/service-task';
 import type { TaskActivityItem } from '@vassembly/service-task';
@@ -6,6 +6,7 @@ import type { Builder } from '@vassembly/graphql';
 
 import { enforceOnboardingCompleteForQuery } from '../shared/enforceOnboardingCompleteForQuery';
 import { resolveAgentDisplayNames } from './shared/resolveAgentDisplayName';
+import { resolveSkillDisplayNames } from './shared/resolveSkillDisplayName';
 import type { ApiGraphQLContext } from '../shared/types';
 
 interface TaskActivityTimelineResolverArgs {
@@ -22,6 +23,11 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
       filterGroup: t.exposeString('filterGroup'),
       commentId: t.exposeString('commentId', { nullable: true }),
       userText: t.exposeString('userText', { nullable: true }),
+      specializationIds: t.field({
+        type: graphQLListType('String'),
+        nullable: true,
+        resolve: (parent: { specializationIds?: string[] | null }) => parent.specializationIds ?? null,
+      }),
       agentResponse: t.exposeString('agentResponse', { nullable: true }),
       totalDuration: t.exposeInt('totalDuration', { nullable: true }),
       totalTokens: t.expose('totalTokens', { type: 'TokenUsage', nullable: true }),
@@ -43,10 +49,36 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
       usageEventId: t.exposeString('usageEventId', { nullable: true }),
       mcpId: t.exposeString('mcpId', { nullable: true }),
       mcpName: t.exposeString('mcpName', { nullable: true }),
+      internalToolId: t.exposeString('internalToolId', { nullable: true }),
+      internalToolDisplayName: t.exposeString('internalToolDisplayName', { nullable: true }),
+      toolDisplayName: t.exposeString('toolDisplayName', { nullable: true }),
       toolName: t.exposeString('toolName', { nullable: true }),
       status: t.exposeString('status', { nullable: true }),
+      startedAt: t.exposeString('startedAt', { nullable: true }),
+      endedAt: t.exposeString('endedAt', { nullable: true }),
       durationMs: t.exposeInt('durationMs', { nullable: true }),
+      input: t.exposeString('input', { nullable: true }),
+      inputTruncated: t.exposeBoolean('inputTruncated', { nullable: true }),
+      output: t.exposeString('output', { nullable: true }),
+      outputTruncated: t.exposeBoolean('outputTruncated', { nullable: true }),
+      invocationId: t.exposeString('invocationId', { nullable: true }),
+      rootInvokeId: t.exposeString('rootInvokeId', { nullable: true }),
       errorMessage: t.exposeString('errorMessage', { nullable: true }),
+      errorDetails: t.expose('errorDetails', { type: 'ErrorDetails', nullable: true }),
+      outcomeSummary: t.exposeString('outcomeSummary', { nullable: true }),
+      commentSkillIds: t.field({
+        type: graphQLListType('String'),
+        nullable: true,
+        resolve: (parent: { commentSkillIds?: string[] | null }) => parent.commentSkillIds ?? null,
+      }),
+      planTemplateShortName: t.exposeString('planTemplateShortName', { nullable: true }),
+      planTemplateDescription: t.exposeString('planTemplateDescription', { nullable: true }),
+      planInstanceStatus: t.exposeString('planInstanceStatus', { nullable: true }),
+      planItems: t.field({
+        type: graphQLListType('TaskPlanInstanceItem'),
+        nullable: true,
+        resolve: (parent: { planItems?: object[] | null }) => parent.planItems ?? null,
+      }),
     }),
   });
 
@@ -88,17 +120,30 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
             .filter((item) => item.kind === 'progressEvent')
             .map((item) => item.agentId);
 
-          const mcpAgentIds = timeline.items
-            .filter(
-              (item) =>
-                item.kind === 'mcpInvocationStarted' || item.kind === 'mcpInvocationCompleted',
-            )
+          const toolCallAgentIds = timeline.items
+            .filter((item) => item.kind === 'mcpInvocation' || item.kind === 'toolInvocation')
             .map((item) => item.agentId);
 
-          const agentNameById = await resolveAgentDisplayNames({
-            agentIds: [...progressAgentIds, ...mcpAgentIds],
-            userId,
-          });
+          const planAgentIds = timeline.items
+            .filter((item) => item.kind === 'plan')
+            .flatMap((item) => item.planItems?.map((planItem) => planItem.agentId) ?? []);
+
+          const planSkillIds = timeline.items
+            .filter((item) => item.kind === 'plan')
+            .flatMap(
+              (item) =>
+                item.planItems
+                  ?.map((planItem) => planItem.skillId)
+                  .filter((skillId): skillId is string => skillId !== null) ?? [],
+            );
+
+          const [agentNameById, skillNameById] = await Promise.all([
+            resolveAgentDisplayNames({
+              agentIds: [...progressAgentIds, ...toolCallAgentIds, ...planAgentIds],
+              userId,
+            }),
+            resolveSkillDisplayNames({ skillIds: planSkillIds }),
+          ]);
 
           const items = timeline.items.map((item) => {
             if (item.kind === 'progressEvent') {
@@ -108,10 +153,23 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
               };
             }
 
-            if (item.kind === 'mcpInvocationStarted' || item.kind === 'mcpInvocationCompleted') {
+            if (item.kind === 'mcpInvocation' || item.kind === 'toolInvocation') {
               return {
                 ...item,
                 agentName: agentNameById.get(item.agentId) ?? 'Unknown agent',
+              };
+            }
+
+            if (item.kind === 'plan') {
+              return {
+                ...item,
+                planItems: item.planItems.map((planItem) => ({
+                  ...planItem,
+                  agentName: agentNameById.get(planItem.agentId) ?? planItem.agentId,
+                  skillName: planItem.skillId
+                    ? skillNameById.get(planItem.skillId) ?? null
+                    : null,
+                })),
               };
             }
 

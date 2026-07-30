@@ -18,4 +18,5 @@ export interface McpSeedEntry {
 export interface LoadMcpsResult {
   insertedCount: number;
   skippedCount: number;
+  removedCount: number;
 }

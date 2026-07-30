@@ -3,6 +3,16 @@ export const ONBOARDING_ALLOWED_ROUTES = [
   '/settings',
   '/agents/ai-integrations/create',
   '/verify-email',
+  '/mcps',
 ] as const;
 
-export const ONBOARDING_GRAPHQL_ALLOWED_QUERIES = new Set(['user', 'aiIntegrations']);
+export const ONBOARDING_GRAPHQL_ALLOWED_QUERIES = new Set([
+  'user',
+  'aiIntegrations',
+  'mcps',
+  'availableTags',
+  'userConfiguredMcps',
+  'mcp',
+  'mcpConfiguration',
+  'mcpWithAgents',
+]);

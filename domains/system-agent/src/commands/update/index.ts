@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { validatorFactory } from '@vassembly/validation';
 
-import { AgentCategory, AgentStatus } from '../../constants';
+import { AgentCategory, AgentStatus, SYSTEM_AGENT_CUSTOM_INSTRUCTIONS_MAX_LENGTH } from '../../constants';
 import { systemAgentMongodbDao } from '../../clients';
 import { SystemAgentModel, systemAgentFactory } from '../../model';
 import { invalidateActiveByNameCache } from '../../cache/keys';
@@ -25,6 +25,7 @@ const UPDATE_DB_SCHEMA = z
     category: z.enum(Object.values(AgentCategory) as [string, ...string[]]).nullable().optional(),
     status: z.enum(Object.values(AgentStatus) as [string, ...string[]]).optional(),
     assignedToolIds: assignedToolIdsUpdateSchema,
+    customInstructions: z.string().max(SYSTEM_AGENT_CUSTOM_INSTRUCTIONS_MAX_LENGTH).nullable().optional(),
     updatedByAdminId: z.string().min(1),
   });
 

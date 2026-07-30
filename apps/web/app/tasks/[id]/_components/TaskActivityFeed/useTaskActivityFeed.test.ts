@@ -73,6 +73,7 @@ describe('useTaskActivityFeed', () => {
       userId: 'user-1',
       userText: 'Follow up',
       agentResponse: null,
+      specializationIds: [],
       createdAt: '2026-01-03T00:00:00.000Z',
       updatedAt: '2026-01-03T00:00:00.000Z',
     };

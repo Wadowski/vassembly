@@ -1,11 +1,21 @@
+'use client';
+
+import { useMemo } from 'react';
+
 import {
   type SubmitTaskCommentResponse,
+  TaskStatus,
 } from '@vassembly/ui-api-hooks';
 
 import styles from './TaskActivityFeed.module.scss';
 
 import { TaskActivityFilter } from '../TaskActivityFilter/TaskActivityFilter';
 import { TaskActivityFeedItem } from './TaskActivityFeedItem';
+import {
+  getItemIdsKey,
+  useTaskActivityListAnimation,
+} from './hooks/useTaskActivityListAnimation';
+import { TaskActivityThinkingIndicator } from './taskActivityThinkingIndicator';
 import { useTaskActivityFeed } from './useTaskActivityFeed';
 
 export interface TaskActivityFeedProps {
@@ -15,6 +25,7 @@ export interface TaskActivityFeedProps {
   pendingUserComment: SubmitTaskCommentResponse['comment'] | null;
   onPendingUserCommentSynced: () => void;
   onTaskUpdated: () => void;
+  isAdmin: boolean;
 }
 
 export const TaskActivityFeed = ({
@@ -24,6 +35,7 @@ export const TaskActivityFeed = ({
   pendingUserComment,
   onPendingUserCommentSynced,
   onTaskUpdated,
+  isAdmin,
 }: TaskActivityFeedProps): JSX.Element => {
   const { items, selectedGroups, setSelectedGroups, isEmpty } = useTaskActivityFeed({
     taskId,
@@ -32,6 +44,16 @@ export const TaskActivityFeed = ({
     pendingUserComment,
     onPendingUserCommentSynced,
     onTaskUpdated,
+  });
+
+  const isTaskInProgress = taskStatus === TaskStatus.InProgress;
+  const itemIdsKey = useMemo(
+    () => getItemIdsKey({ itemIds: items.map((item) => item.id) }),
+    [items],
+  );
+  const { listRef } = useTaskActivityListAnimation({
+    itemIdsKey,
+    enteringClassName: styles.listItemEntering ?? '',
   });
 
   return (
@@ -44,14 +66,23 @@ export const TaskActivityFeed = ({
         Activity
       </h2>
       <TaskActivityFilter selectedGroups={selectedGroups} onChange={setSelectedGroups} />
+      {isTaskInProgress ? <TaskActivityThinkingIndicator /> : null}
       {isEmpty ? (
         <p className={styles.empty} data-testid="task-activity-feed-empty">
           No activity yet.
         </p>
       ) : (
-        <ul className={styles.list} role="list" aria-live="polite">
+        <ul ref={listRef} className={styles.list} role="list" aria-live="polite">
           {items.map((item) => (
-            <TaskActivityFeedItem key={item.id} item={item} />
+            <li
+              key={item.id}
+              className={styles.listItem}
+              data-activity-item-id={item.id}
+            >
+              <div className={styles.listItemContent} data-activity-item-enter>
+                <TaskActivityFeedItem item={item} isAdmin={isAdmin} />
+              </div>
+            </li>
           ))}
         </ul>
       )}

@@ -71,11 +71,6 @@ export const registerSpecializationResolvers = (builder: Builder): void => {
             throw new UnauthorizedError('Authentication required');
           }
 
-          await userDomain.queries.assertHasRole({
-            userId,
-            role: AUTH_TOKEN_ROLE.ADMIN,
-          });
-
           const result = await specializationService.getSpecialization({ id: args.id });
           return result.specialization;
         },

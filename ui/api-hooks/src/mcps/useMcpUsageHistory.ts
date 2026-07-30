@@ -9,6 +9,7 @@ export interface McpUsageHistoryItem {
   mcpId: string;
   mcpSlug: string | null;
   toolName: string;
+  toolDisplayName: string | null;
   userId: string;
   taskId: string | null;
   commentId: string | null;
@@ -21,6 +22,8 @@ export interface McpUsageHistoryItem {
   durationMs: number | null;
   input: string | null;
   inputTruncated: boolean;
+  output: string | null;
+  outputTruncated: boolean;
   errorMessage: string | null;
   createdAt: string;
   updatedAt: string;

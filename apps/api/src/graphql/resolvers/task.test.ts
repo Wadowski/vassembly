@@ -22,7 +22,7 @@ import { registerTaskResolvers } from './task';
 type UserTasksResolver = (
   root: unknown,
   args: { page?: number | null; size?: number | null; search?: string | null },
-  context: { authenticatedUserId?: string },
+  context: { authenticatedUserId?: string; onboardingCompleted?: boolean },
 ) => Promise<{
   items: Array<ReturnType<typeof toTaskResponse>>;
   totalCount: number;
@@ -33,7 +33,7 @@ type UserTasksResolver = (
 type TaskResolver = (
   root: unknown,
   args: { id: string },
-  context: { authenticatedUserId?: string },
+  context: { authenticatedUserId?: string; onboardingCompleted?: boolean },
 ) => Promise<ReturnType<typeof toTaskResponse>>;
 
 interface CapturedTaskResolvers {
@@ -127,7 +127,7 @@ describe('registerTaskResolvers userTasks', () => {
       const result = await resolveUserTasks(
         {},
         { page: 0, size: 10, search: null },
-        { authenticatedUserId: 'user-auth' },
+        { authenticatedUserId: 'user-auth', onboardingCompleted: true },
       );
 
       expect(result).toEqual({
@@ -155,7 +155,7 @@ describe('registerTaskResolvers userTasks', () => {
       const result = await resolveUserTasks(
         {},
         { page: 2, size: 5, search: 'invoice' },
-        { authenticatedUserId: 'user-auth' },
+        { authenticatedUserId: 'user-auth', onboardingCompleted: true },
       );
 
       expect(result.items).toEqual([]);
@@ -177,7 +177,7 @@ describe('registerTaskResolvers userTasks', () => {
         size: 10,
       });
 
-      const result = await resolveUserTasks({}, { page: 0, size: 10 }, { authenticatedUserId: 'user-auth' });
+      const result = await resolveUserTasks({}, { page: 0, size: 10 }, { authenticatedUserId: 'user-auth', onboardingCompleted: true });
 
       expect(result.items.map((item) => item.status)).toEqual([
         'created',
@@ -198,7 +198,7 @@ describe('registerTaskResolvers userTasks', () => {
         size: 10,
       });
 
-      const result = await resolveUserTasks({}, { page: 0, size: 10 }, { authenticatedUserId: 'user-auth' });
+      const result = await resolveUserTasks({}, { page: 0, size: 10 }, { authenticatedUserId: 'user-auth', onboardingCompleted: true });
 
       expect(result.items[0]?.title).toBe('Parsed invoices');
       expect(result.items[1]?.title).toBeNull();
@@ -207,12 +207,14 @@ describe('registerTaskResolvers userTasks', () => {
 
   describe('error flows', () => {
     it('should throw UnauthorizedError when authenticatedUserId is missing', async () => {
-      await expect(resolveUserTasks({}, { page: 0, size: 10 }, {})).rejects.toThrow(UnauthorizedError);
+      await expect(
+        resolveUserTasks({}, { page: 0, size: 10 }, { onboardingCompleted: true }),
+      ).rejects.toThrow(UnauthorizedError);
     });
 
     it('should throw UnauthorizedError when authenticatedUserId is undefined in context', async () => {
       await expect(
-        resolveUserTasks({}, { page: 0, size: 10 }, { authenticatedUserId: undefined }),
+        resolveUserTasks({}, { page: 0, size: 10 }, { authenticatedUserId: undefined, onboardingCompleted: true }),
       ).rejects.toThrow(UnauthorizedError);
     });
 
@@ -220,7 +222,7 @@ describe('registerTaskResolvers userTasks', () => {
       mockListUserTasks.mockRejectedValue(new ValidationError('Invalid page'));
 
       await expect(
-        resolveUserTasks({}, { page: -1, size: 10 }, { authenticatedUserId: 'user-auth' }),
+        resolveUserTasks({}, { page: -1, size: 10 }, { authenticatedUserId: 'user-auth', onboardingCompleted: true }),
       ).rejects.toThrow(ValidationError);
     });
   });
@@ -235,14 +237,16 @@ describe('registerTaskResolvers task', () => {
   });
 
   it('should throw UnauthorizedError when authenticatedUserId is missing', async () => {
-    await expect(resolveTask({}, { id: 'task-1' }, {})).rejects.toThrow(UnauthorizedError);
+    await expect(resolveTask({}, { id: 'task-1' }, { onboardingCompleted: true })).rejects.toThrow(
+      UnauthorizedError,
+    );
   });
 
   it('should call taskService.getTask with userId and taskId when authenticated', async () => {
     const taskResponse = toTaskResponse({ task: buildTaskModel({ id: 'task-42' }) });
     mockGetTask.mockResolvedValue(taskResponse);
 
-    await resolveTask({}, { id: 'task-42' }, { authenticatedUserId: 'user-auth' });
+    await resolveTask({}, { id: 'task-42' }, { authenticatedUserId: 'user-auth', onboardingCompleted: true });
 
     expect(mockGetTask).toHaveBeenCalledWith({
       userId: 'user-auth',
@@ -261,7 +265,7 @@ describe('registerTaskResolvers task', () => {
     });
     mockGetTask.mockResolvedValue(taskResponse);
 
-    const result = await resolveTask({}, { id: 'task-1' }, { authenticatedUserId: 'user-auth' });
+    const result = await resolveTask({}, { id: 'task-1' }, { authenticatedUserId: 'user-auth', onboardingCompleted: true });
 
     expect(result).toEqual(taskResponse);
   });
@@ -270,7 +274,7 @@ describe('registerTaskResolvers task', () => {
     mockGetTask.mockRejectedValue(new NotFoundError('Task not found'));
 
     await expect(
-      resolveTask({}, { id: 'missing-task' }, { authenticatedUserId: 'user-auth' }),
+      resolveTask({}, { id: 'missing-task' }, { authenticatedUserId: 'user-auth', onboardingCompleted: true }),
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -278,7 +282,7 @@ describe('registerTaskResolvers task', () => {
     mockGetTask.mockRejectedValue(new ValidationError('taskId is required'));
 
     await expect(
-      resolveTask({}, { id: '' }, { authenticatedUserId: 'user-auth' }),
+      resolveTask({}, { id: '' }, { authenticatedUserId: 'user-auth', onboardingCompleted: true }),
     ).rejects.toThrow(ValidationError);
   });
 });

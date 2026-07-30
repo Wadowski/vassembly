@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import { clearTokens } from '../auth/sessionStorage';
 import { clearStoredUserPreferences } from '../preferences';
+import { OnboardingGate } from '../auth/OnboardingGate';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -64,8 +65,10 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
   };
 
   return (
-    <Layout variant="main" drawer={drawerConfig}>
-      {children}
-    </Layout>
+    <OnboardingGate>
+      <Layout variant="main" drawer={drawerConfig}>
+        {children}
+      </Layout>
+    </OnboardingGate>
   );
 };

@@ -3,6 +3,7 @@ import mcpDomain from '@vassembly/domain-mcp';
 import systemAgentDomain from '@vassembly/domain-system-agent';
 
 import { runAgentInvokeWithTools } from '../runAgentInvokeWithTools';
+import { formatMcpCatalogSection } from '../shared/formatMcpCatalogSection';
 import { logSpecializationEvent } from './logSpecializationEvent';
 
 import type { InternalToolContext } from '../types';
@@ -26,7 +27,7 @@ const buildMcpCatalogMessage = ({
   specializationDescription: string;
   mcps: Array<{ name: string; slug: string; description: string }>;
 }): string => {
-  const mcpLines = mcps.map((mcp) => `- ${mcp.name} (${mcp.slug}): ${mcp.description}`).join('\n');
+  const mcpLines = formatMcpCatalogSection({ mcps });
 
   return [
     `Specialization: ${specializationName}`,

@@ -10,7 +10,6 @@ import { formatIntentCategoriesSection } from './formatIntentCategoriesSection';
 import { formatIntentRoutingSection } from './formatIntentRoutingSection';
 import {
   formatTaskWorkerOrchestrationSection,
-  MAX_TASK_WORKER_VALIDATOR_RETRIES,
   TASK_WORKER_ORCHESTRATION_SECTION_HEADING,
 } from './formatTaskWorkerOrchestrationSection';
 import {
@@ -18,10 +17,15 @@ import {
   SKILL_PLANNER_SCRIPT_SECTION_HEADING,
 } from './formatSkillPlannerScriptSection';
 import {
-  formatSpecializationResearcherSkillsSection,
+  formatSpecializationMethodologistSkillsSection,
+  isSpecializationMethodologistAgentName,
+  SPECIALIZATION_METHODOLOGIST_SKILLS_SECTION_HEADING,
+} from './formatSpecializationMethodologistSkillsSection';
+import {
+  formatSpecializationResearcherDataGatheringSection,
   isSpecializationResearcherAgentName,
-  SPECIALIZATION_RESEARCHER_SKILLS_SECTION_HEADING,
-} from './formatSpecializationResearcherSkillsSection';
+  SPECIALIZATION_RESEARCHER_DATA_GATHERING_SECTION_HEADING,
+} from './formatSpecializationResearcherDataGatheringSection';
 import {
   formatSpecializationWorkerExecutionSection,
   isSpecializationWorkerAgentName,
@@ -64,26 +68,42 @@ describe('formatSubagentOutputPolicySection', () => {
 });
 
 describe('formatTaskWorkerOrchestrationSection', () => {
-  it('should require Task planner, mandatory validators, and retry loop', () => {
+  it('should require Task planner once and platform hand-off', () => {
     const section = formatTaskWorkerOrchestrationSection();
 
     expect(section).toContain(TASK_WORKER_ORCHESTRATION_SECTION_HEADING);
+    expect(section).toContain('Methodologists (required)');
+    expect(section).toContain('role=methodologist');
     expect(section).toContain('Task planner');
-    expect(section).toContain('Validators are mandatory');
-    expect(section).toContain(`Retry at most ${MAX_TASK_WORKER_VALIDATOR_RETRIES} times`);
-    expect(section).toContain('Forbidden before step 2 completes');
-    expect(section).toContain('never asks the user questions');
-    expect(section).toContain('invoke_skill_planner when New skill needed is set');
+    expect(section).toContain('exactly once');
+    expect(section).toContain('Hand off to platform execution');
+    expect(section).toContain('Never call Task planner a second time');
   });
 });
 
-describe('formatSpecializationResearcherSkillsSection', () => {
+describe('formatSpecializationMethodologistSkillsSection', () => {
   it('should forbid inventing skill names not in the catalog', () => {
-    const section = formatSpecializationResearcherSkillsSection();
+    const section = formatSpecializationMethodologistSkillsSection();
 
-    expect(section).toContain(SPECIALIZATION_RESEARCHER_SKILLS_SECTION_HEADING);
+    expect(section).toContain(SPECIALIZATION_METHODOLOGIST_SKILLS_SECTION_HEADING);
     expect(section).toContain('Never invent');
     expect(section).toContain('## Available Skills');
+  });
+});
+
+describe('formatSpecializationResearcherDataGatheringSection', () => {
+  it('should require data gathering and script skills for repeatable retrieval', () => {
+    const section = formatSpecializationResearcherDataGatheringSection();
+
+    expect(section).toContain(SPECIALIZATION_RESEARCHER_DATA_GATHERING_SECTION_HEADING);
+    expect(section).toContain('invoke_skill_planner');
+    expect(section).toContain('run_skill_script');
+  });
+});
+
+describe('isSpecializationMethodologistAgentName', () => {
+  it('should identify provisioned specialization methodologists', () => {
+    expect(isSpecializationMethodologistAgentName({ name: 'Legal methodologist' })).toBe(true);
   });
 });
 
@@ -98,7 +118,7 @@ describe('formatSpecializationWorkerExecutionSection', () => {
     const section = formatSpecializationWorkerExecutionSection();
 
     expect(section).toContain(SPECIALIZATION_WORKER_EXECUTION_SECTION_HEADING);
-    expect(section).toContain('DO IT using skills');
+    expect(section).toContain('Your primary way of working is executing skills');
     expect(section).toContain('invoke_skill_planner');
   });
 });
@@ -214,17 +234,28 @@ describe('buildSystemAgentSystemMessage', () => {
     expect(result).toContain(CURRENT_DATE_TIME_SECTION_HEADING);
   });
 
-  it('should append skill catalog policy and output policy for specialization researchers', () => {
+  it('should append skill catalog policy and output policy for specialization methodologists', () => {
     const result = buildSystemAgentSystemMessage({
-      name: 'Legal researcher',
-      rule: 'Research domain topics.',
+      name: 'Legal methodologist',
+      rule: 'Define domain methodology.',
       skillsCatalogSection: '## Available Skills\n\n- **ping-host**: Ping a host',
       now: FIXED_NOW,
     });
 
-    expect(result).toContain(SPECIALIZATION_RESEARCHER_SKILLS_SECTION_HEADING);
+    expect(result).toContain(SPECIALIZATION_METHODOLOGIST_SKILLS_SECTION_HEADING);
     expect(result).toContain('## Available Skills');
     expect(result).toContain('ping-host');
+  });
+
+  it('should append data gathering policy for specialization researchers', () => {
+    const result = buildSystemAgentSystemMessage({
+      name: 'Legal researcher',
+      rule: 'Gather domain data.',
+      now: FIXED_NOW,
+    });
+
+    expect(result).toContain(SPECIALIZATION_RESEARCHER_DATA_GATHERING_SECTION_HEADING);
+    expect(result).not.toContain(SPECIALIZATION_METHODOLOGIST_SKILLS_SECTION_HEADING);
   });
 
   it('should append execution policy and output policy for specialization workers', () => {
@@ -239,8 +270,24 @@ describe('buildSystemAgentSystemMessage', () => {
     expect(result.startsWith(workerRule)).toBe(true);
     expect(result).toContain(SUBAGENT_OUTPUT_POLICY_SECTION_HEADING);
     expect(result).toContain(SPECIALIZATION_WORKER_EXECUTION_SECTION_HEADING);
-    expect(result).toContain('DO IT using skills');
+    expect(result).toContain('Your primary way of working is executing skills');
     expect(result).toContain(CURRENT_DATE_TIME_SECTION_HEADING);
+  });
+
+  it('should append custom instructions before skills catalog when provided', () => {
+    const customInstructions = 'Prefer EU regulatory sources for this specialization.';
+
+    const result = buildSystemAgentSystemMessage({
+      name: 'Legal worker',
+      rule: 'Execute domain work.',
+      customInstructions,
+      skillsCatalogSection: '## Available Skills\n\n- **contract-review**: Review contracts',
+      now: FIXED_NOW,
+    });
+
+    expect(result).toContain('## Specialization-specific guidance');
+    expect(result).toContain(customInstructions);
+    expect(result.indexOf(customInstructions)).toBeLessThan(result.indexOf('## Available Skills'));
   });
 
   it('should append skills catalog section when provided', () => {

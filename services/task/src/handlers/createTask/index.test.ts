@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ValidationError, WrongParamError } from '@vassembly/errors';
 
-const { mockCreate, mockGetActiveByName, mockExecuteTask, mockGenerateTaskTitle, mockGenerateTaskCategory, mockCommentCreate, mockInitProgress, mockMarkInProgress } = vi.hoisted(() => ({
+const { mockCreate, mockGetActiveByName, mockExecuteTask, mockGenerateTaskTitle, mockGenerateTaskCategory, mockCommentCreate, mockInitProgress, mockMarkInProgress, mockClassifyCommentSpecializations } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
   mockGetActiveByName: vi.fn(),
   mockExecuteTask: vi.fn(),
@@ -11,6 +11,7 @@ const { mockCreate, mockGetActiveByName, mockExecuteTask, mockGenerateTaskTitle,
   mockCommentCreate: vi.fn(),
   mockInitProgress: vi.fn(),
   mockMarkInProgress: vi.fn(),
+  mockClassifyCommentSpecializations: vi.fn(),
 }));
 
 vi.mock('../executeTask', () => ({
@@ -23,6 +24,10 @@ vi.mock('../generateTaskCategory', () => ({
 
 vi.mock('../generateTaskTitle', () => ({
   generateTaskTitle: mockGenerateTaskTitle,
+}));
+
+vi.mock('../classifyCommentSpecializations', () => ({
+  classifyCommentSpecializations: mockClassifyCommentSpecializations,
 }));
 
 vi.mock('@vassembly/logger', () => ({
@@ -101,6 +106,7 @@ describe('createTask handler', () => {
     mockExecuteTask.mockResolvedValue(undefined);
     mockGenerateTaskTitle.mockResolvedValue(undefined);
     mockGenerateTaskCategory.mockResolvedValue(undefined);
+    mockClassifyCommentSpecializations.mockResolvedValue(undefined);
   });
 
   it('should return TaskResponse with serialized id and ISO timestamps when create succeeds', async () => {

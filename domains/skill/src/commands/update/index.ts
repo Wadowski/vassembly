@@ -9,6 +9,8 @@ import { getModelById } from '../../queries/getModelById';
 import { persistSkillScripts, removeSkillScripts } from '../shared/persistScripts';
 import {
   SKILL_DESCRIPTION_SCHEMA,
+  SKILL_INPUT_SCHEMA,
+  SKILL_OUTPUT_SCHEMA,
   SKILL_RULE_SCHEMA,
   SKILL_SCRIPTS_INPUT_SCHEMA,
   USES_SKILL_IDS_SCHEMA,
@@ -20,6 +22,8 @@ const UPDATE_INPUT_SCHEMA = z
   .object({
     id: z.string().trim().min(1),
     description: SKILL_DESCRIPTION_SCHEMA.optional(),
+    input: SKILL_INPUT_SCHEMA.optional(),
+    output: SKILL_OUTPUT_SCHEMA.optional(),
     rule: SKILL_RULE_SCHEMA.optional(),
     enabled: z.boolean().optional(),
     scripts: SKILL_SCRIPTS_INPUT_SCHEMA.optional(),
@@ -28,6 +32,8 @@ const UPDATE_INPUT_SCHEMA = z
   .refine(
     (value) =>
       value.description !== undefined ||
+      value.input !== undefined ||
+      value.output !== undefined ||
       value.rule !== undefined ||
       value.enabled !== undefined ||
       value.scripts !== undefined ||
@@ -37,6 +43,8 @@ const UPDATE_INPUT_SCHEMA = z
 
 const UPDATE_DB_SCHEMA = z.object({
   description: SKILL_DESCRIPTION_SCHEMA.optional(),
+  input: SKILL_INPUT_SCHEMA.optional(),
+  output: SKILL_OUTPUT_SCHEMA.optional(),
   rule: SKILL_RULE_SCHEMA.optional(),
   enabled: z.boolean().optional(),
   scripts: z
@@ -79,6 +87,14 @@ export const update = async (
 
   if (parsed.data.description !== undefined) {
     updateData.description = parsed.data.description.trim();
+  }
+
+  if (parsed.data.input !== undefined) {
+    updateData.input = parsed.data.input.trim();
+  }
+
+  if (parsed.data.output !== undefined) {
+    updateData.output = parsed.data.output.trim();
   }
 
   if (parsed.data.rule !== undefined) {

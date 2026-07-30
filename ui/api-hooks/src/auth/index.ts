@@ -11,3 +11,4 @@ export { useAuth } from './useAuth';
 export { useLogout } from './useLogout';
 export { useVerifyEmail, type VerifyEmailResponse } from './useVerifyEmail';
 export { useResendVerification, type ResendVerificationResponse } from './useResendVerification';
+export { useFinishOnboarding, type FinishOnboardingResponse } from './useFinishOnboarding';

@@ -6,6 +6,7 @@ export const GET_MCP_USAGE_HISTORY_QUERY = `
         mcpId
         mcpSlug
         toolName
+        toolDisplayName
         userId
         taskId
         commentId
@@ -18,6 +19,8 @@ export const GET_MCP_USAGE_HISTORY_QUERY = `
         durationMs
         input
         inputTruncated
+        output
+        outputTruncated
         errorMessage
         createdAt
         updatedAt

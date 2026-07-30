@@ -3,11 +3,15 @@ import { appendCurrentDateTimeSection, SYSTEM_AGENT_NAME } from '@vassembly/cons
 import { formatAssistantOrchestrationSection } from './formatAssistantOrchestrationSection';
 import { formatIntentCategoriesSection } from './formatIntentCategoriesSection';
 import { formatIntentRoutingSection } from './formatIntentRoutingSection';
-import { formatSkillPlannerScriptSection } from './formatSkillPlannerScriptSection';
+import { formatSkillPlannerReuseSection, formatSkillPlannerScriptSection } from './formatSkillPlannerScriptSection';
 import {
-  formatSpecializationResearcherSkillsSection,
+  formatSpecializationMethodologistSkillsSection,
+  isSpecializationMethodologistAgentName,
+} from './formatSpecializationMethodologistSkillsSection';
+import {
+  formatSpecializationResearcherDataGatheringSection,
   isSpecializationResearcherAgentName,
-} from './formatSpecializationResearcherSkillsSection';
+} from './formatSpecializationResearcherDataGatheringSection';
 import {
   formatSpecializationWorkerExecutionSection,
   isSpecializationWorkerAgentName,
@@ -20,6 +24,8 @@ export interface BuildSystemAgentSystemMessageParams {
   name: string;
   rule: string;
   skillsCatalogSection?: string;
+  agentsCatalogSection?: string;
+  customInstructions?: string;
   now?: Date;
 }
 
@@ -27,6 +33,8 @@ export const buildSystemAgentSystemMessage = ({
   name,
   rule,
   skillsCatalogSection,
+  agentsCatalogSection,
+  customInstructions,
   now,
 }: BuildSystemAgentSystemMessageParams): string => {
   const sections: string[] = [rule];
@@ -45,17 +53,28 @@ export const buildSystemAgentSystemMessage = ({
   } else if (name === SYSTEM_AGENT_NAME.TaskPlanner) {
     sections.push(formatTaskPlannerPlanningSection());
   } else if (name === SYSTEM_AGENT_NAME.SkillPlanner) {
+    sections.push(formatSkillPlannerReuseSection());
     sections.push(formatSkillPlannerScriptSection());
+  } else if (isSpecializationMethodologistAgentName({ name })) {
+    sections.push(formatSpecializationMethodologistSkillsSection());
   } else if (isSpecializationResearcherAgentName({ name })) {
-    sections.push(formatSpecializationResearcherSkillsSection());
+    sections.push(formatSpecializationResearcherDataGatheringSection());
   } else if (isSpecializationWorkerAgentName({ name })) {
     sections.push(formatSpecializationWorkerExecutionSection());
   }
 
   let systemMessage = sections.join('\n\n');
 
+  if (customInstructions) {
+    systemMessage = `${systemMessage}\n\n## Specialization-specific guidance\n\n${customInstructions}`;
+  }
+
   if (skillsCatalogSection) {
     systemMessage = `${systemMessage}\n\n${skillsCatalogSection}`;
+  }
+
+  if (agentsCatalogSection) {
+    systemMessage = `${systemMessage}\n\n${agentsCatalogSection}`;
   }
 
   return appendCurrentDateTimeSection({ systemMessage, now });

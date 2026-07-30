@@ -1,8 +1,154 @@
+x-mcp-key-proxy: &mcp-key-proxy
+  image: ghcr.io/onprem-ai/mcp-key-proxy:latest
+  security_opt:
+    - seccomp=unconfined
+
+x-mcpproxy-go: &mcpproxy-go
+  security_opt:
+    - seccomp=unconfined
+
 services:
+  github-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @modelcontextprotocol/server-github'
+      - '--header-to-env'
+      - 'X-Mcp-Env-GITHUB_PERSONAL_ACCESS_TOKEN=GITHUB_PERSONAL_ACCESS_TOKEN'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_GITHUB_PORT:-4101}:8000'
+
+  context7:
+    image: context7/mcp-server:latest
+    ports:
+      - '${MCP_CONTEXT7_PORT:-4001}:4001'
+
+  mongodb-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y mongodb-mcp-server'
+      - '--header-to-env'
+      - 'X-Mcp-Env-MONGODB_URI=MONGODB_URI'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_MONGODB_PORT:-4104}:8000'
+
+  redis-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @modelcontextprotocol/server-redis'
+      - '--header-to-env'
+      - 'X-Mcp-Env-REDIS_URL=REDIS_URL'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_REDIS_PORT:-4105}:8000'
+
+  aws-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @aws/mcp-server-aws'
+      - '--header-to-env'
+      - 'X-Mcp-Env-AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID'
+      - '--header-to-env'
+      - 'X-Mcp-Env-AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY'
+      - '--header-to-env'
+      - 'X-Mcp-Env-AWS_REGION=AWS_REGION'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_AWS_PORT:-4106}:8000'
+
+  vercel-mcp:
+    image: vercel/mcp-server-vercel:latest
+    ports:
+      - '${MCP_VERCEL_PORT:-4003}:4003'
+
+  terraform-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @hashicorp/terraform-mcp-server'
+      - '--header-to-env'
+      - 'X-Mcp-Env-TF_TOKEN_app_terraform_io=TF_TOKEN_app_terraform_io'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_TERRAFORM_PORT:-4107}:8000'
+
+  sentry-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @sentry/mcp-server'
+      - '--header-to-env'
+      - 'X-Mcp-Env-SENTRY_AUTH_TOKEN=SENTRY_AUTH_TOKEN'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_SENTRY_PORT:-4108}:8000'
+
+  datadog-mcp:
+    image: datadog/mcp-server-datadog:latest
+    ports:
+      - '${MCP_DATADOG_PORT:-4004}:4004'
+
   brave-search-mcp:
-    image: ghcr.io/onprem-ai/mcp-key-proxy:latest
-    security_opt:
-      - seccomp=unconfined
+    <<: *mcp-key-proxy
     command:
       - '--stdio'
       - 'npx -y @brave/brave-search-mcp-server'
@@ -22,9 +168,222 @@ services:
       - '${MCP_BRAVE_SEARCH_PORT:-4109}:8000'
 
   wikipedia-mcp:
+    <<: *mcpproxy-go
     build:
       context: ./mcps/wikipedia-mcp
-    security_opt:
-      - seccomp=unconfined
     ports:
       - '${MCP_WIKIPEDIA_PORT:-4110}:8080'
+
+  pubmed-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y pubmed-mcp'
+      - '--header-to-env'
+      - 'X-Mcp-Env-NCBI_API_KEY=NCBI_API_KEY'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_PUBMED_PORT:-4111}:8000'
+
+  arxiv-mcp:
+    <<: *mcpproxy-go
+    build:
+      context: ./mcps/arxiv-mcp
+    ports:
+      - '${MCP_ARXIV_PORT:-4112}:8080'
+
+  google-search-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @modelcontextprotocol/server-google-search'
+      - '--header-to-env'
+      - 'X-Mcp-Env-GOOGLE_API_KEY=GOOGLE_API_KEY'
+      - '--header-to-env'
+      - 'X-Mcp-Env-GOOGLE_CSE_ID=GOOGLE_CSE_ID'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_GOOGLE_SEARCH_PORT:-4113}:8000'
+
+  notion-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @notionhq/notion-mcp-server'
+      - '--header-to-env'
+      - 'X-Mcp-Env-NOTION_TOKEN=NOTION_TOKEN'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_NOTION_PORT:-4006}:8000'
+
+  obsidian-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y mcp-obsidian'
+      - '--header-to-env'
+      - 'X-Mcp-Env-OBSIDIAN_API_KEY=OBSIDIAN_API_KEY'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_OBSIDIAN_PORT:-4114}:8000'
+
+  granola-mcp:
+    image: granola/mcp-server-granola:latest
+    ports:
+      - '${MCP_GRANOLA_PORT:-4007}:4007'
+
+  discord-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @discord/mcp-server-discord'
+      - '--header-to-env'
+      - 'X-Mcp-Env-DISCORD_BOT_TOKEN=DISCORD_BOT_TOKEN'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_DISCORD_PORT:-4115}:8000'
+
+  gmail-mcp:
+    image: google/mcp-server-gmail:latest
+    ports:
+      - '${MCP_GMAIL_PORT:-4008}:4008'
+
+  google-calendar-mcp:
+    image: google/mcp-server-gcal:latest
+    ports:
+      - '${MCP_GOOGLE_CALENDAR_PORT:-4009}:4009'
+
+  todoist-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @todoist/mcp-server-todoist'
+      - '--header-to-env'
+      - 'X-Mcp-Env-TODOIST_API_TOKEN=TODOIST_API_TOKEN'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_TODOIST_PORT:-4116}:8000'
+
+  linear-mcp:
+    image: linear/mcp-server-linear:latest
+    ports:
+      - '${MCP_LINEAR_PORT:-4010}:4010'
+
+  stripe-mcp:
+    image: stripe/mcp-server-stripe:latest
+    ports:
+      - '${MCP_STRIPE_PORT:-4011}:4011'
+
+  figma-mcp:
+    image: figma/mcp-server-figma:latest
+    ports:
+      - '${MCP_FIGMA_PORT:-4012}:4012'
+
+  google-sheets-mcp:
+    image: google/mcp-server-gsheets:latest
+    ports:
+      - '${MCP_GOOGLE_SHEETS_PORT:-4013}:4013'
+
+  canva-mcp:
+    image: canva/mcp-server-canva:latest
+    ports:
+      - '${MCP_CANVA_PORT:-4014}:4014'
+
+  google-maps-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y @modelcontextprotocol/server-google-maps'
+      - '--header-to-env'
+      - 'X-Mcp-Env-GOOGLE_MAPS_API_KEY=GOOGLE_MAPS_API_KEY'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_GOOGLE_MAPS_PORT:-4117}:8000'
+
+  openweather-mcp:
+    <<: *mcp-key-proxy
+    command:
+      - '--stdio'
+      - 'npx -y openweather-mcp'
+      - '--header-to-env'
+      - 'X-Mcp-Env-OPENWEATHER_API_KEY=OPENWEATHER_API_KEY'
+      - '--port'
+      - '8000'
+      - '--host'
+      - '0.0.0.0'
+      - '--pool-size'
+      - '${MCP_PROXY_POOL_SIZE:-5}'
+      - '--ttl'
+      - '300'
+      - '--cors'
+      - '*'
+    ports:
+      - '${MCP_OPENWEATHER_PORT:-4118}:8000'
+
+  spotify-mcp:
+    image: communitymcp/spotify-mcp:latest
+    ports:
+      - '${MCP_SPOTIFY_PORT:-4016}:4016'

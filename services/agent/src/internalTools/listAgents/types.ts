@@ -6,6 +6,7 @@ export interface ListAgentsParams {
 }
 
 export interface ListAgentRow {
+  id?: string;
   name: string;
   description: string | undefined;
   category: string | null;

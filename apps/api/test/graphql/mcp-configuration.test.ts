@@ -37,10 +37,13 @@ type McpConfigurationResolver = (
 
 type UserConfiguredMcpsResolver = (
   root: unknown,
-  args: { limit?: number | null; offset?: number | null },
+  args: { page?: number | null; size?: number | null },
   context: { authenticatedUserId?: string },
 ) => Promise<{
-  items: Array<{ mcpId: string; status?: string; configurationStatus?: string }>;
+  items: Array<{ id: string; name: string; configurationStatus?: string }>;
+  total: number;
+  page: number;
+  size: number;
 }>;
 
 type McpsResolver = (
@@ -86,13 +89,14 @@ const captureMcpConfigResolvers = (): CapturedMcpConfigResolvers => {
             return;
           }
 
-          if (config.args !== undefined && ('limit' in config.args || 'offset' in config.args)) {
-            captured.resolveUserConfiguredMcps = config.resolve as UserConfiguredMcpsResolver;
+          if (config.args !== undefined && 'page' in config.args && 'tags' in config.args) {
+            captured.resolveMcps = config.resolve as McpsResolver;
             return;
           }
 
           if (config.args !== undefined && 'page' in config.args) {
-            captured.resolveMcps = config.resolve as McpsResolver;
+            captured.resolveUserConfiguredMcps = config.resolve as UserConfiguredMcpsResolver;
+            return;
           }
         },
         arg,
@@ -112,6 +116,22 @@ const MOCK_CONFIGURATION = {
   status: 'configured',
   fieldValues: [{ key: 'apiKey', hasSecret: true }],
   createdAt: '2026-06-08T12:00:00.000Z',
+  updatedAt: '2026-06-08T12:00:00.000Z',
+};
+
+const MOCK_CONFIGURED_MCP = {
+  id: 'mcp-gmail',
+  slug: 'gmail-mcp',
+  name: 'Gmail MCP',
+  description: 'Send and read Gmail messages',
+  tags: ['email'],
+  iconPath: '/icons/gmail.svg',
+  documentationUrl: null,
+  repositoryUrl: null,
+  configurationStatus: 'configured',
+  enabled: true,
+  requiresConfiguration: true,
+  createdAt: '2026-06-08T10:00:00.000Z',
   updatedAt: '2026-06-08T12:00:00.000Z',
 };
 
@@ -183,20 +203,32 @@ describe('GraphQL: MCP Configuration Queries', () => {
     });
 
     it('should return list of user configured MCPs', async () => {
-      mockListUserMcpConfigurations.mockResolvedValue([
-        { ...MOCK_CONFIGURATION, mcpId: 'mcp-gmail' },
-        { ...MOCK_CONFIGURATION, id: 'config-2', mcpId: 'mcp-brave' },
-      ]);
+      mockListUserMcpConfigurations.mockResolvedValue({
+        items: [
+          MOCK_CONFIGURED_MCP,
+          { ...MOCK_CONFIGURED_MCP, id: 'mcp-brave', name: 'Brave Search MCP' },
+        ],
+        total: 2,
+        page: 0,
+        size: 20,
+      });
 
       const result = await resolveUserConfiguredMcps({}, {}, mockContext);
 
       expect(Array.isArray(result.items)).toBe(true);
       expect(result.items.length).toBeGreaterThan(0);
-      expect(result.items[0]?.mcpId).toBeDefined();
+      expect(result.items[0]?.id).toBeDefined();
+      expect(result.items[0]?.name).toBeDefined();
+      expect(result.total).toBe(2);
     });
 
     it('should return empty list when user has no configurations', async () => {
-      mockListUserMcpConfigurations.mockResolvedValue([]);
+      mockListUserMcpConfigurations.mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 0,
+        size: 20,
+      });
 
       const result = await resolveUserConfiguredMcps(
         {},
@@ -207,14 +239,18 @@ describe('GraphQL: MCP Configuration Queries', () => {
       expect(result.items).toEqual([]);
     });
 
-    it('should support pagination via limit and offset', async () => {
-      mockListUserMcpConfigurations.mockResolvedValue([
-        { ...MOCK_CONFIGURATION, mcpId: 'mcp-gmail' },
-      ]);
+    it('should support pagination via page and size', async () => {
+      mockListUserMcpConfigurations.mockResolvedValue({
+        items: [MOCK_CONFIGURED_MCP],
+        total: 3,
+        page: 0,
+        size: 5,
+      });
 
-      const result = await resolveUserConfiguredMcps({}, { limit: 5, offset: 0 }, mockContext);
+      const result = await resolveUserConfiguredMcps({}, { page: 0, size: 5 }, mockContext);
 
       expect(Array.isArray(result.items)).toBe(true);
+      expect(result.size).toBe(5);
     });
 
     it('should throw UnauthorizedError when auth context is missing', async () => {

@@ -11,12 +11,12 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
-const { mockGetActiveById } = vi.hoisted(() => ({
-  mockGetActiveById: vi.fn(),
+const { mockGetModelById } = vi.hoisted(() => ({
+  mockGetModelById: vi.fn(),
 }));
 
 vi.mock('../../queries', () => ({
-  getActiveById: mockGetActiveById,
+  getModelById: mockGetModelById,
 }));
 
 import type { ModeledProviderClient } from './types';
@@ -50,7 +50,7 @@ describe('invoke system agent command', () => {
   });
 
   it('should append intent categories when invoking intent classifier', async () => {
-    mockGetActiveById.mockResolvedValue({
+    mockGetModelById.mockResolvedValue({
       data: {
         id: SYSTEM_AGENT_ID,
         name: SYSTEM_AGENT_NAME.IntentClassifier,
@@ -72,7 +72,7 @@ describe('invoke system agent command', () => {
   });
 
   it('should pass structured invoke params with agent rule as systemMessage', async () => {
-    mockGetActiveById.mockResolvedValue({
+    mockGetModelById.mockResolvedValue({
       data: {
         id: SYSTEM_AGENT_ID,
         name: 'Compliance Bot',
@@ -96,7 +96,7 @@ describe('invoke system agent command', () => {
   });
 
   it('should pass internalToolBindings through to modeled provider client', async () => {
-    mockGetActiveById.mockResolvedValue({
+    mockGetModelById.mockResolvedValue({
       data: {
         id: SYSTEM_AGENT_ID,
         name: 'Compliance Bot',
@@ -129,7 +129,7 @@ describe('invoke system agent command', () => {
   });
 
   it('should throw NotFoundError when system agent does not exist', async () => {
-    mockGetActiveById.mockRejectedValue(new NotFoundError('System agent not found'));
+    mockGetModelById.mockRejectedValue(new NotFoundError('System agent not found'));
 
     await expect(
       invoke({
@@ -141,7 +141,7 @@ describe('invoke system agent command', () => {
   });
 
   it('should throw NotFoundError when system agent is archived', async () => {
-    mockGetActiveById.mockRejectedValue(new NotFoundError('System agent not found'));
+    mockGetModelById.mockRejectedValue(new NotFoundError('System agent not found'));
 
     await expect(
       invoke({
@@ -153,7 +153,7 @@ describe('invoke system agent command', () => {
   });
 
   it('should throw NotFoundError when system agent is disabled', async () => {
-    mockGetActiveById.mockRejectedValue(new NotFoundError('System agent not found'));
+    mockGetModelById.mockRejectedValue(new NotFoundError('System agent not found'));
 
     await expect(
       invoke({
@@ -166,7 +166,7 @@ describe('invoke system agent command', () => {
 
   it('should pass skillsCatalogSection through to system message builder', async () => {
     const catalogSection = '## Available Skills\n\n- **contract-review**: Review contracts';
-    mockGetActiveById.mockResolvedValue({
+    mockGetModelById.mockResolvedValue({
       data: {
         id: SYSTEM_AGENT_ID,
         name: 'Compliance Bot',

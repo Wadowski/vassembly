@@ -20,6 +20,7 @@ export interface InternalToolContext {
   shouldAbort?: () => Promise<boolean>;
   recordAgentInvokeProgress?: RecordAgentInvokeProgress;
   recordMcpUsageEvent?: RecordMcpUsageEvent;
+  recordInternalToolUsageEvent?: RecordInternalToolUsageEvent;
 }
 
 export type CredentialScope = 'platform' | 'user';
@@ -27,7 +28,7 @@ export type CredentialScope = 'platform' | 'user';
 export interface AgentInvokeProgressEventInput {
   agentId: string;
   parentAgentId?: string;
-  state: 'started' | 'completed' | 'failed' | 'waiting';
+  state: 'started' | 'completed' | 'failed' | 'waiting' | 'skipped';
   timestamp?: Date;
   duration?: number;
   inputMessages?: string;
@@ -38,6 +39,7 @@ export interface AgentInvokeProgressEventInput {
   provider?: string;
   model?: string;
   credentialSource?: CredentialScope;
+  outcomeSummary?: string;
 }
 
 export type RecordAgentInvokeProgress = (
@@ -48,6 +50,7 @@ export interface McpUsageEventStartedInput {
   phase: 'started';
   mcpId: string;
   toolName: string;
+  originalToolName: string;
   args: Record<string, unknown>;
   startedAt: Date;
   agentId?: string;
@@ -62,6 +65,7 @@ export interface McpUsageEventCompletedInput {
   endedAt: Date;
   durationMs: number;
   errorMessage?: string;
+  output?: string;
 }
 
 export type RecordMcpUsageEventInput =
@@ -70,6 +74,35 @@ export type RecordMcpUsageEventInput =
 
 export type RecordMcpUsageEvent = (
   input: RecordMcpUsageEventInput,
+) => Promise<string | void>;
+
+export interface InternalToolUsageEventStartedInput {
+  phase: 'started';
+  internalToolId: string;
+  toolName: string;
+  args: Record<string, unknown>;
+  startedAt: Date;
+  agentId?: string;
+  invocationId?: string;
+  rootInvokeId?: string;
+}
+
+export interface InternalToolUsageEventCompletedInput {
+  phase: 'completed';
+  eventId: string;
+  status: 'success' | 'error';
+  endedAt: Date;
+  durationMs: number;
+  errorMessage?: string;
+  output?: string;
+}
+
+export type RecordInternalToolUsageEventInput =
+  | InternalToolUsageEventStartedInput
+  | InternalToolUsageEventCompletedInput;
+
+export type RecordInternalToolUsageEvent = (
+  input: RecordInternalToolUsageEventInput,
 ) => Promise<string | void>;
 
 export type InternalToolHandler = (args: Record<string, unknown>) => Promise<string>;
@@ -107,6 +140,7 @@ export interface RunAgentInvokeWithToolsResult {
     mcpIdsUsed: string[];
     skippedMcpIds: string[];
     internalToolIdsUsed: string[];
+    internalToolResults?: Array<{ toolId: string; content: string }>;
     skippedInternalToolIds: string[];
     maxUseAgentDepth: number;
   };

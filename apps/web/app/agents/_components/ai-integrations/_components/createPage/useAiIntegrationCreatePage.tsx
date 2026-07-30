@@ -24,7 +24,8 @@ const REDIRECT_AFTER_CREATE_MS = 1500;
 
 export function AiIntegrationCreatePageContent(): JSX.Element {
   const router = useRouter();
-  const { onboardingCompleted = true } = useUserAuth().user ?? {};
+  const { user } = useUserAuth();
+  const onboardingCompleted = user?.onboardingCompleted ?? false;
   const snackbar = useSnackbar();
   const form = useAiIntegrationForm({ mode: 'create' });
   const { handleChange, values: formValues } = form;
@@ -89,7 +90,7 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
         snackbar.show({
           variant: 'success',
           message:
-            'This connection will be used for platform agents. You can change this in Settings.',
+            'This connection will be used for platform agents. You can change this from the integrations list.',
           duration: 6000,
           isDismissible: true,
         });

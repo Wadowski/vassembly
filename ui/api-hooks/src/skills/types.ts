@@ -12,6 +12,8 @@ export interface SkillItem {
   specializationId: string;
   name: string;
   description: string;
+  input: string;
+  output: string;
   rule: string;
   enabled: boolean;
   scripts: SkillScriptItem[];
@@ -39,6 +41,8 @@ export interface CreateSkillInput {
   specializationId: string;
   name: string;
   description: string;
+  input: string;
+  output: string;
   rule: string;
   scripts?: SkillScriptWriteInput[];
   usesSkillIds?: string[];
@@ -46,6 +50,8 @@ export interface CreateSkillInput {
 
 export interface UpdateSkillInput {
   description?: string;
+  input?: string;
+  output?: string;
   rule?: string;
   enabled?: boolean;
   scripts?: SkillScriptWriteInput[];
@@ -61,6 +67,8 @@ export interface SkillFormScriptInput {
 export interface SkillFormInput {
   name: string;
   description: string;
+  input: string;
+  output: string;
   rule: string;
   scripts: SkillFormScriptInput[];
   usesSkillIds: string[];

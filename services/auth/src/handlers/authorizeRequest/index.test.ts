@@ -25,7 +25,7 @@ describe("authorizeRequest", () => {
 
     const result = await authorizeRequest({ headers: mockHeaders });
 
-    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: true });
+    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: false });
     expect(authTokenDomain.queries.verify).toHaveBeenCalledWith({
       token: "valid-token",
     });
@@ -74,6 +74,32 @@ describe("authorizeRequest", () => {
     );
   });
 
+  it("returns onboardingCompleted true when token marks onboarding complete", async () => {
+    vi.mocked(authTokenDomain.queries.verify).mockResolvedValue({
+      userId: "user-123",
+      role: "user",
+      refreshTokenId: "refresh-123",
+      onboardingCompleted: true,
+    } as never);
+
+    const result = await authorizeRequest({ headers: mockHeaders });
+
+    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: true });
+  });
+
+  it("returns onboardingCompleted false when token marks onboarding incomplete", async () => {
+    vi.mocked(authTokenDomain.queries.verify).mockResolvedValue({
+      userId: "user-123",
+      role: "user",
+      refreshTokenId: "refresh-123",
+      onboardingCompleted: false,
+    } as never);
+
+    const result = await authorizeRequest({ headers: mockHeaders });
+
+    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: false });
+  });
+
   it("defaults role to user when role claim is missing", async () => {
     vi.mocked(authTokenDomain.queries.verify).mockResolvedValue({
       userId: "user-123",
@@ -82,7 +108,7 @@ describe("authorizeRequest", () => {
 
     const result = await authorizeRequest({ headers: mockHeaders });
 
-    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: true });
+    expect(result).toEqual({ userId: "user-123", role: "user", onboardingCompleted: false });
   });
 
   it("trims whitespace from tokens", async () => {

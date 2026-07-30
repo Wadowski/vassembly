@@ -9,7 +9,27 @@ export const GET_TASK_ACTIVITY_TIMELINE_QUERY = `
         filterGroup
         commentId
         userText
+        specializationIds
+        commentSkillIds
         agentResponse
+        planTemplateShortName
+        planTemplateDescription
+        planInstanceStatus
+        planItems {
+          templateItemIndex
+          agentId
+          agentName
+          skillId
+          skillName
+          order
+          status
+          startedAt
+          completedAt
+          failedAt
+          errorMessage
+          retryCount
+          description
+        }
         totalDuration
         totalTokens {
           input
@@ -38,10 +58,27 @@ export const GET_TASK_ACTIVITY_TIMELINE_QUERY = `
         usageEventId
         mcpId
         mcpName
+        internalToolId
+        internalToolDisplayName
+        toolDisplayName
         toolName
         status
+        startedAt
+        endedAt
         durationMs
+        input
+        inputTruncated
+        output
+        outputTruncated
+        invocationId
+        rootInvokeId
         errorMessage
+        errorDetails {
+          message
+          type
+          stackTrace
+        }
+        outcomeSummary
       }
     }
   }

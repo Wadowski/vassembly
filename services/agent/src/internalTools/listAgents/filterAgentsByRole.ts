@@ -1,6 +1,8 @@
+import type { SpecializationAgentRole } from '../createSpecialization/constants';
+
 import type { ListAgentRow } from './types';
 
-export type SpecializationAgentRole = 'researcher' | 'worker' | 'validator';
+export type { SpecializationAgentRole };
 
 export interface FilterAgentsByRoleParams {
   agents: ListAgentRow[];
@@ -12,7 +14,12 @@ export const resolveAgentRoleFromArgs = (
 ): SpecializationAgentRole | undefined => {
   const role = args.role;
 
-  if (role === 'researcher' || role === 'worker' || role === 'validator') {
+  if (
+    role === 'methodologist' ||
+    role === 'researcher' ||
+    role === 'worker' ||
+    role === 'validator'
+  ) {
     return role;
   }
 

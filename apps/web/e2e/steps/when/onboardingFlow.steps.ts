@@ -56,20 +56,25 @@ const createFirstAiIntegrationDuringOnboarding = async ({
     : '/onboarding';
 
   await page.goto(onboardingUrl, { waitUntil: 'domcontentloaded' });
+  await expect(page).toHaveURL(/\/onboarding(?:\?|$)/, { timeout: 20_000 });
+};
 
-  if (capturedReturnUrl?.startsWith('/')) {
-    const escapedPath = capturedReturnUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    await expect(page).toHaveURL(new RegExp(`${escapedPath}(?:\\?.*)?$`), { timeout: 20_000 });
-    return;
-  }
-
-  if (capturedReturnUrl) {
-    await expect(page).toHaveURL(/\/(?:\?.*)?$/, { timeout: 20_000 });
-    return;
-  }
-
+const finishOnboardingOnHub = async ({
+  page,
+}: {
+  page: NonNullable<import('@playwright/test').Page>;
+}): Promise<void> => {
+  await page.getByRole('button', { name: /finish onboarding/i }).click();
   await expect(page).not.toHaveURL(/\/onboarding(?:\?|$)/, { timeout: 20_000 });
 };
+
+When('I activate "Manage individual connections" on the onboarding hub', async ({ page }) => {
+  if (!page) {
+    return;
+  }
+
+  await page.getByRole('button', { name: /manage individual connections/i }).click();
+});
 
 When('I create my first AI integration during onboarding', async ({ page, seed, world }) => {
   if (!page) {
@@ -83,7 +88,25 @@ When('I create my first AI integration during onboarding', async ({ page, seed, 
     userId: webWorld.auth?.userId,
     capturedReturnUrl: webWorld.capturedReturnUrl,
   });
+  await finishOnboardingOnHub({ page });
 });
+
+When(
+  'I create my first AI integration during onboarding without finishing',
+  async ({ page, seed, world }) => {
+    if (!page) {
+      return;
+    }
+
+    const webWorld = world as WebBddWorld;
+    await createFirstAiIntegrationDuringOnboarding({
+      page,
+      context: seed,
+      userId: webWorld.auth?.userId,
+      capturedReturnUrl: webWorld.capturedReturnUrl,
+    });
+  },
+);
 
 When('onboarding completes', async ({ page, seed, world }) => {
   if (!page) {
@@ -97,6 +120,7 @@ When('onboarding completes', async ({ page, seed, world }) => {
     userId: webWorld.auth?.userId,
     capturedReturnUrl: webWorld.capturedReturnUrl,
   });
+  await finishOnboardingOnHub({ page });
 });
 
 When(
