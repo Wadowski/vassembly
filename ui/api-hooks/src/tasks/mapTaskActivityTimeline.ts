@@ -82,6 +82,7 @@ export interface TaskActivityItemDto {
   rootInvokeId?: string | null;
   errorMessage?: string | null;
   errorDetails?: TaskActivityErrorDetailsDto | null;
+  outcomeSummary?: string | null;
 }
 
 export interface GraphQLTaskActivityTimelineData {

@@ -7,6 +7,8 @@ export {
   runAgentInvokeWithTools,
   updateTaskToolHandler,
 } from './internalTools';
+export { resolveSpecializationAgentRole } from './internalTools/createSpecialization/resolveSpecializationAgentRole';
+export type { SpecializationAgentRole } from './internalTools/createSpecialization/constants';
 
 export type {
   AgentInvokeProgressEventInput,

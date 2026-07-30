@@ -1,3 +1,4 @@
+import { MAX_SPECIALIZATION_RESULTS } from '@vassembly/constants';
 import { updateDbById } from '@vassembly/commands';
 import { ValidationError } from '@vassembly/errors';
 import { z } from 'zod';
@@ -12,11 +13,11 @@ import type {
 
 const SET_SPECIALIZATION_IDS_INPUT_SCHEMA = z.object({
   commentId: z.string().min(1),
-  specializationIds: z.array(z.string().min(1)).max(3),
+  specializationIds: z.array(z.string().min(1)).max(MAX_SPECIALIZATION_RESULTS),
 });
 
 const SET_SPECIALIZATION_IDS_DB_SCHEMA = z.object({
-  specializationIds: z.array(z.string().min(1)).max(3),
+  specializationIds: z.array(z.string().min(1)).max(MAX_SPECIALIZATION_RESULTS),
 });
 
 const persistSetSpecializationIds = updateDbById<TaskCommentModel>({

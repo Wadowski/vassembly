@@ -3,7 +3,15 @@ export interface ClassifySpecializationArgs {
   description: string;
 }
 
+export interface NewSpecializationEntry {
+  name: string;
+  description: string;
+}
+
 export type ClassifySpecializationResult =
-  | { type: 'existing'; specializationIds: string[] }
-  | { type: 'new'; name: string; description: string }
+  | {
+      type: 'classified';
+      existingSpecializationIds: string[];
+      newSpecializations: NewSpecializationEntry[];
+    }
   | { type: 'skipped'; reason: string };

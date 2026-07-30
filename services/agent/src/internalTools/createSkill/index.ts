@@ -3,50 +3,6 @@ import { ValidationError } from '@vassembly/errors';
 
 import type { CreateSkillToolResult } from './types';
 
-const parseScripts = (
-  value: unknown,
-): Array<{ filename: string; language: 'python' | 'nodejs' | 'bash'; content: string }> => {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  return value.flatMap((entry) => {
-    if (typeof entry !== 'object' || entry === null) {
-      return [];
-    }
-
-    const script = entry as {
-      filename?: unknown;
-      language?: unknown;
-      content?: unknown;
-    };
-
-    if (
-      typeof script.filename !== 'string' ||
-      typeof script.language !== 'string' ||
-      typeof script.content !== 'string'
-    ) {
-      return [];
-    }
-
-    if (
-      script.language !== 'python' &&
-      script.language !== 'nodejs' &&
-      script.language !== 'bash'
-    ) {
-      return [];
-    }
-
-    return [
-      {
-        filename: script.filename.trim(),
-        language: script.language,
-        content: script.content,
-      },
-    ];
-  });
-};
-
 const parseUsesSkillIds = (value: unknown): string[] => {
   if (!Array.isArray(value)) {
     return [];
@@ -65,7 +21,6 @@ export const createSkillToolHandler = async (
   const input = typeof args.input === 'string' ? args.input.trim() : '';
   const output = typeof args.output === 'string' ? args.output.trim() : '';
   const rule = typeof args.rule === 'string' ? args.rule.trim() : '';
-  const scripts = parseScripts(args.scripts);
   const usesSkillIds = parseUsesSkillIds(args.usesSkillIds);
 
   if (!specializationId) {
@@ -91,6 +46,36 @@ export const createSkillToolHandler = async (
   if (!rule) {
     throw new ValidationError('rule is required');
   }
+
+  const scripts = Array.isArray(args.scripts)
+    ? args.scripts.flatMap((entry) => {
+        if (typeof entry !== 'object' || entry === null) {
+          return [];
+        }
+
+        const script = entry as {
+          filename?: unknown;
+          language?: unknown;
+          content?: unknown;
+        };
+
+        if (
+          typeof script.filename !== 'string' ||
+          typeof script.language !== 'string' ||
+          typeof script.content !== 'string'
+        ) {
+          return [];
+        }
+
+        return [
+          {
+            filename: script.filename.trim(),
+            language: script.language as 'python' | 'nodejs' | 'bash' | 'terminal',
+            content: script.content,
+          },
+        ];
+      })
+    : [];
 
   const result = await skillDomain.commands.create({
     specializationId,

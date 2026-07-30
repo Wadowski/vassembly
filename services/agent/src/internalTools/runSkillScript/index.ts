@@ -111,7 +111,7 @@ export const runSkillScriptForContext = async ({
         : 'none';
 
     throw new ValidationError(
-      `Script "${normalizedFilename}" not found on skill "${normalizedSkillName}". Available scripts: ${availableScripts}`,
+      `Script "${normalizedFilename}" not found on skill "${normalizedSkillName}". Available scripts: ${availableScripts}. Ensure the skill was created with scripts[] persisted (via create_skill) and use the exact filename from scripts/ (e.g. "scripts/format-recipe-to-json.py").`,
     );
   }
 

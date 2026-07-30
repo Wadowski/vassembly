@@ -7,6 +7,7 @@ import {
 } from '@vassembly/service-agent';
 import { logger } from '@vassembly/logger';
 
+import { createRecordAgentInvokeProgress } from '../shared/createRecordAgentInvokeProgress';
 import { aggregateTaskSpecializationIds } from './aggregateTaskSpecializationIds';
 import { buildCommentClassificationMessage } from './buildCommentClassificationMessage';
 
@@ -34,17 +35,18 @@ const resolveSpecializationIds = async ({
     return [];
   }
 
-  if (classifyResult.type === 'existing') {
-    return classifyResult.specializationIds;
+  const createdIds: string[] = [];
+
+  for (const newSpec of classifyResult.newSpecializations) {
+    const createRaw = await createSpecializationToolHandler(
+      { name: newSpec.name, description: newSpec.description },
+      toolContext,
+    );
+    const createResult = parseCreateResult(createRaw);
+    createdIds.push(createResult.specializationId);
   }
 
-  const createRaw = await createSpecializationToolHandler(
-    { name: classifyResult.name, description: classifyResult.description },
-    toolContext,
-  );
-  const createResult = parseCreateResult(createRaw);
-
-  return [createResult.specializationId];
+  return [...classifyResult.existingSpecializationIds, ...createdIds];
 };
 
 export const classifyCommentSpecializations = async ({
@@ -81,6 +83,7 @@ export const classifyCommentSpecializations = async ({
       callerAgentType: 'system',
       recursionDepth: 0,
       rootInvokeId: randomUUID(),
+      recordAgentInvokeProgress: createRecordAgentInvokeProgress({ taskId, userId, commentId }),
     };
 
     const classifyRaw = await classifySpecializationToolHandler(

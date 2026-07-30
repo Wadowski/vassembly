@@ -103,11 +103,36 @@ const coerceJsonRecord = (value: unknown): Record<string, unknown> => {
 };
 
 const coerceItems = (value: unknown): Array<Record<string, unknown>> => {
-  if (!Array.isArray(value)) {
+  let arrayValue = value;
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return [];
+    }
+
+    const parsed = tryParseJson({ raw: trimmed });
+
+    if (Array.isArray(parsed)) {
+      arrayValue = parsed;
+    } else {
+      const repaired = repairLlmToolArgumentsJson({ raw: trimmed });
+      const repairedParsed = tryParseJson({ raw: repaired });
+
+      if (Array.isArray(repairedParsed)) {
+        arrayValue = repairedParsed;
+      } else {
+        return [];
+      }
+    }
+  }
+
+  if (!Array.isArray(arrayValue)) {
     return [];
   }
 
-  return value.filter((item): item is Record<string, unknown> => {
+  return arrayValue.filter((item): item is Record<string, unknown> => {
     return typeof item === 'object' && item !== null && !Array.isArray(item);
   });
 };

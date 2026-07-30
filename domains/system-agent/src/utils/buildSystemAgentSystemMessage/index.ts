@@ -5,9 +5,13 @@ import { formatIntentCategoriesSection } from './formatIntentCategoriesSection';
 import { formatIntentRoutingSection } from './formatIntentRoutingSection';
 import { formatSkillPlannerReuseSection, formatSkillPlannerScriptSection } from './formatSkillPlannerScriptSection';
 import {
-  formatSpecializationResearcherSkillsSection,
+  formatSpecializationMethodologistSkillsSection,
+  isSpecializationMethodologistAgentName,
+} from './formatSpecializationMethodologistSkillsSection';
+import {
+  formatSpecializationResearcherDataGatheringSection,
   isSpecializationResearcherAgentName,
-} from './formatSpecializationResearcherSkillsSection';
+} from './formatSpecializationResearcherDataGatheringSection';
 import {
   formatSpecializationWorkerExecutionSection,
   isSpecializationWorkerAgentName,
@@ -51,8 +55,10 @@ export const buildSystemAgentSystemMessage = ({
   } else if (name === SYSTEM_AGENT_NAME.SkillPlanner) {
     sections.push(formatSkillPlannerReuseSection());
     sections.push(formatSkillPlannerScriptSection());
+  } else if (isSpecializationMethodologistAgentName({ name })) {
+    sections.push(formatSpecializationMethodologistSkillsSection());
   } else if (isSpecializationResearcherAgentName({ name })) {
-    sections.push(formatSpecializationResearcherSkillsSection());
+    sections.push(formatSpecializationResearcherDataGatheringSection());
   } else if (isSpecializationWorkerAgentName({ name })) {
     sections.push(formatSpecializationWorkerExecutionSection());
   }

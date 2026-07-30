@@ -28,7 +28,7 @@ export type CredentialScope = 'platform' | 'user';
 export interface AgentInvokeProgressEventInput {
   agentId: string;
   parentAgentId?: string;
-  state: 'started' | 'completed' | 'failed' | 'waiting';
+  state: 'started' | 'completed' | 'failed' | 'waiting' | 'skipped';
   timestamp?: Date;
   duration?: number;
   inputMessages?: string;
@@ -39,6 +39,7 @@ export interface AgentInvokeProgressEventInput {
   provider?: string;
   model?: string;
   credentialSource?: CredentialScope;
+  outcomeSummary?: string;
 }
 
 export type RecordAgentInvokeProgress = (

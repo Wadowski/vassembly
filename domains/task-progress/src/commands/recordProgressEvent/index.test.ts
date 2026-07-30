@@ -231,6 +231,39 @@ describe('recordProgressEvent', () => {
       });
       expect(failedEvent.state).toBe(ProgressEventState.Failed);
     });
+
+    it('should append event with skipped state', async () => {
+      mockCollection.updateOne.mockResolvedValue({
+        matchedCount: 1,
+        modifiedCount: 1,
+      });
+
+      const result = await recordProgressEvent({
+        commentId: 'comment-123',
+        agentId: 'agent-123',
+        state: ProgressEventState.Skipped,
+        outcomeSummary: 'Skipped: short_description',
+      });
+
+      expect(result.state).toBe(ProgressEventState.Skipped);
+      expect(result.outcomeSummary).toBe('Skipped: short_description');
+    });
+
+    it('should persist outcomeSummary when provided', async () => {
+      mockCollection.updateOne.mockResolvedValue({
+        matchedCount: 1,
+        modifiedCount: 1,
+      });
+
+      const result = await recordProgressEvent({
+        commentId: 'comment-123',
+        agentId: 'agent-123',
+        state: ProgressEventState.Completed,
+        outcomeSummary: 'Matched: legal · Created: airtable',
+      });
+
+      expect(result.outcomeSummary).toBe('Matched: legal · Created: airtable');
+    });
   });
 
   describe('optional fields', () => {

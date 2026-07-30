@@ -18,7 +18,7 @@ When creating (only if steps 1–2 do not apply):
 - Input / Output: explicit contract (required for create_skill).
 - Rule: one capability, <=15 numbered steps; delegate details to child skills via use skill.
 - usesSkillIds: set when composing existing skills.
-- Scripts: only for logic not covered by an existing script skill.`;
+- Scripts: default to an empty scripts[] (prompt-only skill). Only call a script creator when the rule's steps plus the agent's assigned tools (web_search, MCP tools, run_skill_script for other skills) cannot express the required logic — e.g. exact deterministic computation, external API calls with no matching tool, or file/byte-level processing.`;
 };
 
 export const formatSkillPlannerScriptSection = (): string => {

@@ -8,6 +8,11 @@ import { Text } from '@vassembly/ui-system-design/text';
 
 import { AI_INTEGRATIONS_LIST_ANCHOR } from '../../../aiIntegrationRoutes';
 import { AiIntegrationForm } from '../../../_components/ai-integrations/_components/AiIntegrationForm';
+import {
+  SystemAgentPreferenceAction,
+  SystemAgentPreferenceBadge,
+} from '../../../_components/ai-integrations/_components/shared';
+import sharedStyles from '../../../_components/ai-integrations/_components/shared/styles.module.scss';
 import styles from '../../../_components/ai-integrations/_components/AiIntegrationsList/styles.module.scss';
 import { useAiIntegrationEditPage } from './useAiIntegrationEditPage';
 
@@ -26,6 +31,12 @@ export function AiIntegrationEditPage(): JSX.Element {
     shouldShowProgress,
     setShouldShowProgress,
     userId,
+    isCurrentSystemAgentConnection,
+    canSetAsSystemAgentConnection,
+    isPreferenceLoading,
+    currentPreferenceCredentialId,
+    handleSetSystemAgentPreference,
+    isSettingSystemAgentPreference,
   } = useAiIntegrationEditPage();
 
   if (view.phase === 'error') {
@@ -55,6 +66,27 @@ export function AiIntegrationEditPage(): JSX.Element {
       <Text variant="h1">Edit integration</Text>
       {credential?.apiKeyHint !== null && credential?.apiKeyHint !== undefined ? (
         <Text variant="body2">Current key hint: {credential.apiKeyHint}</Text>
+      ) : null}
+      {credential !== undefined && !isPreferenceLoading ? (
+        <div className={sharedStyles.editPreferenceSection}>
+          <SystemAgentPreferenceBadge
+            credentialId={credential.id}
+            currentCredentialId={currentPreferenceCredentialId}
+          />
+          <SystemAgentPreferenceAction
+            credential={credential}
+            currentCredentialId={currentPreferenceCredentialId}
+            isPreferenceLoading={isPreferenceLoading}
+            savingCredentialId={isSettingSystemAgentPreference ? credential.id : null}
+            isSaving={isSettingSystemAgentPreference}
+            onSetPreference={handleSetSystemAgentPreference}
+          />
+          {!isCurrentSystemAgentConnection && !canSetAsSystemAgentConnection ? (
+            <Text variant="caption" className={sharedStyles.preferenceHelper}>
+              Test the connection and ensure it is active before setting it as the system connection.
+            </Text>
+          ) : null}
+        </div>
       ) : null}
       <AiIntegrationForm
         values={form.values}

@@ -43,5 +43,6 @@ export const recordProgressEvent = async (
     integrationName: input.integrationName,
     provider: input.provider,
     model: input.model,
+    outcomeSummary: input.outcomeSummary,
   });
 };

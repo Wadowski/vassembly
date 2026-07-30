@@ -1,10 +1,13 @@
 import { runAgentInvokeWithTools } from '@vassembly/service-agent';
 
-import { buildPlanItemWorkerMessage } from './buildPlanItemWorkerMessage';
+import { buildPlanItemMessage } from './buildPlanItemMessage';
+import { buildPriorItemsContext } from './buildPriorItemsContext';
 import { extractCreatedSkillId } from './extractCreatedSkillId';
 import { resolveItemInputSlice } from './resolveItemInputSlice';
+import { resolvePlanItemAgentRole } from './resolvePlanItemAgentRole';
 import { resolveSkillNameForItem } from './resolveSkillNameForItem';
 
+import type { PriorItemContextEntry } from './buildPriorItemsContext';
 import type {
   RecordAgentInvokeProgress,
   RecordInternalToolUsageEvent,
@@ -17,6 +20,7 @@ export interface RunPlanItemParams {
   description: string;
   templateItem: { description: string; skillId: string | null };
   instanceInputDetails: Record<string, unknown>;
+  priorItems: PriorItemContextEntry[];
   taskId: string;
   commentId: string;
   userId: string;
@@ -41,6 +45,7 @@ export const runPlanItem = async ({
   description,
   templateItem,
   instanceInputDetails,
+  priorItems,
   taskId,
   commentId,
   userId,
@@ -56,13 +61,17 @@ export const runPlanItem = async ({
     instanceInputDetails,
   });
   const skillName = await resolveSkillNameForItem({ skillId: templateItem.skillId });
+  const role = await resolvePlanItemAgentRole({ agentId });
+  const priorItemsContext = buildPriorItemsContext({ priorItems });
 
-  const message = buildPlanItemWorkerMessage({
+  const message = buildPlanItemMessage({
+    role,
     templateItemIndex,
     description,
     skillId: templateItem.skillId,
     skillName,
     inputSlice,
+    priorItemsContext,
   });
 
   try {

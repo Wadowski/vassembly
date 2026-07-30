@@ -8,6 +8,7 @@ import { Text } from '@vassembly/ui-system-design/text';
 import {
   getProgressAgentName,
   getProgressEventStats,
+  getProgressOutcomeSummary,
   getProgressRelativeTime,
   getProgressStatusLabel,
 } from './getProgressRowDisplay';
@@ -28,6 +29,7 @@ export const ActivityProgressEventRow = ({
   const statusLabel = getProgressStatusLabel({ item });
   const relativeTime = getProgressRelativeTime({ item });
   const eventStats = getProgressEventStats({ item });
+  const outcomeSummary = getProgressOutcomeSummary({ item });
   const rowClassName = isExpanded ? `${styles.row} ${styles.rowExpanded}` : styles.row;
   const hasErrorDetails = isFailedProgressEvent(item) && Boolean(item.errorDetails?.message);
 
@@ -112,6 +114,15 @@ export const ActivityProgressEventRow = ({
                 ) : null}
               </div>
             </section>
+          ) : null}
+          {outcomeSummary ? (
+            <Text
+              variant="body2"
+              className={styles.meta}
+              data-testid={`activity-progress-outcome-${item.eventId ?? item.id}`}
+            >
+              {outcomeSummary}
+            </Text>
           ) : null}
           {item.inputMessages ? (
             <section>

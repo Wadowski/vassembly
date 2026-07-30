@@ -2,6 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { NotFoundError, TimeoutError, UserInputWaitingError, ValidationError } from '@vassembly/errors';
 
+vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
+  mongoDb: {
+    db: {
+      collection: vi.fn(),
+    },
+  },
+}));
+
 const {
   mockGetModelById,
   mockMarkInProgress,

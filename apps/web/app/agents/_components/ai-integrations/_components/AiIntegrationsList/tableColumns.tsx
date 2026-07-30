@@ -8,14 +8,23 @@ import { AgentUsageBadge } from './AgentUsageBadge';
 import { ConnectionStatusBadge } from './ConnectionStatusBadge';
 import { ProviderIcon } from './ProviderIcon';
 import { AiIntegrationStatusBadge } from './aiIntegrationStatusBadge';
-
+import {
+  SystemAgentPreferenceAction,
+  SystemAgentPreferenceBadge,
+} from '../shared';
+import sharedStyles from '../shared/styles.module.scss';
 
 export interface GetAiIntegrationListTableColumnsArgs {
   onEdit: (credentialId: string) => void;
   onDelete: (credential: AiIntegrationCredentialDto) => void;
   onRestore: (credential: AiIntegrationCredentialDto) => void;
   onTest: (credential: AiIntegrationCredentialDto) => void;
+  onSetSystemAgentPreference: (credentialId: string) => Promise<void>;
   testingCredentialId?: string | null;
+  currentPreferenceCredentialId?: string;
+  settingPreferenceCredentialId?: string | null;
+  isPreferenceLoading?: boolean;
+  isSettingPreference?: boolean;
 }
 
 export const getAiIntegrationListTableColumns = ({
@@ -23,7 +32,12 @@ export const getAiIntegrationListTableColumns = ({
   onDelete,
   onRestore,
   onTest,
+  onSetSystemAgentPreference,
   testingCredentialId,
+  currentPreferenceCredentialId,
+  settingPreferenceCredentialId,
+  isPreferenceLoading = false,
+  isSettingPreference = false,
 }: GetAiIntegrationListTableColumnsArgs): ColumnDef<AiIntegrationCredentialDto>[] => [
   {
     key: 'name',
@@ -46,6 +60,20 @@ export const getAiIntegrationListTableColumns = ({
       <div className={styles.statusConnectionCell}>
         <AiIntegrationStatusBadge status={row.status} />
         <ConnectionStatusBadge status={row.connectionStatus} />
+        <div className={sharedStyles.preferenceRow}>
+          <SystemAgentPreferenceBadge
+            credentialId={row.id}
+            currentCredentialId={currentPreferenceCredentialId}
+          />
+          <SystemAgentPreferenceAction
+            credential={row}
+            currentCredentialId={currentPreferenceCredentialId}
+            isPreferenceLoading={isPreferenceLoading}
+            savingCredentialId={settingPreferenceCredentialId ?? null}
+            isSaving={isSettingPreference}
+            onSetPreference={onSetSystemAgentPreference}
+          />
+        </div>
       </div>
     ),
   },

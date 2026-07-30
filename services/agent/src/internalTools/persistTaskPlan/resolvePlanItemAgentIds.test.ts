@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ValidationError } from '@vassembly/errors';
 
@@ -15,30 +15,40 @@ vi.mock('@vassembly/domain-system-agent', () => ({
 import { resolvePlanItemAgentIds } from './resolvePlanItemAgentIds';
 
 const WORKER_AGENT_ID = '507f1f77bcf86cd799439011';
-const SPECIALIZATION_ID = '507f1f77bcf86cd799439012';
+const RESEARCHER_AGENT_ID = '507f1f77bcf86cd799439012';
+const VALIDATOR_AGENT_ID = '507f1f77bcf86cd799439013';
+const SPECIALIZATION_ID = '507f1f77bcf86cd799439014';
 
 describe('resolvePlanItemAgentIds', () => {
-  it('should resolve exact worker agent names to MongoDB ids', async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
     mockGetBySpecializationId.mockResolvedValue({
       items: [
         { id: WORKER_AGENT_ID, name: 'Legal worker' },
-        { id: 'researcher-id', name: 'Legal researcher' },
+        { id: RESEARCHER_AGENT_ID, name: 'Legal researcher' },
+        { id: VALIDATOR_AGENT_ID, name: 'Legal validator' },
+      ],
+    });
+  });
+
+  it('should resolve worker, researcher, and validator agent names', async () => {
+    const result = await resolvePlanItemAgentIds({
+      specializationIds: [SPECIALIZATION_ID],
+      items: [
+        { agentName: 'Legal worker' },
+        { agentName: 'Legal researcher' },
+        { agentName: 'Legal validator' },
       ],
     });
 
-    const result = await resolvePlanItemAgentIds({
-      specializationIds: [SPECIALIZATION_ID],
-      items: [{ agentName: 'Legal worker' }],
-    });
-
-    expect(result).toEqual([{ agentName: 'Legal worker', agentId: WORKER_AGENT_ID }]);
+    expect(result).toEqual([
+      { agentName: 'Legal worker', agentId: WORKER_AGENT_ID },
+      { agentName: 'Legal researcher', agentId: RESEARCHER_AGENT_ID },
+      { agentName: 'Legal validator', agentId: VALIDATOR_AGENT_ID },
+    ]);
   });
 
   it('should reject placeholder agent names', async () => {
-    mockGetBySpecializationId.mockResolvedValue({
-      items: [{ id: WORKER_AGENT_ID, name: 'Legal worker' }],
-    });
-
     await expect(
       resolvePlanItemAgentIds({
         specializationIds: [SPECIALIZATION_ID],
@@ -47,19 +57,16 @@ describe('resolvePlanItemAgentIds', () => {
     ).rejects.toThrow(ValidationError);
   });
 
-  it('should reject researcher agent names for plan items', async () => {
+  it('should throw when no specialization agents are available', async () => {
     mockGetBySpecializationId.mockResolvedValue({
-      items: [
-        { id: WORKER_AGENT_ID, name: 'Legal worker' },
-        { id: 'researcher-id', name: 'Legal researcher' },
-      ],
+      items: [{ id: 'task-worker-id', name: 'Task worker' }],
     });
 
     await expect(
       resolvePlanItemAgentIds({
         specializationIds: [SPECIALIZATION_ID],
-        items: [{ agentName: 'Legal researcher' }],
+        items: [{ agentName: 'Legal worker' }],
       }),
-    ).rejects.toThrow(ValidationError);
+    ).rejects.toThrow('No specialization agents (researcher, worker, or validator) found');
   });
 });

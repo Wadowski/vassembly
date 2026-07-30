@@ -39,6 +39,7 @@ export interface TaskActivityProgressEventItem {
   integrationName?: string;
   provider?: string;
   model?: string;
+  outcomeSummary?: string;
 }
 
 export interface TaskActivityPlanItemRow {
@@ -188,6 +189,7 @@ export const mapProgressStateToFilterGroup = ({
     [ProgressEventState.Completed]: 'agentFinished',
     [ProgressEventState.Failed]: 'agentFailed',
     [ProgressEventState.Waiting]: 'agentWaiting',
+    [ProgressEventState.Skipped]: 'agentFinished',
   };
 
   return filterGroupByState[normalized] ?? 'agentStarted';

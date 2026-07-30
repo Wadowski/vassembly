@@ -172,4 +172,59 @@ describe('persistTaskPlan internal tool handler', () => {
 
     expect(parsed.error).toContain('Unknown agentName');
   });
+
+  it('should persist plans with worker, validator, and researcher items', async () => {
+    const validatorAgentId = '507f1f77bcf86cd799439017';
+    const researcherAgentId = VALID_AGENT_ID;
+
+    mockGetBySpecializationId.mockResolvedValue({
+      items: [
+        { id: researcherAgentId, name: 'Legal researcher' },
+        { id: VALID_WORKER_AGENT_ID, name: 'Legal worker' },
+        { id: validatorAgentId, name: 'Legal validator' },
+      ],
+    });
+
+    const result = await persistTaskPlanToolHandler(
+      {
+        ...buildValidInput(),
+        items: [
+          {
+            agentName: 'Legal worker',
+            skillId: VALID_SKILL_ID,
+            description: 'Execute work',
+            order: 1,
+          },
+          {
+            agentName: 'Legal validator',
+            skillId: null,
+            description: 'Verify that work was completed',
+            order: 2,
+          },
+          {
+            agentName: 'Legal researcher',
+            skillId: null,
+            description: 'What jurisdiction applies?',
+            order: 3,
+          },
+        ],
+      },
+      BASE_CONTEXT,
+    );
+
+    expect(JSON.parse(result)).toEqual({
+      taskPlanTemplateId: TEMPLATE_ID,
+      taskPlanInstanceId: INSTANCE_ID,
+      reusedExistingTemplate: false,
+    });
+    expect(mockCreateTemplate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        items: [
+          expect.objectContaining({ agentId: VALID_WORKER_AGENT_ID }),
+          expect.objectContaining({ agentId: validatorAgentId }),
+          expect.objectContaining({ agentId: researcherAgentId }),
+        ],
+      }),
+    );
+  });
 });

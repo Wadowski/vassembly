@@ -90,7 +90,7 @@ export function AiIntegrationCreatePageContent(): JSX.Element {
         snackbar.show({
           variant: 'success',
           message:
-            'This connection will be used for platform agents. You can change this in Settings.',
+            'This connection will be used for platform agents. You can change this from the integrations list.',
           duration: 6000,
           isDismissible: true,
         });

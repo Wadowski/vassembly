@@ -5,6 +5,7 @@ export enum ProgressEventState {
   Completed = 'completed',
   Failed = 'failed',
   Waiting = 'waiting',
+  Skipped = 'skipped',
 }
 
 export interface TokenUsage {
@@ -34,6 +35,7 @@ export interface ProgressEventModel {
   integrationName?: string;
   provider?: string;
   model?: string;
+  outcomeSummary?: string;
 }
 
 export class TaskProgressModel extends Model {

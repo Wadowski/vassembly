@@ -1,7 +1,7 @@
 import systemAgentDomain from '@vassembly/domain-system-agent';
 import { ValidationError } from '@vassembly/errors';
 
-import { isSpecializationWorkerAgentName } from '../isSpecializationWorkerAgentName';
+import { resolveSpecializationAgentRole } from '../createSpecialization/resolveSpecializationAgentRole';
 
 export interface ResolvePlanItemAgentIdsParams {
   items: Array<{ agentName: string }>;
@@ -72,20 +72,6 @@ const resolveAgentIdByName = ({
     return suffixMatches[0]!.id;
   }
 
-  const roleSuffixMatches = [' researcher', ' worker', ' validator'].flatMap((suffix) => {
-    if (!normalizedTarget.endsWith(suffix.trim())) {
-      return [];
-    }
-
-    return availableAgents.filter((agent) =>
-      normalizeAgentName({ name: agent.name }).endsWith(suffix),
-    );
-  });
-
-  if (roleSuffixMatches.length === 1) {
-    return roleSuffixMatches[0]!.id;
-  }
-
   const knownNames = availableAgents.map((agent) => agent.name).join(', ');
 
   throw new ValidationError(
@@ -102,21 +88,26 @@ export const resolvePlanItemAgentIds = async ({
   }
 
   const availableAgents = await loadSpecializationAgents({ specializationIds });
-  const workerAgents = availableAgents.filter((agent) =>
-    isSpecializationWorkerAgentName({ name: agent.name }),
+  const specializationAgents = availableAgents.filter(
+    (agent) => resolveSpecializationAgentRole({ name: agent.name }) !== undefined,
   );
 
-  if (workerAgents.length === 0) {
-    throw new ValidationError('No specialization worker agents found for the current task');
+  if (specializationAgents.length === 0) {
+    throw new ValidationError(
+      'No specialization agents (researcher, worker, or validator) found for the current task',
+    );
   }
 
   return items.map((item) => {
-    const agentId = resolveAgentIdByName({ agentName: item.agentName, availableAgents: workerAgents });
-    const matchedAgent = workerAgents.find((agent) => agent.id === agentId);
+    const agentId = resolveAgentIdByName({
+      agentName: item.agentName,
+      availableAgents: specializationAgents,
+    });
+    const matchedAgent = specializationAgents.find((agent) => agent.id === agentId);
 
     if (!matchedAgent) {
       throw new ValidationError(
-        `Plan item agentName "${item.agentName}" must be a specialization worker from Available agents`,
+        `Plan item agentName "${item.agentName}" must be a specialization agent (researcher, worker, or validator) from Available agents`,
       );
     }
 

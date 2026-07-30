@@ -78,6 +78,7 @@ export const GET_TASK_ACTIVITY_TIMELINE_QUERY = `
           type
           stackTrace
         }
+        outcomeSummary
       }
     }
   }

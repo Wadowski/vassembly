@@ -51,6 +51,50 @@ const persistCreate = createDb<SkillModel>({
   validationSchema: CREATE_DB_SCHEMA,
 });
 
+const RUN_SKILL_SCRIPT_REFERENCE_PATTERN = /run_skill_script\s+scripts\/[^\s]+/i;
+
+const assertRuleScriptsConsistency = ({
+  rule,
+  scripts,
+}: {
+  rule: string;
+  scripts: CreateSkillCommandInput['scripts'];
+}): void => {
+  const scriptCount = scripts?.length ?? 0;
+
+  if (scriptCount === 0 && RUN_SKILL_SCRIPT_REFERENCE_PATTERN.test(rule)) {
+    throw new ValidationError(
+      'Skill rule references run_skill_script but no scripts were provided',
+    );
+  }
+};
+
+const backfillScriptsOnExistingSkill = async ({
+  skillId,
+  scripts,
+}: {
+  skillId: string;
+  scripts: NonNullable<CreateSkillCommandInput['scripts']>;
+}): Promise<CreateSkillCommandResult> => {
+  const persistedScripts = await persistSkillScripts({
+    skillId,
+    scripts,
+    scriptStorageClient,
+  });
+
+  await skillMongodbDao.update(
+    skillFactory.create({ id: skillId }),
+    skillFactory.create({ scripts: persistedScripts }),
+  );
+
+  const updated = await getModelById({ id: skillId });
+
+  return {
+    data: updated.data,
+    isNew: false,
+  };
+};
+
 const isDuplicateKeyError = (error: unknown): boolean => {
   if (typeof error !== 'object' || error === null) {
     return false;
@@ -127,6 +171,8 @@ export const create = async (
   const scripts = parsed.data.scripts ?? [];
   const usesSkillIds = parsed.data.usesSkillIds ?? [];
 
+  assertRuleScriptsConsistency({ rule, scripts });
+
   const duplicateResult = await handleDuplicate({
     specializationId: parsed.data.specializationId,
     name,
@@ -134,6 +180,15 @@ export const create = async (
   });
 
   if (duplicateResult !== null) {
+    const existingScripts = duplicateResult.data.scripts ?? [];
+
+    if (scripts.length > 0 && existingScripts.length === 0 && duplicateResult.data.id) {
+      return backfillScriptsOnExistingSkill({
+        skillId: duplicateResult.data.id,
+        scripts,
+      });
+    }
+
     return duplicateResult;
   }
 

@@ -1,22 +1,30 @@
-const MAX_SPECIALIZATION_RESULTS = 3;
+import { MAX_SPECIALIZATION_RESULTS } from '@vassembly/constants';
+
+import { resolveExistingSpecializationMatch } from './resolveExistingSpecializationMatch';
+
+import type { CatalogSpecializationEntry } from './resolveExistingSpecializationMatch';
+import type { NewSpecializationEntry } from './types';
 
 const NEW_PREFIX = 'NEW:';
 
 export type NormalizeGeneratedSpecializationsResult =
-  | { isValid: true; type: 'existing'; specializationIds: string[] }
-  | { isValid: true; type: 'new'; name: string; description: string }
-  | { isValid: false; reason: 'empty_output' | 'invalid_output' | 'too_many_results' };
+  | {
+      isValid: true;
+      existingSpecializationIds: string[];
+      newSpecializations: NewSpecializationEntry[];
+    }
+  | { isValid: false; reason: 'empty_output' | 'invalid_output' };
 
 export interface NormalizeGeneratedSpecializationsParams {
   rawOutput: string;
-  existingByLowerName: Map<string, string>;
+  catalogItems: CatalogSpecializationEntry[];
 }
 
 const parseNewLine = ({
   line,
 }: {
   line: string;
-}): { name: string; description: string } | null => {
+}): NewSpecializationEntry | null => {
   const payload = line.slice(NEW_PREFIX.length).trim();
 
   if (!payload.includes('|')) {
@@ -36,7 +44,7 @@ const parseNewLine = ({
 
 export const normalizeGeneratedSpecializations = ({
   rawOutput,
-  existingByLowerName,
+  catalogItems,
 }: NormalizeGeneratedSpecializationsParams): NormalizeGeneratedSpecializationsResult => {
   const lines = rawOutput
     .split('\n')
@@ -47,44 +55,51 @@ export const normalizeGeneratedSpecializations = ({
     return { isValid: false, reason: 'empty_output' };
   }
 
-  if (lines.length > MAX_SPECIALIZATION_RESULTS) {
-    return { isValid: false, reason: 'too_many_results' };
-  }
-
-  const newLine = lines.find((line) => line.toUpperCase().startsWith(NEW_PREFIX));
-
-  if (newLine !== undefined) {
-    const parsed = parseNewLine({ line: newLine });
-
-    if (parsed === null) {
-      return { isValid: false, reason: 'invalid_output' };
-    }
-
-    return {
-      isValid: true,
-      type: 'new',
-      name: parsed.name,
-      description: parsed.description,
-    };
-  }
-
-  const specializationIds: string[] = [];
+  const existingSpecializationIds: string[] = [];
+  const newSpecializations: NewSpecializationEntry[] = [];
+  const seenExistingIds = new Set<string>();
+  const seenNewNames = new Set<string>();
+  let totalCount = 0;
 
   for (const line of lines) {
-    const specializationId = existingByLowerName.get(line.toLowerCase());
-
-    if (specializationId !== undefined && !specializationIds.includes(specializationId)) {
-      specializationIds.push(specializationId);
+    if (totalCount >= MAX_SPECIALIZATION_RESULTS) {
+      break;
     }
+
+    if (line.toUpperCase().startsWith(NEW_PREFIX)) {
+      const parsed = parseNewLine({ line });
+
+      if (parsed === null || seenNewNames.has(parsed.name)) {
+        continue;
+      }
+
+      seenNewNames.add(parsed.name);
+      newSpecializations.push(parsed);
+      totalCount += 1;
+      continue;
+    }
+
+    const specializationId = resolveExistingSpecializationMatch({
+      candidate: line,
+      catalogItems,
+    });
+
+    if (specializationId === undefined || seenExistingIds.has(specializationId)) {
+      continue;
+    }
+
+    seenExistingIds.add(specializationId);
+    existingSpecializationIds.push(specializationId);
+    totalCount += 1;
   }
 
-  if (specializationIds.length === 0) {
+  if (existingSpecializationIds.length === 0 && newSpecializations.length === 0) {
     return { isValid: false, reason: 'invalid_output' };
   }
 
   return {
     isValid: true,
-    type: 'existing',
-    specializationIds,
+    existingSpecializationIds,
+    newSpecializations,
   };
 };

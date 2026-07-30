@@ -6,7 +6,7 @@ export interface RecordTaskProgressInput {
   commentId: string;
   agentId: string;
   parentAgentId?: string;
-  state: 'started' | 'completed' | 'failed' | 'waiting';
+  state: 'started' | 'completed' | 'failed' | 'waiting' | 'skipped';
   timestamp?: Date;
   duration?: number;
   inputMessages?: string;
@@ -16,6 +16,7 @@ export interface RecordTaskProgressInput {
   integrationName?: string;
   provider?: string;
   model?: string;
+  outcomeSummary?: string;
 }
 
 export type RecordTaskProgressOutput = ProgressEventModel;

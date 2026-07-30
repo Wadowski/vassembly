@@ -1,5 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { DynamicStructuredTool } from '@langchain/core/tools';
 import { ExecutionPausedError, InternalError, UserInputWaitingError } from '@vassembly/errors';
 
 import { buildInternalTools, mergeToolsWithInternalPrecedence } from '../internalTools';
@@ -18,6 +19,7 @@ export interface InvokeWithChatModelParams {
   createChatModel: (model: string) => BaseChatModel;
   invokeParams: AiProviderInvokeParams;
   errorMessage: string;
+  adaptTools?: (tools: DynamicStructuredTool[]) => DynamicStructuredTool[];
 }
 
 const CONSOLE_LOG_PREFIX = 'client-langchain ::';
@@ -54,9 +56,11 @@ interface InvokeModelResult {
 const invokeModel = async ({
   createChatModel,
   invokeParams,
+  adaptTools,
 }: {
   createChatModel: (model: string) => BaseChatModel;
   invokeParams: AiProviderInvokeParams;
+  adaptTools?: (tools: DynamicStructuredTool[]) => DynamicStructuredTool[];
 }): Promise<InvokeModelResult> => {
   const chatModel = createChatModel(invokeParams.model);
   const messages = buildInitialMessages(invokeParams);
@@ -120,6 +124,7 @@ const invokeModel = async ({
     const { response, executedToolNames, executedToolResults, usage } = await runToolCallLoop({
       model: chatModel,
       tools: mergedTools,
+      bindingTools: adaptTools ? adaptTools(mergedTools) : undefined,
       messages,
       maxIterations: MCP_TOOL_MAX_ITERATIONS,
       signal: invokeParams.signal,
@@ -151,9 +156,14 @@ export const invokeWithChatModel = async ({
   createChatModel,
   invokeParams,
   errorMessage,
+  adaptTools,
 }: InvokeWithChatModelParams): Promise<AiProviderInvokeResult> => {
   try {
-    const { message, usage, toolUsage } = await invokeModel({ createChatModel, invokeParams });
+    const { message, usage, toolUsage } = await invokeModel({
+      createChatModel,
+      invokeParams,
+      adaptTools,
+    });
 
     return {
       message,

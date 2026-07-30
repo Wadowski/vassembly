@@ -10,6 +10,18 @@ vi.mock('@vassembly/client-mongodb/src/connection.js', () => ({
   },
 }));
 
+vi.mock('@vassembly/client-mongodb', () => ({
+  mongoDb: {
+    db: {
+      collection: vi.fn(),
+    },
+  },
+  MongoDbDAO: vi.fn(() => ({
+    getRaw: vi.fn(),
+    getManyRaw: vi.fn(),
+  })),
+}));
+
 const {
   mockGetInstanceModelById,
   mockGetTemplateModelById,
@@ -55,7 +67,7 @@ vi.mock('./runPlanItem', () => ({
   runPlanItem: mockRunPlanItem,
 }));
 
-vi.mock('../recordProgressHelper', () => ({
+vi.mock('../../shared/recordProgressHelper', () => ({
   recordProgressEvent: mockRecordProgressEvent,
 }));
 
@@ -181,5 +193,79 @@ describe('orchestrateTaskPlanInstance', () => {
     expect(result.skillIdsUsed).toContain(SKILL_NEW);
     expect(result.skillIdsUsed).toContain('skill-1');
     expect(result.skillIdsUsed).toContain('skill-2');
+  });
+
+  it('should pass worker output as prior items context to a later validator item', async () => {
+    const workerOutput = { message: 'Contract summarized' };
+
+    mockGetTemplateModelById.mockResolvedValue({
+      data: {
+        id: TEMPLATE_ID,
+        items: [
+          { agentId: AGENT_A, skillId: 'skill-1', description: 'Summarize contract', order: 1 },
+          {
+            agentId: AGENT_B,
+            skillId: 'skill-2',
+            description: 'Verify that summary was produced',
+            order: 2,
+          },
+        ],
+      },
+    });
+    mockGetInstanceModelById.mockResolvedValue({
+      data: {
+        id: INSTANCE_ID,
+        taskPlanTemplateId: TEMPLATE_ID,
+        commentId: COMMENT_ID,
+        taskId: TASK_ID,
+        inputDetails: {},
+        status: TaskPlanInstanceStatus.Pending,
+        items: [
+          {
+            templateItemIndex: 0,
+            agentId: AGENT_A,
+            skillId: 'skill-1',
+            order: 1,
+            status: TaskPlanInstanceStatus.Pending,
+            retryCount: 0,
+          },
+          {
+            templateItemIndex: 1,
+            agentId: AGENT_B,
+            skillId: 'skill-2',
+            order: 2,
+            status: TaskPlanInstanceStatus.Pending,
+            retryCount: 0,
+          },
+        ],
+      },
+    });
+    mockRunPlanItem.mockImplementation(
+      async ({
+        templateItemIndex,
+        priorItems,
+      }: {
+        templateItemIndex: number;
+        priorItems: Array<{ output: Record<string, unknown> | null }>;
+      }) => {
+        if (templateItemIndex === 0) {
+          return { status: 'done', output: workerOutput };
+        }
+
+        expect(priorItems).toHaveLength(1);
+        expect(priorItems[0]?.output).toEqual(workerOutput);
+
+        return { status: 'done' };
+      },
+    );
+
+    const result = await orchestrateTaskPlanInstance({
+      taskPlanInstanceId: INSTANCE_ID,
+      commentId: COMMENT_ID,
+      taskId: TASK_ID,
+    });
+
+    expect(result.executedItemIndexes).toEqual([0, 1]);
+    expect(result.instanceStatus).toBe('done');
   });
 });

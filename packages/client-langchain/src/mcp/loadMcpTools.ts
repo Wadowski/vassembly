@@ -76,6 +76,8 @@ export const loadMcpTools = async ({
   const client = new MultiServerMCPClient({
     mcpServers,
     throwOnLoadError: false,
+    prefixToolNameWithServerName: true,
+    additionalToolNamePrefix: 'mcp',
   });
 
   const toolNameToServerName = new Map<string, string>();

@@ -6,13 +6,14 @@ import taskPlanInstanceDomain, {
 import taskPlanTemplateDomain from '@vassembly/domain-task-plan-template';
 
 import { logTaskPlanEvent } from '../logTaskPlanEvent';
-import { createRecordAgentInvokeProgress } from '../createRecordAgentInvokeProgress';
+import { createRecordAgentInvokeProgress } from '../../shared/createRecordAgentInvokeProgress';
 import { createRecordInternalToolUsageEvent } from '../createRecordInternalToolUsageEvent';
 import { createRecordMcpUsageEvent } from '../createRecordMcpUsageEvent';
-import { recordProgressEvent } from '../recordProgressHelper';
+import { recordProgressEvent } from '../../shared/recordProgressHelper';
 import { groupItemsByOrder } from './groupItemsByOrder';
 import { runPlanItem } from './runPlanItem';
 
+import type { PriorItemContextEntry } from './buildPriorItemsContext';
 import type { OrchestrateTaskPlanInstanceParams, OrchestrateTaskPlanInstanceResult } from './types';
 
 export interface OrchestrateTaskPlanInstanceOptions {
@@ -118,6 +119,18 @@ export const orchestrateTaskPlanInstance = async (
   const itemSkillIds = new Map(
     (currentInstance.items ?? []).map((item) => [item.templateItemIndex, item.skillId]),
   );
+  const completedItemContext = new Map<number, PriorItemContextEntry>(
+    (currentInstance.items ?? [])
+      .filter((item) => item.status === TaskPlanInstanceStatus.Done)
+      .map((item) => [
+        item.templateItemIndex,
+        {
+          templateItemIndex: item.templateItemIndex,
+          description: template.items?.[item.templateItemIndex]?.description ?? '',
+          output: item.output ?? null,
+        },
+      ]),
+  );
   const progressAgentId = resolveProgressAgentId({
     agentAssignedId: options.agentAssignedId,
     items: currentInstance.items ?? [],
@@ -187,6 +200,11 @@ export const orchestrateTaskPlanInstance = async (
         });
 
         const templateItem = template.items?.[item.templateItemIndex];
+        const templateItemOrder = templateItem?.order ?? 0;
+        const priorItems = [...completedItemContext.values()].filter(
+          (entry) =>
+            (template.items?.[entry.templateItemIndex]?.order ?? 0) < templateItemOrder,
+        );
 
         const result = await runPlanItem({
           templateItemIndex: item.templateItemIndex,
@@ -197,6 +215,7 @@ export const orchestrateTaskPlanInstance = async (
             skillId: templateItem?.skillId ?? null,
           },
           instanceInputDetails: currentInstance.inputDetails ?? {},
+          priorItems,
           taskId: params.taskId,
           commentId: params.commentId,
           userId: options.userId ?? '',
@@ -243,6 +262,12 @@ export const orchestrateTaskPlanInstance = async (
         });
 
         if (result.status === 'done') {
+          completedItemContext.set(item.templateItemIndex, {
+            templateItemIndex: item.templateItemIndex,
+            description: templateItem?.description ?? '',
+            output: result.output ?? null,
+          });
+
           logTaskPlanEvent({
             event: 'taskPlan.instance.itemCompleted',
             taskId: params.taskId,

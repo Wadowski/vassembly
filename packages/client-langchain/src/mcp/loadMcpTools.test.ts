@@ -47,6 +47,8 @@ describe('loadMcpTools', () => {
         },
       },
       throwOnLoadError: false,
+      prefixToolNameWithServerName: true,
+      additionalToolNamePrefix: 'mcp',
     });
     expect(result.tools).toEqual([{ name: 'search', description: 'Search the web' }]);
     expect(result.toolNameToServerName.get('search')).toBe('brave-1');

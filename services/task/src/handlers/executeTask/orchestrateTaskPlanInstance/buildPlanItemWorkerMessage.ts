@@ -1,10 +1,9 @@
-export interface BuildPlanItemWorkerMessageParams {
-  templateItemIndex: number;
-  description: string;
-  skillId: string | null;
-  skillName: string | null;
-  inputSlice: Record<string, unknown>;
-}
+import type { BuildPlanItemMessageParams } from './buildPlanItemMessage';
+
+export type BuildPlanItemWorkerMessageParams = Pick<
+  BuildPlanItemMessageParams,
+  'templateItemIndex' | 'description' | 'skillId' | 'skillName' | 'inputSlice'
+>;
 
 export const buildPlanItemWorkerMessage = ({
   templateItemIndex,

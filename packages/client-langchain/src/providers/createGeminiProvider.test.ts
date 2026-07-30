@@ -1,15 +1,29 @@
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { afterEach, beforeEach, vi, describe, it, expect } from "vitest";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { InternalError, WrongParamError } from "@vassembly/errors";
 
 import { createGeminiProvider } from "./createGeminiProvider";
 
 vi.mock("@langchain/google-genai");
-vi.mock("@google/genai", () => ({ GoogleGenAI: vi.fn() }));
+
+const createModelsResponse = (
+  models: Array<{ name: string; supportedGenerationMethods: string[] }>,
+): Response =>
+  new Response(
+    JSON.stringify({
+      models,
+    }),
+    { status: 200 },
+  );
 
 describe("createGeminiProvider", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubGlobal("fetch", vi.fn());
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("should throw WrongParamError when apiKey is missing", () => {
@@ -17,12 +31,13 @@ describe("createGeminiProvider", () => {
   });
 
   it("should test connection successfully with generative models", async () => {
-    const { GoogleGenAI } = await import("@google/genai");
-    const pager = (async function* () {
-      yield { name: "models/gemini-pro", supportedActions: ["generateContent"] };
-    })();
-    vi.mocked(GoogleGenAI).mockImplementation(
-      () => ({ models: { list: vi.fn().mockResolvedValue(pager) } }) as never,
+    vi.mocked(fetch).mockResolvedValueOnce(
+      createModelsResponse([
+        {
+          name: "models/gemini-pro",
+          supportedGenerationMethods: ["generateContent"],
+        },
+      ]),
     );
     const result = await createGeminiProvider({ apiKey: "gemini-key" }).testConnection();
     expect(result.success).toBe(true);
@@ -30,12 +45,13 @@ describe("createGeminiProvider", () => {
   });
 
   it("should fail test connection when no generative models available", async () => {
-    const { GoogleGenAI } = await import("@google/genai");
-    const pager = (async function* () {
-      yield { name: "models/embedding-model", supportedActions: ["embedContent"] };
-    })();
-    vi.mocked(GoogleGenAI).mockImplementation(
-      () => ({ models: { list: vi.fn().mockResolvedValue(pager) } }) as never,
+    vi.mocked(fetch).mockResolvedValueOnce(
+      createModelsResponse([
+        {
+          name: "models/embedding-model",
+          supportedGenerationMethods: ["embedContent"],
+        },
+      ]),
     );
     const result = await createGeminiProvider({ apiKey: "gemini-key" }).testConnection();
     expect(result.success).toBe(false);
@@ -55,10 +71,8 @@ describe("createGeminiProvider", () => {
   });
 
   it("should throw InternalError on getModels failure", async () => {
-    const { GoogleGenAI } = await import("@google/genai");
-    vi.mocked(GoogleGenAI).mockImplementation(
-      () =>
-        ({ models: { list: vi.fn().mockRejectedValue(new Error("List error")) } }) as never,
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response("List error", { status: 500 }),
     );
     await expect(
       createGeminiProvider({ apiKey: "gemini-key" }).getModels(),

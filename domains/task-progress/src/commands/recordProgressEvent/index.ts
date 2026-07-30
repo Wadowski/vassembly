@@ -34,6 +34,7 @@ const VALIDATION_SCHEMA = z.object({
   integrationName: z.string().optional(),
   provider: z.string().optional(),
   model: z.string().optional(),
+  outcomeSummary: z.string().optional(),
 });
 
 export const recordProgressEvent = async (
@@ -57,6 +58,7 @@ export const recordProgressEvent = async (
     integrationName: validated.integrationName,
     provider: validated.provider,
     model: validated.model,
+    outcomeSummary: validated.outcomeSummary,
   };
 
   const result = await collection.updateOne(

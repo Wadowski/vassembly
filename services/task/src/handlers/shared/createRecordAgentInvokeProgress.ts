@@ -1,7 +1,7 @@
 import { recordProgressEvent } from './recordProgressHelper';
 
 import type { AgentInvokeProgressEventInput } from '@vassembly/service-agent';
-import type { CreateRecordAgentInvokeProgressParams } from './types';
+import type { CreateRecordAgentInvokeProgressParams } from '../executeTask/types';
 
 export const createRecordAgentInvokeProgress = ({
   taskId,
@@ -25,6 +25,7 @@ export const createRecordAgentInvokeProgress = ({
       integrationName: input.integrationName,
       provider: input.provider,
       model: input.model,
+      outcomeSummary: input.outcomeSummary,
     });
   };
 };

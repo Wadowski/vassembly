@@ -6,6 +6,7 @@ vi.mock('@vassembly/domain-task-progress', () => ({
     Completed: 'completed',
     Failed: 'failed',
     Waiting: 'waiting',
+    Skipped: 'skipped',
   },
 }));
 
@@ -18,5 +19,9 @@ describe('mapProgressStateToFilterGroup', () => {
 
   it('should map failed state to agentFailed', () => {
     expect(mapProgressStateToFilterGroup({ state: 'failed' })).toBe('agentFailed');
+  });
+
+  it('should map skipped state to agentFinished', () => {
+    expect(mapProgressStateToFilterGroup({ state: 'skipped' })).toBe('agentFinished');
   });
 });

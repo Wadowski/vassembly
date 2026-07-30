@@ -48,6 +48,7 @@ vi.mock('@vassembly/domain-task-progress', () => ({
     Completed: 'completed',
     Failed: 'failed',
     Waiting: 'waiting',
+    Skipped: 'skipped',
   },
   default: {
     queries: {},
@@ -232,5 +233,35 @@ describe('getTaskActivityTimeline handler', () => {
         taskId: TASK_ID,
       }),
     ).rejects.toThrow(NotFoundError);
+  });
+
+  it('should pass through outcomeSummary on classifier progress events', async () => {
+    mockResolveCommentProgress.mockResolvedValue({
+      events: [
+        {
+          id: 'event-classifier-1',
+          agentId: 'classifier-agent-1',
+          state: 'skipped',
+          timestamp: new Date('2026-01-01T10:01:00.000Z'),
+          outcomeSummary: 'Skipped: short_description',
+        },
+      ],
+    });
+
+    const result = await getTaskActivityTimeline({
+      userId: USER_ID,
+      taskId: TASK_ID,
+    });
+
+    const progressItem = result.items.find(
+      (item) => item.kind === 'progressEvent' && item.eventId === 'event-classifier-1',
+    );
+
+    expect(progressItem).toMatchObject({
+      kind: 'progressEvent',
+      state: 'skipped',
+      outcomeSummary: 'Skipped: short_description',
+      filterGroup: 'agentFinished',
+    });
   });
 });

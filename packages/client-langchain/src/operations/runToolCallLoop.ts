@@ -23,6 +23,7 @@ import type { AiProviderInvokeResult } from '../types';
 export interface RunToolCallLoopParams {
   model: BaseChatModel;
   tools: DynamicStructuredTool[];
+  bindingTools?: DynamicStructuredTool[];
   messages: BaseMessage[];
   maxIterations: number;
   signal?: AbortSignal;
@@ -377,6 +378,7 @@ const invokeToolWithRecording = async ({
 export const runToolCallLoop = async ({
   model,
   tools,
+  bindingTools,
   messages,
   maxIterations,
   signal,
@@ -389,8 +391,11 @@ export const runToolCallLoop = async ({
   requireSuccessfulToolLlmName,
 }: RunToolCallLoopParams): Promise<RunToolCallLoopResult> => {
   const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
+  const toolsToBind = bindingTools ?? tools;
   const modelWithTools =
-    tools.length > 0 && typeof model.bindTools === 'function' ? model.bindTools(tools) : model;
+    toolsToBind.length > 0 && typeof model.bindTools === 'function'
+      ? model.bindTools(toolsToBind)
+      : model;
   let currentMessages = messages;
   const executedToolNames: string[] = [];
   const executedToolResults: ExecutedToolResult[] = [];

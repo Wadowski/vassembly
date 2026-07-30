@@ -131,10 +131,10 @@ describe('createSpecialization internal tool handler', () => {
       name: 'legal',
       description: 'Legal specialization',
     });
-    expect(mockCreateSystemAgent).toHaveBeenCalledTimes(3);
+    expect(mockCreateSystemAgent).toHaveBeenCalledTimes(4);
     expect(mockCreateSystemAgent).toHaveBeenCalledWith(
       expect.objectContaining({
-        name: 'Legal researcher',
+        name: 'Legal methodologist',
         category: AgentCategory.Utility,
         specializationId: 'spec-1',
         assignedToolIds: [...SPECIALIZATION_AGENT_TOOL_IDS],
@@ -155,7 +155,7 @@ describe('createSpecialization internal tool handler', () => {
     expect(mockGenerateSpecializationAgentDescriptions).toHaveBeenCalledWith(
       expect.objectContaining({
         specializationId: 'spec-1',
-        agentIds: ['agent-1', 'agent-1', 'agent-1'],
+        agentIds: ['agent-1', 'agent-1', 'agent-1', 'agent-1'],
       }),
     );
   });
@@ -172,7 +172,7 @@ describe('createSpecialization internal tool handler', () => {
     );
 
     expect(JSON.parse(result)).toEqual({ specializationId: 'spec-1', isNew: true });
-    expect(mockCreateSystemAgent).toHaveBeenCalledTimes(3);
+    expect(mockCreateSystemAgent).toHaveBeenCalledTimes(4);
   });
 
   it('should not throw when MCP mapping rejects', async () => {

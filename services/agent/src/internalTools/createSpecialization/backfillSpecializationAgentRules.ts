@@ -1,49 +1,13 @@
 import systemAgentDomain from '@vassembly/domain-system-agent';
 
-import {
-  SPECIALIZATION_AGENT_ROLES,
-  SPECIALIZATION_AGENT_RULES,
-  SPECIALIZATION_PROVISIONING_ADMIN_ID,
-} from './constants';
-
-import type { SpecializationAgentRole } from './constants';
+import { SPECIALIZATION_AGENT_RULES, SPECIALIZATION_PROVISIONING_ADMIN_ID } from './constants';
+import { resolveSpecializationAgentRole } from './resolveSpecializationAgentRole';
 
 const PAGE_SIZE = 100;
 
 export interface BackfillSpecializationAgentRulesResult {
   updatedCount: number;
 }
-
-const SYSTEM_TASK_WORKER_AGENT_NAMES = [
-  'Task worker',
-  'Question worker',
-  'Scheduled task worker',
-  'Routine task worker',
-] as const;
-
-const resolveSpecializationAgentRoleFromName = ({
-  name,
-}: {
-  name: string;
-}): SpecializationAgentRole | undefined => {
-  const normalizedName = name.trim().toLowerCase();
-
-  if (
-    SYSTEM_TASK_WORKER_AGENT_NAMES.some(
-      (systemWorkerName) => systemWorkerName.toLowerCase() === normalizedName,
-    )
-  ) {
-    return undefined;
-  }
-
-  for (const role of SPECIALIZATION_AGENT_ROLES) {
-    if (normalizedName.endsWith(` ${role}`)) {
-      return role;
-    }
-  }
-
-  return undefined;
-};
 
 export const backfillSpecializationAgentRules =
   async (): Promise<BackfillSpecializationAgentRulesResult> => {
@@ -63,7 +27,7 @@ export const backfillSpecializationAgentRules =
           continue;
         }
 
-        const role = resolveSpecializationAgentRoleFromName({ name: agent.name });
+        const role = resolveSpecializationAgentRole({ name: agent.name });
         if (role === undefined) {
           continue;
         }

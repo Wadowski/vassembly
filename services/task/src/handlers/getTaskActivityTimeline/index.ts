@@ -156,6 +156,7 @@ export const getTaskActivityTimeline = async ({
         integrationName: event.integrationName,
         provider: event.provider,
         model: event.model,
+        outcomeSummary: event.outcomeSummary,
       });
     }
 

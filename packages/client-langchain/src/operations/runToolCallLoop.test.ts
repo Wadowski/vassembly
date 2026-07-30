@@ -188,4 +188,23 @@ describe('runToolCallLoop', () => {
     expect(result.response.content).toBe('Done');
     expect(invoke).toHaveBeenCalledTimes(2);
   });
+
+  it('should bind adapted tools while invoking the original tool instances', async () => {
+    const bindTools = vi.fn().mockReturnValue(createMockModel(vi.fn().mockResolvedValue({ content: 'Done', tool_calls: [] })));
+    const toolInvoke = vi.fn().mockResolvedValue('ok');
+    const originalTool = createMockTool('persist_task_plan', toolInvoke);
+    const bindingTool = { name: 'persist_task_plan', invoke: vi.fn() } as unknown as DynamicStructuredTool;
+
+    await runToolCallLoop({
+      model: { bindTools } as unknown as BaseChatModel,
+      tools: [originalTool],
+      bindingTools: [bindingTool],
+      messages: [new HumanMessage('Hello')],
+      maxIterations: 1,
+    });
+
+    expect(bindTools).toHaveBeenCalledWith([bindingTool]);
+    expect(bindingTool.invoke).not.toHaveBeenCalled();
+    expect(toolInvoke).not.toHaveBeenCalled();
+  });
 });

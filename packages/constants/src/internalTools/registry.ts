@@ -56,7 +56,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     domain: 'task-plan',
     action: 'persist',
     description:
-      'Persist the composed plan. Required top-level fields: shortName, description, inputDetails, outputDetails, resolvedInputDetails, items[]. Each item needs agentName (exact name from Available agents), skillId (existing skill id, or null), skillName (existing skill name to reuse when skillId is null; omit to define a new skill via description), description, order. Do not use placeholder agent names or MongoDB ids for agents.',
+      'Persist the composed plan. Required top-level fields: shortName, description, inputDetails, outputDetails, resolvedInputDetails, items[]. Each item needs agentName (exact name from Available agents — worker, researcher, or validator), skillId (existing skill id, or null), skillName (existing skill name to reuse when skillId is null; omit to define a new skill via description), description, order. Do not use placeholder agent names or MongoDB ids for agents.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'persist_task_plan',
   }),
@@ -72,7 +72,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     domain: 'specialization',
     action: 'classify',
     description:
-      'Classify a task description into 1–3 specialization domains. Returns existing IDs or a signal to create a new specialization.',
+      'Classify a task description into up to 5 specialization domains (subject-matter and tool/platform). Returns existing IDs and/or new specialization entries to create.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'classify_specialization',
   }),
@@ -80,7 +80,7 @@ export const INTERNAL_TOOLS: InternalToolDefinition[] = [
     domain: 'specialization',
     action: 'create',
     description:
-      'Provision a new specialization domain: creates the entity, provisions researcher/worker/validator agents, and maps relevant MCPs.',
+      'Provision a new specialization domain: creates the entity, provisions methodologist/researcher/worker/validator agents, and maps relevant MCPs.',
     accessScope: InternalToolAccessScope.SYSTEM_ONLY,
     llmToolName: 'create_specialization',
   }),

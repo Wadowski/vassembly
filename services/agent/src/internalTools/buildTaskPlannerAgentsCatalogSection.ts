@@ -1,5 +1,5 @@
 import { listSystemAgentsBySpecializationIds } from './listAgents/listSystemAgentsBySpecializationIds';
-import { isSpecializationWorkerAgentName } from './isSpecializationWorkerAgentName';
+import { resolveSpecializationAgentRole } from './createSpecialization/resolveSpecializationAgentRole';
 
 export interface BuildTaskPlannerAgentsCatalogSectionParams {
   specializationIds: string[];
@@ -9,20 +9,33 @@ export const buildTaskPlannerAgentsCatalogSection = async ({
   specializationIds,
 }: BuildTaskPlannerAgentsCatalogSectionParams): Promise<string> => {
   const agents = await listSystemAgentsBySpecializationIds({ specializationIds });
-  const workerAgents = agents.filter((agent) => isSpecializationWorkerAgentName({ name: agent.name }));
+  const specializationAgents = agents
+    .map((agent) => ({ agent, role: resolveSpecializationAgentRole({ name: agent.name }) }))
+    .filter(
+      (
+        entry,
+      ): entry is {
+        agent: (typeof agents)[number];
+        role: NonNullable<ReturnType<typeof resolveSpecializationAgentRole>>;
+      } => entry.role !== undefined,
+    );
 
-  if (workerAgents.length === 0) {
-    return '## Available agents\n\n(none — no specialization workers for this task)';
+  const planAssignableAgents = specializationAgents.filter(
+    ({ role }) => role !== 'methodologist',
+  );
+
+  if (planAssignableAgents.length === 0) {
+    return '## Available agents\n\n(none — no specialization agents for this task)';
   }
 
-  const lines = workerAgents.map(
-    (agent) =>
-      `- **${agent.name}** — use this exact string as \`agentName\` in persist_task_plan items`,
+  const lines = planAssignableAgents.map(
+    ({ agent, role }) =>
+      `- **${agent.name}** (${role}) — use this exact string as \`agentName\` in persist_task_plan items`,
   );
 
   return `## Available agents
 
-Plan items must target specialization **workers** only (listed below). Do not use researchers or validators as agentName.
+Each plan item targets exactly one specialization agent — worker, researcher, or validator (listed below with role). Methodologists run before planning and are not plan items. Assign a worker for execution, a researcher to gather topic data, or a validator to verify the user's request is fulfilled.
 
 ${lines.join('\n')}`;
 };

@@ -1032,3 +1032,155 @@ db.agents.countDocuments({
 | Provider clients | Unified `@vassembly/client-langchain` (v1.1) | Separate per-provider packages (higher maintenance) |
 
 This approach minimizes new architectural concepts, keeps secrets out of responses by default, and leaves a clear path for future agent execution (`invoke()` already on client interface).
+
+---
+
+## Addendum (2026-07-30): Switch System Agent Connection Preference from the AI Integrations UI
+
+**Status:** Ready for implementation — UI-only, no backend changes required.
+**Feature request:** Let users change which AI integration powers platform/system agents directly from the AI Integrations list or the integration edit page, instead of only via the (currently unimplemented) Settings `#ai-connections` section referenced in [`docs/features/system-agent/design.md`](../system-agent/design.md).
+
+### Analysis
+
+**What already exists (fully reusable, ~100%):**
+
+| Layer | Asset | Reuse |
+|-------|-------|-------|
+| Domain | `@vassembly/domain-system-agent` — `preferenceModel.ts`, `commands.upsertPreference`, `queries.getPreferenceByUserId` | No change |
+| Service | `services/agent/src/handlers/getConnectionPreference`, `setConnectionPreference` — validates credential is owned, `status: active`, `connectionStatus: connected` | No change |
+| API | REST `GET/PUT /system-agents/connection-preference` (user auth via `authorizeRequest`) | No change |
+| UI hooks | `ui/api-hooks/src/systemAgents/useSystemAgentPreference.ts` → `useSystemAgentPreference()` (GET) and `useUpsertSystemAgentPreference()` (PUT), already exported from `@vassembly/ui-api-hooks` | No change |
+| Cross-cutting guards | `createCredential` auto-sets preference on first credential (`isFirstSystemAgentPreference`); `deleteCredential` blocks delete with `ConflictError` when the credential is the active preference | No change |
+| UI patterns | `ConnectionStatusBadge`, `AiIntegrationStatusBadge`, `AgentUsageBadge` (Tag/Text badges with variant maps), `useAiIntegrationList.ts` (testingCredentialId busy-state pattern), `tableColumns.tsx` (action column), `DeleteDialog.tsx` (warning copy pattern) | Clone pattern, not code |
+
+**What's missing (the actual gap — UI only):**
+
+1. No visual indicator on the list or edit page showing *which* credential currently powers system agents.
+2. No action to set/change the preference from either surface — today the create-flow toast says "You can change this in Settings," but `/settings#ai-connections` is stub/unmounted, so users have no way to change their mind after the first integration.
+3. `deleteCredential`'s `ConflictError` message is thrown by the API but the list's `handleDelete` in `useAiIntegrationList.ts` swallows it behind a generic `"Failed to delete integration"` snackbar — the specific, actionable backend message never reaches the user.
+
+**No new domain, service, route, or GraphQL work is needed.** This is a pure `apps/web` UI addition composing two already-exported hooks. Confirms the PRD/design's Phase 3 backend was already fully delivered; only the "Phase 2 Settings UI" front-end was never built, and the request now redirects that UI surface to `/agents` instead.
+
+### UX Placement Decision: Both list and edit page
+
+| Option | Verdict | Rationale |
+|--------|---------|-----------|
+| List page only | Partial | List is the natural place to *compare* connections at a glance (like a radio group) and switch in one click without navigating away — matches the "only one connection used at a time" mental model from `design.md` §3.4. |
+| Edit/detail page only | Partial | Users already reviewing one integration's details expect to see/change its system-agent role inline, without going back to the list. |
+| **Both (recommended)** | ✅ | Same shared hook/logic, presentational components differ only in layout. Marginal cost is one extra hook consumer + two small components, not duplicated business logic. Matches how `ConnectionStatusBadge` and `AiIntegrationStatusBadge` are already reused across both surfaces implicitly (list shows them; edit page could too). |
+
+**Decision:** Implement on **both** — list (primary, since users compare across all integrations) and edit page (secondary, contextual convenience) — sharing one Facade hook so there is a single source of truth for the "set as system connection" action.
+
+### Design Patterns Applied
+
+- **Facade** (`services/agent/src/handlers/*` already fascades domain calls; mirrored on the frontend): introduce `useSystemAgentPreferenceStatus` + `useSetSystemAgentPreference` as a small facade over the existing `useSystemAgentPreference()` / `useUpsertSystemAgentPreference()` hooks, hiding refetch/snackbar/busy-state orchestration behind one API consumed identically by the list and the edit page — avoids duplicating that orchestration in two components.
+- **Strategy (map object)**: `SystemAgentPreferenceBadge` renders label/variant via a state → `{ label, tagVariant }` map, following the exact pattern already used in `ConnectionStatusBadge.tsx` and `AiIntegrationStatusBadge.tsx` (`CONNECTION_VARIANT_MAP`, `CONNECTION_LABEL_MAP`).
+- **Observer** (implicit via hook re-fetch): after a successful `PUT`, the facade hook triggers `useSystemAgentPreference().fetch()` again so all badge/action consumers on the page re-render with the new current-preference id — same pattern `useAiIntegrationList.ts` already uses (`refreshList()` after delete/restore/test).
+
+### API & Convention Notes (doc drift)
+
+- `useSystemAgentPreference` GET already uses **REST**, not GraphQL, which technically deviates from `api-calling-conventions.mdc` ("GraphQL for Data Retrieval"). This was decided in the existing System Agents backend (`docs/features/system-agent/architecture.md` §6.1) prior to this feature and is **out of scope to change here** — flipping it to GraphQL would require a new resolver + schema type purely to satisfy convention, with no user-facing benefit, and risks regressing the already-shipped Settings/Invoke-modal consumers of the same hook. **Recommendation:** leave as-is; track as separate tech-debt cleanup if/when the preference domain gets additional query needs.
+- **Route drift resolution:** `docs/features/system-agent/design.md` and `docs/features/system-agent/architecture.md` describe the canonical control surface as `/settings#ai-connections` (Settings page), but that Settings section was never implemented (stub/unmounted) and the codebase's actual, shipped surface is `/agents#ai-integrations` (list) and `/agents/ai-integrations/[id]/edit` (edit). This addendum **supersedes** the Settings-only placement for those two docs: the canonical, currently-supported UI for changing the system-agent connection is the AI Integrations list/edit pages documented here. If Settings `#ai-connections` is built later, it should call the same `useSystemAgentPreference` / `useUpsertSystemAgentPreference` hooks and can simply link out from `IntegrationCredentialPicker`'s existing `manageHref` pattern — no conflict, just an additional entry point.
+- No changes needed to `packages/constants/src/specialization.ts` or `config.platformAi` — this addendum only affects user-credential preference used by `getConnectionPreference`/`setConnectionPreference`/`invokeSystemAgent`, which is orthogonal to platform-wide AI config.
+
+### UX Flows
+
+**Flow 1 — Set preference from the list**
+
+```mermaid
+flowchart TD
+  A[List loads] --> B[GET /system-agents/connection-preference]
+  B --> C{Preference exists?}
+  C -->|No 404| D[No row shows "Current"; all eligible rows show "Set as system connection"]
+  C -->|Yes| E[Row matching integrationCredentialId shows "Current" badge; others show action button]
+  E --> F[User clicks "Set as system connection" on row X]
+  F --> G{Row X eligible? status=active & connectionStatus=connected}
+  G -->|No| H[Button disabled with tooltip — unreachable via click]
+  G -->|Yes| I[PUT /system-agents/connection-preference credentialId=X]
+  I -->|200| J[Snackbar: "System agent connection updated"; refetch preference; badge moves to row X]
+  I -->|422/404 error| K[Snackbar: error message from API]
+```
+
+**Flow 2 — Set/verify preference from the edit page**
+
+```mermaid
+flowchart TD
+  A[Edit page loads credential] --> B[GET /system-agents/connection-preference in parallel]
+  B --> C{This credential is current preference?}
+  C -->|Yes| D[Show "Current system agent connection" badge, action disabled]
+  C -->|No| E{Credential active & connected?}
+  E -->|Yes| F[Show "Set as system connection" button]
+  E -->|No| G[Show disabled button + helper: "Test the connection and ensure it's active first"]
+  F --> H[Click → PUT preference] --> I[Snackbar success; badge flips to "Current"]
+```
+
+**Flow 3 — Delete guard message (edge-case fix bundled with this feature)**
+
+```mermaid
+flowchart TD
+  A[User clicks Delete on the current-preference credential] --> B[DELETE /ai-integrations/:id]
+  B --> C[Service throws ConflictError: "Cannot delete this credential because it powers system agents..."]
+  C --> D[handleDelete catches error via getRequestErrorMessage, shows it in snackbar instead of generic text]
+```
+
+### File-Level Implementation Steps (all in `apps/web`, UI-only)
+
+1. **Shared facade hooks** — new folder `apps/web/app/agents/_components/ai-integrations/_components/shared/`:
+   - `useSystemAgentPreferenceStatus.ts` — thin wrapper over `useSystemAgentPreference()`; exposes `{ currentCredentialId: string | undefined, isLoading, refetch }`; treats a 404/`NotFoundError` response as `currentCredentialId: undefined` (no error surfaced to UI — "no preference set yet" is a valid state, matching `getConnectionPreference`'s documented 404 behavior).
+   - `useSetSystemAgentPreference.ts` — thin wrapper over `useUpsertSystemAgentPreference()`; exposes `{ setPreference: (credentialId: string) => Promise<void>, isSaving: boolean, savingCredentialId: string | null }`; on success calls a passed-in `onSuccess` (used to trigger `refetch`) and shows the snackbar; on failure shows `getRequestErrorMessage(error, 'Failed to update system agent connection')` (mirrors `handleTestConnection`'s try/catch pattern in `useAiIntegrationList.ts`).
+   - `types.ts` — `SystemAgentPreferenceEligibility` type/params per `code-rules-general.mdc` (types.ts colocation rule).
+   - `index.ts` — public exports only.
+
+2. **Presentational components** — same `shared/` folder:
+   - `SystemAgentPreferenceBadge.tsx` — Tag (`variant="primary"` tonal) with text "Current connection" when `credential.id === currentCredentialId`; renders nothing otherwise. Mirrors `ConnectionStatusBadge.tsx` structure (map-based label/variant, though here it's boolean so a simple conditional suffices — no map needed, avoiding over-engineering per `software-design-patterns.mdc` §Anti-patterns).
+   - `SystemAgentPreferenceAction.tsx` — `Button` (`variant="text"`, `size="small"`) labeled "Set as system connection"; `isDisabled` when `status !== 'active' || connectionStatus !== 'connected'` (tooltip/helper text: "Test the connection and ensure it's active first"); `isLoading` when `savingCredentialId === credential.id`; hidden entirely (render `null`) when this row is already the current preference (badge shown instead, per Flow 1/2).
+   - `styles.module.scss` — reuse existing `Tag`/`Button` tokens; no new design tokens needed.
+
+3. **List integration** — `apps/web/app/agents/_components/ai-integrations/_components/AiIntegrationsList/`:
+   - `useAiIntegrationList.ts`: compose `useSystemAgentPreferenceStatus()` and `useSetSystemAgentPreference({ onSuccess: refetchPreference })`; expose `currentPreferenceCredentialId`, `handleSetSystemAgentPreference`, `settingPreferenceCredentialId` from the hook's return object (same shape convention as `testingCredentialId`/`handleTestConnection`).
+     - **Bundled fix:** wrap `deleteCredential` call in `handleDelete` in try/catch, using `getRequestErrorMessage(error, 'Failed to delete integration')` for the snackbar message instead of the current hardcoded string, so the `ConflictError` ("Cannot delete this credential because it powers system agents…") reaches the user (addresses edge case in Flow 3).
+   - `tableColumns.tsx`: extend the existing `statusAndConnection` cell (or add adjacent `systemAgentPreference` column) to render `<SystemAgentPreferenceBadge />` + `<SystemAgentPreferenceAction />` side by side; extend `GetAiIntegrationListTableColumnsArgs` with `currentPreferenceCredentialId`, `onSetSystemAgentPreference`, `settingPreferenceCredentialId`.
+   - `AiIntegrationsList.tsx`: pass the three new props from `catalog` into `getAiIntegrationListTableColumns(...)` (same pattern as existing `testingCredentialId`).
+
+4. **Edit page integration** — `apps/web/app/agents/ai-integrations/[id]/edit/`:
+   - `useAiIntegrationEditPage.tsx`: compose the same two shared hooks; expose `isCurrentSystemAgentConnection`, `canSetAsSystemAgentConnection`, `handleSetSystemAgentPreference`, `isSettingSystemAgentPreference`.
+   - `AiIntegrationEditPage.tsx`: render `SystemAgentPreferenceBadge` / `SystemAgentPreferenceAction` directly under the "Current key hint" `Text`, above `AiIntegrationForm`.
+
+5. **No changes required** to `ui/api-hooks`, `services/agent`, `domains/system-agent`, or `apps/api` — all consumed hooks/endpoints already exist and are exported.
+
+### Testing Strategy
+
+| Test | Location | Focus |
+|------|----------|-------|
+| Unit — `useSystemAgentPreferenceStatus.test.ts` | `shared/` | Maps 404/no-preference to `undefined` without throwing; maps successful GET to `currentCredentialId` |
+| Unit — `useSetSystemAgentPreference.test.ts` | `shared/` | Success calls `onSuccess` + success snackbar; API error surfaces `getRequestErrorMessage` text; `savingCredentialId` tracks the in-flight row only (busy-state isolation, same assertion style as `testingCredentialId`) |
+| Unit — `SystemAgentPreferenceBadge.test.tsx` | `shared/` | Renders badge only when id matches; renders nothing otherwise (black-box render assertions per `code-rules-general.mdc`) |
+| Unit — `SystemAgentPreferenceAction.test.tsx` | `shared/` | Disabled when inactive/disconnected; hidden when already current; fires `onClick` with credential id otherwise |
+| Unit — `useAiIntegrationList.test.ts` (extend existing) | `AiIntegrationsList/` | New: `handleSetSystemAgentPreference` invokes facade + triggers `refreshList`-equivalent refetch; delete error now surfaces backend `ConflictError` message instead of generic text |
+| Unit — `useAiIntegrationEditPage.test.ts` (extend existing, if present, else colocate `.test.tsx`) | edit page | Badge/action state reflects `currentCredentialId` vs `credentialId` from route params |
+| E2E (optional, only if user explicitly wants Gherkin coverage) | `apps/web/e2e/features/ai-integrations/` | "User sets system agent connection from list", "User sets system agent connection from edit page", "Disconnected credential cannot be set as preference", "Deleting the current preference credential shows a blocking error" — reuse existing `apps/web/e2e/steps/utils/seedMultiSpecTask.ts`-style seeding conventions from `multi-specialization-tasks` steps if a credential-seeding helper doesn't already exist under `e2e/steps/utils/` |
+
+No new backend integration tests needed — `setConnectionPreference`/`deleteCredential` handler tests already cover the validation/guard logic being surfaced (see `services/agent/src/handlers/setConnectionPreference/index.test.ts`, `deleteCredential` tests).
+
+### Edge Cases
+
+| # | Scenario | Handling |
+|---|----------|----------|
+| 1 | Credential is `connectionStatus: 'untested'` or `'failed'` | Action button disabled with helper text; user must "Test" first (existing Test action in the same row) |
+| 2 | Credential `status: 'archived'` or `'disabled'` | Action hidden entirely (archived rows already only show Restore, not Delete/Test — preference action follows the same visibility rule) |
+| 3 | No preference set yet (`getConnectionPreference` 404) | Treated as "unset" — no row shows "Current"; all eligible rows show the action; first successful click establishes it |
+| 4 | Preference points to a credential that was later deleted/archived | `currentCredentialId` from GET may reference a row not present in the current filtered/paginated list view — badge simply won't render on this page; not a bug, matches list pagination/filtering semantics already accepted elsewhere in this doc |
+| 5 | User attempts to delete the current-preference credential | Backend `ConflictError` ("Cannot delete this credential because it powers system agents…") now surfaces verbatim in the snackbar (bundled fix in step 3) instead of masking it |
+| 6 | Loading states | Preference GET runs in parallel with the list/detail fetch; while `isLoading`, render no badge/no action (avoid flashing incorrect "Set as system connection" before we know the true current id) — same “skip render until data resolved” approach as `AiIntegrationEditPage`'s `view.phase === 'loading'` guard |
+| 7 | Rapid double-click / concurrent set requests | `savingCredentialId` busy-state disables the clicked action and (optionally) all other rows' actions while a PUT is in-flight — same single-flight pattern as `testingCredentialId` |
+| 8 | User sets preference to the same credential that's already current | Not reachable via UI (action hidden for the current row per edge case handling), so no redundant PUT is possible |
+
+### Todo Plan
+
+1. **`apps/web`** — [Type: extend existing app — UI-only feature]
+   - Changes needed: Add shared facade hooks + presentational badge/action components under `agents/_components/ai-integrations/_components/shared/`; wire into `AiIntegrationsList` (`useAiIntegrationList.ts`, `tableColumns.tsx`, `AiIntegrationsList.tsx`) and the edit page (`useAiIntegrationEditPage.tsx`, `AiIntegrationEditPage.tsx`); fix `handleDelete` error surfacing for the preference-conflict guard
+   - Files: see File-Level Implementation Steps §1–4 above
+   - Suggested subagent workflow: `tdd-unit-test-writer` → `coder` ↔ `code-reviewer` (loop: max 2 iterations) → `documentation-writer`
+   - Dependencies: None — all backend/API/hooks already shipped
+
+That is the only todo item; no other package requires changes.

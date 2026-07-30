@@ -65,6 +65,7 @@ export const registerTaskActivityResolvers = (builder: Builder): void => {
       rootInvokeId: t.exposeString('rootInvokeId', { nullable: true }),
       errorMessage: t.exposeString('errorMessage', { nullable: true }),
       errorDetails: t.expose('errorDetails', { type: 'ErrorDetails', nullable: true }),
+      outcomeSummary: t.exposeString('outcomeSummary', { nullable: true }),
       commentSkillIds: t.field({
         type: graphQLListType('String'),
         nullable: true,

@@ -13,7 +13,7 @@ import { randomUUID } from 'node:crypto';
 import { executionRegistry } from '../../executionRegistry';
 import { buildConversationMessage } from './buildConversationMessage';
 import { buildResumeMessage } from './buildResumeMessage';
-import { createRecordAgentInvokeProgress } from './createRecordAgentInvokeProgress';
+import { createRecordAgentInvokeProgress } from '../shared/createRecordAgentInvokeProgress';
 import { createRecordInternalToolUsageEvent } from './createRecordInternalToolUsageEvent';
 import { createRecordMcpUsageEvent } from './createRecordMcpUsageEvent';
 import { logTaskPlanEvent } from './logTaskPlanEvent';
