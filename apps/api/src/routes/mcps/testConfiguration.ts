@@ -2,7 +2,7 @@ import { WrongParamError } from '@vassembly/errors';
 import { defineRoute } from '@vassembly/server';
 import { z } from 'zod';
 
-import { authorizeProtectedRequest } from '../shared/authorizeProtectedRequest';
+import { handlers as authHandlers } from '@vassembly/service-auth';
 import mcpService from '@vassembly/service-mcp';
 import { withErrorResponses } from '../errorSchema';
 
@@ -33,7 +33,7 @@ export const testMcpConfigurationRoute = defineRoute({
       throw new WrongParamError('Missing mcpId');
     }
 
-    const { userId } = await authorizeProtectedRequest({ headers });
+    const { userId } = await authHandlers.authorizeRequest({ headers });
 
     return mcpService.testMcpConnection(
       {
